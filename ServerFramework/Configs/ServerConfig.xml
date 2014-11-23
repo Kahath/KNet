@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ServerSettings>
+  
+       <!--  Server settings -->
+<property name="bindip" value="0.0.0.0"/>     <!--Server bind IP-->
+<property name="bindport" value=""/>          <!--Server port-->
+  
+       <!-- Database settings-->
+<property name="dbhost" value="127.0.0.1"/>   <!--Database IP-->
+<property name="dbport" value="3306"/>        <!--Database port-->
+<property name="dbuser" value="root"/>        <!--Database username-->
+<property name="dbpass" value="root"/>        <!--Database password-->
+<property name="dbname" value=""/>            <!--Database name-->
+
+       <!-- Log level settings-->
+<property name="loglevel" value="0xFF" />      <!--Console log level mask
+                                                  Normal      = 0x01
+                                                  Error       = 0x02
+                                                  Init        = 0x04
+                                                  Database    = 0x08
+                                                  Debug       = 0x10
+                                                  Dump        = 0x20
+                                                  Cmd         = 0x40
+                                                  Default     = 0x80
+                                                  All         = 0xFF-->
+    <!--Packet log level settings-->
+<property name="packetloglevel" value="0x03" /> <!--Packet log level mask
+                                                  None        = 0x00
+                                                  SMSG        = 0x01
+                                                  CMSG        = 0x02
+                                                  All         = 0x03-->
+         
+  <!-- Socket settings-->
+<property name="maxconnections" value="10" />
+<property name="buffersize" value="4096" />
+<property name="maxsimultaneousacceptops" value="10" />
+<property name="backlog" value="100" />
+<property name="headerlength" value="4" />
+</ServerSettings>
