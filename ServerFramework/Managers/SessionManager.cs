@@ -37,6 +37,11 @@ namespace ServerFramework.Managers
             set { _freeSessionIDPool = value; }
         }
 
+        public int ClientsCount
+        {
+            get { return _clients.Count; }
+        }
+
         #endregion
 
         #region Constructors
@@ -52,10 +57,12 @@ namespace ServerFramework.Managers
 
         #region Init
 
-        private void Init()
+        internal override void Init()
         {
             Clients = new ConcurrentDictionary<int, Client>();
             FreeSessionIDPool = new Stack<int>();
+
+            base.Init();
         }
 
         #endregion
@@ -97,7 +104,7 @@ namespace ServerFramework.Managers
                 Interlocked.Increment(ref _sessionId);
 
             Clients[id] = c;
-            Log.Message(LogType.Debug, "New session");
+            LogManager.Log(LogType.Debug, "New session");
             return id;
         }
 

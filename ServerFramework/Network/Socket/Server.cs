@@ -9,6 +9,9 @@ using ServerFramework.Constants.Misc;
 using ServerFramework.Database;
 using ServerFramework.Constants.Entities.Session;
 using ServerFramework.Singleton;
+using ServerFramework.Constants.Entities.Console.Misc;
+using ServerFramework.Network.Handlers;
+using ServerFramework.Configuration;
 
 namespace ServerFramework.Network.Socket
 {
@@ -17,7 +20,7 @@ namespace ServerFramework.Network.Socket
         #region Fields
 
         System.Net.Sockets.Socket listenSocket;
-        PacketLog packetLogger;
+
         Semaphore maxConnectionsEnforcer;
         SocketListenerSettings socketSettings;
 
@@ -28,12 +31,6 @@ namespace ServerFramework.Network.Socket
         MessageHandler messageHandler;
 
         #endregion 
-
-        #region Handlers
-
-        public delegate void ServerEventHandler(object sender, SocketAsyncEventArgs e);
-
-        #endregion
 
         #region Events
 
@@ -121,12 +118,12 @@ namespace ServerFramework.Network.Socket
             }
             catch (SocketException e)
             {
-                Log.Message(LogType.Error, "{0}", e.Message);
-                //Console.ReadLine();
+                LogManager.Log(LogType.Error, "{0}", e.Message);
+                Console.ReadLine();
                 Environment.Exit(0);
             }
 
-            Log.Message(LogType.Normal, "Starting listening on {0}:{1}",
+            LogManager.Log(LogType.Normal, "Starting listening on {0}:{1}",
                 this.socketSettings.LocalEndPoint.Address,
                 this.socketSettings.LocalEndPoint.Port);
 
@@ -139,7 +136,7 @@ namespace ServerFramework.Network.Socket
 
         private void startAccept()
         {
-            Log.Message(LogType.Debug, "Start Accepting connection");
+            LogManager.Log(LogType.Debug, "Start Accepting connection");
             SocketAsyncEventArgs acceptEventArgs;
 
             if (this.AcceptPool.Count > 1)
@@ -188,7 +185,7 @@ namespace ServerFramework.Network.Socket
 
         #region StartSend
 
-        public void StartSend(SocketAsyncEventArgs e)
+        private void StartSend(SocketAsyncEventArgs e)
         {
             try
             {
@@ -209,7 +206,7 @@ namespace ServerFramework.Network.Socket
                         e.Buffer, token.BufferOffset, token.MessageBytesRemainingCount);
                 }
 
-                packetLogger.Enqueue(token.Packet);
+                Manager.PacketLogMgr.Log(token.Packet);
 
                 if (!e.AcceptSocket.SendAsync(e))
                     processSend(e);
@@ -240,7 +237,7 @@ namespace ServerFramework.Network.Socket
             ((UserToken)saea.Sender.UserToken).AssignId(id);
             saea.Receiver.AcceptSocket = e.AcceptSocket;
             saea.Sender.AcceptSocket = e.AcceptSocket;
-            Log.Message(LogType.Normal, "Session {0} ({1}) connected",
+            LogManager.Log(LogType.Normal, "Session {0} ({1}) connected",
                 ((UserToken)saea.Receiver.UserToken).SessionId,
                 saea.Receiver.AcceptSocket.RemoteEndPoint.ToString());
             e.AcceptSocket = null;
@@ -278,14 +275,18 @@ namespace ServerFramework.Network.Socket
                 if (!token.HeaderReady)
                     remainingBytes = headerHandler.HandleHeader(e, token, remainingBytes);
 
-                if (token.HeaderReady && remainingBytes > 0)
+                LogManager.Log(LogType.Debug, "{0}", remainingBytes);
+
+                if (token.HeaderReady)
                     remainingBytes = messageHandler.HandleMessage(e, token, remainingBytes);
 
                 if (token.PacketReady)
                 {
-                    Log.Message(LogType.Debug, "Packet is ready!");
-                    packetLogger.Enqueue(token.Packet);
+                    LogManager.Log(LogType.Debug, "Packet is ready!");
+                    Manager.PacketLogMgr.Log(token.Packet);
+
                     Manager.PacketMgr.InvokeHandler(token.Packet);
+
                     if (remainingBytes > 0)
                         token.Reset(token.MessageOffset + token.MessageLength + 4);
                     else
@@ -321,7 +322,7 @@ namespace ServerFramework.Network.Socket
             token.MessageBytesRemainingCount -= e.BytesTransferred;
             if (token.MessageBytesRemainingCount == 0)
             {
-                Log.Message(LogType.Debug, "All data is sent!");
+                LogManager.Log(LogType.Debug, "All data is sent!");
                 Client c = Manager.SessionMgr.GetClientBySessionID(token.SessionId);
                 if (c == null)
                     return;
@@ -330,7 +331,7 @@ namespace ServerFramework.Network.Socket
             }
             else
             {
-                Log.Message(LogType.Debug, "Not all data is sent! Continue sending data");
+                LogManager.Log(LogType.Debug, "Not all data is sent! Continue sending data");
                 token.MessageBytesDoneCount += e.BytesTransferred;
                 StartSend(e);
             }
@@ -340,7 +341,7 @@ namespace ServerFramework.Network.Socket
 
         #region Send
 
-        public void Send(SocketAsyncEventArgs e)
+        internal void Send(SocketAsyncEventArgs e)
         {
             StartSend(e);
         }

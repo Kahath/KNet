@@ -19,14 +19,20 @@ namespace ServerFramework.Constants.Entities.Session
 
         internal Client(Saea saea)
         {
-
+            Saea = saea;
         }
+
+        #endregion
+
+        #region Events
+
+        public event PacketSendEventHandler BeforePacketSend;
 
         #endregion
 
         #region Properties
 
-        public Saea Saea
+        internal Saea Saea
         {
             get { return _saea; }
             set { _saea = value; }
@@ -49,8 +55,11 @@ namespace ServerFramework.Constants.Entities.Session
 		
         public void Send(UserToken item)
         {
+            if (BeforePacketSend != null)
+                BeforePacketSend(item.Packet, new EventArgs());
+
             item.PrepareSend();
-            Log.Message(LogType.Debug, "Packet Content {0}", BitConverter.ToString(item.Packet.Message));
+            LogManager.Log(LogType.Debug, "Packet Content {0}", BitConverter.ToString(item.Packet.Message));
             Server.GetInstance().Send(this.Saea.Sender);
         }
 
@@ -60,7 +69,6 @@ namespace ServerFramework.Constants.Entities.Session
 		 
         public UserToken PrepareSend(ushort opcode)
         {
-            //sendResetEvent.WaitOne();
             this.Saea.SendResetEvent.WaitOne();
             UserToken token = (UserToken)Saea.Sender.UserToken;
             token.PrepareWrite(opcode);

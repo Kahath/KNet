@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 
-namespace ServerFramework.Network.Socket
+namespace ServerFramework.Constants.Entities.Console.Misc
 {
     public class ObjectPool<T>
     {

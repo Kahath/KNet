@@ -1,6 +1,7 @@
 ﻿using MySql.Data.MySqlClient;
 using ServerFramework.Constants.Misc;
 using ServerFramework.Logging;
+using ServerFramework.Managers;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -43,15 +44,15 @@ namespace ServerFramework.Database
             {
                 connection = new MySqlConnection(connectionString);
                 connection.Open();
-                Log.Message(LogType.Normal, "Successfuly tested database connection on {0}:{1} {2}",
+                LogManager.Log(LogType.Normal, "Successfuly tested database connection on {0}:{1} {2}",
                     host, port, database);
                 pingTimer.Elapsed += pingTimer_Elapsed;
                 pingTimer.Start();
             }
             catch (MySqlException e)
             {
-                Log.Message(LogType.Error, e.Message);
-                Log.Message(LogType.Database, "Trying to reconnect in 5s...");
+                LogManager.Log(LogType.Error, e.Message);
+                LogManager.Log(LogType.Database, "Trying to reconnect in 5s...");
                 Thread.Sleep(5000);
 
                 Init(host, user, pass, port, database);
@@ -75,13 +76,13 @@ namespace ServerFramework.Database
 
                     command.Parameters.AddRange(mParams.ToArray());
                     command.ExecuteNonQuery();
-                    Log.Message(LogType.Database, "Successfuly executed: \"{0}\"", sqlString);
+                    LogManager.Log(LogType.Database, "Successfuly executed: \"{0}\"", sqlString);
                     return true;
                 }
             }
             catch (MySqlException e)
             {
-                Log.Message(LogType.Error, e.Message);
+                LogManager.Log(LogType.Error, e.Message);
                 return false;
             }
         }
@@ -109,7 +110,7 @@ namespace ServerFramework.Database
                         {
                             retData.Load(sqlData);
                             retData.Count = retData.Rows.Count;
-                            Log.Message(LogType.Database, "Successfuly executed: \"{0}\"", sqlString);
+                            LogManager.Log(LogType.Database, "Successfuly executed: \"{0}\"", sqlString);
                             return retData;
                         }
                     }
@@ -118,7 +119,7 @@ namespace ServerFramework.Database
             }
             catch (MySqlException e)
             {
-                Log.Message(LogType.Error, e.Message);
+                LogManager.Log(LogType.Error, e.Message);
                 return null;
             }
         }
@@ -152,11 +153,11 @@ namespace ServerFramework.Database
             {
                 MySqlCommand command = new MySqlCommand(sqlString.ToString(), connection);
                 command.ExecuteNonQuery();
-                Log.Message(LogType.Database, "Successfuly executed: \"{0}\"", sqlString.ToString());
+                LogManager.Log(LogType.Database, "Successfuly executed: \"{0}\"", sqlString.ToString());
             }
             catch (MySqlException e)
             {
-                Log.Message(LogType.Error, e.Message);
+                LogManager.Log(LogType.Error, e.Message);
             }
         }
 
@@ -180,7 +181,7 @@ namespace ServerFramework.Database
 
         private void pingTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            Log.Message(LogType.Normal, "Pinging database");
+            LogManager.Log(LogType.Normal, "Pinging database");
             connection.Ping();
         }
 

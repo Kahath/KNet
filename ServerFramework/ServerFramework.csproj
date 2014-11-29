@@ -59,9 +59,9 @@
     <Compile Include="Game\CommandHandlers\CommandCommands.cs" />
     <Compile Include="Game\CommandHandlers\HelpCommands.cs" />
     <Compile Include="KahathFramework.cs" />
-    <Compile Include="Logging\Log.cs" />
+    <Compile Include="Logging\LogManager.cs" />
     <Compile Include="Constants\Misc\LogType.cs" />
-    <Compile Include="Logging\Packets\PacketLog.cs" />
+    <Compile Include="Logging\Packets\PacketLogManager.cs" />
     <Compile Include="Managers\BufferManager.cs" />
     <Compile Include="Managers\CommandManager.cs" />
     <Compile Include="Managers\Manager.cs" />
@@ -69,14 +69,14 @@
     <Compile Include="Managers\SessionManager.cs" />
     <Compile Include="Network\Packets\Packet.cs" />
     <Compile Include="Network\Packets\UserToken.cs" />
-    <Compile Include="Network\Packets\MessageHandler.cs" />
+    <Compile Include="Network\Handlers\MessageHandler.cs" />
     <Compile Include="Constants\Attributes\OpcodeAttribute.cs" />
     <Compile Include="Network\Packets\PacketHeader.cs" />
-    <Compile Include="Network\Packets\HeaderHandler.cs" />
-    <Compile Include="Network\Socket\ObjectPool.cs" />
+    <Compile Include="Network\Handlers\HeaderHandler.cs" />
+    <Compile Include="Constants\Entities\Misc\ObjectPool.cs" />
     <Compile Include="Network\Socket\Saea.cs" />
     <Compile Include="Network\Socket\Server.cs" />
-    <Compile Include="Network\Socket\SocketListenerSettings.cs" />
+    <Compile Include="Configuration\SocketListenerSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Singleton\SingletonBase.cs" />
   </ItemGroup>

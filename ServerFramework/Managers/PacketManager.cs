@@ -9,18 +9,27 @@ using System.Reflection;
 
 namespace ServerFramework.Managers
 {
-    internal sealed class PacketManager : SingletonBase<PacketManager>
+    public sealed class PacketManager : SingletonBase<PacketManager>
     {
         #region Fields
 
-        private Dictionary<ushort, HandlePacket> _packetHandlers 
-            = new Dictionary<ushort, HandlePacket>();
+        private Dictionary<ushort, PacketHandler> _packetHandlers 
+            = new Dictionary<ushort, PacketHandler>();
 
         #endregion
 
         #region Properties
 
-        public Dictionary<ushort, HandlePacket> PacketHandlers 
+        public int PacketHandlersCount
+        {
+            get { return _packetHandlers.Count; }
+        }
+
+        #endregion
+
+        #region Properties
+
+        internal Dictionary<ushort, PacketHandler> PacketHandlers 
         {
             get { return _packetHandlers; }
             set { _packetHandlers = value; }
@@ -28,17 +37,9 @@ namespace ServerFramework.Managers
 
         #endregion
 
-        #region Delegates
-
-        public delegate void HandlePacket(Packet packet);
-        public delegate void PacketManagerInvokeHandler(object sender, EventArgs e);
-
-        #endregion
-
         #region Events
 
-        public event PacketManagerInvokeHandler BeforePacketInvoke;
-        public event PacketManagerInvokeHandler AfterInitialisation;
+        public event PacketManagerInvokeEventHandler BeforePacketInvoke;
 
         #endregion
 
@@ -55,7 +56,7 @@ namespace ServerFramework.Managers
 
         #region Init
 
-        internal void Init()
+        internal override void Init()
         {
             foreach (var a in AppDomain.CurrentDomain.GetAssemblies())
             {
@@ -68,16 +69,15 @@ namespace ServerFramework.Managers
                             if (attr != null)
                                 if (!PacketHandlers.ContainsKey(attr.Opcode))
                                     PacketHandlers[attr.Opcode] = Delegate.CreateDelegate(
-                                        typeof(HandlePacket), meth) as HandlePacket;
+                                        typeof(PacketHandler), meth) as PacketHandler;
                         }
                     }
                 }
             }
 
-            Log.Message(LogType.Normal, "{0} packet handlers loaded", PacketHandlers.Count);
+            LogManager.Log(LogType.Normal, "{0} packet handlers loaded", PacketHandlers.Count);
 
-            if (AfterInitialisation != null)
-                AfterInitialisation(PacketHandlers, new EventArgs());
+            base.Init();
         }
 
         #endregion
@@ -92,7 +92,7 @@ namespace ServerFramework.Managers
             if (PacketHandlers.ContainsKey(packet.Header.Opcode))
                 PacketHandlers[packet.Header.Opcode].Invoke(packet);
             else
-                Log.Message(LogType.Error, "Opcode {0} doesn't have handler", packet.Header.Opcode);
+                LogManager.Log(LogType.Error, "Opcode {0} doesn't have handler", packet.Header.Opcode);
         }
 
         #endregion

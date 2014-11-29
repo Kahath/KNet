@@ -1,9 +1,11 @@
 ﻿using ServerFramework.Constants.Misc;
 using ServerFramework.Logging;
+using ServerFramework.Managers;
+using ServerFramework.Network.Packets;
 using System;
 using System.Net.Sockets;
 
-namespace ServerFramework.Network.Packets
+namespace ServerFramework.Network.Handlers
 {
     public class MessageHandler
     {
@@ -31,12 +33,12 @@ namespace ServerFramework.Network.Packets
                 token.Packet.PrepareRead();
 
                 token.PacketReady = true;
-                Log.Message(LogType.Debug, "Session Id: {0} Message handled", token.SessionId);
+                LogManager.Log(LogType.Debug, "Session Id: {0} Message handled", token.SessionId);
 
                 return remainingBytesToProcess;
             }
 
-            Log.Message(LogType.Debug, "Handling message");
+            LogManager.Log(LogType.Debug, "Handling message");
 
             if ((remainingBytesToProcess +
                 token.MessageBytesDoneCount) >=
@@ -56,7 +58,7 @@ namespace ServerFramework.Network.Packets
                 token.Packet.PrepareRead();
 
                 token.PacketReady = true;
-                Log.Message(LogType.Debug, "Session Id: {0} Message handled", token.SessionId);
+                LogManager.Log(LogType.Debug, "Session Id: {0} Message handled", token.SessionId);
             }
             else
             {
@@ -71,7 +73,7 @@ namespace ServerFramework.Network.Packets
                 token.MessageBytesDoneCount += remainingBytesToProcess;
                 remainingBytesToProcess = 0;
 
-                Log.Message(LogType.Debug, "Message not fully handled!");
+                LogManager.Log(LogType.Debug, "Message not fully handled!");
             }
             return remainingBytesToProcess;
         }

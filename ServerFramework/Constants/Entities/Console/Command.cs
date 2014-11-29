@@ -9,7 +9,7 @@ namespace ServerFramework.Constants.Entities.Console
         private string _name;
         private CommandLevel _commandLevel;
         private Command[] _subCommands;
-        private CommandScript _script;
+        private CommandScriptHandler _script;
         private string _description;
 
         #endregion
@@ -23,7 +23,7 @@ namespace ServerFramework.Constants.Entities.Console
         }
 
 
-        public CommandScript Script
+        public CommandScriptHandler Script
         {
             get { return _script; }
             set { _script = value; }
@@ -52,7 +52,7 @@ namespace ServerFramework.Constants.Entities.Console
         #region Constructors
 
         public Command(string name, CommandLevel commandLevel
-            , Command[] subCommands, CommandScript script, string description)
+            , Command[] subCommands, CommandScriptHandler script, string description)
         {
             Name = name;
             CommandLevel = CommandLevel;
@@ -60,12 +60,6 @@ namespace ServerFramework.Constants.Entities.Console
             Script = script;
             Description = description;
         }
-
-        #endregion
-
-        #region Delegates
-
-        public delegate bool CommandScript(params string[] args);
 
         #endregion
     }

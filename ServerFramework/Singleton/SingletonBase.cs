@@ -1,5 +1,6 @@
 ﻿using ServerFramework.Constants.Misc;
 using ServerFramework.Logging;
+using ServerFramework.Managers;
 using System;
 using System.Globalization;
 using System.Reflection;
@@ -15,9 +16,17 @@ namespace ServerFramework.Singleton
 
         #endregion
 
-        #region Properties
+        #region Events
 
-        public static T GetInstance(params object[] args)
+        public event ManagerInitialisationEventHandler AfterInitialisation;
+
+        #endregion
+
+        #region Methods
+
+        #region GetInstance
+
+        internal static T GetInstance(params object[] args)
         {
             object ctor = null;
 
@@ -34,8 +43,7 @@ namespace ServerFramework.Singleton
                         }
                         catch (Exception)
                         {
-                            Log.Message(LogType.Error, "Error with creating instance of {0} type"
-                                , typeof(T));
+                            LogManager.Log(LogType.Error, "Error with creating instance of {0} type", typeof(T));
                             Console.ReadLine();
                             Environment.Exit(0);
                         }
@@ -48,6 +56,19 @@ namespace ServerFramework.Singleton
 
             return _instance;
         }
+
+        #endregion
+
+        #region Init
+
+        internal virtual void Init()
+        {
+            if (AfterInitialisation != null)
+                AfterInitialisation(_instance, new EventArgs());
+        }
+
+        #endregion
+
 
         #endregion       
     }

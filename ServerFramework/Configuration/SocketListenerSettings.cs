@@ -1,8 +1,8 @@
 ﻿using System.Net;
 
-namespace ServerFramework.Network.Socket
+namespace ServerFramework.Configuration
 {
-    public class SocketListenerSettings
+    internal class SocketListenerSettings
     {
         #region Fields
 

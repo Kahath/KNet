@@ -45,27 +45,27 @@ namespace ServerFramework.Game.CommandHandlers
                     {
                         if (c.SubCommands != null)
                         {
-                            Log.Message(LogType.Command, "Available sub commands for '{0}{1}' command:", path, c.Name);
-                            Log.Message(LogType.Command, "{0}", _availableSubCommands(c, path));
+                            LogManager.Log(LogType.Command, "Available sub commands for '{0}{1}' command:", path, c.Name);
+                            LogManager.Log(LogType.Command, "{0}", _availableSubCommands(c, path));
                             return true;
                         }
                         else
                         {
                             if (c.Description != null && c.Description != "")
                             {
-                                Log.Message(LogType.Command, "{0}", c.Description);
+                                LogManager.Log(LogType.Command, "{0}", c.Description);
                                 return true;
                             }
                             else
                             {
-                                Log.Message(LogType.Command, "Command '{0}{1}' is missing description", path, c.Name);
+                                LogManager.Log(LogType.Command, "Command '{0}{1}' is missing description", path, c.Name);
                                 return true;
                             }
                         }
                     }
                 }
 
-                Log.Message(LogType.Command, "Command '{0}{1}' not found", path, command[0]);
+                LogManager.Log(LogType.Command, "Command '{0}{1}' not found", path, command[0]);
                 return false;
             }
 
@@ -79,7 +79,7 @@ namespace ServerFramework.Game.CommandHandlers
                 }
             }
 
-            Log.Message(LogType.Command, "Command '{0}{1}' not found", path, command[0]);
+            LogManager.Log(LogType.Command, "Command '{0}{1}' not found", path, command[0]);
             return false;
         }
 

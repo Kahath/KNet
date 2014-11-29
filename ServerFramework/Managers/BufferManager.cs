@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ServerFramework.Managers
 {
-    internal sealed class BufferManager : SingletonBase<BufferManager>
+    public sealed class BufferManager : SingletonBase<BufferManager>
     {
         #region Fields
 
@@ -40,6 +40,7 @@ namespace ServerFramework.Managers
             this.currentIndex = 0;
             this.bufferBytesAllocatedForEachSaea = totalBytesInEachSaeaObject;
             this.freeIndexPool = new Stack<int>();
+            
             Init();
         }
 
@@ -49,17 +50,19 @@ namespace ServerFramework.Managers
 
         #region Init
 
-        public void Init()
+        internal override void Init()
         {
             this.bufferBlock = new byte[totalBytesInBufferBlock];
-            Log.Message(LogType.Normal, "Buffer alocated size: {0}KB", this.TotalBytes / 1024);
+            LogManager.Log(LogType.Normal, "Buffer alocated size: {0}KB", this.TotalBytes / 1024);
+            
+            base.Init();
         }
 
         #endregion
 
         #region SetBuffer
 
-        public bool SetBuffer(SocketAsyncEventArgs e)
+        internal bool SetBuffer(SocketAsyncEventArgs e)
         {
             if (this.freeIndexPool.Count > 0)
             {
@@ -85,7 +88,7 @@ namespace ServerFramework.Managers
 
         #region FreeBuffer
 
-        public void FreeBuffer(SocketAsyncEventArgs e)
+        internal void FreeBuffer(SocketAsyncEventArgs e)
         {
             this.freeIndexPool.Push(e.Offset);
             e.SetBuffer(null, 0, 0);

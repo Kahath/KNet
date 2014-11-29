@@ -3,7 +3,7 @@ using System.Threading;
 
 namespace ServerFramework.Network.Socket
 {
-    public class Saea
+    internal sealed class Saea
     {
         #region Fields
 
@@ -19,7 +19,7 @@ namespace ServerFramework.Network.Socket
         /// Creates object with SocketAsyncEventArgs objects
         /// for sending and receiving data
         /// </summary>
-        public Saea()
+        internal Saea()
         {
             _sendResetEvent = new AutoResetEvent(true);
         }
@@ -28,18 +28,18 @@ namespace ServerFramework.Network.Socket
 
         #region Properties
 
-        public SocketAsyncEventArgs Sender
+        internal SocketAsyncEventArgs Sender
         {
             get { return _sender; }
             set { _sender = value; }
         }
-        public SocketAsyncEventArgs Receiver
+        internal SocketAsyncEventArgs Receiver
         {
             get { return _receiver; }
             set { _receiver = value; }
         }
 
-        public AutoResetEvent SendResetEvent 
+        internal AutoResetEvent SendResetEvent 
         {
             get { return _sendResetEvent; }
             set { _sendResetEvent = value; }
@@ -52,7 +52,7 @@ namespace ServerFramework.Network.Socket
         /// <summary>
         /// Closes both SocketAsyncEventArgs objects
         /// </summary>
-        public void Close()
+        internal void Close()
         {
             this.Sender.AcceptSocket.Close();
             this.Receiver.AcceptSocket.Close();
@@ -62,7 +62,7 @@ namespace ServerFramework.Network.Socket
         /// Shutdown both SocketAsyncEventArgs objects
         /// </summary>
         /// <param name="how"></param>
-        public void Shutdown(SocketShutdown how)
+        internal void Shutdown(SocketShutdown how)
         {
             try
             {

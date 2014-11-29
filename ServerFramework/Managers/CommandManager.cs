@@ -13,7 +13,7 @@ using System.Threading;
 
 namespace ServerFramework.Managers
 {
-    internal sealed class CommandManager : SingletonBase<CommandManager>
+    public sealed class CommandManager : SingletonBase<CommandManager>
     {
         #region Fields
 
@@ -45,7 +45,7 @@ namespace ServerFramework.Managers
 
         #region Init
 
-        internal void Init()
+        internal override void Init()
         {
             foreach (var a in AppDomain.CurrentDomain.GetAssemblies())
             {
@@ -69,21 +69,23 @@ namespace ServerFramework.Managers
                 }
             }
 
-            Log.Message(LogType.Normal, "{0} Commands loaded", CommandTable.Count);
+            LogManager.Log(LogType.Normal, "{0} Commands loaded", CommandTable.Count);
 
             new Thread(() =>
                 {
                     while (true)
-                        InvokeCommand(Console.ReadLine());
+                        _invokeCommand(Console.ReadLine());
 
                 }).Start();
+
+            base.Init();
         }
 
         #endregion
 
         #region InvokeCommand
 
-        internal bool InvokeCommand(string command)
+        private bool _invokeCommand(string command)
         {
             string com = Regex.Replace(command, @"\s+", " ").Trim();
             if(com != "")
@@ -113,13 +115,13 @@ namespace ServerFramework.Managers
                         {
                             if (c.SubCommands == null)
                             {
-                                Log.Message(LogType.Command, "Error with '{0}{1}' command."
+                                LogManager.Log(LogType.Command, "Error with '{0}{1}' command."
                                 + " Missing script or subcommands", path, c.Name);
                                 return false;
                             }
                             else
                             {
-                                Log.Message(LogType.Command, "Available sub commands for '{0}{1}': {2}"
+                                LogManager.Log(LogType.Command, "Available sub commands for '{0}{1}': {2}"
                                     , path, c.Name, _availableSubCommands(c));
                                 return false;
                             }
@@ -129,7 +131,7 @@ namespace ServerFramework.Managers
                     }
                 }
 
-                Log.Message(LogType.Command, "Command '{0}{1}' not found", path, command[0]);
+                LogManager.Log(LogType.Command, "Command '{0}{1}' not found", path, command[0]);
                 return false;
             }
 
@@ -147,7 +149,7 @@ namespace ServerFramework.Managers
                         }
                         else
                         {
-                            Log.Message(LogType.Command, "Error with '{0}{1}' command."
+                            LogManager.Log(LogType.Command, "Error with '{0}{1}' command."
                                 + " Missing script or subcommands", path, c.Name);
                             return false;
                         }
@@ -160,7 +162,7 @@ namespace ServerFramework.Managers
                 }
             }
 
-            Log.Message(LogType.Command, "Command '{0}{1}' not found", path, command[0]);
+            LogManager.Log(LogType.Command, "Command '{0}{1}' not found", path, command[0]);
             return false;
         }
 

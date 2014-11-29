@@ -34,10 +34,10 @@ namespace ServerFramework.Game.CommandHandlers
         {
             if (args.Length > 0)
                 return false;
-            
-            Log.Message(LogType.Command, "List of all commands:");
+
+            LogManager.Log(LogType.Command, "List of all commands:");
             foreach (Command c in Manager.CommandMgr.CommandTable)
-                Log.Message(LogType.Command, "{0}", c.Name);
+                LogManager.Log(LogType.Command, "{0}", c.Name);
 
             return true;
         }

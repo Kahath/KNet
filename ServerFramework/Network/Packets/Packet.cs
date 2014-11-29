@@ -1,5 +1,6 @@
 ﻿using ServerFramework.Constants.Misc;
 using ServerFramework.Logging;
+using ServerFramework.Managers;
 using System;
 using System.IO;
 using System.Text;
@@ -10,9 +11,39 @@ namespace ServerFramework.Network.Packets
     {
         #region Fields
 
-        public PacketHeader Header;
-        public byte[] Message;
-        public int SessionId;
+        private PacketHeader _header;
+        private byte[] _message;
+        private int _sessionId;
+
+        #endregion
+
+        #region Properties
+
+        public PacketHeader Header
+        {
+            get { return _header; }
+            set { _header = value; }
+        }
+
+        public byte[] Message
+        {
+            get { return _message; }
+            set { _message = value; }
+        }
+
+        public int SessionId
+        {
+            get { return _sessionId; }
+            internal set { _sessionId = value; }
+        }
+
+        /// <summary>
+        /// Gets stream of packet
+        /// </summary>
+        internal dynamic GetStream
+        {
+            get { return this.stream; }
+        }
 
         dynamic stream;
 
@@ -161,7 +192,7 @@ namespace ServerFramework.Network.Packets
             stream.BaseStream.Seek(0, SeekOrigin.Begin);
             Message = new byte[stream.BaseStream.Length];
             Header.Size = (ushort)(Message.Length - 4);
-            Log.Message(LogType.Debug, "Size = {0}", Header.Size);
+            LogManager.Log(LogType.Debug, "Size = {0}", Header.Size);
             for (int i = 0; i < Message.Length; i++)
             {
                 Message[i] = (byte)stream.BaseStream.ReadByte();
@@ -176,6 +207,8 @@ namespace ServerFramework.Network.Packets
 
         #region Methods
 
+        #region PrepareRead
+
         /// <summary>
         /// Readies buffer for reading
         /// </summary>
@@ -185,14 +218,9 @@ namespace ServerFramework.Network.Packets
                 stream = new BinaryReader(new MemoryStream(this.Message));
         }
 
+        #endregion
 
-        /// <summary>
-        /// Gets stream of packet
-        /// </summary>
-        internal dynamic GetStream
-        {
-            get { return this.stream; }
-        }
+        #region Dispose
 
         public void Dispose()
         {
@@ -200,6 +228,8 @@ namespace ServerFramework.Network.Packets
             if (stream != null)
                 stream.Close();
         }
+
+        #endregion
 
         #endregion
     }
