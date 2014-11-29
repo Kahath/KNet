@@ -2,85 +2,7 @@
 
 namespace ServerFramework.Network.Packets
 {
-    //[Obsolete]
-    /*public class UserToken
-    {
-        public Packet ThePacket;
-
-        public readonly int BufferOffsetReceive;
-        public readonly int BufferOffsetSend;
-        public readonly int PermanentReceiveMessageOffset;
-
-        public readonly int ReceivePrefixLength;
-        public readonly int SendPrefixLength;
-        public readonly int BufferSize;
-
-        private int sessionId;
-
-        public byte[] ByteArrayPrefix;
-        public byte[] DataToSend;
-
-        public int LengthOfCurrentIncomingMessage;
-
-        public int ReceiveMessageOffset;
-
-        public int ReceivedPrefixBytesDoneCount = 0;
-        public int ReceivedMessageBytesDoneCount = 0;
-        public int RecPrefixBytesDoneThisOp = 0;
-
-        public int SendBytesRemainingCount = 0;
-        public int BytesSentAlreadyCount = 0;
-
-        public bool headerReady = false;
-        public bool packetReady = false;
-
-        public UserToken(SocketAsyncEventArgs e, Int32 rOffset,
-           Int32 sOffset, Int32 receivePrefixLength, Int32 sendPrefixLength)
-        {
-            this.BufferOffsetReceive = rOffset;
-            this.BufferOffsetSend = sOffset;
-            this.ReceivePrefixLength = receivePrefixLength;
-            this.SendPrefixLength = sendPrefixLength;
-            this.ReceiveMessageOffset = rOffset + receivePrefixLength;
-            this.PermanentReceiveMessageOffset = this.ReceiveMessageOffset;
-        }
-
-        public int SessionId
-        {
-            get { return this.sessionId; }
-        }
-
-        public void CreatePacket(bool reader = true)
-        {
-            this.ThePacket = new Packet(reader);
-        }
-
-        public void AssignSessionId(int id)
-        {
-            sessionId = id;
-        }
-
-        public void ResetReceive()
-        {
-            this.ByteArrayPrefix = null;
-            this.ReceivedPrefixBytesDoneCount = 0;
-            this.ReceivedMessageBytesDoneCount = 0;
-            this.RecPrefixBytesDoneThisOp = 0;
-            this.ReceiveMessageOffset = this.PermanentReceiveMessageOffset;
-            this.headerReady = false;
-            this.packetReady = false;
-            CreatePacket();
-        }
-
-        public void ResetSend()
-        {
-            this.BytesSentAlreadyCount = 0;
-            this.SendBytesRemainingCount = 0;
-            this.DataToSend = null;
-        }
-    }*/
-
-    public class UserToken : IDisposable
+    public class UserToken
     {
         #region Fields
 
@@ -229,6 +151,8 @@ namespace ServerFramework.Network.Packets
 
         #region Methods
 
+        #region AssignId
+
         /// <summary>
         /// Assigns session id for UserToken objects.
         /// Used to differentiate clients.
@@ -239,7 +163,9 @@ namespace ServerFramework.Network.Packets
             SessionId = id;
         }
 
+        #endregion
 
+        #region PrepareWrite
 
         /// <summary>
         /// Prepares packet for writing
@@ -250,6 +176,10 @@ namespace ServerFramework.Network.Packets
             Packet = new Packet(opcode);
         }
 
+        #endregion
+
+        #region PrepareSend
+
         /// <summary>
         /// Readies packet for sending
         /// </summary>
@@ -258,10 +188,9 @@ namespace ServerFramework.Network.Packets
             this.MessageBytesRemainingCount = Packet.PrepareForSend();
         }
 
-        /*public void EndSend(PacketHeader header, byte[] message)
-        {
-            Packet = new Packet(header, message);
-        }*/
+        #endregion
+
+        #region PrepareReceive
 
         /// <summary>
         /// Prepares packet for receiving data
@@ -270,6 +199,10 @@ namespace ServerFramework.Network.Packets
         {
             Packet = new Packet();
         }
+
+        #endregion
+
+        #region Write
 
         /// <summary>
         /// Writes data on underlying packet
@@ -281,6 +214,9 @@ namespace ServerFramework.Network.Packets
             Packet.Write<T>(value);
         }
 
+        #endregion
+
+        #region Read
 
         /// <summary>
         /// Reads data from underlying packet
@@ -294,6 +230,9 @@ namespace ServerFramework.Network.Packets
             return Packet.Read<T>();
         }
 
+        #endregion
+
+        #region Reset
 
         /// <summary>
         /// Resets packet to its initial state;
@@ -311,11 +250,8 @@ namespace ServerFramework.Network.Packets
             this.MessageOffset = messageOffset;
         }
 
-        public void Dispose()
-        {
+        #endregion
 
-        }
+        #endregion
     }
-
-        #endregion      
 }

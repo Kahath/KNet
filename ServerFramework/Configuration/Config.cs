@@ -21,8 +21,12 @@ namespace ServerFramework.Configuration
         /// <param name="path">Path to configuration file</param>
         public Config(string path)
         {
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine("Initialising configuration");
+
             if (!File.Exists(path))
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Configuration file is missing!\nExit..");
                 Console.ReadLine();
                 Environment.Exit(0);
@@ -31,6 +35,9 @@ namespace ServerFramework.Configuration
             XmlDocument doc = new XmlDocument();
             doc.Load(path);
             nodes = doc.DocumentElement.ChildNodes;
+            doc = null;
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Successfully read configuration file: {0}", path);
         }
 
         #endregion
@@ -43,7 +50,7 @@ namespace ServerFramework.Configuration
         /// <typeparam name="T">type of value</typeparam>
         /// <param name="config">name of configuration in xml file</param>
         /// <param name="hex">is value written as hexadecimal value</param>
-        /// <returns>value of configuration of specified data type</returns>
+        /// <returns>Configuration value of specified data type.</returns>
         public T Read<T>(string config, bool hex = false)
         {
             string nameValue = null;

@@ -13,7 +13,8 @@
 <property name="dbname" value=""/>            <!--Database name-->
 
        <!-- Log level settings-->
-<property name="loglevel" value="0xFF" />      <!--Console log level mask
+<property name="loglevel" value="0x8F" />      <!--Console log level mask
+                                                  None        = 0x00
                                                   Normal      = 0x01
                                                   Error       = 0x02
                                                   Init        = 0x04
@@ -21,7 +22,7 @@
                                                   Debug       = 0x10
                                                   Dump        = 0x20
                                                   Cmd         = 0x40
-                                                  Default     = 0x80
+                                                  Command     = 0x80
                                                   All         = 0xFF-->
     <!--Packet log level settings-->
 <property name="packetloglevel" value="0x03" /> <!--Packet log level mask
@@ -35,5 +36,4 @@
 <property name="buffersize" value="4096" />
 <property name="maxsimultaneousacceptops" value="10" />
 <property name="backlog" value="100" />
-<property name="headerlength" value="4" />
 </ServerSettings>

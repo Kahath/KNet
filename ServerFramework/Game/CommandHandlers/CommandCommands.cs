@@ -7,7 +7,7 @@ using ServerFramework.Managers;
 namespace ServerFramework.Game.CommandHandlers
 {
     [Command]
-    public sealed class CommandCommands
+    internal sealed class CommandCommands
     {
         #region Methods
 
@@ -17,10 +17,10 @@ namespace ServerFramework.Game.CommandHandlers
         {
             Command[] CommandCommandTable = 
             {
-                new Command("list", (CommandLevel)0xFF, null, CommandListHandler, "")
+                new Command("list", (CommandLevel)0xFFFF, null, CommandListHandler, "")
             };
 
-            return new Command("command", (CommandLevel)0xFF,
+            return new Command("command", (CommandLevel)0xFFFF,
                 CommandCommandTable, null, "");
         }
 
@@ -34,9 +34,10 @@ namespace ServerFramework.Game.CommandHandlers
         {
             if (args.Length > 0)
                 return false;
-
+            
+            Log.Message(LogType.Command, "List of all commands:");
             foreach (Command c in Manager.CommandMgr.CommandTable)
-                Log.Message(LogType.Default, "{0}", c.Name);
+                Log.Message(LogType.Command, "{0}", c.Name);
 
             return true;
         }

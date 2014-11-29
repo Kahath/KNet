@@ -1,5 +1,4 @@
 ﻿using ServerFramework.Constants.Misc;
-using ServerFramework.Constants.NetMessage;
 using ServerFramework.Logging;
 using ServerFramework.Managers;
 using ServerFramework.Network.Packets;
@@ -8,7 +7,7 @@ using System;
 
 namespace ServerFramework.Constants.Entities.Session
 {
-    public class Client
+    public sealed class Client
     {
         #region Fields
 
@@ -18,7 +17,7 @@ namespace ServerFramework.Constants.Entities.Session
 
         #region Constructors
 
-        public Client(Saea saea)
+        internal Client(Saea saea)
         {
 
         }
@@ -52,19 +51,19 @@ namespace ServerFramework.Constants.Entities.Session
         {
             item.PrepareSend();
             Log.Message(LogType.Debug, "Packet Content {0}", BitConverter.ToString(item.Packet.Message));
-            Manager.Server.Send(this.Saea.Sender);
+            Server.GetInstance().Send(this.Saea.Sender);
         }
 
         #endregion
 
         #region PrepareSend
 		 
-        public UserToken PrepareSend(SMSG opcode)
+        public UserToken PrepareSend(ushort opcode)
         {
             //sendResetEvent.WaitOne();
             this.Saea.SendResetEvent.WaitOne();
             UserToken token = (UserToken)Saea.Sender.UserToken;
-            token.PrepareWrite((ushort)opcode);
+            token.PrepareWrite(opcode);
             return token;
         }
 

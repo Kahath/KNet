@@ -1,6 +1,5 @@
 ﻿using ServerFramework.Configuration;
 using ServerFramework.Constants.Misc;
-using ServerFramework.Constants.NetMessage;
 using ServerFramework.Network.Packets;
 using System;
 using System.Collections.Concurrent;
@@ -73,11 +72,6 @@ namespace ServerFramework.Logging.Packets
             if (!((ServerConfig.PacketLogLevel & logtype) == logtype) ? true : false)
                 return;
 
-            /*if (Path == null)
-                return;*/
-
-            //do
-
             XmlElement packetElement = doc.CreateElement(string.Empty,
                 "Packet", string.Empty);
 
@@ -94,10 +88,12 @@ namespace ServerFramework.Logging.Packets
                 "Opcode", string.Empty);
             packetOpcode.InnerText =
                 packet.GetStream is BinaryReader ?
-                "CMSG " + string.Format("0x{0} ({1})", ((ushort)packet.Header.Opcode).ToString("X4"),
-                Enum.GetName(typeof(CMSG), packet.Header.Opcode)) :
-                "SMSG " + string.Format("0x{0} ({1})", ((ushort)packet.Header.Opcode).ToString("X4"),
-                Enum.GetName(typeof(SMSG), packet.Header.Opcode));
+                "CMSG " + string.Format("0x{0}", ((ushort)packet.Header.Opcode).ToString("X4")
+                  //, Enum.GetName(typeof(CMSG), packet.Header.Opcode)
+                  ) :
+                "SMSG " + string.Format("0x{0}", ((ushort)packet.Header.Opcode).ToString("X4")
+                  //, Enum.GetName(typeof(SMSG), packet.Header.Opcode)
+                  );
 
             XmlElement pacaketMessage = doc.CreateElement(string.Empty,
                 "Message", string.Empty);

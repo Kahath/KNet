@@ -26,7 +26,8 @@ namespace ServerFramework.Logging
         /// </summary>
         public static void Init()
         {
-            Console.WriteLine("Initing logger");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine("Initialising logger");
             new Thread(() =>
             {
                 while (true)
@@ -64,7 +65,7 @@ namespace ServerFramework.Logging
 
         public static void Message(string message, params object[] args)
         {
-            SetLogger(LogType.Default, message, args);
+            SetLogger(LogType.None, message, args);
         }
 
         #endregion
@@ -101,6 +102,9 @@ namespace ServerFramework.Logging
                     break;
                 case LogType.Cmd:
                     color = ConsoleColor.Gray;
+                    break;
+                case LogType.Command:
+                    color = ConsoleColor.Blue;
                     break;
                 default:
                     color = ConsoleColor.White;

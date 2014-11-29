@@ -28,16 +28,6 @@ namespace ServerFramework.Network.Socket
         #region Properties
 
         /// <summary>
-        /// Returns object from stack.
-        /// </summary>
-        /// <returns>object</returns>
-        public T Pop()
-        {
-            lock (_stackPool)
-                return this._stackPool.Pop();
-        }
-
-        /// <summary>
         /// Returns number of objects on stack.
         /// </summary>
         public int Count
@@ -48,6 +38,8 @@ namespace ServerFramework.Network.Socket
         #endregion
 
         #region Methods
+
+        #region Push
 
         /// <summary>
         /// Pushes item onto stack
@@ -60,6 +52,22 @@ namespace ServerFramework.Network.Socket
             lock (_stackPool)
                 this._stackPool.Push(item);
         }
+
+        #endregion
+
+        #region Pop
+
+        /// <summary>
+        /// Pops object from stack.
+        /// </summary>
+        /// <returns>object</returns>
+        public T Pop()
+        {
+            lock (_stackPool)
+                return this._stackPool.Pop();
+        }
+
+        #endregion
 
         #endregion
     }

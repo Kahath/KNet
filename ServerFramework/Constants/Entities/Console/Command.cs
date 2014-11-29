@@ -2,7 +2,7 @@
 
 namespace ServerFramework.Constants.Entities.Console
 {
-    public class Command
+    public sealed class Command
     {
         #region Fields
 
@@ -63,7 +63,7 @@ namespace ServerFramework.Constants.Entities.Console
 
         #endregion
 
-        #region Handlers
+        #region Delegates
 
         public delegate bool CommandScript(params string[] args);
 

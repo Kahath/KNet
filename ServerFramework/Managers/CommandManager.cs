@@ -13,7 +13,7 @@ using System.Threading;
 
 namespace ServerFramework.Managers
 {
-    public sealed class CommandManager : SingletonBase<CommandManager>
+    internal sealed class CommandManager : SingletonBase<CommandManager>
     {
         #region Fields
 
@@ -35,7 +35,6 @@ namespace ServerFramework.Managers
 
         CommandManager()
         {
-            //Log.Message(LogType.Debug, "Initing...");
             CommandTable = new List<Command>();
             Init();
         }
@@ -48,30 +47,29 @@ namespace ServerFramework.Managers
 
         internal void Init()
         {
-            var assm = Assembly.GetExecutingAssembly();
-
-            foreach (var type in assm.GetTypes())
+            foreach (var a in AppDomain.CurrentDomain.GetAssemblies())
             {
-                foreach (var attr in type.GetCustomAttributes<CommandAttribute>())
+                foreach (var type in a.GetTypes())
                 {
-                    if (attr != null)
+                    foreach (var attr in type.GetCustomAttributes<CommandAttribute>())
                     {
-                        MethodInfo method = type.GetMethod("GetCommand");
-                        Command c = null;
-
-                        if (method != null)
+                        if (attr != null)
                         {
-                            c = method.Invoke(null, null) as Command;
-                            if (c != null)
-                                CommandTable.Add(c);
-                        }
+                            MethodInfo method = type.GetMethod("GetCommand");
+                            Command c = null;
 
-                        CommandTable.Add((Command)method.Invoke(null, null));
+                            if (method != null)
+                            {
+                                c = method.Invoke(null, null) as Command;
+                                if (c != null)
+                                    CommandTable.Add(c);
+                            }
+                        }
                     }
                 }
             }
 
-            Log.Message(LogType.Init, "{0} Commands loaded", CommandTable.Count);
+            Log.Message(LogType.Normal, "{0} Commands loaded", CommandTable.Count);
 
             new Thread(() =>
                 {
@@ -115,13 +113,13 @@ namespace ServerFramework.Managers
                         {
                             if (c.SubCommands == null)
                             {
-                                Console.WriteLine("Error with {0}{1} command."
+                                Log.Message(LogType.Command, "Error with '{0}{1}' command."
                                 + " Missing script or subcommands", path, c.Name);
                                 return false;
                             }
                             else
                             {
-                                Console.WriteLine("Available sub commands for {0}{1}: {2}"
+                                Log.Message(LogType.Command, "Available sub commands for '{0}{1}': {2}"
                                     , path, c.Name, _availableSubCommands(c));
                                 return false;
                             }
@@ -131,7 +129,7 @@ namespace ServerFramework.Managers
                     }
                 }
 
-                Console.WriteLine("Command \'{0}\' not found", command[0]);
+                Log.Message(LogType.Command, "Command '{0}{1}' not found", path, command[0]);
                 return false;
             }
 
@@ -149,7 +147,7 @@ namespace ServerFramework.Managers
                         }
                         else
                         {
-                            Console.WriteLine("Error with {0}{1} command."
+                            Log.Message(LogType.Command, "Error with '{0}{1}' command."
                                 + " Missing script or subcommands", path, c.Name);
                             return false;
                         }
@@ -162,7 +160,7 @@ namespace ServerFramework.Managers
                 }
             }
 
-            Console.WriteLine("Command \'{0}\' not found", command[0]);
+            Log.Message(LogType.Command, "Command '{0}{1}' not found", path, command[0]);
             return false;
         }
 

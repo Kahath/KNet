@@ -45,14 +45,11 @@
   <ItemGroup>
     <Compile Include="Configuration\Config.cs" />
     <Compile Include="Configuration\ServerConfig.cs" />
-    <Compile Include="Constants\Account\Authentication.cs" />
     <Compile Include="Constants\Attributes\CommandAttribute.cs" />
     <Compile Include="Constants\Misc\CommandLevel.cs" />
     <Compile Include="Constants\Entities\Console\Command.cs" />
     <Compile Include="Constants\Misc\OpcodeType.cs" />
     <Compile Include="Constants\Misc\PacketLogType.cs" />
-    <Compile Include="Constants\NetMessage\CMSG.cs" />
-    <Compile Include="Constants\NetMessage\SMSG.cs" />
     <Compile Include="Constants\Entities\Session\Client.cs" />
     <Compile Include="Database\DB.cs" />
     <Compile Include="Database\MySqlBase.cs" />
@@ -60,6 +57,8 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Game\CommandHandlers\CommandCommands.cs" />
+    <Compile Include="Game\CommandHandlers\HelpCommands.cs" />
+    <Compile Include="KahathFramework.cs" />
     <Compile Include="Logging\Log.cs" />
     <Compile Include="Constants\Misc\LogType.cs" />
     <Compile Include="Logging\Packets\PacketLog.cs" />

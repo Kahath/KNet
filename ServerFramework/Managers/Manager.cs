@@ -1,4 +1,6 @@
 ﻿using ServerFramework.Configuration;
+using ServerFramework.Constants.Misc;
+using ServerFramework.Database;
 using ServerFramework.Logging;
 using ServerFramework.Network.Socket;
 using System;
@@ -15,19 +17,18 @@ namespace ServerFramework.Managers
         public static SessionManager SessionMgr;
         internal static PacketManager PacketMgr;
         internal static BufferManager BufferMgr;
-        internal static Server Server;
 
-        public static void Init()
+        internal static void Init()
         {
-            ServerConfig.Init();
-            Log.Init();
+            Log.Message(LogType.Init, "Initialising command manager");
             CommandMgr          = CommandManager.GetInstance();
+            Log.Message(LogType.Init, "Initialising session manager");
             SessionMgr          = SessionManager.GetInstance();
+            Log.Message(LogType.Init, "Initialising packet manager");
             PacketMgr           = PacketManager.GetInstance();
+            Log.Message(LogType.Init, "Initialising buffer manager");
             BufferMgr           = BufferManager.GetInstance(ServerConfig.BufferSize * 2
                                     * ServerConfig.MaxConnections, ServerConfig.BufferSize);
-            Log.Message("Initing server!");
-            Server              = Server.GetInstance(ServerConfig.SocketSettings);
         }
     }
 }

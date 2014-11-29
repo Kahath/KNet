@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ServerFramework.Managers
 {
-    public sealed class BufferManager : SingletonBase<BufferManager>
+    internal sealed class BufferManager : SingletonBase<BufferManager>
     {
         #region Fields
 
@@ -40,6 +40,7 @@ namespace ServerFramework.Managers
             this.currentIndex = 0;
             this.bufferBytesAllocatedForEachSaea = totalBytesInEachSaeaObject;
             this.freeIndexPool = new Stack<int>();
+            Init();
         }
 
         #endregion

@@ -125,7 +125,7 @@ namespace ServerFramework.Database
 
         #endregion
 
-        #region MyRegion
+        #region ExecuteBigQuery
 
         public void ExecuteBigQuery(string table, string fields,
            int resultCount, object[] values)

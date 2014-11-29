@@ -47,11 +47,6 @@ namespace ServerFramework.Network.Socket
         Server(SocketListenerSettings socketSettings)
         {
             this.socketSettings = socketSettings;
-            //packetLogger = new PacketLog();
-
-            Log.Message(LogType.Init, "Initialising managers");
-            //Manager.Init();
-            //packetLogger.Init();
 
             this.AcceptPool = new
                 ObjectPool<SocketAsyncEventArgs>(this.socketSettings.MaxAcceptOps);
@@ -116,9 +111,6 @@ namespace ServerFramework.Network.Socket
 
         private void startListen()
         {
-            Log.Message(LogType.Init, "Starting listening on {0}:{1}",
-                this.socketSettings.LocalEndPoint.Address,
-                this.socketSettings.LocalEndPoint.Port);
             listenSocket = new System.Net.Sockets.Socket(this.socketSettings.LocalEndPoint.AddressFamily,
                 SocketType.Stream, ProtocolType.Tcp);
             try
@@ -133,6 +125,10 @@ namespace ServerFramework.Network.Socket
                 //Console.ReadLine();
                 Environment.Exit(0);
             }
+
+            Log.Message(LogType.Normal, "Starting listening on {0}:{1}",
+                this.socketSettings.LocalEndPoint.Address,
+                this.socketSettings.LocalEndPoint.Port);
 
             startAccept();
         }
@@ -289,7 +285,7 @@ namespace ServerFramework.Network.Socket
                 {
                     Log.Message(LogType.Debug, "Packet is ready!");
                     packetLogger.Enqueue(token.Packet);
-                    //Manager.PacketManager.InvokeHandler(token.Packet);
+                    Manager.PacketMgr.InvokeHandler(token.Packet);
                     if (remainingBytes > 0)
                         token.Reset(token.MessageOffset + token.MessageLength + 4);
                     else

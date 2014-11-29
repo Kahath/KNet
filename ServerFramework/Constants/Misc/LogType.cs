@@ -13,6 +13,6 @@ namespace ServerFramework.Constants.Misc
         Debug       = 0x10,
         Dump        = 0x20,
         Cmd         = 0x40,
-        Default     = 0x80,
+        Command     = 0x80,
     };
 }

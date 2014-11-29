@@ -45,6 +45,7 @@ namespace ServerFramework.Singleton
                     }
                 }
             }
+
             return _instance;
         }
 
