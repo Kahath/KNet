@@ -5,11 +5,10 @@ using ServerFramework.Logging;
 using ServerFramework.Singleton;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Linq;
-using System.Threading;
 
 namespace ServerFramework.Managers
 {
@@ -71,21 +70,21 @@ namespace ServerFramework.Managers
 
             LogManager.Log(LogType.Normal, "{0} Commands loaded", CommandTable.Count);
 
-            new Thread(() =>
+            /*new Thread(() =>
                 {
                     while (true)
-                        _invokeCommand(Console.ReadLine());
+                        InvokeCommand(Console.ReadLine());
 
-                }).Start();
+                }).Start();*/
 
             base.Init();
         }
 
         #endregion
 
-        #region InvokeCommand
+        #region _invokeCommand
 
-        private bool _invokeCommand(string command)
+        public bool InvokeCommand(string command)
         {
             string com = Regex.Replace(command, @"\s+", " ").Trim();
             if(com != "")

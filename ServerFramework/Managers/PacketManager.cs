@@ -84,15 +84,15 @@ namespace ServerFramework.Managers
 
         #region InvokeHandler
 
-        internal void InvokeHandler(Packet packet)
+        internal void InvokeHandler(UserToken token)
         {
             if (BeforePacketInvoke != null)
-                BeforePacketInvoke(packet, new EventArgs());
+                BeforePacketInvoke(token, new EventArgs());
 
-            if (PacketHandlers.ContainsKey(packet.Header.Opcode))
-                PacketHandlers[packet.Header.Opcode].Invoke(packet);
+            if (PacketHandlers.ContainsKey(token.Packet.Header.Opcode))
+                PacketHandlers[token.Packet.Header.Opcode].Invoke(token);
             else
-                LogManager.Log(LogType.Error, "Opcode {0} doesn't have handler", packet.Header.Opcode);
+                LogManager.Log(LogType.Error, "Opcode {0} doesn't have handler", token.Packet.Header.Opcode);
         }
 
         #endregion

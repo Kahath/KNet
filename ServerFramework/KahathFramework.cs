@@ -14,7 +14,7 @@ namespace ServerFramework
     #region Delegates
 
     public delegate bool CommandScriptHandler(params string[] args);
-    public delegate void PacketHandler(Packet packet);
+    public delegate void PacketHandler(UserToken token);
     public delegate void ManagerInitialisationEventHandler(object sender, EventArgs e);
     public delegate void PacketSendEventHandler(object sender, EventArgs e);
     public delegate void ServerEventHandler(object sender, SocketAsyncEventArgs e);
@@ -22,7 +22,7 @@ namespace ServerFramework
 
     #endregion
 
-    public class KahathFramework
+    public sealed class KahathFramework
     {
         #region Fields
 
@@ -51,6 +51,11 @@ namespace ServerFramework
 
             LogManager.Log(LogType.Init, "Initialising server!");
             Server.GetInstance(_socketSettings);
+
+            while(true)
+            {
+                Manager.CommandMgr.InvokeCommand(Console.ReadLine().ToLower());
+            }
         }
 
         #endregion 

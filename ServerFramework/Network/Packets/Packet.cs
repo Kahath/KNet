@@ -1,13 +1,12 @@
 ﻿using ServerFramework.Constants.Misc;
 using ServerFramework.Logging;
-using ServerFramework.Managers;
 using System;
 using System.IO;
 using System.Text;
 
 namespace ServerFramework.Network.Packets
 {
-    public class Packet : IDisposable
+    public sealed class Packet : IDisposable
     {
         #region Fields
 
@@ -88,7 +87,7 @@ namespace ServerFramework.Network.Packets
         /// <returns>Byte, SByte, UInt16, Int16, UInt32, Int32,
         /// UInt64, Int64, Char, Double, Single, Boolea, Pascal String
         /// depending of method type</returns>
-        public T Read<T>(int count = 0)
+        internal T Read<T>(int count = 0)
         {
             if (stream is BinaryWriter)
                 return default(T);

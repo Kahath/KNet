@@ -1,7 +1,6 @@
 ﻿using MySql.Data.MySqlClient;
 using ServerFramework.Constants.Misc;
 using ServerFramework.Logging;
-using ServerFramework.Managers;
 using System;
 using System.Collections.Generic;
 using System.Text;

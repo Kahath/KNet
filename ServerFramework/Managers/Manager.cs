@@ -1,14 +1,7 @@
 ﻿using ServerFramework.Configuration;
 using ServerFramework.Constants.Misc;
-using ServerFramework.Database;
 using ServerFramework.Logging;
 using ServerFramework.Logging.Packets;
-using ServerFramework.Network.Socket;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ServerFramework.Managers
 {

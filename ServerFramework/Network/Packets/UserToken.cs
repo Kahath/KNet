@@ -1,8 +1,7 @@
-﻿using System;
-
+﻿
 namespace ServerFramework.Network.Packets
 {
-    public class UserToken
+    public sealed class UserToken
     {
         #region Fields
 
@@ -12,7 +11,7 @@ namespace ServerFramework.Network.Packets
         private readonly int _bufferSize;
         private int _sessionId;
 
-        public byte[] Header;
+        private byte[] _header;
 
         private int _messageLength;
         private int _messageOffset;
@@ -53,89 +52,89 @@ namespace ServerFramework.Network.Packets
 
         #region Properties
 
-        public int MessageLength
+        internal int MessageLength
         {
             get { return _messageLength; }
             set { _messageLength = value; }
         }
 
-        public int MessageOffset
+        internal int MessageOffset
         {
             get { return _messageOffset; }
             set { _messageOffset = value; }
         }
 
-        public int HeaderLength
+        internal int HeaderLength
         {
             get { return _headerLength; }
             set { _headerLength = value; }
         }
 
-        public int HeaderOffset
+        internal int HeaderOffset
         {
             get { return _headerOffset; }
             set { _headerOffset = value; }
         }
 
-        public int PermanentMessageOffset
+        internal int PermanentMessageOffset
         {
             get { return _permanentMessageOffset; }
             set { _permanentMessageOffset = value; }
         }
 
-        public int HeaderBytesDoneCount
+        internal int HeaderBytesDoneCount
         {
             get { return _headerBytesDoneCount; }
             set { _headerBytesDoneCount = value; }
         }
 
-        public int MessageBytesDoneCount 
+        internal int MessageBytesDoneCount 
         {
             get { return _messageBytesDoneCount; }
             set { _messageBytesDoneCount = value; }
         }
 
-        public int HeaderBytesRemainingCount
+        internal int HeaderBytesRemainingCount
         {
             get { return _headerBytesRemainingCount; }
             set { _headerBytesRemainingCount = value; }
         }
 
-        public int MessageBytesRemainingCount
+        internal int MessageBytesRemainingCount
         {
             get { return _messageBytesRemainingCount; }
             set { _messageBytesRemainingCount = value; }
         }
 
-        public int HeaderBytesDoneThisOp
+        internal int HeaderBytesDoneThisOp
         {
             get { return _headerBytesDoneThisOp; }
             set { _headerBytesDoneThisOp = value; }
         }
 
-        public bool HeaderReady
+        internal bool HeaderReady
         {
             get { return _headerReady; }
             set { _headerReady = value; }
         }
 
-        public bool PacketReady
+        internal bool PacketReady
         {
             get { return _packetReady; }
             set { _packetReady = value; }
         }
 
-        public int BufferSize
+        internal int BufferSize
         {
             get { return _bufferSize; }
         }
 
-        public int BufferOffset
+        internal int BufferOffset
         {
             get { return _bufferOffset; }
         }
 
-        public Packet Packet 
+        internal Packet Packet 
         {
             get { return _packet; }
             set { _packet = value; }
@@ -144,7 +143,13 @@ namespace ServerFramework.Network.Packets
         public int SessionId
         {
             get { return _sessionId; }
-            set { _sessionId = value; }
+            internal set { _sessionId = value; }
+        }
+
+        internal byte[] Header
+        {
+            get { return _header; }
+            set { _header = value; }
         }
 
         #endregion
@@ -158,7 +163,7 @@ namespace ServerFramework.Network.Packets
         /// Used to differentiate clients.
         /// </summary>
         /// <param name="id">id of this session</param>
-        public void AssignId(int id)
+        internal void AssignId(int id)
         {
             SessionId = id;
         }
@@ -171,7 +176,7 @@ namespace ServerFramework.Network.Packets
         /// Prepares packet for writing
         /// </summary>
         /// <param name="opcode">packet opcode</param>
-        public void PrepareWrite(ushort opcode)
+        internal void PrepareWrite(ushort opcode)
         {
             Packet = new Packet(opcode);
         }
@@ -183,7 +188,7 @@ namespace ServerFramework.Network.Packets
         /// <summary>
         /// Readies packet for sending
         /// </summary>
-        public void PrepareSend()
+        internal void PrepareSend()
         {
             this.MessageBytesRemainingCount = Packet.PrepareForSend();
         }
@@ -195,7 +200,7 @@ namespace ServerFramework.Network.Packets
         /// <summary>
         /// Prepares packet for receiving data
         /// </summary>
-        public void PrepareReceive()
+        internal void PrepareReceive()
         {
             Packet = new Packet();
         }
@@ -237,7 +242,7 @@ namespace ServerFramework.Network.Packets
         /// <summary>
         /// Resets packet to its initial state;
         /// </summary>
-        public void Reset(int messageOffset)
+        internal void Reset(int messageOffset)
         {
             this.Packet = null;
             this.HeaderReady = false;

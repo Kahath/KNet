@@ -1,17 +1,15 @@
-﻿using ServerFramework.Logging;
-using System;
-using ServerFramework.Managers;
-using ServerFramework.Logging.Packets;
-using System.Threading;
-using System.Net.Sockets;
-using ServerFramework.Network.Packets;
-using ServerFramework.Constants.Misc;
-using ServerFramework.Database;
-using ServerFramework.Constants.Entities.Session;
-using ServerFramework.Singleton;
+﻿using ServerFramework.Configuration;
 using ServerFramework.Constants.Entities.Console.Misc;
+using ServerFramework.Constants.Entities.Session;
+using ServerFramework.Constants.Misc;
+using ServerFramework.Logging;
+using ServerFramework.Managers;
 using ServerFramework.Network.Handlers;
-using ServerFramework.Configuration;
+using ServerFramework.Network.Packets;
+using ServerFramework.Singleton;
+using System;
+using System.Net.Sockets;
+using System.Threading;
 
 namespace ServerFramework.Network.Socket
 {
@@ -285,7 +283,7 @@ namespace ServerFramework.Network.Socket
                     LogManager.Log(LogType.Debug, "Packet is ready!");
                     Manager.PacketLogMgr.Log(token.Packet);
 
-                    Manager.PacketMgr.InvokeHandler(token.Packet);
+                    Manager.PacketMgr.InvokeHandler(token);
 
                     if (remainingBytes > 0)
                         token.Reset(token.MessageOffset + token.MessageLength + 4);

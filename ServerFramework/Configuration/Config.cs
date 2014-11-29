@@ -49,30 +49,57 @@ namespace ServerFramework.Configuration
         /// </summary>
         /// <typeparam name="T">type of value</typeparam>
         /// <param name="config">name of configuration in xml file</param>
-        /// <param name="hex">is value written as hexadecimal value</param>
+        /// <param name="hex">if value is written as hexadecimal value</param>
         /// <returns>Configuration value of specified data type.</returns>
         public T Read<T>(string config, bool hex = false)
         {
             string nameValue = null;
-            foreach (XmlNode node in nodes)
+            T trueValue = default(T);
+
+            try
             {
-                if (node.NodeType != XmlNodeType.Comment)
+                foreach (XmlNode node in nodes)
                 {
-                    if (node.Attributes[0].Value == config)
+                    if (node.NodeType != XmlNodeType.Comment)
                     {
-                        nameValue = node.Attributes[1].Value;
-                        break;
+                        if (node.Attributes[0].Value == config)
+                        {
+                            nameValue = node.Attributes[1].Value;
+                            break;
+                        }
                     }
                 }
-            }
 
-            if (hex)
+                if (hex)
+                    trueValue = (T)Convert.ChangeType(Convert.ToInt32(nameValue, 16), typeof(T));
+                else
+                    trueValue = (T)Convert.ChangeType(nameValue, typeof(T));
+            }
+            catch(IndexOutOfRangeException)
             {
-                T value = (T)Convert.ChangeType(Convert.ToInt32(nameValue, 16), typeof(T));
-                return value;
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Error while reading '{0}' config. Missing argument in line", config);
+                Console.ReadLine();
+                Environment.Exit(0);
+
+            }
+            catch(FormatException)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Error while reading '{0}' config. Cannot convert '{1}' into type '{2}'"
+                    , config, nameValue, typeof(T));
+                Console.ReadLine();
+                Environment.Exit(0);
+            }
+            catch (Exception)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Error while reading '{0}' config", config);
+                Console.ReadLine();
+                Environment.Exit(0);
             }
 
-            return (T)Convert.ChangeType(nameValue, typeof(T));
+            return trueValue;
         }
 
         #endregion

@@ -1,6 +1,4 @@
 ﻿using ServerFramework.Constants.Misc;
-using ServerFramework.Network.Socket;
-using System.Net;
 
 namespace ServerFramework.Configuration
 {
@@ -30,27 +28,31 @@ namespace ServerFramework.Configuration
 
         #endregion
 
+        #region Methods
+
         internal static void Init()
         {
-            config                      = new Config("ServerConfig.xml");
+            config = new Config("ServerConfig.xml");
 
-            BindIP                      = config.Read<string>("bindip");
-            BindPort                    = config.Read<int>("bindport");
+            BindIP = config.Read<string>("bindip");
+            BindPort = config.Read<int>("bindport");
 
-            LogLevel                    = (LogType)config.Read<byte>("loglevel", true);
-            PacketLogLevel              = (PacketLogType)config.Read<byte>("packetloglevel", true);
+            LogLevel = (LogType)config.Read<byte>("loglevel", true);
+            PacketLogLevel = (PacketLogType)config.Read<byte>("packetloglevel", true);
 
-            BufferSize                  = config.Read<int>("buffersize");
-            MaxConnections              = config.Read<int>("maxconnections");
-            MaxSimultaneousAcceptOps    = config.Read<int>("maxsimultaneousacceptops");
-            Backlog                     = config.Read<int>("backlog");
-            HeaderLength                = 4;
+            BufferSize = config.Read<int>("buffersize");
+            MaxConnections = config.Read<int>("maxconnections");
+            MaxSimultaneousAcceptOps = config.Read<int>("maxsimultaneousacceptops");
+            Backlog = config.Read<int>("backlog");
+            HeaderLength = 4;
 
-            DBHost                      = config.Read<string>("dbhost");
-            DBPort                      = config.Read<int>("dbport");
-            DBUser                      = config.Read<string>("dbuser");
-            DBPass                      = config.Read<string>("dbpass");
-            DBName                      = config.Read<string>("dbname");
+            DBHost = config.Read<string>("dbhost");
+            DBPort = config.Read<int>("dbport");
+            DBUser = config.Read<string>("dbuser");
+            DBPass = config.Read<string>("dbpass");
+            DBName = config.Read<string>("dbname");
         }
+
+        #endregion      
     }
 }
