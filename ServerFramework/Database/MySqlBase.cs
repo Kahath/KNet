@@ -114,7 +114,6 @@ namespace ServerFramework.Database
                         }
                     }
                 }
-
             }
             catch (MySqlException e)
             {

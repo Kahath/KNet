@@ -16,13 +16,16 @@
 using ServerFramework.Constants.Attributes;
 using ServerFramework.Constants.Entities.Console;
 using ServerFramework.Constants.Misc;
-using ServerFramework.Logging;
-using ServerFramework.Managers;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace ServerFramework.Game.CommandHandlers
 {
     [Command]
-    internal sealed class CommandCommands
+    public class ClearCommands
     {
         #region Methods
 
@@ -30,32 +33,18 @@ namespace ServerFramework.Game.CommandHandlers
 
         public static Command GetCommand()
         {
-            Command[] CommandCommandTable = 
-            {
-                new Command("list", (CommandLevel)0xFFFF, null, CommandListHandler, "")
-            };
-
-            return new Command("command", (CommandLevel)0xFFFF,
-                CommandCommandTable, null, "");
+            return new Command("cls", (CommandLevel)0xFF, null, Cls, "");
         }
 
         #endregion
 
         #region Handlers
 
-        #region CommandListHandler
+        #region ClsHandler
 
-        private static bool CommandListHandler(params string[] args)
+        private static bool Cls(params string[] args)
         {
-            LogManager.Log(LogType.Command, "List of all commands:");
-            foreach (Command c in Manager.CommandMgr.CommandTable)
-            {
-                if(c.SubCommands != null)
-                    LogManager.Log(LogType.Command, "{0}..", c.Name);
-                else
-                    LogManager.Log(LogType.Command, "{0}", c.Name);
-            }
-
+            Console.Clear();
             return true;
         }
 
@@ -63,6 +52,6 @@ namespace ServerFramework.Game.CommandHandlers
 
         #endregion
 
-        #endregion     
+        #endregion
     }
 }
