@@ -17,6 +17,7 @@ namespace ServerFramework.Network.Packets
             get { return _size; }
             set { _size = value; }
         }
+
         public ushort Opcode
         {
             get { return _opcode; }

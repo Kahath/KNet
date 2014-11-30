@@ -32,9 +32,6 @@ namespace ServerFramework.Game.CommandHandlers
 
         private static bool CommandListHandler(params string[] args)
         {
-            if (args.Length > 0)
-                return false;
-
             LogManager.Log(LogType.Command, "List of all commands:");
             foreach (Command c in Manager.CommandMgr.CommandTable)
                 LogManager.Log(LogType.Command, "{0}", c.Name);

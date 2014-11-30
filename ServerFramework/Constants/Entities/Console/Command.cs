@@ -6,42 +6,41 @@ namespace ServerFramework.Constants.Entities.Console
     {
         #region Fields
 
-        private string _name;
-        private CommandLevel _commandLevel;
-        private Command[] _subCommands;
-        private CommandScriptHandler _script;
-        private string _description;
+        private string                  _name;
+        private CommandLevel            _commandLevel;
+        private Command[]               _subCommands;
+        private CommandScriptHandler    _script;
+        private string                  _description;
 
         #endregion
 
         #region Properties
 
-        public string Description
+        internal string Description
         {
             get { return _description; }
             set { _description = value; }
         }
 
-
-        public CommandScriptHandler Script
+        internal CommandScriptHandler Script
         {
             get { return _script; }
             set { _script = value; }
         }
 
-        public Command[] SubCommands
+        internal Command[] SubCommands
         {
             get { return _subCommands; }
             set { _subCommands = value; }
         }
 
-        public CommandLevel CommandLevel
+        internal CommandLevel CommandLevel
         {
             get { return _commandLevel; }
             set { _commandLevel = value; }
         }
 
-        public string Name
+        internal string Name
         {
             get { return _name; }
             set { _name = value; }

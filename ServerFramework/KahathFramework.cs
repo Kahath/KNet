@@ -35,6 +35,13 @@ namespace ServerFramework
         public KahathFramework()
         {
             ServerConfig.Init();
+
+            _socketSettings = new SocketListenerSettings(
+                ServerConfig.MaxConnections, ServerConfig.Backlog
+                , ServerConfig.MaxSimultaneousAcceptOps, ServerConfig.BufferSize
+                , ServerConfig.HeaderLength, new IPEndPoint
+                    (IPAddress.Parse(ServerConfig.BindIP), ServerConfig.BindPort));
+
             LogManager.Init();
 
             LogManager.Log(LogType.Init, "Initialising application database connection.");
@@ -43,12 +50,6 @@ namespace ServerFramework
 
             LogManager.Log(LogType.Init, "Initialising managers.");
             Manager.Init();
-
-            _socketSettings = new SocketListenerSettings(
-                ServerConfig.MaxConnections, ServerConfig.Backlog
-                , ServerConfig.MaxSimultaneousAcceptOps, ServerConfig.BufferSize
-                , ServerConfig.HeaderLength, new IPEndPoint(
-                    IPAddress.Parse(ServerConfig.BindIP), ServerConfig.BindPort));
 
             LogManager.Log(LogType.Init, "Initialising server!");
             Server.GetInstance(_socketSettings);

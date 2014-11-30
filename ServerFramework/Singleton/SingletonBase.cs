@@ -42,7 +42,7 @@ namespace ServerFramework.Singleton
                             , null, args, CultureInfo.CurrentCulture);
                         }
                         catch (Exception)
-                        {
+                        { 
                             LogManager.Log(LogType.Error, "Error with creating instance of {0} type", typeof(T));
                             Console.ReadLine();
                             Environment.Exit(0);
@@ -68,7 +68,6 @@ namespace ServerFramework.Singleton
         }
 
         #endregion
-
 
         #endregion       
     }

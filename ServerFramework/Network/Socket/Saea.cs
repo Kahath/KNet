@@ -33,6 +33,7 @@ namespace ServerFramework.Network.Socket
             get { return _sender; }
             set { _sender = value; }
         }
+
         internal SocketAsyncEventArgs Receiver
         {
             get { return _receiver; }
@@ -49,6 +50,8 @@ namespace ServerFramework.Network.Socket
 
         #region Methods
 
+        #region Close
+
         /// <summary>
         /// Closes both SocketAsyncEventArgs objects
         /// </summary>
@@ -57,6 +60,10 @@ namespace ServerFramework.Network.Socket
             this.Sender.AcceptSocket.Close();
             this.Receiver.AcceptSocket.Close();
         }
+
+        #endregion
+
+        #region Shutdown
 
         /// <summary>
         /// Shutdown both SocketAsyncEventArgs objects
@@ -73,6 +80,8 @@ namespace ServerFramework.Network.Socket
             catch (SocketException) { }
         }
 
+        #endregion
+        
         #endregion
     }
 }

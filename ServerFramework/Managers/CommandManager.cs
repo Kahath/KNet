@@ -55,10 +55,12 @@ namespace ServerFramework.Managers
                         if (attr != null)
                         {
                             MethodInfo method = type.GetMethod("GetCommand");
-                            
+
                             if (method != null)
                             {
-                                Command c = method.Invoke(null, null) as Command;
+                                Command c = null;
+
+                                c = method.Invoke(null, null) as Command;
 
                                 if (c != null)
                                     CommandTable.Add(c);
@@ -75,13 +77,13 @@ namespace ServerFramework.Managers
 
         #endregion
 
-        #region _invokeCommand
+        #region InvokeCommand
 
         internal bool InvokeCommand(string command)
         {
             string com = Regex.Replace(command, @"\s+", " ").Trim();
             if(com != "")
-                return _getCommandHandler(_commandTable.ToArray()
+                return _invokeCommandHandler(_commandTable.ToArray()
                     , com.Split(' ').ToList(), string.Empty);
 
             return false;
@@ -89,43 +91,13 @@ namespace ServerFramework.Managers
 
         #endregion
 
-        #region _getCommandHandler
+        #region _invokeCommandHandler
 
-        private bool _getCommandHandler(Command[] commandTable,
+        private bool _invokeCommandHandler(Command[] commandTable,
             List<string> command, string path)
         {
             if (commandTable == null || command == null)
                 return false;
-
-            if (command.Count == 1)
-            {
-                foreach (Command c in commandTable)
-                {
-                    if (c.Name.StartsWith(command[0].Trim()))
-                    {
-                        if (c.Script == null)
-                        {
-                            if (c.SubCommands == null)
-                            {
-                                LogManager.Log(LogType.Command, "Error with '{0}{1}' command."
-                                + " Missing script or subcommands", path, c.Name);
-                                return false;
-                            }
-                            else
-                            {
-                                LogManager.Log(LogType.Command, "Available sub commands for '{0}{1}': {2}"
-                                    , path, c.Name, _availableSubCommands(c));
-                                return false;
-                            }
-                        }
-                        else
-                            return c.Script.Invoke();
-                    }
-                }
-
-                LogManager.Log(LogType.Command, "Command '{0}{1}' not found", path, command[0]);
-                return false;
-            }
 
             foreach (Command c in commandTable)
             {
@@ -137,7 +109,9 @@ namespace ServerFramework.Managers
                         {
                             command.RemoveAt(0);
                             path += c.Name + " ";
-                            return _getCommandHandler(c.SubCommands, command, path);
+
+                            return _invokeCommandHandler(c.SubCommands, command, path);
+
                         }
                         else
                         {
@@ -149,7 +123,22 @@ namespace ServerFramework.Managers
                     else
                     {
                         command.RemoveAt(0);
-                        return c.Script.Invoke(command.ToArray());
+                        try
+                        {
+                            return c.Script.Invoke(command.ToArray());
+                        }
+                        catch (IndexOutOfRangeException)
+                        {
+                            LogManager.Log(LogType.Error, "Error with '{0}{1}' command. wrong arguments"
+                                , path, c.Name);
+                            return false;
+                        }
+                        catch (Exception)
+                        {
+                            LogManager.Log(LogType.Error, "Error with '{0}{1}' command. Failed to execute handler"
+                                , path, c.Name);
+                            return false;
+                        }
                     }
                 }
             }
