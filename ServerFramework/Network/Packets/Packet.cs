@@ -1,6 +1,4 @@
-﻿using ServerFramework.Constants.Misc;
-using ServerFramework.Logging;
-using System;
+﻿using System;
 using System.IO;
 using System.Text;
 
@@ -191,7 +189,7 @@ namespace ServerFramework.Network.Packets
             stream.BaseStream.Seek(0, SeekOrigin.Begin);
             Message = new byte[stream.BaseStream.Length];
             Header.Size = (ushort)(Message.Length - 4);
-            LogManager.Log(LogType.Debug, "Size = {0}", Header.Size);
+
             for (int i = 0; i < Message.Length; i++)
             {
                 Message[i] = (byte)stream.BaseStream.ReadByte();

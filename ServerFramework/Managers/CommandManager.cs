@@ -55,11 +55,11 @@ namespace ServerFramework.Managers
                         if (attr != null)
                         {
                             MethodInfo method = type.GetMethod("GetCommand");
-                            Command c = null;
-
+                            
                             if (method != null)
                             {
-                                c = method.Invoke(null, null) as Command;
+                                Command c = method.Invoke(null, null) as Command;
+
                                 if (c != null)
                                     CommandTable.Add(c);
                             }
@@ -70,13 +70,6 @@ namespace ServerFramework.Managers
 
             LogManager.Log(LogType.Normal, "{0} Commands loaded", CommandTable.Count);
 
-            /*new Thread(() =>
-                {
-                    while (true)
-                        InvokeCommand(Console.ReadLine());
-
-                }).Start();*/
-
             base.Init();
         }
 
@@ -84,7 +77,7 @@ namespace ServerFramework.Managers
 
         #region _invokeCommand
 
-        public bool InvokeCommand(string command)
+        internal bool InvokeCommand(string command)
         {
             string com = Regex.Replace(command, @"\s+", " ").Trim();
             if(com != "")

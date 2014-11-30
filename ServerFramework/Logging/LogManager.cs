@@ -1,18 +1,65 @@
 ﻿using ServerFramework.Configuration;
 using ServerFramework.Constants.Misc;
 using System;
+using System.Collections.Concurrent;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace ServerFramework.Logging
 {
     public static class LogManager
     {
+        #region Fields
+
+        private static BlockingCollection<Tuple<ConsoleColor, string>> _consoleLogQueue
+            = new BlockingCollection<Tuple<ConsoleColor, string>>();
+
+        #endregion
+
+        #region Properties
+
+        internal static BlockingCollection<Tuple<ConsoleColor, string>> ConsoleLogQueue
+        {
+            get { return _consoleLogQueue; }
+            set { _consoleLogQueue = value; }
+        }
+
+        #endregion
+
         #region Methods
 
-        #region SetLoggerAsync
+        #region Init
 
-        private static async Task SetLoggerAsync(LogType type, string message, params object[] args)
+        internal static void Init()
+        {
+            Thread logThread = new Thread(() =>
+            {
+                while (true)
+                {
+                    var item = ConsoleLogQueue.Take();
+
+                    if (item != null)
+                    {
+                        try
+                        {
+                            Console.ForegroundColor = item.Item1;
+                            Console.WriteLine(item.Item2);
+                        }
+                        catch (NullReferenceException) { }
+                    }
+                }
+
+            });
+
+            logThread.IsBackground = true;
+            logThread.Start();
+        }
+
+        #endregion
+
+        #region Message
+
+        private static void Message(LogType type, string message, params object[] args)
         {
             Console.OutputEncoding = UTF8Encoding.UTF8;
             ConsoleColor color;
@@ -52,19 +99,19 @@ namespace ServerFramework.Logging
 
             if ((ServerConfig.LogLevel & type) == type)
             {
-                Console.ForegroundColor = color;
-                Console.WriteLine(string.Format(
-                    "[{0}] {1}", DateTime.Now.ToLongTimeString(), string.Format(message, args)));
+                string msg = string.Format(
+                    "[{0}] {1}", DateTime.Now.ToLongTimeString(), string.Format(message, args));
+
+                ConsoleLogQueue.Add(Tuple.Create<ConsoleColor, string>(color, msg));
             }
 
-            await Task.Delay(1);
         }
 
         #region Log
 
-        public static async void Log(LogType type, string message, params object[] args)
+        public static void Log(LogType type, string message, params object[] args)
         {
-            await SetLoggerAsync(type, message, args);
+            Message(type, message, args);
         }
 
         #endregion

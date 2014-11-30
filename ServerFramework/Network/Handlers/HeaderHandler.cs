@@ -1,6 +1,4 @@
-﻿using ServerFramework.Constants.Misc;
-using ServerFramework.Logging;
-using ServerFramework.Network.Packets;
+﻿using ServerFramework.Network.Packets;
 using System;
 using System.Net.Sockets;
 
@@ -24,8 +22,6 @@ namespace ServerFramework.Network.Handlers
             if (token.HeaderBytesDoneCount == 0)
                 token.Header = new byte[token.HeaderLength];
 
-            LogManager.Log(LogType.Debug, "Handling header!");
-
             if (remainingBytesToProcess >= token.HeaderLength -
                 token.HeaderBytesDoneCount)
             {
@@ -44,8 +40,6 @@ namespace ServerFramework.Network.Handlers
                 token.HeaderBytesDoneThisOp = token.HeaderLength -
                     token.HeaderBytesDoneCount;
 
-                LogManager.Log(LogType.Debug, "Header: {0}", BitConverter.ToString(token.Header));
-                LogManager.Log(LogType.Debug, "Message Length {0}", BitConverter.ToInt16(token.Header, 0));
                 token.HeaderBytesDoneCount = token.HeaderLength;
 
                 token.MessageLength = BitConverter.ToInt16(
@@ -58,8 +52,8 @@ namespace ServerFramework.Network.Handlers
                     Size = BitConverter.ToUInt16(token.Header, 0),
                     Opcode = BitConverter.ToUInt16(token.Header, 2)
                 };
+
                 token.HeaderReady = true;
-                LogManager.Log(LogType.Debug, "Session id: {0} Header Handled!", token.SessionId);
             }
             else
             {
@@ -74,7 +68,6 @@ namespace ServerFramework.Network.Handlers
                 token.HeaderBytesDoneThisOp = remainingBytesToProcess;
                 token.HeaderBytesDoneCount += remainingBytesToProcess;
                 remainingBytesToProcess = 0;
-                LogManager.Log(LogType.Debug, "Header not fully handled!");
             }
 
             if (remainingBytesToProcess == 0)

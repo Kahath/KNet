@@ -35,6 +35,7 @@ namespace ServerFramework
         public KahathFramework()
         {
             ServerConfig.Init();
+            LogManager.Init();
 
             LogManager.Log(LogType.Init, "Initialising application database connection.");
             DB.Application.Init(ServerConfig.DBHost, ServerConfig.DBUser, ServerConfig.DBPass

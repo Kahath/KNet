@@ -3,8 +3,9 @@ using ServerFramework.Constants.Misc;
 using ServerFramework.Network.Packets;
 using ServerFramework.Singleton;
 using System;
+using System.Collections.Concurrent;
 using System.IO;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Xml;
 
 namespace ServerFramework.Logging.Packets
@@ -15,6 +16,8 @@ namespace ServerFramework.Logging.Packets
 
         private string _path;
         private XmlDocument _doc;
+        private BlockingCollection<Packet> _packetLogQueue
+            = new BlockingCollection<Packet>();
 
         #endregion
 
@@ -30,6 +33,12 @@ namespace ServerFramework.Logging.Packets
         {
             get { return _doc; }
             set { _doc = value; }
+        }
+
+        internal BlockingCollection<Packet> PacketLogQueue
+        {
+            get { return _packetLogQueue; }
+            set { _packetLogQueue = value; }
         }
 
 
@@ -54,31 +63,46 @@ namespace ServerFramework.Logging.Packets
             if (File.Exists(this.Path))
             {
                 Doc = new XmlDocument();
-                Doc.Load(Path);
-                return;
+                Doc.Load(this.Path);
+            }
+            else
+            {
+                Doc = new XmlDocument();
+                XmlDeclaration declaration =
+                    Doc.CreateXmlDeclaration("1.0", "UTF-8", null);
+
+                XmlElement root = Doc.DocumentElement;
+                Doc.InsertBefore(declaration, root);
+
+                XmlElement element = Doc.CreateElement(string.Empty,
+                    "PacketLog", string.Empty);
+                Doc.AppendChild(element);
+
+                Doc.Save(this.Path);     
             }
 
-            Doc = new XmlDocument();
-            XmlDeclaration declaration =
-                Doc.CreateXmlDeclaration("1.0", "UTF-8", null);
-
-            XmlElement root = Doc.DocumentElement;
-            Doc.InsertBefore(declaration, root);
-
-            XmlElement element = Doc.CreateElement(string.Empty,
-                "PacketLog", string.Empty);
-            Doc.AppendChild(element);
-
-            Doc.Save(this.Path);
-
             base.Init();
+
+            Thread logThread = new Thread(() =>
+            {
+                while (true)
+                {
+                    var item = _packetLogQueue.Take();
+
+                    if (item != null)
+                        LogPacket(item);
+                }
+            });
+
+            logThread.IsBackground = true;
+            logThread.Start();
         }
 
         #endregion
 
-        #region LogAsync
+        #region LogPacket
 
-        private async Task LogAsnyc(Packet packet)
+        private void LogPacket(Packet packet)
         {
             PacketLogType logtype = packet.GetStream is BinaryReader ? PacketLogType.CMSG : PacketLogType.SMSG;
             if (!((ServerConfig.PacketLogLevel & logtype) == logtype) ? true : false)
@@ -102,10 +126,10 @@ namespace ServerFramework.Logging.Packets
                 packet.GetStream is BinaryReader ?
                 "CMSG " + string.Format("0x{0}", ((ushort)packet.Header.Opcode).ToString("X4")
                 //, Enum.GetName(typeof(CMSG), packet.Header.Opcode)
-                  ) :
+                    ) :
                 "SMSG " + string.Format("0x{0}", ((ushort)packet.Header.Opcode).ToString("X4")
                 //, Enum.GetName(typeof(SMSG), packet.Header.Opcode)
-                  );
+                    );
 
             XmlElement pacaketMessage = Doc.CreateElement(string.Empty,
                 "Message", string.Empty);
@@ -119,21 +143,19 @@ namespace ServerFramework.Logging.Packets
             packetElement.AppendChild(pacaketMessage);
 
             Doc.Save(Path);
-
-            await Task.Delay(1);
         }
 
         #endregion
 
         #region Log
 
-        internal async void Log(Packet packet)
+        internal void Log(Packet packet)
         {
-            await LogAsnyc(packet);
+            PacketLogQueue.Add(packet);
         }
 
         #endregion
 
-        #endregion    
+        #endregion
     }
 }

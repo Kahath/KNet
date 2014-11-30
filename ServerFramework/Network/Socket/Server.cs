@@ -204,8 +204,6 @@ namespace ServerFramework.Network.Socket
                         e.Buffer, token.BufferOffset, token.MessageBytesRemainingCount);
                 }
 
-                Manager.PacketLogMgr.Log(token.Packet);
-
                 if (!e.AcceptSocket.SendAsync(e))
                     processSend(e);
             }
@@ -273,14 +271,11 @@ namespace ServerFramework.Network.Socket
                 if (!token.HeaderReady)
                     remainingBytes = headerHandler.HandleHeader(e, token, remainingBytes);
 
-                LogManager.Log(LogType.Debug, "{0}", remainingBytes);
-
                 if (token.HeaderReady)
                     remainingBytes = messageHandler.HandleMessage(e, token, remainingBytes);
 
                 if (token.PacketReady)
                 {
-                    LogManager.Log(LogType.Debug, "Packet is ready!");
                     Manager.PacketLogMgr.Log(token.Packet);
 
                     Manager.PacketMgr.InvokeHandler(token);
@@ -318,18 +313,21 @@ namespace ServerFramework.Network.Socket
             UserToken token = (UserToken)e.UserToken;
 
             token.MessageBytesRemainingCount -= e.BytesTransferred;
+
             if (token.MessageBytesRemainingCount == 0)
             {
-                LogManager.Log(LogType.Debug, "All data is sent!");
                 Client c = Manager.SessionMgr.GetClientBySessionID(token.SessionId);
+
                 if (c == null)
                     return;
+
+                Manager.PacketLogMgr.Log(token.Packet);
                 token.Reset(token.PermanentMessageOffset);
+
                 c.Saea.SendResetEvent.Set();
             }
             else
             {
-                LogManager.Log(LogType.Debug, "Not all data is sent! Continue sending data");
                 token.MessageBytesDoneCount += e.BytesTransferred;
                 StartSend(e);
             }
@@ -379,7 +377,7 @@ namespace ServerFramework.Network.Socket
 
             if (OnCloseClientSocket != null)
                 OnCloseClientSocket(c, e);
-
+            
             c.Saea.Shutdown(SocketShutdown.Both);
             c.Saea.Close();
             this.SendReceivePool.Push(c.Saea);
