@@ -2,12 +2,13 @@
 
 namespace ServerFramework.Constants.Misc
 {
+    [Flags]
     public enum OpcodeType : byte
     {
-        Test                    = 0x00,
-        Broken                  = 0x01,
-        Finished                = 0x02,
-        NotUsed                 = 0x03,
-        InDevelopment           = 0x04,
+        Test                    = 0x01,
+        Broken                  = 0x02,
+        Finished                = 0x04,
+        NotUsed                 = 0x08,
+        InDevelopment           = 0x10,
     };
 }

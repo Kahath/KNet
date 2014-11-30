@@ -377,7 +377,9 @@ namespace ServerFramework.Network.Socket
 
             if (OnCloseClientSocket != null)
                 OnCloseClientSocket(c, e);
-            
+
+            LogManager.Log(LogType.Normal, "Session {0} quit", ((UserToken)e.UserToken).SessionId);
+
             c.Saea.Shutdown(SocketShutdown.Both);
             c.Saea.Close();
             this.SendReceivePool.Push(c.Saea);

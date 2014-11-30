@@ -1,4 +1,5 @@
-﻿using ServerFramework.Constants.Attributes;
+﻿using ServerFramework.Configuration;
+using ServerFramework.Constants.Attributes;
 using ServerFramework.Constants.Misc;
 using ServerFramework.Logging;
 using ServerFramework.Network.Packets;
@@ -67,9 +68,14 @@ namespace ServerFramework.Managers
                         foreach (OpcodeAttribute attr in meth.GetCustomAttributes<OpcodeAttribute>())
                         {
                             if (attr != null)
-                                if (!PacketHandlers.ContainsKey(attr.Opcode))
-                                    PacketHandlers[attr.Opcode] = Delegate.CreateDelegate(
-                                        typeof(PacketHandler), meth) as PacketHandler;
+                            {
+                                if ((ServerConfig.OpcodeAllowLevel & attr.Type) == attr.Type)
+                                {
+                                    if (!PacketHandlers.ContainsKey(attr.Opcode))
+                                        PacketHandlers[attr.Opcode] = Delegate.CreateDelegate(
+                                            typeof(PacketHandler), meth) as PacketHandler;
+                                }
+                            }
                         }
                     }
                 }
@@ -90,9 +96,33 @@ namespace ServerFramework.Managers
                 BeforePacketInvoke(token, new EventArgs());
 
             if (PacketHandlers.ContainsKey(token.Packet.Header.Opcode))
-                PacketHandlers[token.Packet.Header.Opcode].Invoke(token);
+            {
+                try
+                {
+                    PacketHandlers[token.Packet.Header.Opcode].Invoke(token);
+                }
+                catch(Exception)
+                {
+                    OpcodeAttribute attr = 
+                        PacketHandlers[token.Packet.Header.Opcode].
+                        GetMethodInfo().GetCustomAttribute(typeof(OpcodeAttribute))
+                        as OpcodeAttribute;
+
+                    if (attr != null)
+                    {
+                        LogManager.Log(LogType.Error, "Error with '0x{0:X}' opcode"
+                            + " authored by '{1}' using version '{2:F}' and type '{3}'"
+                            , attr.Opcode, attr.Author, attr.Version, attr.Type);
+
+                        LogManager.Log(LogType.Error, "Packet size: {0}", token.Packet.Header.Size);
+                        LogManager.Log(LogType.Error, "Packet opcode: {0:X}", token.Packet.Header.Opcode);
+                        LogManager.Log(LogType.Error, "Packet content: {0}"
+                            , BitConverter.ToString(token.Packet.Message));
+                    }
+                }
+            }
             else
-                LogManager.Log(LogType.Error, "Opcode {0} doesn't have handler", token.Packet.Header.Opcode);
+                LogManager.Log(LogType.Error, "Opcode 0x{0:X} doesn't have handler", token.Packet.Header.Opcode);
         }
 
         #endregion
