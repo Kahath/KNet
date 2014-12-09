@@ -68,6 +68,7 @@
     <Compile Include="Managers\Manager.cs" />
     <Compile Include="Managers\PacketManager.cs" />
     <Compile Include="Managers\SessionManager.cs" />
+    <Compile Include="Network\Packets\Handlers\ExampleHandler.cs" />
     <Compile Include="Network\Packets\Packet.cs" />
     <Compile Include="Network\Packets\UserToken.cs" />
     <Compile Include="Network\Handlers\MessageHandler.cs" />
