@@ -59,6 +59,25 @@ namespace ServerFramework
 
             LogManager.Init();
 
+            Console.WriteLine();
+            LogManager.Log(LogType.Cmd, "Configuration");
+            LogManager.Log(LogType.Cmd, "Bind IP: {0}", ServerConfig.BindIP);
+            LogManager.Log(LogType.Cmd, "Bind port: {0}", ServerConfig.BindPort);
+            LogManager.Log(LogType.Cmd, "Console log level: {0}", ServerConfig.LogLevel);
+            LogManager.Log(LogType.Cmd, "Packet log level: {0}", ServerConfig.PacketLogLevel);
+            LogManager.Log(LogType.Cmd, "Opcode allow level: {0}", ServerConfig.OpcodeAllowLevel);
+            LogManager.Log(LogType.Cmd, "Buffer size: {0}", ServerConfig.BufferSize);
+            LogManager.Log(LogType.Cmd, "Maximum connections: {0}", ServerConfig.MaxConnections);
+            LogManager.Log(LogType.Cmd, "Maximum sockets for accept: {0}", ServerConfig.MaxSimultaneousAcceptOps);
+            LogManager.Log(LogType.Cmd, "Backlog: {0}", ServerConfig.Backlog);
+            LogManager.Log(LogType.Cmd, "Packet header length: {0}", ServerConfig.HeaderLength);
+            LogManager.Log(LogType.Cmd, "Database host name: {0}", ServerConfig.DBHost);
+            LogManager.Log(LogType.Cmd, "Database port: {0}", ServerConfig.DBPort);
+            LogManager.Log(LogType.Cmd, "Database username: {0}", ServerConfig.DBUser);
+            LogManager.Log(LogType.Cmd, "Database password: {0}", ServerConfig.DBPass);
+            LogManager.Log(LogType.Cmd, "Database name: {0}", ServerConfig.DBName);
+            Console.WriteLine();
+
             LogManager.Log(LogType.Init, "Initialising application database connection.");
             DB.Application.Init(ServerConfig.DBHost, ServerConfig.DBUser, ServerConfig.DBPass
                 , ServerConfig.DBPort, ServerConfig.DBName);

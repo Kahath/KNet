@@ -23,7 +23,13 @@ namespace ServerFramework.Network.Packets.Handlers
 {
     public class ExampleHandler
     {
-        [Opcode(0x0000, "Kahath", 1.0, OpcodeType.Test)]
+        #region Handlers
+
+        #region ExamplePacketHandler
+
+        #region Version 1
+
+        [Opcode(0x0000, "Kahath", 1, OpcodeType.Test)]
         public static void ExamplePacketHandler(UserToken packet)
         {
             Client pClient = Manager.SessionMgr.GetClientBySessionID(packet.SessionId);
@@ -45,5 +51,38 @@ namespace ServerFramework.Network.Packets.Handlers
             //Send data
             pClient.Send(token);
         }
+
+        #endregion
+
+        #region Version 2
+
+        [Opcode(0x0000, "Kahath", 2, OpcodeType.Test)]
+        public static void ExamplePacketHandlerTwo(UserToken packet)
+        {
+            Client pClient = Manager.SessionMgr.GetClientBySessionID(packet.SessionId);
+
+            //Read if packet has data
+            string exampleName = packet.Read<string>();
+            byte exampleData = packet.Read<byte>();
+
+            //Process data
+            Console.WriteLine(exampleName);
+
+            //Send back if need
+            //Get packet with opcode
+            UserToken token = pClient.PrepareSend(0x0001);
+
+            //Write data
+            token.Write<string>("Example string data");
+
+            //Send data
+            pClient.Send(token);
+        }
+
+        #endregion
+        
+        #endregion
+        
+        #endregion
     }
 }

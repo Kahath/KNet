@@ -23,7 +23,7 @@ namespace ServerFramework.Constants.Attributes
     {
         public ushort Opcode;
         public string Author;
-        public double Version;
+        public int Version;
         public OpcodeType Type;
 
         /// <summary>
@@ -33,7 +33,7 @@ namespace ServerFramework.Constants.Attributes
         /// <param name="author">Author of method</param>
         /// <param name="version">Version of method</param>
         /// <param name="description">Brief description</param>
-        public OpcodeAttribute(ushort opcode, string author, double version, OpcodeType type)
+        public OpcodeAttribute(ushort opcode, string author, int version, OpcodeType type)
         {
             this.Opcode = opcode;
             this.Author = author;

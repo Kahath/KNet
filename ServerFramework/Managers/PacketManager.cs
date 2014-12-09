@@ -74,6 +74,9 @@ namespace ServerFramework.Managers
 
         internal override void Init()
         {
+            Dictionary<ushort, KeyValuePair<OpcodeAttribute, MethodInfo>> temp 
+                = new Dictionary<ushort, KeyValuePair<OpcodeAttribute, MethodInfo>>();
+
             foreach (var a in AppDomain.CurrentDomain.GetAssemblies())
             {
                 foreach (var type in a.GetTypes())
@@ -86,9 +89,12 @@ namespace ServerFramework.Managers
                             {
                                 if ((ServerConfig.OpcodeAllowLevel & attr.Type) == attr.Type)
                                 {
-                                    if (!PacketHandlers.ContainsKey(attr.Opcode))
-                                        PacketHandlers[attr.Opcode] = Delegate.CreateDelegate(
-                                            typeof(PacketHandler), meth) as PacketHandler;
+                                    if (!temp.ContainsKey(attr.Opcode))
+                                        temp[attr.Opcode]
+                                            = new KeyValuePair<OpcodeAttribute, MethodInfo>(attr, meth);
+                                    else
+                                        if(temp[attr.Opcode].Key.Version < attr.Version)
+                                            temp[attr.Opcode] = new KeyValuePair<OpcodeAttribute, MethodInfo>(attr, meth);
                                 }
                             }
                         }
@@ -96,7 +102,13 @@ namespace ServerFramework.Managers
                 }
             }
 
-            LogManager.Log(LogType.Normal, "{0} packet handlers loaded", PacketHandlers.Count);
+            foreach (KeyValuePair<OpcodeAttribute, MethodInfo> keyval in temp.Values)
+            {
+                PacketHandlers[keyval.Key.Opcode] = Delegate.CreateDelegate(
+                    typeof(PacketHandler), keyval.Value) as PacketHandler;
+            }
+
+            LogManager.Log(LogType.Normal, "{0} packet handlers loaded", PacketHandlersCount);
 
             base.Init();
         }
@@ -126,7 +138,7 @@ namespace ServerFramework.Managers
                     if (attr != null)
                     {
                         LogManager.Log(LogType.Error, "Error with '0x{0:X}' opcode"
-                            + " authored by '{1}' using version '{2:F}' and type '{3}'"
+                            + " authored by '{1}' using version '{2}' and type '{3}'"
                             , attr.Opcode, attr.Author, attr.Version, attr.Type);
 
                         LogManager.Log(LogType.Error, "Packet size: {0}", token.Packet.Header.Size);

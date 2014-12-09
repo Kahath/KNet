@@ -33,7 +33,7 @@ namespace ServerFramework.Logging
 
         #region Properties
 
-        internal static BlockingCollection<Tuple<ConsoleColor, string>> ConsoleLogQueue
+        private static BlockingCollection<Tuple<ConsoleColor, string>> ConsoleLogQueue
         {
             get { return _consoleLogQueue; }
             set { _consoleLogQueue = value; }

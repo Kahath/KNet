@@ -44,13 +44,13 @@ namespace ServerFramework.Logging.Packets
             set { _path = value; }
         }
 
-        internal XmlDocument Doc
+        private XmlDocument Doc
         {
             get { return _doc; }
             set { _doc = value; }
         }
 
-        internal BlockingCollection<Packet> PacketLogQueue
+        private BlockingCollection<Packet> PacketLogQueue
         {
             get { return _packetLogQueue; }
             set { _packetLogQueue = value; }
