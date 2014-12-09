@@ -41,6 +41,8 @@ namespace ServerFramework.Game.CommandHandlers
 
         #endregion
 
+        #endregion    
+ 
         #region Handlers
 
         #region CommandListHandler
@@ -50,7 +52,7 @@ namespace ServerFramework.Game.CommandHandlers
             LogManager.Log(LogType.Command, "List of all commands:");
             foreach (Command c in Manager.CommandMgr.CommandTable)
             {
-                if(c.SubCommands != null)
+                if (c.SubCommands != null)
                     LogManager.Log(LogType.Command, "{0}..", c.Name);
                 else
                     LogManager.Log(LogType.Command, "{0}", c.Name);
@@ -62,7 +64,5 @@ namespace ServerFramework.Game.CommandHandlers
         #endregion
 
         #endregion
-
-        #endregion     
     }
 }

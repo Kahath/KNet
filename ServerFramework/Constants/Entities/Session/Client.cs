@@ -26,6 +26,23 @@ namespace ServerFramework.Constants.Entities.Session
         #region Fields
 
         private Saea _saea;
+        private object _userToken;
+
+        #endregion
+
+        #region Properties
+
+        internal Saea Saea
+        {
+            get { return _saea; }
+            set { _saea = value; }
+        }
+
+        public object UserToken
+        {
+            get { return _userToken; }
+            set { _userToken = value; }
+        }
 
         #endregion
 
@@ -41,16 +58,6 @@ namespace ServerFramework.Constants.Entities.Session
         #region Events
 
         public event PacketSendEventHandler BeforePacketSend;
-
-        #endregion
-
-        #region Properties
-
-        internal Saea Saea
-        {
-            get { return _saea; }
-            set { _saea = value; }
-        }
 
         #endregion
 

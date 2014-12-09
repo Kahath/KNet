@@ -77,9 +77,9 @@ namespace ServerFramework.Configuration
                 {
                     if (node.NodeType != XmlNodeType.Comment)
                     {
-                        if (node.Attributes[0].Value == config)
+                        if (node.Attributes["name"].Value == config)
                         {
-                            nameValue = node.Attributes[1].Value;
+                            nameValue = node.Attributes["value"].Value;
                             break;
                         }
                     }
@@ -90,7 +90,7 @@ namespace ServerFramework.Configuration
                 else
                     trueValue = (T)Convert.ChangeType(nameValue, typeof(T));
             }
-            catch(IndexOutOfRangeException)
+            catch (IndexOutOfRangeException)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Error while reading '{0}' config. Missing argument in line", config);
@@ -98,7 +98,14 @@ namespace ServerFramework.Configuration
                 Environment.Exit(0);
 
             }
-            catch(FormatException)
+            catch (NullReferenceException)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Error while reading '{0}' config. Argument is null", config);
+                Console.ReadLine();
+                Environment.Exit(0);
+            }
+            catch (FormatException)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Error while reading '{0}' config. Cannot convert '{1}' into type '{2}'"

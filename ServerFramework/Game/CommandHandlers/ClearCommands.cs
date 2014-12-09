@@ -38,6 +38,8 @@ namespace ServerFramework.Game.CommandHandlers
 
         #endregion
 
+        #endregion
+
         #region Handlers
 
         #region ClsHandler
@@ -47,8 +49,6 @@ namespace ServerFramework.Game.CommandHandlers
             Console.Clear();
             return true;
         }
-
-        #endregion
 
         #endregion
 

@@ -15,7 +15,7 @@
 
 namespace ServerFramework.Database
 {
-    public class DB
+    internal class DB
     {
         internal static MySqlBase Application = new MySqlBase();
     }

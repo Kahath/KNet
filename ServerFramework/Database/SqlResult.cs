@@ -38,10 +38,16 @@ namespace ServerFramework.Database
 
         #region Methods
 
+        #region Read
+
         public T Read<T>(int row, string column)
         {
             return (T)Convert.ChangeType(Rows[row][column], typeof(T));
         }
+
+        #endregion
+
+        #region ReadAllValuesFromField
 
         public object[] ReadAllValuesFromField(string column)
         {
@@ -52,6 +58,8 @@ namespace ServerFramework.Database
 
             return o;
         }
+
+        #endregion
 
         #endregion     
     }

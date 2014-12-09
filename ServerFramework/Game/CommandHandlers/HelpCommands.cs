@@ -114,6 +114,8 @@ namespace ServerFramework.Game.CommandHandlers
 
 	    #endregion
 
+        #endregion
+
         #region Handlers
 
         #region HelpCommandHandler
@@ -123,8 +125,6 @@ namespace ServerFramework.Game.CommandHandlers
             return _getHelpCommand(Manager.CommandMgr.CommandTable.ToArray(),
                 args.ToList(), string.Empty);
         }
-
-        #endregion
 
         #endregion
 

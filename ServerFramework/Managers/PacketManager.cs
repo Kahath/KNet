@@ -25,7 +25,7 @@ using System.Reflection;
 
 namespace ServerFramework.Managers
 {
-    public sealed class PacketManager : SingletonBase<PacketManager>
+    internal sealed class PacketManager : SingletonBase<PacketManager>
     {
         #region Fields
 

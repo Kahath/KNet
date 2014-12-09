@@ -91,7 +91,23 @@ namespace ServerFramework.Network.Packets
 
         #endregion
 
-        #region Reader
+        #region Methods
+
+        #region PrepareRead
+
+        /// <summary>
+        /// Readies buffer for reading
+        /// </summary>
+        internal void PrepareRead()
+        {
+            if (!(stream is BinaryWriter))
+                stream = new BinaryReader(new MemoryStream(this.Message));
+        }
+
+        #endregion
+
+        #region Read
+
         /// <summary>
         /// Used for reading from packet buffer
         /// </summary>
@@ -105,7 +121,7 @@ namespace ServerFramework.Network.Packets
             if (stream is BinaryWriter)
                 return default(T);
 
-            switch(typeof(T).Name)
+            switch (typeof(T).Name)
             {
                 case "Byte":
                     return stream.ReadByte();
@@ -138,9 +154,10 @@ namespace ServerFramework.Network.Packets
                     return default(T);
             }
         }
+
         #endregion
 
-        #region Writer
+        #region Write
 
         /// <summary>
         /// Writes value to stream buffer.
@@ -152,7 +169,7 @@ namespace ServerFramework.Network.Packets
             if (stream is BinaryReader)
                 return;
 
-            switch(typeof(T).Name)
+            switch (typeof(T).Name)
             {
                 case "Byte":
                     stream.Write(Convert.ToByte(value));
@@ -195,6 +212,10 @@ namespace ServerFramework.Network.Packets
             }
         }
 
+        #endregion
+
+        #region PrepareForSend
+
         /// <summary>
         /// Readies packet for sending.
         /// </summary>
@@ -214,20 +235,6 @@ namespace ServerFramework.Network.Packets
             Message[1] = (byte)((Header.Size >> 8) & 0xFF);
 
             return Message.Length;
-        }
-        #endregion
-
-        #region Methods
-
-        #region PrepareRead
-
-        /// <summary>
-        /// Readies buffer for reading
-        /// </summary>
-        internal void PrepareRead()
-        {
-            if (!(stream is BinaryWriter))
-                stream = new BinaryReader(new MemoryStream(this.Message));
         }
 
         #endregion

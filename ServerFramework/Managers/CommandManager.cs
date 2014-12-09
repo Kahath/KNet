@@ -97,7 +97,7 @@ namespace ServerFramework.Managers
 
         #region InvokeCommand
 
-        internal bool InvokeCommand(string command)
+        public bool InvokeCommand(string command)
         {
             string com = Regex.Replace(command, @"\s+", " ").Trim();
             if(com != "")
@@ -214,30 +214,30 @@ namespace ServerFramework.Managers
             }
         }
 
+        #endregion
+
         #region _getCommand
 
         private Command _getCommand(Command[] commandTable, List<string> command)
         {
-             if (commandTable == null || command == null)
-                  return null;
+            if (commandTable == null || command == null)
+                return null;
 
-             foreach (Command c in commandTable)
-             {
-                 if (c.Name.StartsWith(command[0].Trim()))
-                 {
-                     command.RemoveAt(0);
+            foreach (Command c in commandTable)
+            {
+                if (c.Name.StartsWith(command[0].Trim()))
+                {
+                    command.RemoveAt(0);
 
-                     if (command.Count > 0)
-                         return _getCommand(c.SubCommands, command);
-                     else
-                         return c;
-                 }
-             }
+                    if (command.Count > 0)
+                        return _getCommand(c.SubCommands, command);
+                    else
+                        return c;
+                }
+            }
 
-             return null;
+            return null;
         }
-
-        #endregion
 
         #endregion
 

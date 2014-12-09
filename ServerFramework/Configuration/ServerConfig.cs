@@ -61,7 +61,7 @@ namespace ServerFramework.Configuration
             MaxConnections              = config.Read<int>("maxconnections");
             MaxSimultaneousAcceptOps    = config.Read<int>("maxsimultaneousacceptops");
             Backlog                     = config.Read<int>("backlog");
-            HeaderLength = 4;
+            HeaderLength                = 4;
 
             DBHost                      = config.Read<string>("dbhost");
             DBPort                      = config.Read<int>("dbport");

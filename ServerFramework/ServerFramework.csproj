@@ -88,7 +88,7 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Libs\MySql.Data.dll" />
-    <Content Include="Sql\command.sql" />
+    <None Include="Sql\command.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

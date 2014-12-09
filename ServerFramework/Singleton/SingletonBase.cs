@@ -41,7 +41,7 @@ namespace ServerFramework.Singleton
 
         #region GetInstance
 
-        internal static T GetInstance(params object[] args)
+        public static T GetInstance(params object[] args)
         {
             object ctor = null;
 
