@@ -29,7 +29,7 @@ namespace ServerFramework
     #region Delegates
 
     public delegate bool CommandScriptHandler(params string[] args);
-    public delegate void PacketHandler(UserToken token);
+    public delegate void PacketHandler(Packet packet);
     public delegate void ManagerInitialisationEventHandler(object sender, EventArgs e);
     public delegate void PacketSendEventHandler(object sender, EventArgs e);
     public delegate void ServerEventHandler(object sender, SocketAsyncEventArgs e);

@@ -70,7 +70,8 @@ namespace ServerFramework.Managers
                     {
                         if (attr != null)
                         {
-                            MethodInfo method = type.GetMethod("GetCommand");
+                            MethodInfo method = type.GetMethod("GetCommand"
+                                , BindingFlags.NonPublic | BindingFlags.Static);
 
                             if (method != null)
                             {

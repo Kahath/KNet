@@ -31,7 +31,7 @@ namespace ServerFramework.Game.CommandHandlers
 
         #region GetCommand
 
-        public static Command GetCommand()
+        private static Command GetCommand()
         {
             return new Command("cls", (CommandLevel)0xFF, null, Cls, "");
         }

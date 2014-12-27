@@ -125,8 +125,6 @@ namespace ServerFramework.Logging
 
         }
 
-
-
         #endregion
 
         #region Log

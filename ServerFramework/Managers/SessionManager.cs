@@ -17,8 +17,10 @@ using ServerFramework.Constants.Entities.Session;
 using ServerFramework.Constants.Misc;
 using ServerFramework.Logging;
 using ServerFramework.Singleton;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 
 namespace ServerFramework.Managers
@@ -82,25 +84,25 @@ namespace ServerFramework.Managers
         internal Client RemoveClient(int id)
         {
             Client client = null;
-            lock (Clients)
-            {
-                if (Clients.ContainsKey(id))
-                {
-                    Clients.TryRemove(id, out client);
-                    FreeSessionIDPool.Push(id);
-                }
-            }
+
+            if( Clients.TryRemove(id, out client))
+                FreeSessionIDPool.Push(id);
+
             return client;
         }
 
         #endregion
 
-        #region GetClientBySessionID
+        #region GetClientBySessionId
 
-        public Client GetClientBySessionID(int id)
+        public Client GetClientBySessionId(int sessionId)
         {
-            lock (Clients)
-                return Clients.ContainsKey(id) ? Clients[id] : null;
+            Client c = null;
+            
+            if(Clients.TryGetValue(sessionId, out c))
+                return c;
+
+            return null;
         }
 
         #endregion
@@ -110,11 +112,13 @@ namespace ServerFramework.Managers
         internal int AddClient(Client c)
         {
             int id;
+
             id = FreeSessionIDPool.Count > 0 ? FreeSessionIDPool.Pop() :
                 Interlocked.Increment(ref _sessionId);
 
-            Clients[id] = c;
+            Clients.TryAdd(id, c);
             LogManager.Log(LogType.Debug, "New session");
+
             return id;
         }
 

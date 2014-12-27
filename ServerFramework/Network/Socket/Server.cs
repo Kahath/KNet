@@ -244,13 +244,17 @@ namespace ServerFramework.Network.Socket
 
             Client c = new Client(saea);
             int id = Manager.SessionMgr.AddClient(c);
+
             ((UserToken)saea.Receiver.UserToken).AssignId(id);
             ((UserToken)saea.Sender.UserToken).AssignId(id);
+
             saea.Receiver.AcceptSocket = e.AcceptSocket;
             saea.Sender.AcceptSocket = e.AcceptSocket;
+
             LogManager.Log(LogType.Normal, "Session {0} ({1}) connected",
                 ((UserToken)saea.Receiver.UserToken).SessionId,
                 saea.Receiver.AcceptSocket.RemoteEndPoint.ToString());
+
             e.AcceptSocket = null;
             this.AcceptPool.Push(e);
 
@@ -293,7 +297,7 @@ namespace ServerFramework.Network.Socket
                 {
                     Manager.PacketLogMgr.Log(token.Packet);
 
-                    Manager.PacketMgr.InvokeHandler(token);
+                    Manager.PacketMgr.InvokeHandler(token.Packet);
 
                     if (remainingBytes > 0)
                         token.Reset(token.MessageOffset + token.MessageLength + 4);
@@ -307,7 +311,6 @@ namespace ServerFramework.Network.Socket
                         token.MessageOffset = token.BufferOffset;
                         token.HeaderBytesDoneCount = 0;
                     }
-
                 }
             }
             startReceive(e);
@@ -331,7 +334,7 @@ namespace ServerFramework.Network.Socket
 
             if (token.MessageBytesRemainingCount == 0)
             {
-                Client c = Manager.SessionMgr.GetClientBySessionID(token.SessionId);
+                Client c = Manager.SessionMgr.GetClientBySessionId(token.SessionId);
 
                 if (c == null)
                     return;
@@ -384,7 +387,6 @@ namespace ServerFramework.Network.Socket
 
         private void closeClientSocket(SocketAsyncEventArgs e)
         {
-
             Client c = Manager.SessionMgr.RemoveClient(((UserToken)e.UserToken).SessionId);
 
             if (c == null)

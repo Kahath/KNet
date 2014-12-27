@@ -30,9 +30,9 @@ namespace ServerFramework.Network.Packets.Handlers
         #region Version 1
 
         [Opcode(0x0000, "Kahath", 1, OpcodeType.Test)]
-        public static void ExamplePacketHandler(UserToken packet)
+        public static void ExamplePacketHandler(Packet packet)
         {
-            Client pClient = Manager.SessionMgr.GetClientBySessionID(packet.SessionId);
+            Client pClient = Manager.SessionMgr.GetClientBySessionId(packet.SessionId);
 
             //Read if packet has data
             string exampleName = packet.Read<string>();
@@ -42,14 +42,15 @@ namespace ServerFramework.Network.Packets.Handlers
             Console.WriteLine(exampleName);
 
             //Send back if need
-            //Get packet with opcode
-            UserToken token = pClient.PrepareSend(0x0001);
+            //Create new packet for send
+            using (packet = new Packet(0x0001))
+            {
+                //Write data
+                packet.Write<string>("Example string data");
 
-            //Write data
-            token.Write<string>("Example string data");
-
-            //Send data
-            pClient.Send(token);
+                //Send data
+                pClient.Send(packet);
+            }
         }
 
         #endregion
@@ -57,9 +58,9 @@ namespace ServerFramework.Network.Packets.Handlers
         #region Version 2
 
         [Opcode(0x0000, "Kahath", 2, OpcodeType.Test)]
-        public static void ExamplePacketHandlerTwo(UserToken packet)
+        public static void ExamplePacketHandlerTwo(Packet packet)
         {
-            Client pClient = Manager.SessionMgr.GetClientBySessionID(packet.SessionId);
+            Client pClient = Manager.SessionMgr.GetClientBySessionId(packet.SessionId);
 
             //Read if packet has data
             string exampleName = packet.Read<string>();
@@ -69,14 +70,15 @@ namespace ServerFramework.Network.Packets.Handlers
             Console.WriteLine(exampleName);
 
             //Send back if need
-            //Get packet with opcode
-            UserToken token = pClient.PrepareSend(0x0001);
+            //Create new packet for send
+            using (packet = new Packet(0x0001))
+            {
+                //Write data
+                packet.Write<string>("Example string data");
 
-            //Write data
-            token.Write<string>("Example string data");
-
-            //Send data
-            pClient.Send(token);
+                //Send data
+                pClient.Send(packet);
+            }
         }
 
         #endregion

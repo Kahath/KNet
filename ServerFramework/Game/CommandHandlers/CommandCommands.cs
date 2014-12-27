@@ -28,7 +28,7 @@ namespace ServerFramework.Game.CommandHandlers
 
         #region GetCommand
 
-        public static Command GetCommand()
+        private static Command GetCommand()
         {
             Command[] CommandCommandTable = 
             {

@@ -21,7 +21,6 @@ namespace ServerFramework.Configuration
 {
     public sealed class Config
     {
-
         #region Fields
 
         XmlNodeList nodes;
@@ -58,6 +57,8 @@ namespace ServerFramework.Configuration
         #endregion
 
         #region Methods
+
+        #region Read
 
         /// <summary>
         /// Reads configuration value with specified data type
@@ -123,6 +124,8 @@ namespace ServerFramework.Configuration
 
             return trueValue;
         }
+
+        #endregion
 
         #endregion
     }

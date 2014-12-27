@@ -36,19 +36,15 @@ namespace ServerFramework.Managers
 
         #region Properties
 
-        public int PacketHandlersCount
-        {
-            get { return _packetHandlers.Count; }
-        }
-
-        #endregion
-
-        #region Properties
-
         internal Dictionary<ushort, PacketHandler> PacketHandlers 
         {
             get { return _packetHandlers; }
             set { _packetHandlers = value; }
+        }
+
+        public int PacketHandlersCount
+        {
+            get { return _packetHandlers.Count; }
         }
 
         #endregion
@@ -117,21 +113,21 @@ namespace ServerFramework.Managers
 
         #region InvokeHandler
 
-        internal void InvokeHandler(UserToken token)
+        internal void InvokeHandler(Packet packet)
         {
             if (BeforePacketInvoke != null)
-                BeforePacketInvoke(token, new EventArgs());
+                BeforePacketInvoke(packet, new EventArgs());
 
-            if (PacketHandlers.ContainsKey(token.Packet.Header.Opcode))
+            if (PacketHandlers.ContainsKey(packet.Header.Opcode))
             {
                 try
                 {
-                    PacketHandlers[token.Packet.Header.Opcode].Invoke(token);
+                    PacketHandlers[packet.Header.Opcode].Invoke(packet);
                 }
                 catch(Exception)
                 {
-                    OpcodeAttribute attr = 
-                        PacketHandlers[token.Packet.Header.Opcode].
+                    OpcodeAttribute attr =
+                        PacketHandlers[packet.Header.Opcode].
                         GetMethodInfo().GetCustomAttribute(typeof(OpcodeAttribute))
                         as OpcodeAttribute;
 
@@ -141,15 +137,15 @@ namespace ServerFramework.Managers
                             + " authored by '{1}' using version '{2}' and type '{3}'"
                             , attr.Opcode, attr.Author, attr.Version, attr.Type);
 
-                        LogManager.Log(LogType.Error, "Packet size: {0}", token.Packet.Header.Size);
-                        LogManager.Log(LogType.Error, "Packet opcode: {0:X}", token.Packet.Header.Opcode);
+                        LogManager.Log(LogType.Error, "Packet size: {0}", packet.Header.Size);
+                        LogManager.Log(LogType.Error, "Packet opcode: {0:X}", packet.Header.Opcode);
                         LogManager.Log(LogType.Error, "Packet content: {0}"
-                            , BitConverter.ToString(token.Packet.Message));
+                            , BitConverter.ToString(packet.Message));
                     }
                 }
             }
             else
-                LogManager.Log(LogType.Error, "Opcode 0x{0:X} doesn't have handler", token.Packet.Header.Opcode);
+                LogManager.Log(LogType.Error, "Opcode 0x{0:X} doesn't have handler", packet.Header.Opcode);
         }
 
         #endregion

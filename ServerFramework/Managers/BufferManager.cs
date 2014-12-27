@@ -25,20 +25,44 @@ namespace ServerFramework.Managers
     {
         #region Fields
 
-        int totalBytesInBufferBlock;
-
-        byte[] bufferBlock;
-        Stack<int> freeIndexPool;
-        int currentIndex;
-        int bufferBytesAllocatedForEachSaea;
+        private int         _bufferBytesAllocatedForEachSaea;
+        private int         _totalBytesInBufferBlock;
+        private int         _currentIndex;
+        private byte[]      _bufferBlock;
+        private Stack<int>  _freeIndexPool;
 
         #endregion
 
         #region Properties
 
-        public int TotalBytes
+        private int BufferBytesAllocatedForEachSaea
         {
-            get { return this.totalBytesInBufferBlock; }
+            get { return _bufferBytesAllocatedForEachSaea; }
+            set { _bufferBytesAllocatedForEachSaea = value; }
+        }
+
+        public int TotalBytesInBufferBlock
+        {
+            get { return _totalBytesInBufferBlock; }
+            private set { _totalBytesInBufferBlock = value; }
+        }
+
+        private int CurrentIndex
+        {
+            get { return _currentIndex; }
+            set { _currentIndex = value; }
+        }
+
+        private byte[] BufferBlock
+        {
+            get { return _bufferBlock; }
+            set { _bufferBlock = value; }
+        }
+
+        private Stack<int> FreeIndexPool
+        {
+            get { return _freeIndexPool; }
+            set { _freeIndexPool = value; }
         }
 
         #endregion
@@ -47,10 +71,10 @@ namespace ServerFramework.Managers
 
         BufferManager(int totalBytes, int totalBytesInEachSaeaObject)
         {
-            this.totalBytesInBufferBlock = totalBytes;
-            this.currentIndex = 0;
-            this.bufferBytesAllocatedForEachSaea = totalBytesInEachSaeaObject;
-            this.freeIndexPool = new Stack<int>();
+            TotalBytesInBufferBlock = totalBytes;
+            CurrentIndex = 0;
+            BufferBytesAllocatedForEachSaea = totalBytesInEachSaeaObject;
+            FreeIndexPool = new Stack<int>();
             
             Init();
         }
@@ -63,8 +87,8 @@ namespace ServerFramework.Managers
 
         internal override void Init()
         {
-            this.bufferBlock = new byte[totalBytesInBufferBlock];
-            LogManager.Log(LogType.Normal, "Buffer alocated size: {0}KB", this.TotalBytes / 1024);
+            BufferBlock = new byte[TotalBytesInBufferBlock];
+            LogManager.Log(LogType.Normal, "Buffer alocated size: {0}KB", TotalBytesInBufferBlock / 1024);
             
             base.Init();
         }
@@ -75,21 +99,21 @@ namespace ServerFramework.Managers
 
         internal bool SetBuffer(SocketAsyncEventArgs e)
         {
-            if (this.freeIndexPool.Count > 0)
+            if (FreeIndexPool.Count > 0)
             {
-                e.SetBuffer(this.bufferBlock, this.freeIndexPool.Pop(),
-                    this.bufferBytesAllocatedForEachSaea);
+                e.SetBuffer(BufferBlock, FreeIndexPool.Pop(),
+                    BufferBytesAllocatedForEachSaea);
             }
             else
             {
-                if ((this.totalBytesInBufferBlock - this.bufferBytesAllocatedForEachSaea) <
-                    this.currentIndex)
+                if ((TotalBytesInBufferBlock - BufferBytesAllocatedForEachSaea) <
+                    CurrentIndex)
                     return false;
 
-                e.SetBuffer(this.bufferBlock, this.currentIndex,
-                    this.bufferBytesAllocatedForEachSaea);
+                e.SetBuffer(BufferBlock, CurrentIndex,
+                    BufferBytesAllocatedForEachSaea);
 
-                this.currentIndex += this.bufferBytesAllocatedForEachSaea;
+                CurrentIndex += BufferBytesAllocatedForEachSaea;
             }
 
             return true;
@@ -101,7 +125,7 @@ namespace ServerFramework.Managers
 
         internal void FreeBuffer(SocketAsyncEventArgs e)
         {
-            this.freeIndexPool.Push(e.Offset);
+            FreeIndexPool.Push(e.Offset);
             e.SetBuffer(null, 0, 0);
         }
 

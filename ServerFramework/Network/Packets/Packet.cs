@@ -76,7 +76,7 @@ namespace ServerFramework.Network.Packets
         /// Creates new object for writing message
         /// </summary>
         /// <param name="message">opcode of message</param>
-        internal Packet(ushort message)
+        public Packet(ushort message)
         {
             stream = new BinaryWriter(new MemoryStream());
             Header = new PacketHeader
@@ -116,7 +116,7 @@ namespace ServerFramework.Network.Packets
         /// <returns>Byte, SByte, UInt16, Int16, UInt32, Int32,
         /// UInt64, Int64, Char, Double, Single, Boolea, Pascal String
         /// depending of method type</returns>
-        internal T Read<T>(int count = 0)
+        public T Read<T>(int count = 0)
         {
             if (stream is BinaryWriter)
                 return default(T);
@@ -150,6 +150,8 @@ namespace ServerFramework.Network.Packets
                 case "String":
                     var bytes = stream.ReadBytes(stream.ReadByte());
                     return Encoding.UTF8.GetString(bytes);
+                case "Byte[]":
+                    return stream.ReadBytes(count);
                 default:
                     return default(T);
             }
@@ -164,7 +166,7 @@ namespace ServerFramework.Network.Packets
         /// </summary>
         /// <typeparam name="T">type of value</typeparam>
         /// <param name="value">value of method type</param>
-        internal void Write<T>(T value)
+        public void Write<T>(T value)
         {
             if (stream is BinaryReader)
                 return;
@@ -243,7 +245,7 @@ namespace ServerFramework.Network.Packets
 
         public void Dispose()
         {
-            this.Message = null;
+            //this.Message = null;
             if (stream != null)
                 stream.Close();
         }

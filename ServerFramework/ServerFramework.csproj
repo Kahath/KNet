@@ -46,6 +46,7 @@
     <Compile Include="Configuration\Config.cs" />
     <Compile Include="Configuration\ServerConfig.cs" />
     <Compile Include="Constants\Attributes\CommandAttribute.cs" />
+    <Compile Include="Constants\Entities\Session\IClient.cs" />
     <Compile Include="Constants\Misc\CommandLevel.cs" />
     <Compile Include="Constants\Entities\Console\Command.cs" />
     <Compile Include="Constants\Misc\OpcodeType.cs" />

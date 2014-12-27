@@ -184,31 +184,6 @@ namespace ServerFramework.Network.Packets
 
         #endregion
 
-        #region PrepareWrite
-
-        /// <summary>
-        /// Prepares packet for writing
-        /// </summary>
-        /// <param name="opcode">packet opcode</param>
-        internal void PrepareWrite(ushort opcode)
-        {
-            Packet = new Packet(opcode);
-        }
-
-        #endregion
-
-        #region PrepareSend
-
-        /// <summary>
-        /// Readies packet for sending
-        /// </summary>
-        internal void PrepareSend()
-        {
-            this.MessageBytesRemainingCount = Packet.PrepareForSend();
-        }
-
-        #endregion
-
         #region PrepareReceive
 
         /// <summary>
@@ -221,32 +196,11 @@ namespace ServerFramework.Network.Packets
 
         #endregion
 
-        #region Write
+        #region PrepareForSend
 
-        /// <summary>
-        /// Writes data on underlying packet
-        /// </summary>
-        /// <typeparam name="T">type of value</typeparam>
-        /// <param name="value">value</param>
-        public void Write<T>(T value)
+        public void PrepareSend()
         {
-            Packet.Write<T>(value);
-        }
-
-        #endregion
-
-        #region Read
-
-        /// <summary>
-        /// Reads data from underlying packet
-        /// </summary>
-        /// <typeparam name="T">type of return value</typeparam>
-        /// <returns>Byte, SByte, UInt16, Int16, UInt32, Int32,
-        /// UInt64, Int64, Char, Double, Single, Boolea, Pascal String
-        /// depending of method type</returns>
-        public T Read<T>()
-        {
-            return Packet.Read<T>();
+            this.MessageBytesRemainingCount = Packet.PrepareForSend();
         }
 
         #endregion

@@ -26,7 +26,7 @@ namespace ServerFramework.Constants.Entities.Session
         #region Fields
 
         private Saea _saea;
-        private object _userToken;
+        private IClient _clientToken;
 
         #endregion
 
@@ -38,10 +38,10 @@ namespace ServerFramework.Constants.Entities.Session
             set { _saea = value; }
         }
 
-        public object UserToken
+        public IClient Token
         {
-            get { return _userToken; }
-            set { _userToken = value; }
+            get { return _clientToken; }
+            set { _clientToken = value; }
         }
 
         #endregion
@@ -74,26 +74,18 @@ namespace ServerFramework.Constants.Entities.Session
 
         #region Send
 		
-        public void Send(UserToken item)
+        public void Send(Packet packet)
         {
             if (BeforePacketSend != null)
-                BeforePacketSend(item.Packet, new EventArgs());
+                BeforePacketSend(packet, new EventArgs());
 
-            item.PrepareSend();
-            LogManager.Log(LogType.Debug, "Packet Content {0}", BitConverter.ToString(item.Packet.Message));
-            Server.GetInstance().Send(this.Saea.Sender);
-        }
-
-        #endregion
-
-        #region PrepareSend
-		 
-        public UserToken PrepareSend(ushort opcode)
-        {
             this.Saea.SendResetEvent.WaitOne();
-            UserToken token = (UserToken)Saea.Sender.UserToken;
-            token.PrepareWrite(opcode);
-            return token;
+            UserToken token = Saea.Sender.UserToken as UserToken;
+            token.Packet = packet;
+            token.PrepareSend();
+
+            LogManager.Log(LogType.Debug, "Packet Content {0}", BitConverter.ToString(packet.Message));
+            Server.GetInstance().Send(this.Saea.Sender);
         }
 
         #endregion
