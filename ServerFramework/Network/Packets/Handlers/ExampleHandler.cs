@@ -35,7 +35,7 @@ namespace ServerFramework.Network.Packets.Handlers
             Client pClient = Manager.SessionMgr.GetClientBySessionId(packet.SessionId);
 
             //Read if packet has data
-            string exampleName = packet.Read<string>();
+            string exampleName = packet.Read<string>(8);
             byte exampleData = packet.Read<byte>();
 
             //Process data
@@ -63,7 +63,7 @@ namespace ServerFramework.Network.Packets.Handlers
             Client pClient = Manager.SessionMgr.GetClientBySessionId(packet.SessionId);
 
             //Read if packet has data
-            string exampleName = packet.Read<string>();
+            string exampleName = packet.Read<string>(8);
             byte exampleData = packet.Read<byte>();
 
             //Process data
