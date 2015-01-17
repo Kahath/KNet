@@ -18,6 +18,7 @@ using ServerFramework.Logging;
 using ServerFramework.Network.Packets;
 using ServerFramework.Network.Socket;
 using System;
+using System.Net;
 
 namespace ServerFramework.Constants.Entities.Session
 {
@@ -44,6 +45,21 @@ namespace ServerFramework.Constants.Entities.Session
             set { _clientToken = value; }
         }
 
+        public string IP
+        {
+            get { return (Saea.Receiver.AcceptSocket.RemoteEndPoint as IPEndPoint).Address.ToString(); }
+        }
+
+        public int Port
+        {
+            get { return (Saea.Receiver.AcceptSocket.RemoteEndPoint as IPEndPoint).Port;}
+        }
+
+        public int SessionID
+        {
+            get { return (Saea.Receiver.UserToken as UserToken).SessionId; }
+        }
+
         #endregion
 
         #region Constructors
@@ -63,15 +79,6 @@ namespace ServerFramework.Constants.Entities.Session
 
         #region Methods
 
-        #region GetIP
-
-        public string GetIP()
-        {
-            return Saea.Receiver.AcceptSocket.RemoteEndPoint.ToString();
-        }
-
-        #endregion
-
         #region Send
 		
         public void Send(Packet packet)
@@ -82,7 +89,8 @@ namespace ServerFramework.Constants.Entities.Session
             this.Saea.SendResetEvent.WaitOne();
             UserToken token = Saea.Sender.UserToken as UserToken;
             token.Packet = packet;
-            token.PrepareSend();
+            token.Finish();
+            token.Packet.SessionId = token.SessionId;
 
             LogManager.Log(LogType.Debug, "Packet Content {0}", BitConverter.ToString(packet.Message));
             Server.GetInstance().Send(this.Saea.Sender);

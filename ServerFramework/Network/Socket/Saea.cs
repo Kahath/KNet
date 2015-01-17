@@ -13,6 +13,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using ServerFramework.Network.Packets;
 using System.Net.Sockets;
 using System.Threading;
 
@@ -61,9 +62,28 @@ namespace ServerFramework.Network.Socket
             set { _sendResetEvent = value; }
         }
 
+        internal System.Net.Sockets.Socket AcceptSocket
+        {
+            set 
+            { 
+                Sender.AcceptSocket = value;
+                Receiver.AcceptSocket = value;
+            }
+        }
+
         #endregion
 
         #region Methods
+
+        #region AssignId
+
+        public void AssignId(int id)
+        {
+            ((UserToken)Sender.UserToken).SessionId = id;
+            ((UserToken)Receiver.UserToken).SessionId = id;
+        }
+
+        #endregion
 
         #region Close
 

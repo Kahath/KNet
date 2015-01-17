@@ -76,6 +76,15 @@ namespace ServerFramework.Network.Packets.Handlers
                 //Write data
                 packet.Write<string>("Example string data");
 
+                //Write bits
+                packet.WriteBits<int>(0x123, 8);
+
+                packet.WriteBit(true);
+                packet.WriteBit(false);
+
+                //Flush to write remaining bits to stream
+                packet.Flush();
+
                 //Send data
                 pClient.Send(packet);
             }

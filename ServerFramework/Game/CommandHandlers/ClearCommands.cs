@@ -17,10 +17,6 @@ using ServerFramework.Constants.Attributes;
 using ServerFramework.Constants.Entities.Console;
 using ServerFramework.Constants.Misc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ServerFramework.Game.CommandHandlers
 {
@@ -33,7 +29,7 @@ namespace ServerFramework.Game.CommandHandlers
 
         private static Command GetCommand()
         {
-            return new Command("cls", (CommandLevel)0xFF, null, Cls, "");
+            return new Command("cls", (CommandLevel)0xFFFF, null, Cls, "");
         }
 
         #endregion

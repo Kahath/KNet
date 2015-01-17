@@ -93,6 +93,29 @@ namespace ServerFramework.Managers
 
         #endregion
 
+        #region GetClient
+
+        public Client GetClient(Func<Client, bool> func)
+        {
+            Client client = null;
+
+            client = Clients.Values.SingleOrDefault(func);
+
+            return client;
+        }
+
+        #endregion
+
+        #region GetClients
+
+        public IEnumerable<Client> GetClients(Func<Client, bool> func)
+        {
+            IEnumerable<Client> clients = Clients.Values.Where(func).AsEnumerable();
+            return clients;
+        }
+
+        #endregion
+
         #region GetClientBySessionId
 
         public Client GetClientBySessionId(int sessionId)

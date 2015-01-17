@@ -154,7 +154,7 @@ namespace ServerFramework.Network.Packets
                 case "Boolean":
                     return _stream.ReadBoolean();
                 case "String":
-                    var bytes = _stream.ReadBytes(GetBits<byte>(count));
+                    var bytes = _stream.ReadBytes(ReadBits<byte>(count));
                     return Encoding.UTF8.GetString(bytes);
                 case "Byte[]":
                     return _stream.ReadBytes(count);
@@ -224,9 +224,9 @@ namespace ServerFramework.Network.Packets
 
         #region BitPack
 
-        #region GetBit
+        #region ReadBit
 
-        public bool GetBit()
+        public bool ReadBit()
         {
             if (Position == 0)
             {
@@ -244,23 +244,23 @@ namespace ServerFramework.Network.Packets
 
         #endregion
 
-        #region GetBits
+        #region ReadBits
 
-        public T GetBits<T>(int count)
+        public T ReadBits<T>(int count)
         {
             int retVal = 0;
 
             for (int i = count - 1; i >= 0; --i)
-                retVal = GetBit() ? (1 << i) | retVal : retVal;
+                retVal = ReadBit() ? (1 << i) | retVal : retVal;
 
             return (T)Convert.ChangeType(retVal, typeof(T));
         }
 
         #endregion
 
-        #region PutBit
+        #region WriteBit
 
-        public void PutBit(bool value)
+        public void WriteBit(bool value)
         {
             ++Position;
 
@@ -277,18 +277,18 @@ namespace ServerFramework.Network.Packets
 
         #endregion
 
-        #region PutBits
+        #region WriteBits
 
-        public void PutBits<T>(T value, int count)
+        public void WriteBits<T>(T value, int count)
         {
             for (int i = count - 1; i >= 0; --i)
-                PutBit((bool)Convert.ChangeType(
+                WriteBit((bool)Convert.ChangeType(
                     (Convert.ToInt32(value) >> i) & 1, typeof(bool)));
         }
 
         #endregion
 
-        #region Finish
+        #region Flush
 
         public void Flush()
         {
@@ -305,13 +305,13 @@ namespace ServerFramework.Network.Packets
 
         #endregion
 
-        #region PrepareForSend
+        #region End
 
         /// <summary>
         /// Readies packet for sending.
         /// </summary>
         /// <returns>Size of packet minus header size</returns>
-        internal int PrepareForSend()
+        internal int End()
         {
             _stream.BaseStream.Seek(0, SeekOrigin.Begin);
             Message = new byte[_stream.BaseStream.Length];

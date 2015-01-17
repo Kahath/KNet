@@ -45,6 +45,15 @@ namespace ServerFramework
 
         #endregion
 
+        #region Properties
+
+        public Server Server
+        {
+            get { return Server.GetInstance(); }
+        }
+
+        #endregion
+
         #region Constructors
 
         public KahathFramework()
@@ -86,9 +95,15 @@ namespace ServerFramework
             Manager.Init();
 
             LogManager.Log(LogType.Init, "Initialising server!");
-            Server.GetInstance(_socketSettings);
 
-            while(true)
+            Server.GetInstance(_socketSettings);
+        }
+
+        public void Start()
+        {
+            Server.Init();
+
+            while (true)
             {
                 Manager.CommandMgr.InvokeCommand(Console.ReadLine().ToLower());
             }

@@ -69,9 +69,6 @@ namespace ServerFramework.Network.Socket
 
             headerHandler = new HeaderHandler();
             messageHandler = new MessageHandler();
-
-            init();
-            startListen();
         }
 
         #endregion
@@ -80,7 +77,7 @@ namespace ServerFramework.Network.Socket
 
         #region Init
 
-        private void init()
+        internal override void Init()
         {
             for (int i = 0; i < socketSettings.MaxAcceptOps; i++)
                 this.AcceptPool.Push(
@@ -100,7 +97,7 @@ namespace ServerFramework.Network.Socket
                 token = new UserToken(socketSettings.BufferSize,
                     SendRecPoolItem.Receiver.Offset,
                     socketSettings.ReceivePrefixLength);
-                token.PrepareReceive();
+                token.StartReceive();
                 SendRecPoolItem.Receiver.UserToken = token;
                 SendRecPoolItem.Receiver.Completed +=
                     new EventHandler<SocketAsyncEventArgs>(receive_completed);
@@ -113,6 +110,10 @@ namespace ServerFramework.Network.Socket
 
                 this.SendReceivePool.Push(SendRecPoolItem);
             }
+
+            startListen();
+
+            base.Init();
         }
 
         #endregion
@@ -245,15 +246,19 @@ namespace ServerFramework.Network.Socket
             Client c = new Client(saea);
             int id = Manager.SessionMgr.AddClient(c);
 
-            ((UserToken)saea.Receiver.UserToken).AssignId(id);
-            ((UserToken)saea.Sender.UserToken).AssignId(id);
+            saea.AssignId(id);
+            saea.AcceptSocket = e.AcceptSocket;
 
-            saea.Receiver.AcceptSocket = e.AcceptSocket;
-            saea.Sender.AcceptSocket = e.AcceptSocket;
+            try
+            {
+                LogManager.Log(LogType.Normal, "Session {0} ({1}) connected",
+                    ((UserToken)saea.Receiver.UserToken).SessionId,
+                    saea.Receiver.AcceptSocket.RemoteEndPoint.ToString());
+            }
+            catch(ObjectDisposedException)
+            {
 
-            LogManager.Log(LogType.Normal, "Session {0} ({1}) connected",
-                ((UserToken)saea.Receiver.UserToken).SessionId,
-                saea.Receiver.AcceptSocket.RemoteEndPoint.ToString());
+            }
 
             e.AcceptSocket = null;
             this.AcceptPool.Push(e);
@@ -313,6 +318,7 @@ namespace ServerFramework.Network.Socket
                     }
                 }
             }
+
             startReceive(e);
         }
 

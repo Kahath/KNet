@@ -14,12 +14,15 @@
  */
 
 using ServerFramework.Configuration;
+using ServerFramework.Constants.Entities.Session;
 using ServerFramework.Constants.Misc;
+using ServerFramework.Managers;
 using ServerFramework.Network.Packets;
 using ServerFramework.Singleton;
 using System;
 using System.Collections.Concurrent;
 using System.IO;
+using System.Text;
 using System.Threading;
 using System.Xml;
 
@@ -30,7 +33,7 @@ namespace ServerFramework.Logging.Packets
         #region Fields
 
         private string _path;
-        private XmlDocument _doc;
+        private StringBuilder _packetLog;
         private BlockingCollection<Packet> _packetLogQueue
             = new BlockingCollection<Packet>();
 
@@ -39,15 +42,9 @@ namespace ServerFramework.Logging.Packets
         #region Properties
 
         internal string Path
-        { 
+        {
             get { return _path; }
             set { _path = value; }
-        }
-
-        private XmlDocument Doc
-        {
-            get { return _doc; }
-            set { _doc = value; }
         }
 
         private BlockingCollection<Packet> PacketLogQueue
@@ -56,6 +53,11 @@ namespace ServerFramework.Logging.Packets
             set { _packetLogQueue = value; }
         }
 
+        private StringBuilder PacketLog
+        {
+            get { return _packetLog; }
+            set { _packetLog = value; }
+        }
 
         #endregion
 
@@ -75,25 +77,16 @@ namespace ServerFramework.Logging.Packets
         internal override void Init()
         {
             Path = DateTime.Now.ToString("yyyy_MM_dd") + "_PacketLog.xml";
+
             if (File.Exists(this.Path))
             {
-                Doc = new XmlDocument();
-                Doc.Load(this.Path);
+                PacketLog = new StringBuilder(ServerConfig.PacketLogSize * 1024 * 1024);
             }
             else
             {
-                Doc = new XmlDocument();
-                XmlDeclaration declaration =
-                    Doc.CreateXmlDeclaration("1.0", "UTF-8", null);
-
-                XmlElement root = Doc.DocumentElement;
-                Doc.InsertBefore(declaration, root);
-
-                XmlElement element = Doc.CreateElement(string.Empty,
-                    "PacketLog", string.Empty);
-                Doc.AppendChild(element);
-
-                Doc.Save(this.Path);     
+                PacketLog = new StringBuilder(ServerConfig.PacketLogSize * 1024 * 1024);
+                PacketLog.AppendLine("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
+                File.Create(this.Path);
             }
 
             base.Init();
@@ -102,10 +95,12 @@ namespace ServerFramework.Logging.Packets
             {
                 while (true)
                 {
-                    var item = _packetLogQueue.Take();
+                    var item = PacketLogQueue.Take();
 
                     if (item != null)
+                    {
                         LogPacket(item);
+                    }
                 }
             });
 
@@ -117,47 +112,49 @@ namespace ServerFramework.Logging.Packets
 
         #region LogPacket
 
-        private void LogPacket(Packet packet)
+        private async void LogPacket(Packet packet)
         {
             PacketLogType logtype = packet.GetStream is BinaryReader ? PacketLogType.CMSG : PacketLogType.SMSG;
+
             if (!((ServerConfig.PacketLogLevel & logtype) == logtype) ? true : false)
                 return;
 
-            XmlElement packetElement = Doc.CreateElement(string.Empty,
-                "Packet", string.Empty);
+            Client pClient = Manager.SessionMgr.GetClientBySessionId(packet.SessionId);
 
-            XmlElement packetTime = Doc.CreateElement(string.Empty,
-                "DateTime", string.Empty);
-            packetTime.InnerText = DateTime.Now.ToShortDateString() +
-                " " + DateTime.Now.ToLongTimeString();
+            using (StringWriter sw = new StringWriter(PacketLog))
+            {
+                using (XmlTextWriter xtw = new XmlTextWriter(sw))
+                {
+                    xtw.WriteStartElement("Packet");
+                    xtw.WriteElementString("DateTime", DateTime.Now.ToString());
 
-            XmlElement packetSize = Doc.CreateElement(string.Empty,
-                "Size", string.Empty);
-            packetSize.InnerText = packet.Header.Size.ToString();
+                    if (pClient != null)
+                    {
+                        xtw.WriteElementString("IP", pClient.IP);
 
-            XmlElement packetOpcode = Doc.CreateElement(string.Empty,
-                "Opcode", string.Empty);
-            packetOpcode.InnerText =
-                packet.GetStream is BinaryReader ?
-                "CMSG " + string.Format("0x{0}", ((ushort)packet.Header.Opcode).ToString("X4")
-                //, Enum.GetName(typeof(CMSG), packet.Header.Opcode)
-                    ) :
-                "SMSG " + string.Format("0x{0}", ((ushort)packet.Header.Opcode).ToString("X4")
-                //, Enum.GetName(typeof(SMSG), packet.Header.Opcode)
-                    );
+                        if (pClient.Token != null)
+                            xtw.WriteElementString("Client", pClient.Token.ToString());
+                    }
 
-            XmlElement pacaketMessage = Doc.CreateElement(string.Empty,
-                "Message", string.Empty);
-            pacaketMessage.InnerText = BitConverter.ToString(packet.Message);
+                    xtw.WriteElementString("Size", packet.Header.Size.ToString());
 
+                    string opcode = packet.GetStream is BinaryReader ?
+                        "CMSG " + string.Format("0x{0}", ((ushort)packet.Header.Opcode).ToString("X4")) :
+                        "SMSG " + string.Format("0x{0}", ((ushort)packet.Header.Opcode).ToString("X4"));
 
-            Doc.DocumentElement.AppendChild(packetElement);
-            packetElement.AppendChild(packetTime);
-            packetElement.AppendChild(packetSize);
-            packetElement.AppendChild(packetOpcode);
-            packetElement.AppendChild(pacaketMessage);
+                    xtw.WriteElementString("Opcode", opcode);
+                    xtw.WriteElementString("Message", BitConverter.ToString(packet.Message));
+                    xtw.WriteEndElement();
 
-            Doc.Save(Path);
+                    if (PacketLog.Length >= PacketLog.Capacity)
+                    {
+                        using (StreamWriter writer = new StreamWriter(Path, true, Encoding.UTF8))
+                            await writer.WriteAsync(PacketLog.ToString());
+
+                        PacketLog.Clear();
+                    }
+                }
+            }
         }
 
         #endregion

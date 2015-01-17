@@ -31,7 +31,7 @@ namespace ServerFramework.Managers
         internal static void Init()
         {
             LogManager.Log(LogType.Init, "Initialising packet log manager");
-            PacketLogMgr        = PacketLogManager.GetInstance();
+            PacketLogMgr = PacketLogManager.GetInstance();
 
             LogManager.Log(LogType.Init, "Initialising command manager");
             CommandMgr          = CommandManager.GetInstance();

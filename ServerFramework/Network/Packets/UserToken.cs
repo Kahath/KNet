@@ -184,23 +184,23 @@ namespace ServerFramework.Network.Packets
 
         #endregion
 
-        #region PrepareReceive
+        #region StartReceive
 
         /// <summary>
         /// Prepares packet for receiving data
         /// </summary>
-        internal void PrepareReceive()
+        internal void StartReceive()
         {
             Packet = new Packet();
         }
 
         #endregion
 
-        #region PrepareForSend
+        #region Finish
 
-        public void PrepareSend()
+        public void Finish()
         {
-            this.MessageBytesRemainingCount = Packet.PrepareForSend();
+            this.MessageBytesRemainingCount = Packet.End();
         }
 
         #endregion

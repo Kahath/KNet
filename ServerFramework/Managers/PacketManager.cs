@@ -137,8 +137,10 @@ namespace ServerFramework.Managers
                             + " authored by '{1}' using version '{2}' and type '{3}'"
                             , attr.Opcode, attr.Author, attr.Version, attr.Type);
 
-                        LogManager.Log(LogType.Error, "Packet size: {0}", packet.Header.Size);
-                        LogManager.Log(LogType.Error, "Packet opcode: {0:X}", packet.Header.Opcode);
+                        LogManager.Log(LogType.Error, "Packet size: {0}"
+                            , packet.Header.Size);
+                        LogManager.Log(LogType.Error, "Packet opcode: {0:X}"
+                            , packet.Header.Opcode);
                         LogManager.Log(LogType.Error, "Packet content: {0}"
                             , BitConverter.ToString(packet.Message));
                     }

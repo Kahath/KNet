@@ -83,12 +83,16 @@ namespace ServerFramework.Database
             {
                 using (MySqlCommand command = new MySqlCommand(sqlString, connection))
                 {
-                    var mParams = new List<MySqlParameter>(args.Length);
+                    if (args != null && args.Length > 0)
+                    {
+                        var mParams = new List<MySqlParameter>(args.Length);
 
-                    foreach (var a in args)
-                        mParams.Add(new MySqlParameter("", a));
+                        foreach (var a in args)
+                            mParams.Add(new MySqlParameter("", a));
 
-                    command.Parameters.AddRange(mParams.ToArray());
+                        command.Parameters.AddRange(mParams.ToArray());
+                    }
+
                     command.ExecuteNonQuery();
                     LogManager.Log(LogType.Database, "Successfuly executed: \"{0}\"", sqlString);
                     return true;

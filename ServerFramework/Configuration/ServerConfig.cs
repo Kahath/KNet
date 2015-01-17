@@ -29,6 +29,7 @@ namespace ServerFramework.Configuration
         internal static LogType LogLevel;
         internal static PacketLogType PacketLogLevel;
         internal static OpcodeType OpcodeAllowLevel;
+        internal static byte PacketLogSize;
 
         internal static int BufferSize;
         internal static int MaxConnections;
@@ -56,6 +57,7 @@ namespace ServerFramework.Configuration
             LogLevel                    = (LogType)config.Read<byte>("loglevel", true);
             PacketLogLevel              = (PacketLogType)config.Read<byte>("packetloglevel", true);
             OpcodeAllowLevel            = (OpcodeType)config.Read<byte>("opcodeallowlevel", true);
+            PacketLogSize               = config.Read<byte>("packetlogsize");
 
             BufferSize                  = config.Read<int>("buffersize");
             MaxConnections              = config.Read<int>("maxconnections");

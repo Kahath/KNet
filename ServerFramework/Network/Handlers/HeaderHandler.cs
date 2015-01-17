@@ -61,7 +61,7 @@ namespace ServerFramework.Network.Handlers
                 token.MessageLength = BitConverter.ToInt16(
                     token.Header, 0);
 
-                token.PrepareReceive();
+                token.StartReceive();
 
                 token.Packet.Header = new PacketHeader
                 {
