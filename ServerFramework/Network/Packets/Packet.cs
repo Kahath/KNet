@@ -13,6 +13,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using ServerFramework.Configuration;
 using System;
 using System.IO;
 using System.Text;
@@ -26,6 +27,7 @@ namespace ServerFramework.Network.Packets
         private PacketHeader _header;
         private byte[] _message;
         private int _sessionId;
+        private Encoding _encoder;
 
         private byte _position = 0;
         private byte _value;
@@ -66,6 +68,17 @@ namespace ServerFramework.Network.Packets
             set { _value = value; }
         }
 
+        public dynamic Stream
+        {
+            get { return _stream; }
+        }
+
+        private Encoding Encoder
+        {
+            get { return _encoder; }
+            set { _encoder = value; }
+        }
+
         #endregion
 
         #region Constructors
@@ -73,18 +86,21 @@ namespace ServerFramework.Network.Packets
         /// <summary>
         /// Creates new object for reading message.
         /// </summary>
-        internal Packet()
+        internal Packet(Encoding encoder)
         {
             Header = new PacketHeader();
+            Encoder = encoder;
         }
 
         /// <summary>
         /// Creates new object for writing message
         /// </summary>
         /// <param name="message">opcode of message</param>
-        public Packet(ushort message)
+        public Packet(ushort message, Encoding encoder)
         {
             _stream = new BinaryWriter(new MemoryStream());
+            Encoder = encoder;
+
             Header = new PacketHeader
             {
                 Size = 4,
@@ -106,7 +122,7 @@ namespace ServerFramework.Network.Packets
         /// </summary>
         internal void PrepareRead()
         {
-            if (!(_stream is BinaryWriter))
+            if (!(Stream is BinaryWriter))
                 _stream = new BinaryReader(new MemoryStream(this.Message));
         }
 
@@ -120,44 +136,44 @@ namespace ServerFramework.Network.Packets
         /// <typeparam name="T">type of value</typeparam>
         /// <param name="count">not used</param>
         /// <returns>Byte, SByte, UInt16, Int16, UInt32, Int32,
-        /// UInt64, Int64, Char, Double, Single, Boolea, Pascal String
+        /// UInt64, Int64, Char, Double, Single, Boolena, Pascal String
         /// depending of method type</returns>
         public T Read<T>(int count = 0)
         {
-            if (_stream is BinaryWriter)
+            if (Stream is BinaryWriter)
                 return default(T);
 
             switch (typeof(T).Name)
             {
                 case "Byte":
-                    return _stream.ReadByte();
+                    return Stream.ReadByte();
                 case "SByte":
-                    return _stream.ReadSByte();
+                    return Stream.ReadSByte();
                 case "UInt16":
-                    return _stream.ReadUInt16();
+                    return Stream.ReadUInt16();
                 case "Int16":
-                    return _stream.ReadInt16();
+                    return Stream.ReadInt16();
                 case "UInt32":
-                    return _stream.ReadUInt32();
+                    return Stream.ReadUInt32();
                 case "Int32":
-                    return _stream.ReadInt32();
+                    return Stream.ReadInt32();
                 case "UInt64":
-                    return _stream.ReadUInt64();
+                    return Stream.ReadUInt64();
                 case "Int64":
-                    return _stream.ReadInt64();
+                    return Stream.ReadInt64();
                 case "Char":
-                    return _stream.ReadChar();
+                    return Stream.ReadChar();
                 case "Double":
-                    return _stream.ReadDouble();
+                    return Stream.ReadDouble();
                 case "Single":
-                    return _stream.ReadSingle();
+                    return Stream.ReadSingle();
                 case "Boolean":
-                    return _stream.ReadBoolean();
+                    return Stream.ReadBoolean();
                 case "String":
-                    var bytes = _stream.ReadBytes(ReadBits<byte>(count));
-                    return Encoding.UTF8.GetString(bytes);
+                    var bytes = Stream.ReadBytes(ReadBits<byte>(count));
+                    return Encoder.GetString(bytes);
                 case "Byte[]":
-                    return _stream.ReadBytes(count);
+                    return Stream.ReadBytes(count);
                 default:
                     return default(T);
             }
@@ -174,48 +190,48 @@ namespace ServerFramework.Network.Packets
         /// <param name="value">value of method type</param>
         public void Write<T>(T value)
         {
-            if (_stream is BinaryReader)
+            if (Stream is BinaryReader)
                 return;
 
             switch (typeof(T).Name)
             {
                 case "Byte":
-                    _stream.Write(Convert.ToByte(value));
+                    Stream.Write(Convert.ToByte(value));
                     break;
                 case "SByte":
-                    _stream.Write(Convert.ToSByte(value));
+                    Stream.Write(Convert.ToSByte(value));
                     break;
                 case "UInt16":
-                    _stream.Write(Convert.ToUInt16(value));
+                    Stream.Write(Convert.ToUInt16(value));
                     break;
                 case "Int16":
-                    _stream.Write(Convert.ToInt16(value));
+                    Stream.Write(Convert.ToInt16(value));
                     break;
                 case "UInt32":
-                    _stream.Write(Convert.ToUInt32(value));
+                    Stream.Write(Convert.ToUInt32(value));
                     break;
                 case "Int32":
-                    _stream.Write(Convert.ToInt32(value));
+                    Stream.Write(Convert.ToInt32(value));
                     break;
                 case "UInt64":
-                    _stream.Write(Convert.ToUInt64(value));
+                    Stream.Write(Convert.ToUInt64(value));
                     break;
                 case "Int64":
-                    _stream.Write(Convert.ToInt64(value));
+                    Stream.Write(Convert.ToInt64(value));
                     break;
                 case "Single":
-                    _stream.Write(Convert.ToSingle(value));
+                    Stream.Write(Convert.ToSingle(value));
                     break;
                 case "String":
                     var data = Encoding.UTF8.GetBytes(value as string);
-                    _stream.Write(Convert.ToByte(data.Length));
-                    _stream.Write(data);
+                    Stream.Write(Convert.ToByte(data.Length));
+                    Stream.Write(data);
                     break;
                 case "Byte[]":
                     data = value as byte[];
 
                     if (data != null)
-                        _stream.Write(data);
+                        Stream.Write(data);
                     break;
             }
         }
@@ -313,9 +329,9 @@ namespace ServerFramework.Network.Packets
         /// <returns>Size of packet minus header size</returns>
         internal int End()
         {
-            _stream.BaseStream.Seek(0, SeekOrigin.Begin);
-            Message = new byte[_stream.BaseStream.Length];
-            Header.Size = (ushort)(Message.Length - 4);
+            Stream.BaseStream.Seek(0, SeekOrigin.Begin);
+            Message = new byte[Stream.BaseStream.Length];
+            Header.Size = (ushort)(Message.Length - ServerConfig.HeaderLength);
 
             for (int i = 0; i < Message.Length; i++)
             {
@@ -330,24 +346,12 @@ namespace ServerFramework.Network.Packets
 
         #endregion
 
-        #region GetStream
-
-        /// <summary>
-        /// Gets stream of packet
-        /// </summary>
-        internal dynamic GetStream
-        {
-            get { return this._stream; }
-        }
-
-        #endregion
-
         #region Dispose
 
         public void Dispose()
         {
-            if (_stream != null)
-                _stream.Close();
+            if (Stream != null)
+                Stream.Close();
         }
 
         #endregion

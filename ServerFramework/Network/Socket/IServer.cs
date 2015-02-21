@@ -13,54 +13,27 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using DILibrary.Constants;
-using DILibrary.DependencyInjection;
-using ServerFramework.Configuration;
+using System;
 using System.Net.Sockets;
 
 namespace ServerFramework.Network.Socket
 {
-	public class Server : Dependency<IServer>
+	public interface IServer : IDisposable
 	{
-		#region Constructors
-
-		public Server(SocketListenerSettings socketSettings = null)
-			: base(ResolveTypes.Singleton, socketSettings)
-		{
-
-		}
-
-		#endregion
-
 		#region Events
 
-		public event ServerEventHandler OnCloseClientSocket
-		{
-			add { instance.OnCloseClientSocket += value; }
-			remove { instance.OnCloseClientSocket -= value; }
-		}
-
-		public event ServerEventHandler OnConnect
-		{
-			add { instance.OnConnect += value; }
-			remove { instance.OnConnect -= value; }
-		}
+		event ServerEventHandler OnCloseClientSocket;
+		event ServerEventHandler OnConnect;
 
 		#endregion
 
 		#region Methods
 
-		internal void Init()
-		{
-			instance.init();
-		}
-
-		internal void Send(SocketAsyncEventArgs e)
-		{
-			instance.Send(e);
-		}
+		void init();
+		void Send(SocketAsyncEventArgs e);
 
 		#endregion
+
 
 	}
 }

@@ -13,6 +13,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using DILibrary.DependencyInjection;
 using ServerFramework.Configuration;
 using ServerFramework.Constants.Misc;
 using ServerFramework.Database;
@@ -47,9 +48,9 @@ namespace ServerFramework
 
         #region Properties
 
-        public Server Server
+		public Server Server
         {
-            get { return Server.GetInstance(); }
+			get { return new Server(_socketSettings); }
         }
 
         #endregion
@@ -58,13 +59,24 @@ namespace ServerFramework
 
         public KahathFramework()
         {
+            DependencyManager.Map(typeof(IConfig), typeof(ConfigInject));
+			DependencyManager.Map(typeof(IServer), typeof(ServerInject));
+
             ServerConfig.Init();
 
-            _socketSettings = new SocketListenerSettings(
-                ServerConfig.MaxConnections, ServerConfig.Backlog
-                , ServerConfig.MaxSimultaneousAcceptOps, ServerConfig.BufferSize
-                , ServerConfig.HeaderLength, new IPEndPoint
-                    (IPAddress.Parse(ServerConfig.BindIP), ServerConfig.BindPort));
+            _socketSettings = new SocketListenerSettings
+				(
+					ServerConfig.MaxConnections
+				,	ServerConfig.Backlog
+				,	ServerConfig.MaxSimultaneousAcceptOps
+				,	ServerConfig.BufferSize
+				,	ServerConfig.HeaderLength
+				,	new IPEndPoint
+						(
+							IPAddress.Parse(ServerConfig.BindIP)
+						,	ServerConfig.BindPort
+						)
+				);
 
             LogManager.Init();
 
@@ -88,27 +100,42 @@ namespace ServerFramework
             Console.WriteLine();
 
             LogManager.Log(LogType.Init, "Initialising application database connection.");
-            DB.Application.Init(ServerConfig.DBHost, ServerConfig.DBUser, ServerConfig.DBPass
-                , ServerConfig.DBPort, ServerConfig.DBName);
+            DB.Application.Init
+				(
+					ServerConfig.DBHost
+				,	ServerConfig.DBUser
+				,	ServerConfig.DBPass
+				,	ServerConfig.DBPort
+				,	ServerConfig.DBName
+				);
 
             LogManager.Log(LogType.Init, "Initialising managers.");
             Manager.Init();
 
             LogManager.Log(LogType.Init, "Initialising server!");
-
-            Server.GetInstance(_socketSettings);
         }
 
-        public void Start()
-        {
-            Server.Init();
 
-            while (true)
-            {
-                Manager.CommandMgr.InvokeCommand(Console.ReadLine().ToLower());
-            }
-        }
 
         #endregion 
-    }
+
+		#region Methods
+
+		public void Start()
+		{
+			Server.Init();
+
+			while (true)
+			{
+				string command = Console.ReadLine();
+
+				if (command != null)
+					Manager.CommandMgr.InvokeCommand(command.ToLower());
+				else
+					LogManager.Log(LogType.Command, "Wrong input");
+			}
+		}
+
+		#endregion
+	}
 }

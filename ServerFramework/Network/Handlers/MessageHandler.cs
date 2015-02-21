@@ -53,12 +53,14 @@ namespace ServerFramework.Network.Handlers
                 token.MessageBytesDoneCount) >=
                 token.MessageLength)
             {
-                Buffer.BlockCopy(e.Buffer,
-                    token.MessageOffset,
-                    token.Packet.Message,
-                    token.MessageBytesDoneCount,
-                    token.MessageLength -
-                    token.MessageBytesDoneCount);
+                Buffer.BlockCopy
+					(
+						e.Buffer
+						, token.MessageOffset
+						, token.Packet.Message
+						, token.MessageBytesDoneCount
+						, token.MessageLength - token.MessageBytesDoneCount
+					);
 
                 remainingBytesToProcess = (remainingBytesToProcess - token.MessageLength)
                     + token.MessageBytesDoneCount;
@@ -70,11 +72,14 @@ namespace ServerFramework.Network.Handlers
             }
             else
             {
-                Buffer.BlockCopy(e.Buffer,
-                    token.MessageOffset,
-                    token.Packet.Message,
-                    token.MessageBytesDoneCount,
-                    remainingBytesToProcess);
+                Buffer.BlockCopy
+					(
+						e.Buffer
+						, token.MessageOffset
+						, token.Packet.Message
+						, token.MessageBytesDoneCount
+						, remainingBytesToProcess
+					);
 
                 token.MessageOffset -= token.HeaderBytesDoneThisOp;
 

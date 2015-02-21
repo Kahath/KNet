@@ -32,7 +32,7 @@ namespace ServerFramework.Constants.Attributes
         /// <param name="opcode">Client packet opcode</param>
         /// <param name="author">Author of method</param>
         /// <param name="version">Version of method</param>
-        /// <param name="description">Brief description</param>
+        /// <param name="type">Opcode type</param>
         public OpcodeAttribute(ushort opcode, string author, int version, OpcodeType type)
         {
             this.Opcode = opcode;

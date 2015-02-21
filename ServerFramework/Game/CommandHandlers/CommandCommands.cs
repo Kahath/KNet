@@ -50,6 +50,7 @@ namespace ServerFramework.Game.CommandHandlers
         private static bool CommandListHandler(params string[] args)
         {
             LogManager.Log(LogType.Command, "List of all commands:");
+
             foreach (Command c in Manager.CommandMgr.CommandTable)
             {
                 if (c.SubCommands != null)

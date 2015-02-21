@@ -21,30 +21,42 @@ using ServerFramework.Logging.Packets;
 namespace ServerFramework.Managers
 {
     public static class Manager
-    {
-        public static CommandManager        CommandMgr;
-        public static SessionManager        SessionMgr;
-        internal static PacketManager       PacketMgr;
-        internal static BufferManager       BufferMgr;
-        internal static PacketLogManager    PacketLogMgr;
+	{
+		#region Fields
 
-        internal static void Init()
-        {
-            LogManager.Log(LogType.Init, "Initialising packet log manager");
-            PacketLogMgr = PacketLogManager.GetInstance();
+		public static CommandManager CommandMgr;
+		public static SessionManager SessionMgr;
+		internal static PacketManager PacketMgr;
+		internal static BufferManager BufferMgr;
+		internal static PacketLogManager PacketLogMgr;
 
-            LogManager.Log(LogType.Init, "Initialising command manager");
-            CommandMgr          = CommandManager.GetInstance();
+		#endregion
 
-            LogManager.Log(LogType.Init, "Initialising session manager");
-            SessionMgr          = SessionManager.GetInstance();
+		#region Methods
 
-            LogManager.Log(LogType.Init, "Initialising packet manager");
-            PacketMgr           = PacketManager.GetInstance();
+		#region Init
 
-            LogManager.Log(LogType.Init, "Initialising buffer manager");
-            BufferMgr           = BufferManager.GetInstance(ServerConfig.BufferSize * 2
-                                    * ServerConfig.MaxConnections, ServerConfig.BufferSize);
-        }
+		internal static void Init()
+		{
+			LogManager.Log(LogType.Init, "Initialising packet log manager");
+			PacketLogMgr = PacketLogManager.GetInstance();
+
+			LogManager.Log(LogType.Init, "Initialising command manager");
+			CommandMgr = CommandManager.GetInstance();
+
+			LogManager.Log(LogType.Init, "Initialising session manager");
+			SessionMgr = SessionManager.GetInstance();
+
+			LogManager.Log(LogType.Init, "Initialising packet manager");
+			PacketMgr = PacketManager.GetInstance();
+
+			LogManager.Log(LogType.Init, "Initialising buffer manager");
+			BufferMgr = BufferManager.GetInstance(ServerConfig.BufferSize * 2
+									* ServerConfig.MaxConnections, ServerConfig.BufferSize);
+		}
+
+		#endregion
+
+		#endregion		
     }
 }

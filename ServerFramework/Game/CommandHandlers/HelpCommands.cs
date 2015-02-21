@@ -18,6 +18,7 @@ using ServerFramework.Constants.Entities.Console;
 using ServerFramework.Constants.Misc;
 using ServerFramework.Logging;
 using ServerFramework.Managers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -47,52 +48,45 @@ namespace ServerFramework.Game.CommandHandlers
             if (commandTable == null || command == null)
                 return false;
 
-            if (command.Count == 0)
+            if(command.Count == 0)
                 command.Add("help");
 
-            if (command.Count == 1)
-            {
-                foreach (Command c in commandTable)
-                {
-                    if (c.Name.StartsWith(command[0].Trim()))
-                    {
-                        if (c.SubCommands != null)
-                        {
-                            LogManager.Log(LogType.Command, "Available sub commands for '{0}{1}' command:", path, c.Name);
-                            LogManager.Log(LogType.Command, "{0}", _availableSubCommands(c, path));
-                            return true;
-                        }
-                        else
-                        {
-                            if (c.Description != null && c.Description != "")
-                            {
-                                LogManager.Log(LogType.Command, "{0}", c.Description);
-                                return true;
-                            }
-                            else
-                            {
-                                LogManager.Log(LogType.Command, "Command '{0}{1}' is missing description", path, c.Name);
-                                return true;
-                            }
-                        }
-                    }
-                }
+            Command c = commandTable.FirstOrDefault(x => x.Name.StartsWith(command[0]));
 
-                LogManager.Log(LogType.Command, "Command '{0}{1}' not found", path, command[0]);
-                return false;
-            }
-
-            foreach (Command c in commandTable)
+            if(c != null)
             {
-                if (c.Name.StartsWith(command[0].Trim()))
+                path += c.Name + " ";
+
+                if(command.Count > 1)
                 {
-                    path += c.Name + " ";
                     command.RemoveAt(0);
                     return _getHelpCommand(c.SubCommands, command, path);
                 }
+
+                if (c.SubCommands != null)
+                {
+                    LogManager.Log(LogType.Command, "Available sub commands for '{0}' command:", path);
+                    LogManager.Log(LogType.Command, "{0}", _availableSubCommands(c, path));
+                    return true;
+                }
+                else
+                {
+                    if (c.Description != null && c.Description != "")
+                    {
+                        LogManager.Log(LogType.Command, "{0}", c.Description);
+                        return true;
+                    }
+                    else
+                    {
+                        LogManager.Log(LogType.Command, "Command '{0}' is missing description", path);
+                        return true;
+                    }
+                }    
             }
 
-            LogManager.Log(LogType.Command, "Command '{0}{1}' not found", path, command[0]);
+            path += command[0];
+
+            LogManager.Log(LogType.Command, "Command '{0}' not found", path);
             return false;
         }
 
@@ -106,7 +100,10 @@ namespace ServerFramework.Game.CommandHandlers
 
             foreach (Command com in c.SubCommands)
             {
-                sb.AppendLine(com.Name);
+                if(com.SubCommands != null)
+                    sb.AppendLine(com.Name + "..");
+                else
+                    sb.AppendLine(com.Name);
             }
 
             return sb.ToString();

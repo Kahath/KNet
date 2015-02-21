@@ -118,61 +118,61 @@ namespace ServerFramework.Managers
             if (commandTable == null || command == null)
                 return false;
 
-            foreach (Command c in commandTable)
+            Command c = commandTable.FirstOrDefault(x => x.Name.StartsWith(command[0].Trim()));
+
+            if (c != null)
             {
-                if (c.Name.StartsWith(command[0].Trim()))
+                path += c.Name + " ";
+
+                if (c.Script == null)
                 {
-                    if (c.Script == null)
+                    if (c.SubCommands != null)
                     {
-                        if (c.SubCommands != null)
+                        if(command.Count > 0)
                         {
                             command.RemoveAt(0);
-
-                            if (command.Count > 0)
-                            {
-                                path += c.Name + " ";
-
-                                return _invokeCommandHandler(c.SubCommands, command, path);
-                            }
-                            else
-                            {
-                                LogManager.Log(LogType.Command, "Error with '{0}{1}' command."
-                                    + " Available sub commands:\n{2}", path, c.Name, _availableSubCommands(c));
-                                return false;
-                            }
-                           
+                            return _invokeCommandHandler(c.SubCommands, command, path);
                         }
                         else
                         {
-                            LogManager.Log(LogType.Command, "Error with '{0}{1}' command."
-                                + " Missing script or subcommands", path, c.Name);
+                            LogManager.Log(LogType.Command, "Error with '{0}' command."
+                                + " Available sub commands:\n{2}", path, _availableSubCommands(c));
+
                             return false;
                         }
                     }
                     else
                     {
-                        command.RemoveAt(0);
-                        try
-                        {
-                            return c.Script.Invoke(command.ToArray());
-                        }
-                        catch (IndexOutOfRangeException)
-                        {
-                            LogManager.Log(LogType.Error, "Error with '{0}{1}' command. wrong arguments"
-                                , path, c.Name);
-                            return false;
-                        }
-                        catch (Exception)
-                        {
-                            LogManager.Log(LogType.Error, "Error with '{0}{1}' command. Failed to execute handler"
-                                , path, c.Name);
-                            return false;
-                        }
+                        LogManager.Log(LogType.Command, "Error with '{0}' command."
+                            + " Missing script or subcommands", path);
+                        return false;
+                    }
+                }
+                else
+                {
+                    command.RemoveAt(0);
+                    
+                    try
+                    {
+                        return c.Script.Invoke(command.ToArray());
+                    }
+                    catch (IndexOutOfRangeException)
+                    {
+                        LogManager.Log(LogType.Error, "Error with '{0}' command. wrong arguments"
+                            , path);
+                        return false;
+                    }
+                    catch (Exception)
+                    {
+                        LogManager.Log(LogType.Error, "Error with '{0}' command. Failed to execute handler"
+                            , path);
+                        return false;
                     }
                 }
             }
 
-            LogManager.Log(LogType.Command, "Command '{0}{1}' not found", path, command[0]);
+            path += command[0];
+            LogManager.Log(LogType.Command, "Command '{0}' not found", path);
             return false;
         }
 
@@ -186,7 +186,10 @@ namespace ServerFramework.Managers
 
             foreach (Command com in c.SubCommands)
             {
-                sb.AppendLine(com.Name);
+                if (com.SubCommands != null)
+                    sb.AppendLine(com.Name + "..");
+                else
+                    sb.AppendLine(com.Name);
             }
 
             return sb.ToString();
@@ -199,6 +202,7 @@ namespace ServerFramework.Managers
         private void _loadCommandDescriptions()
         {
             Command c = null;
+
             using (SqlResult res = DB.Application.Select("SELECT * FROM `command`"))
             {
                 for(int i = 0; i < res.Count; i++)
@@ -224,20 +228,18 @@ namespace ServerFramework.Managers
             if (commandTable == null || command == null)
                 return null;
 
-            foreach (Command c in commandTable)
+            Command c = commandTable.FirstOrDefault(x => x.Name.StartsWith(command[0].Trim()));
+
+            if (c != null)
             {
-                if (c.Name.StartsWith(command[0].Trim()))
+                if (command.Count > 0)
                 {
                     command.RemoveAt(0);
-
-                    if (command.Count > 0)
-                        return _getCommand(c.SubCommands, command);
-                    else
-                        return c;
+                    return _getCommand(c.SubCommands, command);
                 }
             }
 
-            return null;
+            return c;
         }
 
         #endregion

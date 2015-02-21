@@ -37,6 +37,8 @@ namespace ServerFramework.Network.Socket
         /// </summary>
         internal Saea()
         {
+            Sender = new SocketAsyncEventArgs();
+            Receiver = new SocketAsyncEventArgs();
             _sendResetEvent = new AutoResetEvent(true);
         }
 
@@ -71,26 +73,25 @@ namespace ServerFramework.Network.Socket
             }
         }
 
-        #endregion
-
-        #region Methods
-
-        #region AssignId
-
-        public void AssignId(int id)
+        internal int SessionId
         {
-            ((UserToken)Sender.UserToken).SessionId = id;
-            ((UserToken)Receiver.UserToken).SessionId = id;
+            set
+            {
+                ((UserToken)Sender.UserToken).SessionId = value;
+                ((UserToken)Receiver.UserToken).SessionId = value;
+            }
         }
 
         #endregion
+
+        #region Methods
 
         #region Close
 
         /// <summary>
         /// Closes both SocketAsyncEventArgs objects
         /// </summary>
-        internal void Close()
+        private void Close()
         {
             this.Sender.AcceptSocket.Close();
             this.Receiver.AcceptSocket.Close();
@@ -98,19 +99,20 @@ namespace ServerFramework.Network.Socket
 
         #endregion
 
-        #region Shutdown
+        #region Disconnect
 
         /// <summary>
         /// Shutdown both SocketAsyncEventArgs objects
         /// </summary>
         /// <param name="how"></param>
-        internal void Shutdown(SocketShutdown how)
+        internal void Disconnect(SocketShutdown how)
         {
             try
             {
                 this.Sender.AcceptSocket.Shutdown(how);
                 this.Receiver.AcceptSocket.Shutdown(how);
                 this._sendResetEvent.Set();
+                this.Close();
             }
             catch (SocketException) { }
         }

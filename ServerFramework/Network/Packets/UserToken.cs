@@ -13,6 +13,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System.Text;
+
 namespace ServerFramework.Network.Packets
 {
     public sealed class UserToken
@@ -41,26 +43,6 @@ namespace ServerFramework.Network.Packets
 
         private bool _headerReady = false;
         private bool _packetReady = false;
-
-        #endregion
-
-        #region Constructors
-
-        /// <summary>
-        /// Creates new token for SocketAsyncEventArgs.UserToken property
-        /// </summary>
-        /// <param name="bufferSize">Buffer size for client</param>
-        /// <param name="bufferOffset">Buffer offset in large alocated buffer</param>
-        /// <param name="headerLength">Length of message header</param>
-        public UserToken(int bufferSize, int bufferOffset, int headerLength)
-        {
-            this._bufferSize = bufferSize;
-            this._bufferOffset = bufferOffset;
-            this.HeaderLength = headerLength;
-            this.HeaderOffset = bufferOffset;
-            this.MessageOffset = bufferOffset + headerLength;
-            this.PermanentMessageOffset = MessageOffset;
-        }
 
         #endregion
 
@@ -102,7 +84,7 @@ namespace ServerFramework.Network.Packets
             set { _headerBytesDoneCount = value; }
         }
 
-        internal int MessageBytesDoneCount 
+        internal int MessageBytesDoneCount
         {
             get { return _messageBytesDoneCount; }
             set { _messageBytesDoneCount = value; }
@@ -148,7 +130,7 @@ namespace ServerFramework.Network.Packets
             get { return _bufferOffset; }
         }
 
-        internal Packet Packet 
+        internal Packet Packet
         {
             get { return _packet; }
             set { _packet = value; }
@@ -168,21 +150,27 @@ namespace ServerFramework.Network.Packets
 
         #endregion
 
-        #region Methods
-
-        #region AssignId
+        #region Constructors
 
         /// <summary>
-        /// Assigns session id for UserToken objects.
-        /// Used to differentiate clients.
+        /// Creates new token for SocketAsyncEventArgs.UserToken property
         /// </summary>
-        /// <param name="id">id of this session</param>
-        internal void AssignId(int id)
+        /// <param name="bufferSize">Buffer size for client</param>
+        /// <param name="bufferOffset">Buffer offset in large alocated buffer</param>
+        /// <param name="headerLength">Length of message header</param>
+        public UserToken(int bufferSize, int bufferOffset, int headerLength)
         {
-            SessionId = id;
+            this._bufferSize = bufferSize;
+            this._bufferOffset = bufferOffset;
+            this.HeaderLength = headerLength;
+            this.HeaderOffset = bufferOffset;
+            this.MessageOffset = bufferOffset + headerLength;
+            this.PermanentMessageOffset = MessageOffset;
         }
 
         #endregion
+
+        #region Methods
 
         #region StartReceive
 
@@ -191,7 +179,7 @@ namespace ServerFramework.Network.Packets
         /// </summary>
         internal void StartReceive()
         {
-            Packet = new Packet();
+            Packet = new Packet(Encoding.UTF8);
         }
 
         #endregion

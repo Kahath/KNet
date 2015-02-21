@@ -69,7 +69,7 @@ namespace ServerFramework.Constants.Entities.Console
             , Command[] subCommands, CommandScriptHandler script, string description)
         {
             Name = name;
-            CommandLevel = CommandLevel;
+            CommandLevel = commandLevel;
             SubCommands = subCommands;
             Script = script;
             Description = description;

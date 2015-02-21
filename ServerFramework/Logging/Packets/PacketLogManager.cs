@@ -114,7 +114,7 @@ namespace ServerFramework.Logging.Packets
 
         private async void LogPacket(Packet packet)
         {
-            PacketLogType logtype = packet.GetStream is BinaryReader ? PacketLogType.CMSG : PacketLogType.SMSG;
+            PacketLogType logtype = packet.Stream is BinaryReader ? PacketLogType.CMSG : PacketLogType.SMSG;
 
             if (!((ServerConfig.PacketLogLevel & logtype) == logtype) ? true : false)
                 return;
@@ -138,7 +138,7 @@ namespace ServerFramework.Logging.Packets
 
                     xtw.WriteElementString("Size", packet.Header.Size.ToString());
 
-                    string opcode = packet.GetStream is BinaryReader ?
+                    string opcode = packet.Stream is BinaryReader ?
                         "CMSG " + string.Format("0x{0}", ((ushort)packet.Header.Opcode).ToString("X4")) :
                         "SMSG " + string.Format("0x{0}", ((ushort)packet.Header.Opcode).ToString("X4"));
 

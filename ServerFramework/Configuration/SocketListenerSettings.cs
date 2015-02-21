@@ -17,7 +17,7 @@ using System.Net;
 
 namespace ServerFramework.Configuration
 {
-    internal class SocketListenerSettings
+    public class SocketListenerSettings
     {
         #region Fields
 
@@ -42,7 +42,7 @@ namespace ServerFramework.Configuration
         /// <param name="bufferSize">Buffer size for each SocketAsyncEventArgs object</param>
         /// <param name="headerLength">Length of message header</param>
         /// <param name="localEndPoint">IP address and port of listening</param>
-        public SocketListenerSettings(int maxConnections, int backlog,
+        internal SocketListenerSettings(int maxConnections, int backlog,
             int maxAcceptOps, int bufferSize,
             int headerLength, IPEndPoint localEndPoint)
         {
@@ -68,18 +68,22 @@ namespace ServerFramework.Configuration
         {
             get { return this._numberOfSaeaForRecSend; }
         }
+
         public int Backlog
         {
             get { return this._backlog; }
         }
+
         public int MaxAcceptOps
         {
             get { return this._maxSimultaneousAcceptOps; }
         }
-        public int ReceivePrefixLength
+
+        public int HeaderLength
         {
             get { return this._headerLength; }
         }
+
         public int BufferSize
         {
             get { return this._bufferSize; }

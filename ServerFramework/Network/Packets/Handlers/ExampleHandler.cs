@@ -18,6 +18,7 @@ using ServerFramework.Constants.Entities.Session;
 using ServerFramework.Constants.Misc;
 using ServerFramework.Managers;
 using System;
+using System.Text;
 
 namespace ServerFramework.Network.Packets.Handlers
 {
@@ -43,7 +44,7 @@ namespace ServerFramework.Network.Packets.Handlers
 
             //Send back if need
             //Create new packet for send
-            using (packet = new Packet(0x0001))
+            using (packet = new Packet(0x0001, Encoding.UTF8))
             {
                 //Write data
                 packet.Write<string>("Example string data");
@@ -71,7 +72,7 @@ namespace ServerFramework.Network.Packets.Handlers
 
             //Send back if need
             //Create new packet for send
-            using (packet = new Packet(0x0001))
+            using (packet = new Packet(0x0001, Encoding.UTF8))
             {
                 //Write data
                 packet.Write<string>("Example string data");

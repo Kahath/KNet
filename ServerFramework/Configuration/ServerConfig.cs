@@ -43,16 +43,16 @@ namespace ServerFramework.Configuration
         internal static string DBPass;
         internal static string DBName;
 
-        #endregion
+        #endregion 
 
         #region Methods
 
         internal static void Init()
         {
-            config                      = new Config("ServerConfig.xml");
+            config						= new Config("ServerConfig.xml");
 
             BindIP                      = config.Read<string>("bindip");
-            BindPort                    = config.Read<int>("bindport");
+            BindPort		            = config.Read<int>("bindport");
 
             LogLevel                    = (LogType)config.Read<byte>("loglevel", true);
             PacketLogLevel              = (PacketLogType)config.Read<byte>("packetloglevel", true);

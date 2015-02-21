@@ -13,43 +13,15 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace ServerFramework.Network.Packets
+
+namespace ServerFramework.Configuration
 {
-    public class PacketHeader
-    {
-        #region Fields
+    public interface IConfig
+	{
+		#region Methods
 
-        private ushort _size;
-        private ushort _opcode;
+		T Read<T>(string config, bool hex = false);
 
-        #endregion
-
-        #region Properties
-
-        public ushort Size
-        {
-            get { return _size; }
-            set { _size = value; }
-        }
-
-        public ushort Opcode
-        {
-            get { return _opcode; }
-            set { _opcode = value; }
-        }
-
-        #endregion
-
-        #region Constructors
-
-        /// <summary>
-        /// Creates new instance of packet header
-        /// </summary>
-        public PacketHeader()
-        {
-
-        }
-
-        #endregion
+		#endregion
     }
 }

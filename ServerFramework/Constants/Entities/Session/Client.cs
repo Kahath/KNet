@@ -93,7 +93,7 @@ namespace ServerFramework.Constants.Entities.Session
             token.Packet.SessionId = token.SessionId;
 
             LogManager.Log(LogType.Debug, "Packet Content {0}", BitConverter.ToString(packet.Message));
-            Server.GetInstance().Send(this.Saea.Sender);
+			new Server().Send(this.Saea.Sender);
         }
 
         #endregion

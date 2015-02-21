@@ -98,34 +98,35 @@ namespace ServerFramework.Managers
         public Client GetClient(Func<Client, bool> func)
         {
             Client client = null;
-
-            client = Clients.Values.SingleOrDefault(func);
+            client = Clients.Values.FirstOrDefault(func);
 
             return client;
         }
+
+		public Client GetClientBySessionId(int sessionId)
+		{
+			Client c = null;
+
+			if (Clients.TryGetValue(sessionId, out c))
+				return c;
+
+			return null;
+		}
 
         #endregion
 
         #region GetClients
 
         public IEnumerable<Client> GetClients(Func<Client, bool> func)
-        {
-            IEnumerable<Client> clients = Clients.Values.Where(func).AsEnumerable();
+        {   
+            IEnumerable<Client> clients = Clients.Values.Where(func);
             return clients;
         }
 
-        #endregion
-
-        #region GetClientBySessionId
-
-        public Client GetClientBySessionId(int sessionId)
+        public IEnumerable<Client> GetClients()
         {
-            Client c = null;
-            
-            if(Clients.TryGetValue(sessionId, out c))
-                return c;
-
-            return null;
+            foreach (KeyValuePair<int, Client> client in Clients)
+                yield return client.Value;
         }
 
         #endregion
@@ -135,24 +136,16 @@ namespace ServerFramework.Managers
         internal int AddClient(Client c)
         {
             int id;
-
             id = FreeSessionIDPool.Count > 0 ? FreeSessionIDPool.Pop() :
                 Interlocked.Increment(ref _sessionId);
 
-            Clients.TryAdd(id, c);
-            LogManager.Log(LogType.Debug, "New session");
+            if (Clients.TryAdd(id, c))
+            {
+                LogManager.Log(LogType.Debug, "New session");
+                return id;
+            }
 
-            return id;
-        }
-
-        #endregion
-
-        #region GetClients
-
-        public IEnumerable<Client> GetClients()
-        {
-            foreach (KeyValuePair<int, Client> client in Clients)
-                yield return client.Value;
+            return 0;
         }
 
         #endregion
