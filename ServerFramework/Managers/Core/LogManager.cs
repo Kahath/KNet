@@ -15,37 +15,30 @@
 
 using ServerFramework.Configuration;
 using ServerFramework.Constants.Misc;
+using ServerFramework.Managers.Base;
 using System;
 using System.Collections.Concurrent;
 using System.Text;
 using System.Threading;
 
-namespace ServerFramework.Logging
+namespace ServerFramework.Managers.Core
 {
-    public static class LogManager
+    public sealed class LogManager : LogManagerBase<LogManager>
     {
-        #region Fields
+		#region Constructors
 
-        private static BlockingCollection<Tuple<ConsoleColor, string>> _consoleLogQueue
-            = new BlockingCollection<Tuple<ConsoleColor, string>>();
+		LogManager()
+		{
+			Init();
+		}
 
-        #endregion
+		#endregion
 
-        #region Properties
+		#region Methods
 
-        private static BlockingCollection<Tuple<ConsoleColor, string>> ConsoleLogQueue
-        {
-            get { return _consoleLogQueue; }
-            set { _consoleLogQueue = value; }
-        }
+		#region Init
 
-        #endregion
-
-        #region Methods
-
-        #region Init
-
-        internal static void Init()
+		internal override void Init()
         {
             Console.InputEncoding = Encoding.UTF8;
             Console.OutputEncoding = Encoding.UTF8;
@@ -77,7 +70,7 @@ namespace ServerFramework.Logging
 
         #region Message
 
-        private static void Message(LogType type, string message, params object[] args)
+        protected override void Message(LogType type, string message, params object[] args)
         {
             Console.OutputEncoding = UTF8Encoding.UTF8;
             ConsoleColor color;
@@ -129,7 +122,7 @@ namespace ServerFramework.Logging
 
         #region Log
 
-        public static void Log(LogType type, string message, params object[] args)
+        public override void Log(LogType type, string message, params object[] args)
         {
             Message(type, message, args);
         }

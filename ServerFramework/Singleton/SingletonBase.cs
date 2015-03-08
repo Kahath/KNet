@@ -14,7 +14,6 @@
  */
 
 using ServerFramework.Constants.Misc;
-using ServerFramework.Logging;
 using ServerFramework.Managers;
 using System;
 using System.Globalization;
@@ -22,18 +21,12 @@ using System.Reflection;
 
 namespace ServerFramework.Singleton
 {
-    public class SingletonBase<T> where T : class
+    public abstract class SingletonBase<T> where T : class
     {
         #region Fields
 
-        private static volatile T _instance;
+        private static T _instance;
         private static object _syncObject = new object();
-
-        #endregion
-
-        #region Events
-
-        public event ManagerInitialisationEventHandler AfterInitialisation;
 
         #endregion
 
@@ -61,14 +54,15 @@ namespace ServerFramework.Singleton
                             ctor = Activator.CreateInstance(typeof(T), BindingFlags.Instance | BindingFlags.NonPublic
                             , null, args, CultureInfo.CurrentCulture);
                         }
-                        catch (Exception)
+                        catch (Exception e)
                         { 
-                            LogManager.Log(LogType.Error, "Error with creating instance of {0} type", typeof(T));
+                            Manager.LogMgr.Log(LogType.Error, "Error with creating instance of {0} type", typeof(T));
                             Console.ReadLine();
                             Environment.Exit(0);
                         }
 
                         _instance = ctor as T;
+
                         return _instance;
                     }
                 }
@@ -81,14 +75,10 @@ namespace ServerFramework.Singleton
 
         #region Init
 
-        internal virtual void Init()
-        {
-            if (AfterInitialisation != null)
-                AfterInitialisation(_instance, new EventArgs());
-        }
+		internal abstract void Init();
 
         #endregion
 
-        #endregion       
-    }
+		#endregion
+	}
 }

@@ -17,7 +17,7 @@ using ServerFramework.Configuration;
 using ServerFramework.Constants.Entities.Console.Misc;
 using ServerFramework.Constants.Entities.Session;
 using ServerFramework.Constants.Misc;
-using ServerFramework.Logging;
+using ServerFramework.Managers.Core;
 using ServerFramework.Managers;
 using ServerFramework.Network.Handlers;
 using ServerFramework.Network.Packets;
@@ -78,7 +78,7 @@ namespace ServerFramework.Network.Socket
 
         #region Init
 
-		public void init()
+		public void Init()
         {
             for (int i = 0; i < socketSettings.MaxAcceptOps; i++)
                 this.AcceptPool.Push(
@@ -114,7 +114,6 @@ namespace ServerFramework.Network.Socket
             }
 
             startListen();
-            //base.Init();
         }
 
         #endregion
@@ -134,12 +133,12 @@ namespace ServerFramework.Network.Socket
             }
             catch (SocketException e)
             {
-                LogManager.Log(LogType.Error, "{0}", e.Message);
+                Manager.LogMgr.Log(LogType.Error, "{0}", e.Message);
                 Console.ReadLine();
                 Environment.Exit(0);
             }
 
-            LogManager.Log(LogType.Normal, "Starting listening on {0}:{1}",
+            Manager.LogMgr.Log(LogType.Normal, "Starting listening on {0}:{1}",
                 this.socketSettings.LocalEndPoint.Address,
                 this.socketSettings.LocalEndPoint.Port);
 
@@ -152,7 +151,7 @@ namespace ServerFramework.Network.Socket
 
         private void startAccept()
         {
-            LogManager.Log(LogType.Debug, "Start Accepting connection");
+            Manager.LogMgr.Log(LogType.Debug, "Start Accepting connection");
             SocketAsyncEventArgs acceptEventArgs;
 
             if (this.AcceptPool.Count > 1)
@@ -260,7 +259,7 @@ namespace ServerFramework.Network.Socket
 
             try
             {
-                LogManager.Log(LogType.Normal, "Session {0} ({1}) connected",
+                Manager.LogMgr.Log(LogType.Normal, "Session {0} ({1}) connected",
                     ((UserToken)saea.Receiver.UserToken).SessionId,
                     saea.Receiver.AcceptSocket.RemoteEndPoint);
             }
@@ -402,7 +401,7 @@ namespace ServerFramework.Network.Socket
             if (OnCloseClientSocket != null)
                 OnCloseClientSocket(c, e);
 
-            LogManager.Log(LogType.Normal, "Session {0} quit", ((UserToken)e.UserToken).SessionId);
+            Manager.LogMgr.Log(LogType.Normal, "Session {0} quit", ((UserToken)e.UserToken).SessionId);
 
             c.Saea.Disconnect(SocketShutdown.Both);
 

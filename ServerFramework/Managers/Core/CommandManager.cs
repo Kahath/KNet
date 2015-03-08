@@ -13,12 +13,13 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using DatabaseFramework.Database.Base;
 using ServerFramework.Constants.Attributes;
 using ServerFramework.Constants.Entities.Console;
 using ServerFramework.Constants.Misc;
 using ServerFramework.Database;
-using ServerFramework.Logging;
-using ServerFramework.Singleton;
+using ServerFramework.Database.DataAccessLayer;
+using ServerFramework.Managers.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,31 +27,14 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace ServerFramework.Managers
+namespace ServerFramework.Managers.Core
 {
-    public sealed class CommandManager : SingletonBase<CommandManager>
+    public sealed class CommandManager : CommandManagerBase<CommandManager>
     {
-        #region Fields
-
-        private List<Command> _commandTable;
-
-        #endregion
-
-        #region Properties
-
-        internal List<Command> CommandTable
-        {
-            get { return _commandTable; }
-            set { _commandTable = value; }
-        }
-
-        #endregion
-
         #region Constructor
 
         CommandManager()
         {
-            CommandTable = new List<Command>();
             Init();
         }
 
@@ -87,32 +71,32 @@ namespace ServerFramework.Managers
                 }
             }
 
-            LogManager.Log(LogType.Normal, "{0} Commands loaded", CommandTable.Count);
+            Manager.LogMgr.Log(LogType.Normal, "{0} Commands loaded", CommandTable.Count);
 
             _loadCommandDescriptions();
-
-            base.Init();
         }
 
         #endregion
 
         #region InvokeCommand
 
-        public bool InvokeCommand(string command)
+        public override bool InvokeCommand(string command)
         {
+			bool retVal = false;
+
             string com = Regex.Replace(command, @"\s+", " ").Trim();
             if(com != "")
-                return _invokeCommandHandler(_commandTable.ToArray()
+                retVal = _invokeCommandHandler(CommandTable.ToArray()
                     , com.Split(' ').ToList(), string.Empty);
 
-            return false;
+            return retVal;
         }
 
         #endregion
 
         #region _invokeCommandHandler
 
-        private bool _invokeCommandHandler(Command[] commandTable,
+		protected override bool _invokeCommandHandler(Command[] commandTable,
             List<string> command, string path)
         {
             if (commandTable == null || command == null)
@@ -135,7 +119,7 @@ namespace ServerFramework.Managers
                         }
                         else
                         {
-                            LogManager.Log(LogType.Command, "Error with '{0}' command."
+                            Manager.LogMgr.Log(LogType.Command, "Error with '{0}' command."
                                 + " Available sub commands:\n{2}", path, _availableSubCommands(c));
 
                             return false;
@@ -143,7 +127,7 @@ namespace ServerFramework.Managers
                     }
                     else
                     {
-                        LogManager.Log(LogType.Command, "Error with '{0}' command."
+                        Manager.LogMgr.Log(LogType.Command, "Error with '{0}' command."
                             + " Missing script or subcommands", path);
                         return false;
                     }
@@ -158,13 +142,13 @@ namespace ServerFramework.Managers
                     }
                     catch (IndexOutOfRangeException)
                     {
-                        LogManager.Log(LogType.Error, "Error with '{0}' command. wrong arguments"
+                        Manager.LogMgr.Log(LogType.Error, "Error with '{0}' command. wrong arguments"
                             , path);
                         return false;
                     }
                     catch (Exception)
                     {
-                        LogManager.Log(LogType.Error, "Error with '{0}' command. Failed to execute handler"
+                        Manager.LogMgr.Log(LogType.Error, "Error with '{0}' command. Failed to execute handler"
                             , path);
                         return false;
                     }
@@ -172,7 +156,7 @@ namespace ServerFramework.Managers
             }
 
             path += command[0];
-            LogManager.Log(LogType.Command, "Command '{0}' not found", path);
+            Manager.LogMgr.Log(LogType.Command, "Command '{0}' not found", path);
             return false;
         }
 
@@ -180,7 +164,7 @@ namespace ServerFramework.Managers
 
         #region _availableSubCommands
 
-        private string _availableSubCommands(Command c)
+		protected override string _availableSubCommands(Command c)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -199,31 +183,32 @@ namespace ServerFramework.Managers
 
         #region _loadCommandDescriptions
 
-        private void _loadCommandDescriptions()
+		protected override void _loadCommandDescriptions()
         {
             Command c = null;
 
-            using (SqlResult res = DB.Application.Select("SELECT * FROM `command`"))
-            {
-                for(int i = 0; i < res.Count; i++)
-                {
-                    c = _getCommand(CommandTable.ToArray()
-                        , res.Read<string>(i, "name").Split(' ').ToList());
+			ResultBase<CommandDataObject> result 
+				= DatabaseManager.GetCollection<CommandDataObject>(DB.Application, "`Command.Search`");
 
-                    if (c != null)
-                    {
-                        c.CommandLevel = (CommandLevel)res.Read<ushort>(i, "commandlevel");
-                        c.Description = res.Read<string>(i, "description");
-                    }
-                }
-            }
+			foreach(CommandDataObject cdo in result)
+			{
+				c = _getCommand(CommandTable.ToArray()
+					, cdo.Name.Split(' ').ToList());
+
+				if (c != null)
+				{
+					c.CommandLevel = (CommandLevel)cdo.CommandLevel;
+					c.Description = cdo.Name;
+				}
+
+			}
         }
 
         #endregion
 
         #region _getCommand
 
-        private Command _getCommand(Command[] commandTable, List<string> command)
+		protected override Command _getCommand(Command[] commandTable, List<string> command)
         {
             if (commandTable == null || command == null)
                 return null;

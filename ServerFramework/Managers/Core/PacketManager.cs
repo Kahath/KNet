@@ -16,45 +16,16 @@
 using ServerFramework.Configuration;
 using ServerFramework.Constants.Attributes;
 using ServerFramework.Constants.Misc;
-using ServerFramework.Logging;
+using ServerFramework.Managers.Base;
 using ServerFramework.Network.Packets;
-using ServerFramework.Singleton;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace ServerFramework.Managers
+namespace ServerFramework.Managers.Core
 {
-    internal sealed class PacketManager : SingletonBase<PacketManager>
+    public sealed class PacketManager : PacketManagerBase<PacketManager>
     {
-        #region Fields
-
-        private Dictionary<ushort, PacketHandler> _packetHandlers 
-            = new Dictionary<ushort, PacketHandler>();
-
-        #endregion
-
-        #region Properties
-
-        internal Dictionary<ushort, PacketHandler> PacketHandlers 
-        {
-            get { return _packetHandlers; }
-            set { _packetHandlers = value; }
-        }
-
-        public int PacketHandlersCount
-        {
-            get { return _packetHandlers.Count; }
-        }
-
-        #endregion
-
-        #region Events
-
-        public event PacketManagerInvokeEventHandler BeforePacketInvoke;
-
-        #endregion
-
         #region Constructor
 
         PacketManager()
@@ -104,19 +75,16 @@ namespace ServerFramework.Managers
                     typeof(PacketHandler), keyval.Value) as PacketHandler;
             }
 
-            LogManager.Log(LogType.Normal, "{0} packet handlers loaded", PacketHandlersCount);
-
-            base.Init();
+            Manager.LogMgr.Log(LogType.Normal, "{0} packet handlers loaded", PacketHandlersCount);
         }
 
         #endregion
 
         #region InvokeHandler
 
-        internal void InvokeHandler(Packet packet)
+        internal override void InvokeHandler(Packet packet)
         {
-            if (BeforePacketInvoke != null)
-                BeforePacketInvoke(packet, new EventArgs());
+			BeforePacketInvokeEvent(packet);
 
             if (PacketHandlers.ContainsKey(packet.Header.Opcode))
             {
@@ -133,21 +101,21 @@ namespace ServerFramework.Managers
 
                     if (attr != null)
                     {
-                        LogManager.Log(LogType.Error, "Error with '0x{0:X}' opcode"
+                        Manager.LogMgr.Log(LogType.Error, "Error with '0x{0:X}' opcode"
                             + " authored by '{1}' using version '{2}' and type '{3}'"
                             , attr.Opcode, attr.Author, attr.Version, attr.Type);
 
-                        LogManager.Log(LogType.Error, "Packet size: {0}"
+                        Manager.LogMgr.Log(LogType.Error, "Packet size: {0}"
                             , packet.Header.Size);
-                        LogManager.Log(LogType.Error, "Packet opcode: {0:X}"
+                        Manager.LogMgr.Log(LogType.Error, "Packet opcode: {0:X}"
                             , packet.Header.Opcode);
-                        LogManager.Log(LogType.Error, "Packet content: {0}"
+                        Manager.LogMgr.Log(LogType.Error, "Packet content: {0}"
                             , BitConverter.ToString(packet.Message));
                     }
                 }
             }
             else
-                LogManager.Log(LogType.Error, "Opcode 0x{0:X} doesn't have handler", packet.Header.Opcode);
+                Manager.LogMgr.Log(LogType.Error, "Opcode 0x{0:X} doesn't have handler", packet.Header.Opcode);
         }
 
         #endregion

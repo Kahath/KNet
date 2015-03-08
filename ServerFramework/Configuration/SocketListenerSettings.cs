@@ -31,6 +31,45 @@ namespace ServerFramework.Configuration
 
         #endregion
 
+		#region Properties
+
+		public int MaxConnections
+		{
+			get { return _maxConnections; }
+		}
+
+		public int NumberOfSaeaForRecSend
+		{
+			get { return _numberOfSaeaForRecSend; }
+		}
+
+		public int Backlog
+		{
+			get { return _backlog; }
+		}
+
+		public int MaxAcceptOps
+		{
+			get { return _maxSimultaneousAcceptOps; }
+		}
+
+		public int HeaderLength
+		{
+			get { return _headerLength; }
+		}
+
+		public int BufferSize
+		{
+			get { return _bufferSize; }
+		}
+
+		public IPEndPoint LocalEndPoint
+		{
+			get { return _localEndPoint; }
+		}
+
+		#endregion   
+
         #region Constructors
 
         /// <summary>
@@ -46,54 +85,15 @@ namespace ServerFramework.Configuration
             int maxAcceptOps, int bufferSize,
             int headerLength, IPEndPoint localEndPoint)
         {
-            this._maxConnections = maxConnections;
-            this._numberOfSaeaForRecSend = maxConnections;
-            this._backlog = backlog;
-            this._maxSimultaneousAcceptOps = maxAcceptOps;
-            this._bufferSize = bufferSize;
-            this._headerLength = headerLength;
-            this._localEndPoint = localEndPoint;
+            _maxConnections = maxConnections;
+            _numberOfSaeaForRecSend = maxConnections;
+            _backlog = backlog;
+            _maxSimultaneousAcceptOps = maxAcceptOps;
+            _bufferSize = bufferSize;
+            _headerLength = headerLength;
+            _localEndPoint = localEndPoint;
         }
 
-        #endregion
-
-        #region Properties
-
-        public int MaxConnections
-        {
-            get { return this._maxConnections; }
-        }
-
-        public int NumberOfSaeaForRecSend
-        {
-            get { return this._numberOfSaeaForRecSend; }
-        }
-
-        public int Backlog
-        {
-            get { return this._backlog; }
-        }
-
-        public int MaxAcceptOps
-        {
-            get { return this._maxSimultaneousAcceptOps; }
-        }
-
-        public int HeaderLength
-        {
-            get { return this._headerLength; }
-        }
-
-        public int BufferSize
-        {
-            get { return this._bufferSize; }
-        }
-
-        public IPEndPoint LocalEndPoint
-        {
-            get { return this._localEndPoint; }
-        }    
-
-        #endregion   
+        #endregion      
     }
 }

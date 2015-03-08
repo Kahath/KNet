@@ -16,9 +16,8 @@
 using ServerFramework.Configuration;
 using ServerFramework.Constants.Entities.Session;
 using ServerFramework.Constants.Misc;
-using ServerFramework.Managers;
+using ServerFramework.Managers.Base;
 using ServerFramework.Network.Packets;
-using ServerFramework.Singleton;
 using System;
 using System.Collections.Concurrent;
 using System.IO;
@@ -26,41 +25,10 @@ using System.Text;
 using System.Threading;
 using System.Xml;
 
-namespace ServerFramework.Logging.Packets
+namespace ServerFramework.Managers.Core
 {
-    public class PacketLogManager : SingletonBase<PacketLogManager>
+    public sealed class PacketLogManager : PacketLogManagerBase<PacketLogManager>
     {
-        #region Fields
-
-        private string _path;
-        private StringBuilder _packetLog;
-        private BlockingCollection<Packet> _packetLogQueue
-            = new BlockingCollection<Packet>();
-
-        #endregion
-
-        #region Properties
-
-        internal string Path
-        {
-            get { return _path; }
-            set { _path = value; }
-        }
-
-        private BlockingCollection<Packet> PacketLogQueue
-        {
-            get { return _packetLogQueue; }
-            set { _packetLogQueue = value; }
-        }
-
-        private StringBuilder PacketLog
-        {
-            get { return _packetLog; }
-            set { _packetLog = value; }
-        }
-
-        #endregion
-
         #region Constructors
 
         PacketLogManager()
@@ -89,8 +57,6 @@ namespace ServerFramework.Logging.Packets
                 File.Create(this.Path);
             }
 
-            base.Init();
-
             Thread logThread = new Thread(() =>
             {
                 while (true)
@@ -112,7 +78,7 @@ namespace ServerFramework.Logging.Packets
 
         #region LogPacket
 
-        private async void LogPacket(Packet packet)
+        protected override async void LogPacket(Packet packet)
         {
             PacketLogType logtype = packet.Stream is BinaryReader ? PacketLogType.CMSG : PacketLogType.SMSG;
 
@@ -161,7 +127,7 @@ namespace ServerFramework.Logging.Packets
 
         #region Log
 
-        internal void Log(Packet packet)
+		internal override void Log(Packet packet)
         {
             PacketLogQueue.Add(packet);
         }

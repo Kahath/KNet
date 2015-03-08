@@ -16,7 +16,7 @@
 using ServerFramework.Constants.Attributes;
 using ServerFramework.Constants.Entities.Console;
 using ServerFramework.Constants.Misc;
-using ServerFramework.Logging;
+using ServerFramework.Managers.Core;
 using ServerFramework.Managers;
 using System;
 using System.Collections.Generic;
@@ -65,20 +65,20 @@ namespace ServerFramework.Game.CommandHandlers
 
                 if (c.SubCommands != null)
                 {
-                    LogManager.Log(LogType.Command, "Available sub commands for '{0}' command:", path);
-                    LogManager.Log(LogType.Command, "{0}", _availableSubCommands(c, path));
+                    Manager.LogMgr.Log(LogType.Command, "Available sub commands for '{0}' command:", path);
+                    Manager.LogMgr.Log(LogType.Command, "{0}", _availableSubCommands(c, path));
                     return true;
                 }
                 else
                 {
                     if (c.Description != null && c.Description != "")
                     {
-                        LogManager.Log(LogType.Command, "{0}", c.Description);
+                        Manager.LogMgr.Log(LogType.Command, "{0}", c.Description);
                         return true;
                     }
                     else
                     {
-                        LogManager.Log(LogType.Command, "Command '{0}' is missing description", path);
+                        Manager.LogMgr.Log(LogType.Command, "Command '{0}' is missing description", path);
                         return true;
                     }
                 }    
@@ -86,7 +86,7 @@ namespace ServerFramework.Game.CommandHandlers
 
             path += command[0];
 
-            LogManager.Log(LogType.Command, "Command '{0}' not found", path);
+            Manager.LogMgr.Log(LogType.Command, "Command '{0}' not found", path);
             return false;
         }
 

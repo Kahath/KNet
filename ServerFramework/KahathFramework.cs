@@ -13,11 +13,12 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using DILibrary.Constants;
 using DILibrary.DependencyInjection;
 using ServerFramework.Configuration;
 using ServerFramework.Constants.Misc;
 using ServerFramework.Database;
-using ServerFramework.Logging;
+using ServerFramework.Managers.Core;
 using ServerFramework.Managers;
 using ServerFramework.Network.Packets;
 using ServerFramework.Network.Socket;
@@ -42,15 +43,22 @@ namespace ServerFramework
     {
         #region Fields
 
-        private SocketListenerSettings _socketSettings;
+        private static SocketListenerSettings _socketSettings;
+		private static Server _server;
 
         #endregion
 
         #region Properties
 
-		public Server Server
+		public static Server Server
         {
-			get { return new Server(_socketSettings); }
+			get 
+			{
+				if (_server == null)
+					_server = new Server(_socketSettings);
+
+				return _server;
+			}
         }
 
         #endregion
@@ -63,6 +71,7 @@ namespace ServerFramework
 			DependencyManager.Map(typeof(IServer), typeof(ServerInject));
 
             ServerConfig.Init();
+			Manager.LogMgr = LogManager.GetInstance();
 
             _socketSettings = new SocketListenerSettings
 				(
@@ -78,29 +87,28 @@ namespace ServerFramework
 						)
 				);
 
-            LogManager.Init();
-
             Console.WriteLine();
-            LogManager.Log(LogType.Cmd, "Configuration");
-            LogManager.Log(LogType.Cmd, "Bind IP: {0}", ServerConfig.BindIP);
-            LogManager.Log(LogType.Cmd, "Bind port: {0}", ServerConfig.BindPort);
-            LogManager.Log(LogType.Cmd, "Console log level: {0}", ServerConfig.LogLevel);
-            LogManager.Log(LogType.Cmd, "Packet log level: {0}", ServerConfig.PacketLogLevel);
-            LogManager.Log(LogType.Cmd, "Opcode allow level: {0}", ServerConfig.OpcodeAllowLevel);
-            LogManager.Log(LogType.Cmd, "Buffer size: {0}", ServerConfig.BufferSize);
-            LogManager.Log(LogType.Cmd, "Maximum connections: {0}", ServerConfig.MaxConnections);
-            LogManager.Log(LogType.Cmd, "Maximum sockets for accept: {0}", ServerConfig.MaxSimultaneousAcceptOps);
-            LogManager.Log(LogType.Cmd, "Backlog: {0}", ServerConfig.Backlog);
-            LogManager.Log(LogType.Cmd, "Packet header length: {0}", ServerConfig.HeaderLength);
-            LogManager.Log(LogType.Cmd, "Database host name: {0}", ServerConfig.DBHost);
-            LogManager.Log(LogType.Cmd, "Database port: {0}", ServerConfig.DBPort);
-            LogManager.Log(LogType.Cmd, "Database username: {0}", ServerConfig.DBUser);
-            LogManager.Log(LogType.Cmd, "Database password: {0}", ServerConfig.DBPass);
-            LogManager.Log(LogType.Cmd, "Database name: {0}", ServerConfig.DBName);
+            Manager.LogMgr.Log(LogType.Cmd, "Configuration");
+            Manager.LogMgr.Log(LogType.Cmd, "Bind IP: {0}", ServerConfig.BindIP);
+            Manager.LogMgr.Log(LogType.Cmd, "Bind port: {0}", ServerConfig.BindPort);
+            Manager.LogMgr.Log(LogType.Cmd, "Console log level: {0}", ServerConfig.LogLevel);
+            Manager.LogMgr.Log(LogType.Cmd, "Packet log level: {0}", ServerConfig.PacketLogLevel);
+            Manager.LogMgr.Log(LogType.Cmd, "Opcode allow level: {0}", ServerConfig.OpcodeAllowLevel);
+            Manager.LogMgr.Log(LogType.Cmd, "Buffer size: {0}", ServerConfig.BufferSize);
+            Manager.LogMgr.Log(LogType.Cmd, "Maximum connections: {0}", ServerConfig.MaxConnections);
+            Manager.LogMgr.Log(LogType.Cmd, "Maximum sockets for accept: {0}", ServerConfig.MaxSimultaneousAcceptOps);
+            Manager.LogMgr.Log(LogType.Cmd, "Backlog: {0}", ServerConfig.Backlog);
+            Manager.LogMgr.Log(LogType.Cmd, "Packet header length: {0}", ServerConfig.HeaderLength);
+            Manager.LogMgr.Log(LogType.Cmd, "Database host name: {0}", ServerConfig.DBHost);
+            Manager.LogMgr.Log(LogType.Cmd, "Database port: {0}", ServerConfig.DBPort);
+            Manager.LogMgr.Log(LogType.Cmd, "Database username: {0}", ServerConfig.DBUser);
+            Manager.LogMgr.Log(LogType.Cmd, "Database password: {0}", ServerConfig.DBPass);
+            Manager.LogMgr.Log(LogType.Cmd, "Database name: {0}", ServerConfig.DBName);
             Console.WriteLine();
 
-            LogManager.Log(LogType.Init, "Initialising application database connection.");
-            DB.Application.Init
+            Manager.LogMgr.Log(LogType.Init, "Initialising application database connection.");
+			
+			DB.Application.Init
 				(
 					ServerConfig.DBHost
 				,	ServerConfig.DBUser
@@ -109,10 +117,12 @@ namespace ServerFramework
 				,	ServerConfig.DBName
 				);
 
-            LogManager.Log(LogType.Init, "Initialising managers.");
+			//Manager.DatabaseMgr = DatabaseManager.GetInstance();
+
+            Manager.LogMgr.Log(LogType.Init, "Initialising managers.");
             Manager.Init();
 
-            LogManager.Log(LogType.Init, "Initialising server!");
+            Manager.LogMgr.Log(LogType.Init, "Initialising server!");
         }
 
 
@@ -120,6 +130,8 @@ namespace ServerFramework
         #endregion 
 
 		#region Methods
+
+		#region Start
 
 		public void Start()
 		{
@@ -132,9 +144,11 @@ namespace ServerFramework
 				if (command != null)
 					Manager.CommandMgr.InvokeCommand(command.ToLower());
 				else
-					LogManager.Log(LogType.Command, "Wrong input");
+					Manager.LogMgr.Log(LogType.Command, "Wrong input");
 			}
 		}
+
+		#endregion
 
 		#endregion
 	}

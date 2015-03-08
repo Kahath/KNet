@@ -20,25 +20,61 @@ namespace ServerFramework.Constants.Attributes
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple=true)]
     public sealed class OpcodeAttribute : Attribute
-    {
-        public ushort Opcode;
-        public string Author;
-        public int Version;
-        public OpcodeType Type;
+	{
+		#region Fields
 
-        /// <summary>
-        /// Attribute used for reading opcodes.
-        /// </summary>
-        /// <param name="opcode">Client packet opcode</param>
-        /// <param name="author">Author of method</param>
-        /// <param name="version">Version of method</param>
-        /// <param name="type">Opcode type</param>
-        public OpcodeAttribute(ushort opcode, string author, int version, OpcodeType type)
-        {
-            this.Opcode = opcode;
-            this.Author = author;
-            this.Version = version;
-            this.Type = type;
-        }
+		private ushort _opcode;
+		private string _author;
+		private int _version;
+		private OpcodeType _type;
+
+		#endregion
+
+		#region Properties
+
+		public ushort Opcode
+		{
+			get { return _opcode; }
+			set { _opcode = value; }
+		}
+
+		public string Author
+		{
+			get { return _author; }
+			set { _author = value; }
+		}
+
+		public int Version
+		{
+			get { return _version; }
+			set { _version = value; }
+		}
+
+		public OpcodeType Type
+		{
+			get { return _type; }
+			set { _type = value; }
+		}
+
+		#endregion
+
+		#region Constructors
+
+		/// <summary>
+		/// Attribute used for reading opcodes.
+		/// </summary>
+		/// <param name="opcode">Client packet opcode</param>
+		/// <param name="author">Author of method</param>
+		/// <param name="version">Version of method</param>
+		/// <param name="type">Opcode type</param>
+		public OpcodeAttribute(ushort opcode, string author, int version, OpcodeType type)
+		{
+			this.Opcode = opcode;
+			this.Author = author;
+			this.Version = version;
+			this.Type = type;
+		}
+
+		#endregion
     }
 }

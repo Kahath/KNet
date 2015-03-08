@@ -13,31 +13,37 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using ServerFramework.Configuration;
-using ServerFramework.Database.Providers;
-namespace ServerFramework.Database
+using ServerFramework.Constants.Misc;
+using System;
+using System.Collections.Concurrent;
+
+namespace ServerFramework.Managers.Base
 {
-    internal static class DB
+	public abstract class LogManagerBase<T> : ManagerBase<T> where T : class
 	{
 		#region Fields
 
-		private static ApplicationProvider _application;
+		private static BlockingCollection<Tuple<ConsoleColor, string>> _consoleLogQueue
+			= new BlockingCollection<Tuple<ConsoleColor, string>>();
 
 		#endregion
 
 		#region Properties
 
-		internal static ApplicationProvider Application
+		protected static BlockingCollection<Tuple<ConsoleColor, string>> ConsoleLogQueue
 		{
-			get
-			{
-				if (_application == null)
-					_application = new ApplicationProvider();
-
-				return _application;
-			}
+			get { return _consoleLogQueue; }
+			set { _consoleLogQueue = value; }
 		}
 
 		#endregion
-    }
+
+		#region Methods
+
+		protected abstract void Message(LogType type, string message, params object[] args);
+		public abstract void Log(LogType type, string message, params object[] args);
+
+		#endregion
+
+	}
 }

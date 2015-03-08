@@ -23,13 +23,23 @@ namespace ServerFramework.Configuration
     {
         #region Fields
 
-        XmlNodeList nodes;
+        private XmlNodeList _nodes;
 
         #endregion
 
-        #region Constructor
+		#region Properties
 
-        /// <summary>
+		private XmlNodeList Nodes
+		{
+			get { return _nodes; }
+			set { _nodes = value; }
+		}
+
+		#endregion
+
+		#region Constructor
+
+		/// <summary>
         /// Provides configuration
         /// </summary>
         /// <param name="path">Path to configuration file</param>
@@ -42,7 +52,7 @@ namespace ServerFramework.Configuration
 
             XmlDocument doc = new XmlDocument();
             doc.Load(path);
-            nodes = doc.DocumentElement.ChildNodes;
+			Nodes = doc.DocumentElement.ChildNodes;
         }
 
         #endregion
@@ -65,7 +75,7 @@ namespace ServerFramework.Configuration
 
             try
             {
-                foreach (XmlNode node in nodes)
+				foreach (XmlNode node in Nodes)
                 {
                     if (node.NodeType != XmlNodeType.Comment)
                     {

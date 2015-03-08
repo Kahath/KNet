@@ -23,7 +23,7 @@ namespace ServerFramework.Configuration
 		#region Constructors
 
 		public Config(string path)
-			: base(ResolveTypes.Transient, path)
+			: base(ResolveType.Transient, path)
 		{
 
 		}
@@ -32,10 +32,14 @@ namespace ServerFramework.Configuration
 
 		#region Methods
 
+		#region Read
+
 		public T Read<T>(string config, bool hex = false)
 		{
-			return instance.Read<T>(config, hex);
+			return Instance.Read<T>(config, hex);
 		}
+
+		#endregion
 
 		#endregion
     }

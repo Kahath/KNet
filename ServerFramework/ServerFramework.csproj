@@ -30,13 +30,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DatabaseFramework">
+      <HintPath>..\DatabaseFramework\bin\Debug\DatabaseFramework.dll</HintPath>
+    </Reference>
     <Reference Include="DILibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Libs\DILibrary.dll</HintPath>
-    </Reference>
-    <Reference Include="MySql.Data, Version=6.9.5.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\MySql.Data.6.9.5\lib\net45\MySql.Data.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -58,23 +57,28 @@
     <Compile Include="Constants\Misc\OpcodeType.cs" />
     <Compile Include="Constants\Misc\PacketLogType.cs" />
     <Compile Include="Constants\Entities\Session\Client.cs" />
+    <Compile Include="Database\DataAccessLayer\CommandDataObject.cs" />
     <Compile Include="Database\DB.cs" />
-    <Compile Include="Database\MySqlBase.cs" />
-    <Compile Include="Database\SqlResult.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Database\Providers\ApplicationProvider.cs" />
     <Compile Include="Game\CommandHandlers\ClearCommands.cs" />
     <Compile Include="Game\CommandHandlers\CommandCommands.cs" />
     <Compile Include="Game\CommandHandlers\HelpCommands.cs" />
     <Compile Include="KahathFramework.cs" />
-    <Compile Include="Logging\LogManager.cs" />
+    <Compile Include="Managers\Base\LogManagerBase.cs" />
+    <Compile Include="Managers\Base\PacketLogManagerBase.cs" />
+    <Compile Include="Managers\Core\LogManager.cs" />
     <Compile Include="Constants\Misc\LogType.cs" />
-    <Compile Include="Logging\Packets\PacketLogManager.cs" />
-    <Compile Include="Managers\BufferManager.cs" />
-    <Compile Include="Managers\CommandManager.cs" />
+    <Compile Include="Managers\Core\PacketLogManager.cs" />
+    <Compile Include="Managers\Base\BufferManagerBase.cs" />
+    <Compile Include="Managers\Base\CommandManagerBase.cs" />
+    <Compile Include="Managers\Base\ManagerBase.cs" />
+    <Compile Include="Managers\Base\PacketManagerBase.cs" />
+    <Compile Include="Managers\Base\SessionManagerBase.cs" />
+    <Compile Include="Managers\Core\BufferManager.cs" />
+    <Compile Include="Managers\Core\CommandManager.cs" />
     <Compile Include="Managers\Manager.cs" />
-    <Compile Include="Managers\PacketManager.cs" />
-    <Compile Include="Managers\SessionManager.cs" />
+    <Compile Include="Managers\Core\PacketManager.cs" />
+    <Compile Include="Managers\Core\SessionManager.cs" />
     <Compile Include="Network\Packets\Handlers\ExampleHandler.cs" />
     <Compile Include="Network\Packets\Packet.cs" />
     <Compile Include="Network\Packets\UserToken.cs" />
@@ -98,8 +102,6 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Libs\DILibrary.dll" />
-    <None Include="app.config" />
-    <None Include="packages.config" />
     <None Include="Sql\command.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

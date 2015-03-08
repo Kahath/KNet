@@ -24,8 +24,8 @@ namespace ServerFramework.Network.Socket
 	{
 		#region Constructors
 
-		public Server(SocketListenerSettings socketSettings = null)
-			: base(ResolveTypes.Singleton, socketSettings)
+		public Server(SocketListenerSettings socketSettings)
+			: base(ResolveType.Singleton, socketSettings)
 		{
 
 		}
@@ -36,31 +36,38 @@ namespace ServerFramework.Network.Socket
 
 		public event ServerEventHandler OnCloseClientSocket
 		{
-			add { instance.OnCloseClientSocket += value; }
-			remove { instance.OnCloseClientSocket -= value; }
+			add { Instance.OnCloseClientSocket += value; }
+			remove { Instance.OnCloseClientSocket -= value; }
 		}
 
 		public event ServerEventHandler OnConnect
 		{
-			add { instance.OnConnect += value; }
-			remove { instance.OnConnect -= value; }
+			add { Instance.OnConnect += value; }
+			remove { Instance.OnConnect -= value; }
 		}
 
 		#endregion
 
 		#region Methods
 
+		#region Init
+
 		internal void Init()
 		{
-			instance.init();
-		}
-
-		internal void Send(SocketAsyncEventArgs e)
-		{
-			instance.Send(e);
+			Instance.Init();
 		}
 
 		#endregion
 
+		#region Send
+
+		internal void Send(SocketAsyncEventArgs e)
+		{
+			Instance.Send(e);
+		}
+
+		#endregion
+
+		#endregion
 	}
 }

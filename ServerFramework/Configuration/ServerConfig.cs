@@ -17,61 +17,171 @@ using ServerFramework.Constants.Misc;
 
 namespace ServerFramework.Configuration
 {
-    internal class ServerConfig
+    internal static class ServerConfig
     {
         #region Fields
 
-        private static Config config;
+        private static Config _config;
+	
+        private static string _bindIp;
+        private static int _bindPort;
 
-        internal static string BindIP;
-        internal static int BindPort;
+        private static LogType _logLevel;
+        private static PacketLogType _packetLogLevel;
+        private static OpcodeType _opcodeAllowLevel;
+        private static byte _packetLogSize;
 
-        internal static LogType LogLevel;
-        internal static PacketLogType PacketLogLevel;
-        internal static OpcodeType OpcodeAllowLevel;
-        internal static byte PacketLogSize;
+        private static int _bufferSize;
+        private static int _maxConnections;
+        private static int _maxSimultaneousAcceptOps;
+        private static int _backlog;
+        private static int _headerLength;
 
-        internal static int BufferSize;
-        internal static int MaxConnections;
-        internal static int MaxSimultaneousAcceptOps;
-        internal static int Backlog;
-        internal static int HeaderLength;
-
-        internal static string DBHost;
-        internal static int DBPort;
-        internal static string DBUser;
-        internal static string DBPass;
-        internal static string DBName;
+        private static string _dbHost;
+        private static int _dbPort;
+        private static string _dbUser;
+        private static string _dbPass;
+        private static string _dbName;
 
         #endregion 
 
-        #region Methods
+		#region Properties
 
-        internal static void Init()
-        {
-            config						= new Config("ServerConfig.xml");
+		private static Config Config
+		{
+			get { return _config; }
+			set { _config = value; }
+		}
 
-            BindIP                      = config.Read<string>("bindip");
-            BindPort		            = config.Read<int>("bindport");
+		internal static string BindIP
+		{
+			get { return _bindIp; }
+			set { _bindIp = value; }
+		}
 
-            LogLevel                    = (LogType)config.Read<byte>("loglevel", true);
-            PacketLogLevel              = (PacketLogType)config.Read<byte>("packetloglevel", true);
-            OpcodeAllowLevel            = (OpcodeType)config.Read<byte>("opcodeallowlevel", true);
-            PacketLogSize               = config.Read<byte>("packetlogsize");
+		internal static int BindPort
+		{
+			get { return _bindPort; }
+			set { _bindPort = value; }
+		}
 
-            BufferSize                  = config.Read<int>("buffersize");
-            MaxConnections              = config.Read<int>("maxconnections");
-            MaxSimultaneousAcceptOps    = config.Read<int>("maxsimultaneousacceptops");
-            Backlog                     = config.Read<int>("backlog");
-            HeaderLength                = 4;
+		internal static LogType LogLevel
+		{
+			get { return _logLevel; }
+			set { _logLevel = value; }
+		}
 
-            DBHost                      = config.Read<string>("dbhost");
-            DBPort                      = config.Read<int>("dbport");
-            DBUser                      = config.Read<string>("dbuser");
-            DBPass                      = config.Read<string>("dbpass");
-            DBName                      = config.Read<string>("dbname");
-        }
+		internal static PacketLogType PacketLogLevel
+		{
+			get { return _packetLogLevel; }
+			set { _packetLogLevel = value; }
+		}
 
+		internal static OpcodeType OpcodeAllowLevel
+		{
+			get { return _opcodeAllowLevel; }
+			set { _opcodeAllowLevel = value; }
+		}
+
+		internal static byte PacketLogSize
+		{
+			get { return _packetLogSize; }
+			set { _packetLogSize = value; }
+		}
+
+		internal static int BufferSize
+		{
+			get { return _bufferSize; }
+			set { _bufferSize = value; }
+		}
+
+		internal static int MaxConnections
+		{
+			get { return _maxConnections; }
+			set { _maxConnections = value; }
+		}
+
+		internal static int MaxSimultaneousAcceptOps
+		{
+			get { return _maxSimultaneousAcceptOps; }
+			set { _maxSimultaneousAcceptOps = value; }
+		}
+
+		internal static int Backlog
+		{
+			get { return _backlog; }
+			set { _backlog = value; }
+		}
+
+		internal static int HeaderLength
+		{
+			get { return _headerLength; }
+			set { _headerLength = value; }
+		}
+
+		internal static string DBHost
+		{
+			get { return _dbHost; }
+			set { _dbHost = value; }
+		}
+
+		internal static int DBPort
+		{
+			get { return _dbPort; }
+			set { _dbPort = value; }
+		}
+
+		internal static string DBUser
+		{
+			get { return _dbUser; }
+			set { _dbUser = value; }
+		}
+
+		internal static string DBPass
+		{
+			get { return _dbPass; }
+			set { _dbPass = value; }
+		}
+
+		internal static string DBName
+		{
+			get { return _dbName; }
+			set { _dbName = value; }
+		}
+
+		#endregion
+
+		#region Methods
+
+		#region Init
+
+		internal static void Init()
+		{
+			Config = new Config("ServerConfig.xml");
+
+			BindIP = Config.Read<string>("bindip");
+			BindPort = Config.Read<int>("bindport");
+
+			LogLevel = (LogType)Config.Read<byte>("loglevel", true);
+			PacketLogLevel = (PacketLogType)Config.Read<byte>("packetloglevel", true);
+			OpcodeAllowLevel = (OpcodeType)Config.Read<byte>("opcodeallowlevel", true);
+			PacketLogSize = Config.Read<byte>("packetlogsize");
+
+			BufferSize = Config.Read<int>("buffersize");
+			MaxConnections = Config.Read<int>("maxconnections");
+			MaxSimultaneousAcceptOps = Config.Read<int>("maxsimultaneousacceptops");
+			Backlog = Config.Read<int>("backlog");
+			HeaderLength = 4;
+
+			DBHost = Config.Read<string>("dbhost");
+			DBPort = Config.Read<int>("dbport");
+			DBUser = Config.Read<string>("dbuser");
+			DBPass = Config.Read<string>("dbpass");
+			DBName = Config.Read<string>("dbname");
+		}
+
+		#endregion
+		
         #endregion      
     }
 }

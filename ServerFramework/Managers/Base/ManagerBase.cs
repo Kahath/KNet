@@ -13,18 +13,13 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace ServerFramework.Constants.Entities.Session
+using ServerFramework.Singleton;
+using System;
+
+namespace ServerFramework.Managers.Base
 {
-    public interface IClient
+	public abstract class ManagerBase<T> : SingletonBase<T> where T : class
 	{
-		#region Properties
-
-		int SessionId
-		{
-			get;
-			set;
-		}
-
-		#endregion
-    }
+		
+	}
 }

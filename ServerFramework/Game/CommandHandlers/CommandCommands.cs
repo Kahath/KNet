@@ -16,7 +16,7 @@
 using ServerFramework.Constants.Attributes;
 using ServerFramework.Constants.Entities.Console;
 using ServerFramework.Constants.Misc;
-using ServerFramework.Logging;
+using ServerFramework.Managers.Core;
 using ServerFramework.Managers;
 
 namespace ServerFramework.Game.CommandHandlers
@@ -49,14 +49,14 @@ namespace ServerFramework.Game.CommandHandlers
 
         private static bool CommandListHandler(params string[] args)
         {
-            LogManager.Log(LogType.Command, "List of all commands:");
+            Manager.LogMgr.Log(LogType.Command, "List of all commands:");
 
             foreach (Command c in Manager.CommandMgr.CommandTable)
             {
                 if (c.SubCommands != null)
-                    LogManager.Log(LogType.Command, "{0}..", c.Name);
+                    Manager.LogMgr.Log(LogType.Command, "{0}..", c.Name);
                 else
-                    LogManager.Log(LogType.Command, "{0}", c.Name);
+                    Manager.LogMgr.Log(LogType.Command, "{0}", c.Name);
             }
 
             return true;

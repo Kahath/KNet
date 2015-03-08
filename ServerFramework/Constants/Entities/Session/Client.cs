@@ -14,7 +14,8 @@
  */
 
 using ServerFramework.Constants.Misc;
-using ServerFramework.Logging;
+using ServerFramework.Managers;
+using ServerFramework.Managers.Core;
 using ServerFramework.Network.Packets;
 using ServerFramework.Network.Socket;
 using System;
@@ -92,8 +93,8 @@ namespace ServerFramework.Constants.Entities.Session
             token.Finish();
             token.Packet.SessionId = token.SessionId;
 
-            LogManager.Log(LogType.Debug, "Packet Content {0}", BitConverter.ToString(packet.Message));
-			new Server().Send(this.Saea.Sender);
+            Manager.LogMgr.Log(LogType.Debug, "Packet Content {0}", BitConverter.ToString(packet.Message));
+			KahathFramework.Server.Send(this.Saea.Sender);
         }
 
         #endregion

@@ -20,7 +20,11 @@ namespace ServerFramework.Configuration
 	{
 		#region Methods
 
+		#region Read
+
 		T Read<T>(string config, bool hex = false);
+
+		#endregion
 
 		#endregion
     }

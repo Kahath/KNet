@@ -29,7 +29,7 @@ namespace ServerFramework.Network.Socket
 
 		#region Methods
 
-		void init();
+		void Init();
 		void Send(SocketAsyncEventArgs e);
 
 		#endregion
