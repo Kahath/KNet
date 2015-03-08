@@ -15,11 +15,11 @@
 
 using DatabaseFramework.Database.Misc;
 using MySql.Data.MySqlClient;
-using System;
+using System.Data;
 
 namespace DatabaseFramework.Database.Base
 {
-	public abstract class DatabaseProviderBase : IDatabaseProvider
+	public abstract class ConnectionProviderBase : IDatabaseProvider
 	{
 		#region Fields
 
@@ -39,31 +39,42 @@ namespace DatabaseFramework.Database.Base
 		public MySqlConnection Connection
 		{
 			get { return _connection; }
-			set { _connection = value; }
-		}
-
-		#endregion
-
-		#region Constructors
-
-		public DatabaseProviderBase()
-		{
-
 		}
 
 		#endregion
 
 		#region Methods
 
-		public void Init(string host, string user,
-			string pass, int port, string database)
-		{
-			ConnectionString = String.Format("server={0};port={1};database={2};uid={3};pwd={4}"
-				, host, port, database, user, pass);
+		#region Init
 
-			Connection = new MySqlConnection(ConnectionString);
-			Connection.Open();
+		protected void Init()
+		{
+			_connection = new MySqlConnection(ConnectionString);
 		}
+
+		#endregion
+
+		#region Open
+
+		protected void Open()
+		{
+			if(Connection != null && Connection.State != ConnectionState.Open)
+				Connection.Open();
+		}
+
+		#endregion
+
+		#region Close
+
+		protected void Close()
+		{
+			if (Connection != null && Connection.State != ConnectionState.Closed)
+				Connection.Close();
+		}
+
+		#endregion
+
+		#region Dispose
 
 		public void Dispose()
 		{
@@ -72,6 +83,6 @@ namespace DatabaseFramework.Database.Base
 
 		#endregion
 
-
+		#endregion
 	}
 }

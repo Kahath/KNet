@@ -13,17 +13,16 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using DatabaseFramework.Database.Attributes;
-using DatabaseFramework.Database.Core;
+using DatabaseFramework.Database.Helpers;
 using MySql.Data.MySqlClient;
+using MySql.Data.Types;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 
-namespace DatabaseFramework.Database.Base
+namespace DatabaseFramework.Database.Core
 {
-	public class ResultBase<T> : List<T>
+	public sealed class ResultSet<T> : List<T>
 	{
 		#region Fields
 
@@ -48,10 +47,10 @@ namespace DatabaseFramework.Database.Base
 
 		#region Constructors
 
-		public ResultBase()
+		public ResultSet()
 		{
 			_constructor = typeof(T).GetConstructor(Type.EmptyTypes);
-			_properties = GetProperties();
+			_properties =  DALHelpers.GetProperties<T>();
 		}
 
 		#endregion
@@ -73,40 +72,22 @@ namespace DatabaseFramework.Database.Base
 					{
 						try
 						{
-							property.Value.SetValue(result, reader[property.ColumnName]);
+							property.FieldInfo.SetValue(result, reader[property.ColumnName]);
 						}
-						catch (IndexOutOfRangeException)
+						catch (Exception e)
 						{
-							property.Value.SetValue(result, null);
+							if (
+									e is MySqlConversionException 
+								||	e is IndexOutOfRangeException
+								||	e is ArgumentException)
+								property.FieldInfo.SetValue(result, null);
+							else
+								throw;
 						}
 					}
 
-					this.Add(result);
+					Add(result);
 				}
-			}
-		}
-
-		#endregion
-
-		#region GetProperties
-
-		private static IEnumerable<Property> GetProperties()
-		{
-			List<Property> retVal = new List<Property>();
-
-			IEnumerable<FieldInfo> fields = typeof(T).GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
-			fields = fields.Concat(typeof(T).BaseType.GetFields(BindingFlags.NonPublic | BindingFlags.Instance));
-			IEnumerable<ColumnAttribute> columnAttributes = fields.Select(x => x.GetCustomAttribute<ColumnAttribute>());
-
-			for (int i = 0; i < fields.Count(); i++)
-			{
-				Property property = new Property
-					(
-						columnAttributes.ElementAt(i).Name
-					,	fields.ElementAt(i)
-					);
-
-				yield return property;
 			}
 		}
 

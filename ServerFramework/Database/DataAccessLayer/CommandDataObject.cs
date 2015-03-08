@@ -15,15 +15,10 @@
 
 using DatabaseFramework.Database.Attributes;
 using DatabaseFramework.Database.Base;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ServerFramework.Database.DataAccessLayer
 {
-	[Table("kahath.application", "command")]
+	[DataDefinition("kahath.application", "command")]
 	public sealed class CommandDataObject : DataObjectBase
 	{
 		#region Fields

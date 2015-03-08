@@ -17,7 +17,6 @@ using ServerFramework.Configuration;
 using ServerFramework.Constants.Misc;
 using ServerFramework.Managers.Base;
 using System;
-using System.Collections.Concurrent;
 using System.Text;
 using System.Threading;
 
@@ -110,8 +109,11 @@ namespace ServerFramework.Managers.Core
 
             if ((ServerConfig.LogLevel & type) == type)
             {
-                string msg = string.Format(
-                    "[{0}] {1}", DateTime.Now.ToLongTimeString(), string.Format(message, args));
+                string msg = string.Format
+					(
+						"[{0}] {1}", DateTime.Now.ToString("HH:mm:ss.fff")
+					,	string.Format(message, args)
+					);
 
                 ConsoleLogQueue.Add(Tuple.Create<ConsoleColor, string>(color, msg));
             }

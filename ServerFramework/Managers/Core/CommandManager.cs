@@ -13,7 +13,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using DatabaseFramework.Database.Base;
+using DatabaseFramework.Database.Core;
 using DatabaseFramework.Managers.Core;
 using ServerFramework.Constants.Attributes;
 using ServerFramework.Constants.Entities.Console;
@@ -188,7 +188,7 @@ namespace ServerFramework.Managers.Core
         {
             Command c = null;
 
-			ResultBase<CommandDataObject> result 
+			ResultSet<CommandDataObject> result 
 				= DatabaseManager.GetCollection<CommandDataObject>(DB.Application, "`Command.Search`");
 
 			foreach(CommandDataObject cdo in result)
@@ -201,7 +201,6 @@ namespace ServerFramework.Managers.Core
 					c.CommandLevel = (CommandLevel)cdo.CommandLevel;
 					c.Description = cdo.Name;
 				}
-
 			}
         }
 

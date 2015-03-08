@@ -44,12 +44,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Database\Attributes\ColumnAttribute.cs" />
-    <Compile Include="Database\Attributes\TableAttribute.cs" />
-    <Compile Include="Database\Base\DatabaseProviderBase.cs" />
+    <Compile Include="Database\Attributes\DataDefinitionAttribute.cs" />
+    <Compile Include="Database\Base\ConnectionProviderBase.cs" />
     <Compile Include="Database\Base\DataObjectBase.cs" />
+    <Compile Include="Database\Helpers\DALHelpers.cs" />
     <Compile Include="Database\Misc\IDatabaseProvider.cs" />
     <Compile Include="Database\Core\Property.cs" />
-    <Compile Include="Database\Base\ResultBase.cs" />
+    <Compile Include="Database\Core\ResultSet.cs" />
     <Compile Include="Database\Core\DatabaseManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

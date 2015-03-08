@@ -15,14 +15,44 @@
 
 using DatabaseFramework.Database.Base;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ServerFramework.Database.Providers
 {
-	public class ApplicationProvider : DatabaseProviderBase
+	public class ApplicationProvider : ConnectionProviderBase
 	{
+		#region Methods
+
+		#region Init
+
+		public void Init(string host, string user, string pass, int port, string database)
+		{
+			ConnectionString = String.Format("server={0};port={1};database={2};uid={3};pwd={4};Convert Zero Datetime=True"
+				, host, port, database, user, pass);
+
+			Init();
+			OpenConnection();
+		}
+
+		#endregion
+
+		#region OpenConnection
+
+		public void OpenConnection()
+		{
+			Open();
+		}
+
+		#endregion
+
+		#region CloseConnection
+
+		public void CloseConnection()
+		{
+			Close();
+		}
+
+		#endregion
+
+		#endregion
 	}
 }

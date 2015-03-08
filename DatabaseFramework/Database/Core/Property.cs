@@ -22,7 +22,7 @@ namespace DatabaseFramework.Database.Core
 		#region Fields
 
 		private string _columnName;
-		private FieldInfo _value;
+		private FieldInfo _fieldInfo;
 
 		#endregion
 
@@ -34,20 +34,20 @@ namespace DatabaseFramework.Database.Core
 			set { _columnName = value; }
 		}
 
-		public FieldInfo Value
+		public FieldInfo FieldInfo
 		{
-			get { return _value; }
-			set { _value = value; }
+			get { return _fieldInfo; }
+			set { _fieldInfo = value; }
 		}
 
 		#endregion
 
 		#region Constructors
 
-		public Property(string name, FieldInfo value)
+		public Property(string name, FieldInfo fieldInfo)
 		{
 			ColumnName = name;
-			Value = value;
+			FieldInfo = fieldInfo;
 		}
 
 		#endregion

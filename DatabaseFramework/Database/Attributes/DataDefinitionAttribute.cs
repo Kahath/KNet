@@ -18,7 +18,7 @@ using System;
 namespace DatabaseFramework.Database.Attributes
 {
 	[AttributeUsage(AttributeTargets.Class)]
-	public sealed class TableAttribute : Attribute
+	public sealed class DataDefinitionAttribute : Attribute
 	{
 		#region Fields
 
@@ -45,7 +45,7 @@ namespace DatabaseFramework.Database.Attributes
 
 		#region Constructors
 
-		public TableAttribute(string databaseName, string tableName)
+		public DataDefinitionAttribute(string databaseName, string tableName)
 		{
 			DatabaseName = databaseName;
 			TableName = tableName;

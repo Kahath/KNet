@@ -14,6 +14,8 @@
  */
 
 using DatabaseFramework.Database.Base;
+using DatabaseFramework.Database.Core;
+using DatabaseFramework.Database.Helpers;
 using DatabaseFramework.Database.Misc;
 using MySql.Data.MySqlClient;
 using System;
@@ -27,9 +29,10 @@ namespace DatabaseFramework.Managers.Core
 
 		#region GetCollection<T>
 
-		public static ResultBase<T> GetCollection<T>(IDatabaseProvider provider, string procedureName, params object[] args)
+		public static ResultSet<T> GetCollection<T>(IDatabaseProvider provider
+			, string procedureName, params object[] args)
 		{
-			ResultBase<T> retVal = new ResultBase<T>();
+			ResultSet<T> retVal = new ResultSet<T>();
 
 			using (provider)
 			{
@@ -43,7 +46,7 @@ namespace DatabaseFramework.Managers.Core
 									(
 										"CALL {0}({1})"
 									,	procedureName
-									,	String.Join(", ", args.Select(x => Convert.ToString(x)))
+									,	String.Join(",", args.Select(x => Convert.ToString(x)))
 									)
 							,	provider.Connection
 							,	transaction
@@ -53,13 +56,13 @@ namespace DatabaseFramework.Managers.Core
 						{
 							retVal.LoadData(reader);
 						}
+
+						transaction.Commit();
 					}
 					catch (MySqlException)
 					{
 						transaction.Rollback();
 					}
-
-					transaction.Commit();
 				}
 			}
 
@@ -81,6 +84,38 @@ namespace DatabaseFramework.Managers.Core
 
 		#endregion
 
-		#endregion	
+		#region Save<T>
+
+		public static void Save<T>(IDatabaseProvider provider, DataObjectBase item)
+		{
+			using(provider)
+			{
+				using(MySqlTransaction transaction = provider.Connection.BeginTransaction())
+				{
+					MySqlCommand command = new MySqlCommand
+						(
+							DALHelpers.CreateSaveQuery<T>(item)
+						,	provider.Connection
+						,	transaction
+						);
+					
+					try
+					{
+						command.ExecuteScalar();
+
+						transaction.Commit();
+					}
+					catch(MySqlException e)
+					{
+						transaction.Rollback();
+					}
+				}
+			}
+		}
+
+		#endregion
+
+
+		#endregion
 	}
 }

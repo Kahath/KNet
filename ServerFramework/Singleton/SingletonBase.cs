@@ -57,7 +57,7 @@ namespace ServerFramework.Singleton
                         catch (Exception e)
                         { 
                             Manager.LogMgr.Log(LogType.Error, "Error with creating instance of {0} type", typeof(T));
-							Manager.LogMgr.Log(LogType.Error, "{0}", e.InnerException.Message);
+							Manager.LogMgr.Log(LogType.Error, "{0}", e.InnerException.ToString());
 							Console.ReadLine();
                             Environment.Exit(0);
                         }

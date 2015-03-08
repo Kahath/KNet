@@ -13,8 +13,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using ServerFramework.Configuration;
 using ServerFramework.Database.Providers;
+
 namespace ServerFramework.Database
 {
     internal static class DB

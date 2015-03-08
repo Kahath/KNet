@@ -31,7 +31,6 @@ namespace DatabaseFramework.Database.Misc
 		MySqlConnection Connection
 		{
 			get;
-			set;
 		}
 
 		#endregion

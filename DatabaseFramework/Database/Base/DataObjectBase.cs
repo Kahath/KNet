@@ -14,7 +14,11 @@
  */
 
 using DatabaseFramework.Database.Attributes;
+using DatabaseFramework.Database.Core;
+using DatabaseFramework.Database.Misc;
+using DatabaseFramework.Managers.Core;
 using System;
+using System.Collections.Generic;
 
 namespace DatabaseFramework.Database.Base
 {
@@ -27,6 +31,8 @@ namespace DatabaseFramework.Database.Base
 
 		[Column("DateCreated")]
 		private DateTime? _dateCreated;
+
+		private static IEnumerable<Property> _properties; 
 
 		#endregion
 
@@ -42,6 +48,21 @@ namespace DatabaseFramework.Database.Base
 		{
 			get { return _dateCreated; }
 			set { _dateCreated = value; }
+		}
+
+		internal static IEnumerable<Property> Properties
+		{
+			get { return _properties; }
+			set { _properties = value; }
+		}
+
+		#endregion
+
+		#region Methods
+
+		public void Save(IDatabaseProvider provider)
+		{
+			DatabaseManager.Save<DataObjectBase>(provider, this);
 		}
 
 		#endregion
