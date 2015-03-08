@@ -14,6 +14,7 @@
  */
 
 using DatabaseFramework.Database.Base;
+using DatabaseFramework.Managers.Core;
 using ServerFramework.Constants.Attributes;
 using ServerFramework.Constants.Entities.Console;
 using ServerFramework.Constants.Misc;

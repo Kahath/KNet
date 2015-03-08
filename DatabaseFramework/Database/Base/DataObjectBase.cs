@@ -22,9 +22,6 @@ namespace DatabaseFramework.Database.Base
 	{
 		#region Fields
 
-		[Column("ID")]
-		private uint? _id;
-
 		[Column("Active")]
 		private bool? _active;
 
@@ -34,12 +31,6 @@ namespace DatabaseFramework.Database.Base
 		#endregion
 
 		#region Properties
-
-		protected uint? ID
-		{
-			get { return _id; }
-			set { _id = value; }
-		}
 
 		protected bool? Active
 		{
@@ -54,15 +45,5 @@ namespace DatabaseFramework.Database.Base
 		}
 
 		#endregion
-
-		#region Constructors
-
-		public DataObjectBase()
-		{
-
-		}
-
-		#endregion
-
 	}
 }

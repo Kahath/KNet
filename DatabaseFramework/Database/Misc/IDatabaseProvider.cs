@@ -20,6 +20,8 @@ namespace DatabaseFramework.Database.Misc
 {
 	public interface IDatabaseProvider : IDisposable
 	{
+		#region Properties
+
 		string ConnectionString
 		{
 			get;
@@ -31,5 +33,7 @@ namespace DatabaseFramework.Database.Misc
 			get;
 			set;
 		}
+
+		#endregion
 	}
 }

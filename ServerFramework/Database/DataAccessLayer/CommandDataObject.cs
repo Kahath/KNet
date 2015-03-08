@@ -28,6 +28,9 @@ namespace ServerFramework.Database.DataAccessLayer
 	{
 		#region Fields
 
+		[Column("ID")]
+		private uint? _id;
+
 		[Column("Name")]
 		private string _name;
 
@@ -40,6 +43,12 @@ namespace ServerFramework.Database.DataAccessLayer
 		#endregion
 
 		#region Properties
+
+		public uint? ID
+		{
+			get { return _id; }
+			set { _id = value; }
+		}
 
 		public string Name
 		{
