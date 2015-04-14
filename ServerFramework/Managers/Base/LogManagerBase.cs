@@ -44,6 +44,5 @@ namespace ServerFramework.Managers.Base
 		public abstract void Log(LogType type, string message, params object[] args);
 
 		#endregion
-
 	}
 }

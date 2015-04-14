@@ -13,13 +13,12 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using DatabaseFramework.Database.Core;
-using DatabaseFramework.Managers.Core;
 using ServerFramework.Constants.Attributes;
 using ServerFramework.Constants.Entities.Console;
 using ServerFramework.Constants.Misc;
 using ServerFramework.Database;
-using ServerFramework.Database.DataAccessLayer;
+using ServerFramework.Database.Model;
+using ServerFramework.Database.Repository;
 using ServerFramework.Managers.Base;
 using System;
 using System.Collections.Generic;
@@ -113,15 +112,15 @@ namespace ServerFramework.Managers.Core
                 {
                     if (c.SubCommands != null)
                     {
+                        command.RemoveAt(0);
                         if(command.Count > 0)
                         {
-                            command.RemoveAt(0);
                             return _invokeCommandHandler(c.SubCommands, command, path);
                         }
                         else
                         {
                             Manager.LogMgr.Log(LogType.Command, "Error with '{0}' command."
-                                + " Available sub commands:\n{2}", path, _availableSubCommands(c));
+                                + " Available sub commands:\n{1}", path, _availableSubCommands(c));
 
                             return false;
                         }
@@ -187,21 +186,21 @@ namespace ServerFramework.Managers.Core
 		protected override void _loadCommandDescriptions()
         {
             Command c = null;
+            CommandRepository repository = new CommandRepository(DB.ApplicationContext);
 
-			ResultSet<CommandDataObject> result 
-				= DatabaseManager.GetCollection<CommandDataObject>(DB.Application, "`Command.Search`");
+            IEnumerable<CommandModel> commands = repository.GetCollection().Where(x => x.Active ?? false);
 
-			foreach(CommandDataObject cdo in result)
-			{
-				c = _getCommand(CommandTable.ToArray()
-					, cdo.Name.Split(' ').ToList());
+            foreach (CommandModel cdo in commands)
+            {
+                c = _getCommand(CommandTable.ToArray()
+                    , cdo.Name.Split(' ').ToList());
 
-				if (c != null)
-				{
-					c.CommandLevel = (CommandLevel)cdo.CommandLevel;
-					c.Description = cdo.Name;
-				}
-			}
+                if (c != null)
+                {
+                    c.CommandLevel = (CommandLevel)cdo.CommandLevel;
+                    c.Description = cdo.Description;
+                }
+            }
         }
 
         #endregion
@@ -217,9 +216,9 @@ namespace ServerFramework.Managers.Core
 
             if (c != null)
             {
+                command.RemoveAt(0);
                 if (command.Count > 0)
                 {
-                    command.RemoveAt(0);
                     return _getCommand(c.SubCommands, command);
                 }
             }

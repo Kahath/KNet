@@ -13,31 +13,28 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using ServerFramework.Database.Providers;
+using ServerFramework.Configuration;
+using ServerFramework.Database.Context;
 
 namespace ServerFramework.Database
 {
-    internal static class DB
-	{
-		#region Fields
+    public static class DB
+    {
+        private static ApplicationContext _applicationContext;
 
-		private static ApplicationProvider _application;
+        public static ApplicationContext ApplicationContext
+        {
+            get
+            {
+                ApplicationContext retVal = null;
 
-		#endregion
+                if (_applicationContext == null)
+                    retVal = _applicationContext = new ApplicationContext(ServerConfig.GetConnectionString());
+                else
+                    retVal = _applicationContext;
 
-		#region Properties
-
-		internal static ApplicationProvider Application
-		{
-			get
-			{
-				if (_application == null)
-					_application = new ApplicationProvider();
-
-				return _application;
-			}
-		}
-
-		#endregion
+                return retVal;
+            }
+        }
     }
 }

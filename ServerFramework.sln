@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerFramework", "ServerFramework\ServerFramework.csproj", "{FF59A6EE-E069-4C0E-B69E-BD3CB81FB6FB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2F187740-8973-4BF8-A0EB-EDAAFDDE1B52} = {2F187740-8973-4BF8-A0EB-EDAAFDDE1B52}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseFramework", "DatabaseFramework\DatabaseFramework.csproj", "{2F187740-8973-4BF8-A0EB-EDAAFDDE1B52}"
 EndProject

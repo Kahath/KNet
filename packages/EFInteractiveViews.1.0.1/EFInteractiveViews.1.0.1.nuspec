@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>EFInteractiveViews</id>
+    <version>1.0.1</version>
+    <title>Interactive Pregenerated Views for Entity Framework 6</title>
+    <authors>Pawel "moozzyk" Kadluczka</authors>
+    <owners>Pawel "moozzyk" Kadluczka</owners>
+    <licenseUrl>https://efinteractiveviews.codeplex.com/license</licenseUrl>
+    <projectUrl>https://efinteractiveviews.codeplex.com/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Interactive Pregenerated Views for Entity Framework 6.</description>
+    <summary>Interactive Pregenerated Views for Entity Framework 6.</summary>
+    <language>en-US</language>
+    <tags>EF6 EF Entity Framework Pregenerated Views moozzyk blog.3d-logic.com</tags>
+    <dependencies>
+      <dependency id="EntityFramework" version="[6.0.0, 7.0)" />
+    </dependencies>
+  </metadata>
+</package>

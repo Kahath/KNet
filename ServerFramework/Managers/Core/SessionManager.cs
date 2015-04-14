@@ -87,6 +87,7 @@ namespace ServerFramework.Managers.Core
 		public override IEnumerable<Client> GetClients(Func<Client, bool> func = null)
         {
 			IEnumerable<Client> clients = null;
+
 			if (func != null)
 				clients = Clients.Values.Where(func);
 			else

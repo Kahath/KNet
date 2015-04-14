@@ -13,16 +13,19 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using DILibrary.Constants;
 using DILibrary.DependencyInjection;
 using ServerFramework.Configuration;
 using ServerFramework.Constants.Misc;
 using ServerFramework.Database;
-using ServerFramework.Managers.Core;
 using ServerFramework.Managers;
+using ServerFramework.Managers.Core;
 using ServerFramework.Network.Packets;
 using ServerFramework.Network.Socket;
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data.Entity.Validation;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 
@@ -107,17 +110,19 @@ namespace ServerFramework
             Console.WriteLine();
 
             Manager.LogMgr.Log(LogType.Init, "Initialising application database connection.");
-			
-			DB.Application.Init
-				(
-					ServerConfig.DBHost
-				,	ServerConfig.DBUser
-				,	ServerConfig.DBPass
-				,	ServerConfig.DBPort
-				,	ServerConfig.DBName
-				);
 
-			//Manager.DatabaseMgr = DatabaseManager.GetInstance();
+            IEnumerable<DbEntityValidationResult> errors = DB.ApplicationContext.GetValidationErrors();
+
+            if(errors.Any())
+            {
+                foreach(DbEntityValidationResult result in errors)
+                    Manager.LogMgr.Log(LogType.Database, "{0}", result.ToString());
+
+                Console.ReadLine();
+                Environment.Exit(0);
+            }
+
+            Manager.LogMgr.Log(LogType.Init, "Successfully tested database connection.");
 
             Manager.LogMgr.Log(LogType.Init, "Initialising managers.");
             Manager.Init();
