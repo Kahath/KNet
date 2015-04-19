@@ -32,10 +32,10 @@ namespace ServerFramework.Game.CommandHandlers
         {
             Command[] CommandCommandTable = 
             {
-                new Command("list", (CommandLevel)0xFFFF, null, CommandListHandler, "")
+                new Command("list", (CommandLevel)0x7FFF, null, CommandListHandler, "")
             };
 
-            return new Command("command", (CommandLevel)0xFFFF,
+            return new Command("command", (CommandLevel)0x7FFF,
                 CommandCommandTable, null, "");
         }
 

@@ -24,14 +24,14 @@ namespace ServerFramework.Managers.Core
 {
     public sealed class LogManager : LogManagerBase<LogManager>
     {
-		#region Constructors
+        #region Constructors
 
-		LogManager()
-		{
-			Init();
-		}
+        LogManager()
+        {
+            Init();
+        }
 
-		#endregion
+        #endregion
 
 		#region Methods
 
@@ -71,8 +71,8 @@ namespace ServerFramework.Managers.Core
 
         protected override void Message(LogType type, string message, params object[] args)
         {
-            Console.OutputEncoding = UTF8Encoding.UTF8;
             ConsoleColor color;
+
             switch (type)
             {
                 case LogType.Normal:
@@ -109,11 +109,16 @@ namespace ServerFramework.Managers.Core
 
             if ((ServerConfig.LogLevel & type) == type)
             {
-                string msg = string.Format
-					(
-						"[{0}] {1}", DateTime.Now.ToString("HH:mm:ss.fff")
-					,	string.Format(message, args)
-					);
+                string msg = String.Empty;
+
+                if (type != LogType.None)
+                {
+                    msg = string.Format
+                        (
+                            "[{0}] {1}", DateTime.Now.ToString("HH:mm:ss.fff")
+                        , string.Format(message, args)
+                        );
+                }
 
                 ConsoleLogQueue.Add(Tuple.Create<ConsoleColor, string>(color, msg));
             }
@@ -127,6 +132,21 @@ namespace ServerFramework.Managers.Core
         public override void Log(LogType type, string message, params object[] args)
         {
             Message(type, message, args);
+        }
+
+        public void Log(string message, params object[] args)
+        {
+            Log(LogType.None, message, args);
+        }
+
+        public void Log(string message)
+        {
+            Log(LogType.None, message);
+        }
+
+        public void Log()
+        {
+            Log(LogType.None, "");
         }
 
         #endregion

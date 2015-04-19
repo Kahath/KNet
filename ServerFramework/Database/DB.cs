@@ -29,9 +29,13 @@ namespace ServerFramework.Database
                 ApplicationContext retVal = null;
 
                 if (_applicationContext == null)
+                {
                     retVal = _applicationContext = new ApplicationContext(ServerConfig.GetConnectionString());
+                }
                 else
+                {
                     retVal = _applicationContext;
+                }
 
                 return retVal;
             }

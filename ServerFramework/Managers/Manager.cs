@@ -20,23 +20,63 @@ using ServerFramework.Managers.Core;
 namespace ServerFramework.Managers
 {
     public static class Manager
-	{
-		#region Fields
+    {
+        #region Fields
 
-		public static CommandManager CommandMgr;
-		public static SessionManager SessionMgr;
-		public static PacketManager PacketMgr;
-		public static BufferManager BufferMgr;
-		public static PacketLogManager PacketLogMgr;
-		public static LogManager LogMgr;
+        private static CommandManager _commandMgr;
+		private static SessionManager _sessionMgr;
+		private static PacketManager _packetMgr;
+		private static BufferManager _bufferMgr;
+		private static PacketLogManager _packetLogMgr;
+		private static LogManager _logMgr;
 
 		#endregion
 
 		#region Methods
 
-		#region Init
+        #region Properties
 
-		internal static void Init()
+        public static CommandManager CommandMgr
+        {
+            get { return _commandMgr; }
+            set { _commandMgr = value; }
+        }
+
+        public static SessionManager SessionMgr
+        {
+            get { return _sessionMgr; }
+            set { _sessionMgr = value; }
+        }
+
+        public static PacketManager PacketMgr
+        {
+            get { return _packetMgr; }
+            set { _packetMgr = value; }
+        }
+
+        public static BufferManager BufferMgr
+        {
+            get { return _bufferMgr; }
+            set { _bufferMgr = value; }
+        }
+
+        public static PacketLogManager PacketLogMgr
+        {
+            get { return _packetLogMgr; }
+            set { _packetLogMgr = value; }
+        }
+
+        public static LogManager LogMgr
+        {
+            get { return _logMgr; }
+            set { _logMgr = value; }
+        }
+
+        #endregion
+
+        #region Init
+
+        internal static void Init()
 		{
 			LogMgr = LogManager.GetInstance();
 

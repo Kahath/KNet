@@ -33,7 +33,5 @@ namespace ServerFramework.Network.Socket
 		void Send(SocketAsyncEventArgs e);
 
 		#endregion
-
-
 	}
 }

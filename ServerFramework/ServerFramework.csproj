@@ -116,11 +116,12 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Libs\DILibrary.dll" />
+    <Content Include="Sql\Application.Command.Table.sql" />
+    <Content Include="Sql\Application.Schema.sql" />
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
-    <None Include="Sql\command.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

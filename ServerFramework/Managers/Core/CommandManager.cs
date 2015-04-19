@@ -61,7 +61,14 @@ namespace ServerFramework.Managers.Core
                             {
                                 Command c = null;
 
-                                c = method.Invoke(null, null) as Command;
+                                try
+                                {
+                                    c = method.Invoke(null, null) as Command;
+                                }
+                                catch(Exception)
+                                {
+                                    Manager.LogMgr.Log(LogType.Error, "Error creating command type {0}", type.ToString());
+                                }
 
                                 if (c != null)
                                     CommandTable.Add(c);
@@ -85,9 +92,12 @@ namespace ServerFramework.Managers.Core
 			bool retVal = false;
 
             string com = Regex.Replace(command, @"\s+", " ").Trim();
-            if(com != "")
+
+            if (com != "")
+            {
                 retVal = _invokeCommandHandler(CommandTable.ToArray()
                     , com.Split(' ').ToList(), string.Empty);
+            }
 
             return retVal;
         }
@@ -171,9 +181,13 @@ namespace ServerFramework.Managers.Core
             foreach (Command com in c.SubCommands)
             {
                 if (com.SubCommands != null)
+                {
                     sb.AppendLine(com.Name + "..");
+                }
                 else
+                {
                     sb.AppendLine(com.Name);
+                }
             }
 
             return sb.ToString();
@@ -188,7 +202,7 @@ namespace ServerFramework.Managers.Core
             Command c = null;
             CommandRepository repository = new CommandRepository(DB.ApplicationContext);
 
-            IEnumerable<CommandModel> commands = repository.GetCollection().Where(x => x.Active ?? false);
+            IEnumerable<CommandModel> commands = repository.GetCollection().Where(x => x.Active);
 
             foreach (CommandModel cdo in commands)
             {

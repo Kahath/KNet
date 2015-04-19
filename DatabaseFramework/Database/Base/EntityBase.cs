@@ -21,8 +21,9 @@ namespace DatabaseFramework.Database.Base
 	{
 		#region Properties
 
-        public bool? Active { get; set; }
-        public DateTime? DateCreated { get; set; }
+        public bool Active { get; set; }
+        public DateTime DateCreated { get; set; }
+        public DateTime? DateModified { get; set; }
         public DateTime? DateDeactivated { get; set; }
 
 		#endregion

@@ -16,6 +16,8 @@
 using InteractivePreGeneratedViews;
 using System;
 using System.Data.Entity;
+using System.IO;
+using System.Reflection;
 
 namespace DatabaseFramework.Database.Context
 {
@@ -24,6 +26,7 @@ namespace DatabaseFramework.Database.Context
         #region Fields
 
         private string _connectionString;
+        private string _directoryPath;
 
         #endregion
 
@@ -44,10 +47,15 @@ namespace DatabaseFramework.Database.Context
         {
             ConnectionString = connectionString;
 
+            _directoryPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\" + Assembly.GetEntryAssembly().GetName().Name + @"\" + this.Database.Connection.Database + @"\";
+            
+            if(!Directory.Exists(_directoryPath))
+            {
+                Directory.CreateDirectory(_directoryPath);
+            }
+
             InteractiveViews.SetViewCacheFactory(this,
-                new FileViewCacheFactory(
-                    Environment.GetFolderPath(
-                    Environment.SpecialFolder.ApplicationData) + @"\ServerFramework\EFCache\Views.xml"));
+                new FileViewCacheFactory(_directoryPath + @"\" + this + ".xml"));
         }
 
         #endregion

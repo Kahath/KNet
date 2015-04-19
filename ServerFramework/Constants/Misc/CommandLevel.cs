@@ -18,7 +18,7 @@ using System;
 namespace ServerFramework.Constants.Misc
 {
     [Flags]
-    public enum CommandLevel : ushort
+    public enum CommandLevel : short
     {
         None                    = 0x0000,
         CommandLevelOne         = 0x0001,

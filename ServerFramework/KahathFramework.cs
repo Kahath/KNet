@@ -90,7 +90,6 @@ namespace ServerFramework
 						)
 				);
 
-            Console.WriteLine();
             Manager.LogMgr.Log(LogType.Cmd, "Configuration");
             Manager.LogMgr.Log(LogType.Cmd, "Bind IP: {0}", ServerConfig.BindIP);
             Manager.LogMgr.Log(LogType.Cmd, "Bind port: {0}", ServerConfig.BindPort);
@@ -107,7 +106,7 @@ namespace ServerFramework
             Manager.LogMgr.Log(LogType.Cmd, "Database username: {0}", ServerConfig.DBUser);
             Manager.LogMgr.Log(LogType.Cmd, "Database password: {0}", ServerConfig.DBPass);
             Manager.LogMgr.Log(LogType.Cmd, "Database name: {0}", ServerConfig.DBName);
-            Console.WriteLine();
+            Manager.LogMgr.Log();
 
             Manager.LogMgr.Log(LogType.Init, "Initialising application database connection.");
 

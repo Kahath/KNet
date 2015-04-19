@@ -29,7 +29,7 @@ namespace ServerFramework.Game.CommandHandlers
 
         private static Command GetCommand()
         {
-            return new Command("cls", (CommandLevel)0xFFFF, null, Cls, "");
+            return new Command("cls", (CommandLevel)0x7FFF, null, Cls, "");
         }
 
         #endregion

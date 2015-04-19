@@ -28,7 +28,7 @@ namespace ServerFramework.Database.Model
         [StringLength(50)]
         public string Name { get; set; }
 
-        public int? CommandLevel { get; set; }
+        public short CommandLevel { get; set; }
         public string Description { get; set; }
     }
 }

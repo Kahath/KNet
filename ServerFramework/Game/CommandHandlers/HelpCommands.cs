@@ -34,7 +34,7 @@ namespace ServerFramework.Game.CommandHandlers
 
         private static Command GetCommand()
         {
-            return new Command("help", (CommandLevel)0xFFFF, null, HelpCommandHandler
+            return new Command("help", (CommandLevel)0x7FFF, null, HelpCommandHandler
                 , "");
         }
 

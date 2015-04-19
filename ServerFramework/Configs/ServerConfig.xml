@@ -7,7 +7,7 @@
                                                    
        <!-- Database settings-->                   
 <property name="dbhost" value="127.0.0.1"/>        <!--Database IP-->
-<property name="dbport" value="3306"/>             <!--Database port-->
+<property name="dbport" value="1433"/>             <!--Database port-->
 <property name="dbuser" value="root"/>             <!--Database username-->
 <property name="dbpass" value="root"/>             <!--Database password-->
 <property name="dbname" value=""/>                 <!--Database name-->
