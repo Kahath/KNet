@@ -16,9 +16,7 @@
 using ServerFramework.Constants.Attributes;
 using ServerFramework.Constants.Entities.Console;
 using ServerFramework.Constants.Misc;
-using ServerFramework.Managers.Core;
 using ServerFramework.Managers;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;

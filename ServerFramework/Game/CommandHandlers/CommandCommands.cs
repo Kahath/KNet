@@ -16,7 +16,6 @@
 using ServerFramework.Constants.Attributes;
 using ServerFramework.Constants.Entities.Console;
 using ServerFramework.Constants.Misc;
-using ServerFramework.Managers.Core;
 using ServerFramework.Managers;
 
 namespace ServerFramework.Game.CommandHandlers
