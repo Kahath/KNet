@@ -13,16 +13,24 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using System;
+using ServerFramework.Database.Base;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ServerFramework.Constants.Misc
+namespace ServerFramework.Database.Model
 {
-    [Flags]
-    enum PacketLogType : byte
+    [Table("Log", Schema="Application")]
+    public class LogModel : EntityBase
     {
-        None    = 0x00,
-        CMSG    = 0x01,
-        SMSG    = 0x02,
+        #region Properties
 
-    };
+        [Key]
+        public int ID { get; set; }
+        public string Message { get; set; }
+        public int LogTypeID { get; set; }
+        [ForeignKey("LogTypeID")]
+        public LogTypeModel LogType { get; set; }
+
+        #endregion
+    }
 }

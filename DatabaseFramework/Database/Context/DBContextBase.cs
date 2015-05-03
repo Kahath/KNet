@@ -46,10 +46,20 @@ namespace DatabaseFramework.Database.Context
             : base(connectionString)
         {
             ConnectionString = connectionString;
+            Configuration.AutoDetectChangesEnabled = false;
 
+            Init();
+        }
+
+        #endregion
+
+        #region Methods
+
+        private void Init()
+        {
             _directoryPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\" + Assembly.GetEntryAssembly().GetName().Name + @"\" + this.Database.Connection.Database + @"\";
-            
-            if(!Directory.Exists(_directoryPath))
+
+            if (!Directory.Exists(_directoryPath))
             {
                 Directory.CreateDirectory(_directoryPath);
             }
@@ -57,14 +67,10 @@ namespace DatabaseFramework.Database.Context
             InteractiveViews.SetViewCacheFactory(this,
                 new FileViewCacheFactory(_directoryPath + @"\" + this + ".xml"));
         }
-
-        #endregion
-
-        #region Methods
-
-        public override int SaveChanges()
+        
+        public async void Save()
         {
-           return base.SaveChanges();
+            await SaveChangesAsync();
         }
 
         #endregion

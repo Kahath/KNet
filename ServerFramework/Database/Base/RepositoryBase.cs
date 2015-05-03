@@ -13,32 +13,38 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using ServerFramework.Configuration;
-using ServerFramework.Database.Context;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace ServerFramework.Database
+namespace ServerFramework.Database.Base
 {
-    public static class DB
+    public abstract class RepositoryBase<T> where T : EntityBase
     {
-        private static ApplicationContext _applicationContext;
+        #region Fields
 
-        public static ApplicationContext ApplicationContext
+        private DBContextBase _context;
+
+        #endregion
+
+        #region Properties
+
+        public DBContextBase Context
         {
-            get
-            {
-                ApplicationContext retVal = null;
-
-                if (_applicationContext == null)
-                {
-                    retVal = _applicationContext = new ApplicationContext(ServerConfig.GetConnectionString());
-                }
-                else
-                {
-                    retVal = _applicationContext;
-                }
-
-                return retVal;
-            }
+            get { return _context; }
+            set { _context = value; }
         }
+
+        #endregion
+
+        #region Constructors
+
+        public RepositoryBase(DBContextBase context)
+        {
+            Context = context;
+        }
+
+        #endregion
+
     }
 }

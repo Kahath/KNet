@@ -22,7 +22,7 @@ using System.Text;
 
 namespace ServerFramework.Network.Packets.Handlers
 {
-    public class ExampleHandler
+    public static class ExampleHandler
     {
         #region Handlers
 
@@ -44,7 +44,7 @@ namespace ServerFramework.Network.Packets.Handlers
 
             //Send back if need
             //Create new packet for send
-            using (packet = new Packet(0x0001, Encoding.UTF8))
+            using (packet = new Packet(0x0001))
             {
                 //Write data
                 packet.Write<string>("Example string data");
@@ -72,7 +72,7 @@ namespace ServerFramework.Network.Packets.Handlers
 
             //Send back if need
             //Create new packet for send
-            using (packet = new Packet(0x0001, Encoding.UTF8))
+            using (packet = new Packet(0x0001))
             {
                 //Write data
                 packet.Write<string>("Example string data");

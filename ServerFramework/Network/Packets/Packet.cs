@@ -86,20 +86,20 @@ namespace ServerFramework.Network.Packets
         /// <summary>
         /// Creates new object for reading message.
         /// </summary>
-        internal Packet(Encoding encoder)
+        internal Packet(Encoding encoder = null)
         {
             Header = new PacketHeader();
-            Encoder = encoder;
+            Encoder = encoder ?? Encoding.UTF8;
         }
 
         /// <summary>
         /// Creates new object for writing message
         /// </summary>
         /// <param name="message">opcode of message</param>
-        public Packet(ushort message, Encoding encoder)
+        public Packet(ushort message, Encoding encoder = null)
         {
             _stream = new BinaryWriter(new MemoryStream());
-            Encoder = encoder;
+            Encoder = encoder ?? Encoding.UTF8;
 
             Header = new PacketHeader
             {
@@ -223,7 +223,7 @@ namespace ServerFramework.Network.Packets
                     Stream.Write(Convert.ToSingle(value));
                     break;
                 case "String":
-                    var data = Encoding.UTF8.GetBytes(value as string);
+                    var data = Encoder.GetBytes(value as string);
                     Stream.Write(Convert.ToByte(data.Length));
                     Stream.Write(data);
                     break;
@@ -335,7 +335,7 @@ namespace ServerFramework.Network.Packets
 
             for (int i = 0; i < Message.Length; i++)
             {
-                Message[i] = (byte)_stream.BaseStream.ReadByte();
+                Message[i] = (byte)Stream.BaseStream.ReadByte();
             }
 
             Message[0] = (byte)(Header.Size & 0xFF);

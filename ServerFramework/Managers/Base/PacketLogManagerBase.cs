@@ -13,6 +13,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using ServerFramework.Database.Model;
 using ServerFramework.Network.Packets;
 using System;
 using System.Collections.Concurrent;
@@ -28,7 +29,7 @@ namespace ServerFramework.Managers.Base
 		#region Fields
 
 		private string _path;
-		private StringBuilder _packetLog;
+		private List<PacketLogModel> _packetLog;
 		private BlockingCollection<Packet> _packetLogQueue
 			= new BlockingCollection<Packet>();
 
@@ -48,10 +49,15 @@ namespace ServerFramework.Managers.Base
 			set { _packetLogQueue = value; }
 		}
 
-		protected StringBuilder PacketLog
+		protected List<PacketLogModel> PacketLog
 		{
-			get { return _packetLog; }
-			set { _packetLog = value; }
+            get
+            {
+                if (_packetLog == null)
+                    _packetLog = new List<PacketLogModel>();
+
+                return _packetLog;
+            }
 		}
 
 		#endregion

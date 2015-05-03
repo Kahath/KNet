@@ -13,9 +13,6 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using ServerFramework.Constants.Misc;
-using ServerFramework.Managers;
-using ServerFramework.Managers.Core;
 using ServerFramework.Network.Packets;
 using ServerFramework.Network.Socket;
 using System;
@@ -93,8 +90,7 @@ namespace ServerFramework.Constants.Entities.Session
             token.Finish();
             token.Packet.SessionId = token.SessionId;
 
-            Manager.LogMgr.Log(LogType.Debug, "Packet Content {0}", BitConverter.ToString(packet.Message));
-			KahathFramework.Server.Send(this.Saea.Sender);
+            KahathFramework.Server.Send(this.Saea.Sender);
         }
 
         #endregion

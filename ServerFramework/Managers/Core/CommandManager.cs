@@ -16,12 +16,12 @@
 using ServerFramework.Constants.Attributes;
 using ServerFramework.Constants.Entities.Console;
 using ServerFramework.Constants.Misc;
-using ServerFramework.Database;
+using ServerFramework.Database.Context;
 using ServerFramework.Database.Model;
-using ServerFramework.Database.Repository;
 using ServerFramework.Managers.Base;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -200,19 +200,21 @@ namespace ServerFramework.Managers.Core
 		protected override void _loadCommandDescriptions()
         {
             Command c = null;
-            CommandRepository repository = new CommandRepository(DB.ApplicationContext);
-
-            IEnumerable<CommandModel> commands = repository.GetCollection().Where(x => x.Active);
-
-            foreach (CommandModel cdo in commands)
+            Stopwatch sw = new Stopwatch();
+            using (ApplicationContext context = new ApplicationContext())
             {
-                c = _getCommand(CommandTable.ToArray()
-                    , cdo.Name.Split(' ').ToList());
+                IEnumerable<CommandModel> commands = context.Commands.Where(x => x.Active);
 
-                if (c != null)
+                foreach (CommandModel cdo in commands)
                 {
-                    c.CommandLevel = (CommandLevel)cdo.CommandLevel;
-                    c.Description = cdo.Description;
+                    c = _getCommand(CommandTable.ToArray()
+                        , cdo.Name.Split(' ').ToList());
+
+                    if (c != null)
+                    {
+                        c.CommandLevel = (CommandLevel)cdo.CommandLevel;
+                        c.Description = cdo.Description;
+                    }
                 }
             }
         }

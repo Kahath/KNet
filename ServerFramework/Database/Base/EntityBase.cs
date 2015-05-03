@@ -13,20 +13,27 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using DatabaseFramework.Database.Base;
-using ServerFramework.Database.Context;
-using ServerFramework.Database.Model;
+using System;
 
-namespace ServerFramework.Database.Repository
+namespace ServerFramework.Database.Base
 {
-    public class CommandRepository : RepositoryBase<CommandModel>
+    public abstract class EntityBase
     {
-        #region Constructor
+        #region Properties
 
-        public CommandRepository(ApplicationContext context)
-            : base(context)
+        public bool Active { get; set; }
+        public DateTime DateCreated { get; set; }
+        public DateTime? DateModified { get; set; }
+        public DateTime? DateDeactivated { get; set; }
+
+        #endregion
+
+        #region Constructors
+
+        public EntityBase()
         {
-
+            DateCreated = DateTime.Now;
+            Active = true;
         }
 
         #endregion

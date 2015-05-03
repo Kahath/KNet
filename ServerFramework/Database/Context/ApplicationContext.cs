@@ -13,7 +13,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using DatabaseFramework.Database.Context;
+using ServerFramework.Configuration;
+using ServerFramework.Database.Base;
 using ServerFramework.Database.Model;
 using System.Data.Entity;
 
@@ -23,17 +24,30 @@ namespace ServerFramework.Database.Context
     {
         #region Properties
 
-        public DbSet<CommandModel> Commands { get; set; }
+        public DbSet<CommandModel> Commands             { get; set; }
+        public DbSet<PacketLogModel> PacketLog          { get; set; }
+        public DbSet<PacketLogTypeModel> PacketLogType  { get; set; }
+        public DbSet<LogModel> Log                      { get; set; }
+        public DbSet<LogTypeModel> LogType              { get; set; }
 
         #endregion
 
 
         #region Constructors
 
-        public ApplicationContext(string connectionString)
-            : base(connectionString)
+        public ApplicationContext()
+            : base(ServerConfig.ConnectionString)
         {
 
+        }
+
+        #endregion
+
+        #region Methods
+
+        public void AddPacketLog(PacketLogModel entity)
+        {
+            PacketLog.Add(entity);
         }
 
         #endregion

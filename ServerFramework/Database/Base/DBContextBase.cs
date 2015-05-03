@@ -13,39 +13,49 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using DatabaseFramework.Database.Context;
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Data.Entity;
+using System.IO;
+using System.Reflection;
 
-namespace DatabaseFramework.Database.Base
+namespace ServerFramework.Database.Base
 {
-    public abstract class RepositoryBase<T> where T : EntityBase
+    public class DBContextBase : DbContext
     {
         #region Fields
 
-        private DBContextBase _context;
+        private string _connectionString;
 
         #endregion
 
         #region Properties
 
-        public DBContextBase Context
+        public string ConnectionString
         {
-            get { return _context; }
-            set { _context = value; }
+            get { return _connectionString; }
+            set { _connectionString = value; }
         }
 
         #endregion
 
         #region Constructors
 
-        public RepositoryBase(DBContextBase context)
+        public DBContextBase(string connectionString)
+            : base(connectionString)
         {
-            Context = context;
+            ConnectionString = connectionString;
+            Configuration.AutoDetectChangesEnabled = false;
         }
 
         #endregion
 
+        #region Methods
+
+        public async void Save()
+        {
+            await SaveChangesAsync();
+        }
+
+        #endregion
     }
 }

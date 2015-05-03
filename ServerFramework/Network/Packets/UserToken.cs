@@ -17,7 +17,7 @@ using System.Text;
 
 namespace ServerFramework.Network.Packets
 {
-    public sealed class UserToken
+    internal sealed class UserToken
     {
         #region Fields
 
@@ -32,7 +32,6 @@ namespace ServerFramework.Network.Packets
         private int _messageLength;
         private int _messageOffset;
         private int _headerLength;
-        private int _headerOffset;
         private int _permanentMessageOffset;
 
         private int _headerBytesDoneCount = 0;
@@ -64,12 +63,6 @@ namespace ServerFramework.Network.Packets
         {
             get { return _headerLength; }
             set { _headerLength = value; }
-        }
-
-        internal int HeaderOffset
-        {
-            get { return _headerOffset; }
-            set { _headerOffset = value; }
         }
 
         internal int PermanentMessageOffset
@@ -158,12 +151,11 @@ namespace ServerFramework.Network.Packets
         /// <param name="bufferSize">Buffer size for client</param>
         /// <param name="bufferOffset">Buffer offset in large alocated buffer</param>
         /// <param name="headerLength">Length of message header</param>
-        public UserToken(int bufferSize, int bufferOffset, int headerLength)
+        internal UserToken(int bufferSize, int bufferOffset, int headerLength)
         {
             this._bufferSize = bufferSize;
             this._bufferOffset = bufferOffset;
             this.HeaderLength = headerLength;
-            this.HeaderOffset = bufferOffset;
             this.MessageOffset = bufferOffset + headerLength;
             this.PermanentMessageOffset = MessageOffset;
         }
@@ -186,7 +178,7 @@ namespace ServerFramework.Network.Packets
 
         #region Finish
 
-        public void Finish()
+        internal void Finish()
         {
             this.MessageBytesRemainingCount = Packet.End();
         }

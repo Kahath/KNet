@@ -19,7 +19,7 @@ using System.Net.Sockets;
 
 namespace ServerFramework.Network.Handlers
 {
-    public class MessageHandler
+    internal class MessageHandler
     {
         #region Methods
 
@@ -31,7 +31,7 @@ namespace ServerFramework.Network.Handlers
         /// <param name="token">SocketAsyncEventArgs UserToken</param>
         /// <param name="remainingBytesToProcess">bytes transfered in receive callback</param>
         /// <returns></returns>
-        public int HandleMessage(SocketAsyncEventArgs e,
+        internal int HandleMessage(SocketAsyncEventArgs e,
             UserToken token,
             int remainingBytesToProcess)
         {

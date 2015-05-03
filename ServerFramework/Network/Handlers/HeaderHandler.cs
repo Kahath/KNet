@@ -20,7 +20,7 @@ using System.Net.Sockets;
 
 namespace ServerFramework.Network.Handlers
 {
-    public class HeaderHandler
+    internal class HeaderHandler
     {
         #region Methods
 
@@ -32,7 +32,7 @@ namespace ServerFramework.Network.Handlers
         /// <param name="token">SocketAsyncEventArgs user token</param>
         /// <param name="remainingBytesToProcess">bytes transfered in receiveCallback</param>
         /// <returns></returns>
-        public int HandleHeader(SocketAsyncEventArgs e,
+        internal int HandleHeader(SocketAsyncEventArgs e,
             UserToken token, int remainingBytesToProcess)
         {
             if (token.HeaderBytesDoneCount == 0)

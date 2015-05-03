@@ -27,5 +27,15 @@ namespace DatabaseFramework.Database.Base
         public DateTime? DateDeactivated { get; set; }
 
 		#endregion
-	}
+
+        #region Constructors
+
+        public EntityBase()
+        {
+            DateCreated = DateTime.Now;
+            Active = true;
+        }
+
+        #endregion
+    }
 }

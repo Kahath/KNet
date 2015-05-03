@@ -14,8 +14,10 @@
  */
 
 using ServerFramework.Constants.Misc;
+using ServerFramework.Database.Model;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace ServerFramework.Managers.Base
 {
@@ -23,18 +25,30 @@ namespace ServerFramework.Managers.Base
 	{
 		#region Fields
 
-		private static BlockingCollection<Tuple<ConsoleColor, string>> _consoleLogQueue
+		private BlockingCollection<Tuple<ConsoleColor, string>> _consoleLogQueue
 			= new BlockingCollection<Tuple<ConsoleColor, string>>();
+        private List<LogModel> _logList;
 
 		#endregion
 
 		#region Properties
 
-		protected static BlockingCollection<Tuple<ConsoleColor, string>> ConsoleLogQueue
+		protected BlockingCollection<Tuple<ConsoleColor, string>> ConsoleLogQueue
 		{
 			get { return _consoleLogQueue; }
 			set { _consoleLogQueue = value; }
 		}
+
+        protected List<LogModel> LogList
+        {
+            get 
+            {
+                if (_logList == null)
+                    _logList = new List<LogModel>();
+
+                return _logList; 
+            }
+        }
 
 		#endregion
 

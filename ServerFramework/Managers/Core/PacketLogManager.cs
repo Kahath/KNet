@@ -16,14 +16,16 @@
 using ServerFramework.Configuration;
 using ServerFramework.Constants.Entities.Session;
 using ServerFramework.Constants.Misc;
+using ServerFramework.Database;
+using ServerFramework.Database.Context;
+using ServerFramework.Database.Model;
 using ServerFramework.Managers.Base;
 using ServerFramework.Network.Packets;
 using System;
-using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.IO;
-using System.Text;
+using System.Linq;
 using System.Threading;
-using System.Xml;
 
 namespace ServerFramework.Managers.Core
 {
@@ -44,19 +46,6 @@ namespace ServerFramework.Managers.Core
 
         internal override void Init()
         {
-            Path = DateTime.Now.ToString("yyyy_MM_dd") + "_PacketLog.xml";
-
-            if (File.Exists(this.Path))
-            {
-                PacketLog = new StringBuilder(ServerConfig.PacketLogSize * 1024 * 1024);
-            }
-            else
-            {
-                PacketLog = new StringBuilder(ServerConfig.PacketLogSize * 1024 * 1024);
-                PacketLog.AppendLine("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
-                File.Create(this.Path);
-            }
-
             Thread logThread = new Thread(() =>
             {
                 while (true)
@@ -78,7 +67,7 @@ namespace ServerFramework.Managers.Core
 
         #region LogPacket
 
-        protected override async void LogPacket(Packet packet)
+        protected override void LogPacket(Packet packet)
         {
             PacketLogType logtype = packet.Stream is BinaryReader ? PacketLogType.CMSG : PacketLogType.SMSG;
 
@@ -87,39 +76,46 @@ namespace ServerFramework.Managers.Core
 
             Client pClient = Manager.SessionMgr.GetClientBySessionId(packet.SessionId);
 
-            using (StringWriter sw = new StringWriter(PacketLog))
+            PacketLogModel packetLog = new PacketLogModel();
+            
+            if(pClient != null)
             {
-                using (XmlTextWriter xtw = new XmlTextWriter(sw))
+                packetLog.IP = pClient.IP;
+
+                if(pClient.Token != null)
                 {
-                    xtw.WriteStartElement("Packet");
-                    xtw.WriteElementString("DateTime", DateTime.Now.ToString());
-
-                    if (pClient != null)
-                    {
-                        xtw.WriteElementString("IP", pClient.IP);
-
-                        if (pClient.Token != null)
-                            xtw.WriteElementString("Client", pClient.Token.ToString());
-                    }
-
-                    xtw.WriteElementString("Size", packet.Header.Size.ToString());
-
-                    string opcode = packet.Stream is BinaryReader ?
-                        "CMSG " + string.Format("0x{0}", ((ushort)packet.Header.Opcode).ToString("X4")) :
-                        "SMSG " + string.Format("0x{0}", ((ushort)packet.Header.Opcode).ToString("X4"));
-
-                    xtw.WriteElementString("Opcode", opcode);
-                    xtw.WriteElementString("Message", BitConverter.ToString(packet.Message));
-                    xtw.WriteEndElement();
-
-                    if (PacketLog.Length >= PacketLog.Capacity)
-                    {
-                        using (StreamWriter writer = new StreamWriter(Path, true, Encoding.UTF8))
-                            await writer.WriteAsync(PacketLog.ToString());
-
-                        PacketLog.Clear();
-                    }
+                    packetLog.ClientID = pClient.Token.ID;
                 }
+            }
+
+            packetLog.Size = packet.Header.Size;
+            packetLog.Opcode = packet.Header.Opcode;
+
+            using (ApplicationContext context = new ApplicationContext())
+            {
+                packetLog.PacketLogTypeID = packet.Stream is BinaryReader ?
+                    context.PacketLogType.First(x => x.ID == (int)PacketLogType.CMSG && x.Active).ID :
+                    context.PacketLogType.First(x => x.ID == (int)PacketLogType.SMSG && x.Active).ID;
+            }
+
+            if (packet.Header.Size > 0)
+            {
+                packetLog.Message = packet.Stream is BinaryReader ?
+                    BitConverter.ToString(packet.Message) :
+                    BitConverter.ToString(packet.Message, 4);
+            }
+
+            PacketLog.Add(packetLog);
+
+            if(PacketLog.Count > 1000)
+            {
+                using(ApplicationContext context = new ApplicationContext())
+                {
+                    context.PacketLog.AddRange(PacketLog);
+                    context.SaveChanges();
+                }
+
+                PacketLog.Clear();
             }
         }
 

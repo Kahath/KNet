@@ -150,6 +150,19 @@ namespace ServerFramework.Configuration
 			set { _dbName = value; }
 		}
 
+        internal static string ConnectionString
+        {
+            get
+            {
+                string retVal = String.Empty;
+
+                retVal = String.Format("Data Source={0},{1};Network Library=DBMSSOCN;Initial Catalog={2};User ID={3};Password={4};"
+                    , DBHost, DBPort, DBName, DBUser, DBPass);
+
+                return retVal;
+            }
+        }
+
 		#endregion
 
 		#region Methods
@@ -180,20 +193,6 @@ namespace ServerFramework.Configuration
 			DBPass = Config.Read<string>("dbpass");
             DBName = Config.Read<string>("dbname");
 		}
-
-        #endregion
-
-        #region GetConnectionString
-
-        internal static string GetConnectionString()
-        {
-            string retVal = String.Empty;
-
-            retVal = String.Format("Data Source={0},{1};Network Library=DBMSSOCN;Initial Catalog={2};User ID={3};Password={4};"
-                , DBHost, DBPort, DBName, DBUser, DBPass);
-
-            return retVal;
-        }
 
         #endregion
 		

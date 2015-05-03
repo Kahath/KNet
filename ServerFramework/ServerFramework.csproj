@@ -34,9 +34,6 @@
     <RunPostBuildEvent>Always</RunPostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DatabaseFramework">
-      <HintPath>..\DatabaseFramework\bin\Debug\DatabaseFramework.dll</HintPath>
-    </Reference>
     <Reference Include="DILibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Libs\DILibrary.dll</HintPath>
@@ -70,12 +67,19 @@
     <Compile Include="Constants\Misc\OpcodeType.cs" />
     <Compile Include="Constants\Misc\PacketLogType.cs" />
     <Compile Include="Constants\Entities\Session\Client.cs" />
+    <Compile Include="Database\Base\DBContextBase.cs" />
+    <Compile Include="Database\Base\EntityBase.cs" />
+    <Compile Include="Database\Base\RepositoryBase.cs" />
     <Compile Include="Database\Context\ApplicationContext.cs" />
-    <Compile Include="Database\DB.cs" />
+    <Compile Include="Database\Context\ApplicationContext.Views.cs" />
     <Compile Include="Database\Model\CommandModel.cs" />
-    <Compile Include="Database\Repository\CommandRepository.cs" />
+    <Compile Include="Database\Model\LogModel.cs" />
+    <Compile Include="Database\Model\LogTypeModel.cs" />
+    <Compile Include="Database\Model\PacketLogModel.cs" />
+    <Compile Include="Database\Model\PacketLogTypeModel.cs" />
     <Compile Include="Game\CommandHandlers\ClearCommands.cs" />
     <Compile Include="Game\CommandHandlers\CommandCommands.cs" />
+    <Compile Include="Game\CommandHandlers\DatabaseCommands.cs" />
     <Compile Include="Game\CommandHandlers\HelpCommands.cs" />
     <Compile Include="KahathFramework.cs" />
     <Compile Include="Managers\Base\LogManagerBase.cs" />
@@ -117,6 +121,10 @@
     </Content>
     <Content Include="Libs\DILibrary.dll" />
     <Content Include="Sql\Application.Command.Table.sql" />
+    <Content Include="Sql\Application.Log.Table.sql" />
+    <Content Include="Sql\Application.Log.Type.Table.sql" />
+    <Content Include="Sql\Application.Packet.Log.Table.sql" />
+    <Content Include="Sql\Application.Packet.Log.Type.Table.sql" />
     <Content Include="Sql\Application.Schema.sql" />
     <None Include="App.config">
       <SubType>Designer</SubType>

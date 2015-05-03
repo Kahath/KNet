@@ -13,16 +13,28 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using System;
+using ServerFramework.Constants.Attributes;
+using ServerFramework.Constants.Entities.Console;
+using ServerFramework.Constants.Misc;
+using ServerFramework.Database;
 
-namespace ServerFramework.Constants.Misc
+namespace ServerFramework.Game.CommandHandlers
 {
-    [Flags]
-    enum PacketLogType : byte
+    [Command]
+    public sealed class DatabaseCommands
     {
-        None    = 0x00,
-        CMSG    = 0x01,
-        SMSG    = 0x02,
+        #region Methods
 
-    };
+        #region GetCommand
+
+        private static Command GetCommand()
+        {
+            return new Command("database", (CommandLevel)0x7FFF, null, null, "");
+        }
+
+        #endregion
+
+        #endregion
+
+    }
 }

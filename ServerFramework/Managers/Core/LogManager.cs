@@ -15,6 +15,9 @@
 
 using ServerFramework.Configuration;
 using ServerFramework.Constants.Misc;
+using ServerFramework.Database;
+using ServerFramework.Database.Context;
+using ServerFramework.Database.Model;
 using ServerFramework.Managers.Base;
 using System;
 using System.Text;
@@ -24,6 +27,12 @@ namespace ServerFramework.Managers.Core
 {
     public sealed class LogManager : LogManagerBase<LogManager>
     {
+        #region Fields
+
+        private Timer _timer;
+
+        #endregion
+
         #region Constructors
 
         LogManager()
@@ -58,9 +67,9 @@ namespace ServerFramework.Managers.Core
                         catch (NullReferenceException) { }
                     }
                 }
-
             });
 
+            _timer = new Timer(TimerCallback, null, 10000, 10000);
             logThread.IsBackground = true;
             logThread.Start();
         }
@@ -109,15 +118,25 @@ namespace ServerFramework.Managers.Core
 
             if ((ServerConfig.LogLevel & type) == type)
             {
-                string msg = String.Empty;
+                string msg = String.Empty; 
 
-                if (type != LogType.None)
+                if (type == LogType.Debug || type == LogType.Command || type == LogType.Cmd)
                 {
-                    msg = string.Format
+                    msg = String.Format(message, args);
+                }
+                else
+                {
+                    msg = String.Format
                         (
                             "[{0}] {1}", DateTime.Now.ToString("HH:mm:ss.fff")
-                        , string.Format(message, args)
+                        , String.Format(message, args)
                         );
+
+                    LogModel logModel = new LogModel();
+                    logModel.LogTypeID = (int)type;
+                    logModel.Message = String.Format(message, args);
+
+                    LogList.Add(logModel);
                 }
 
                 ConsoleLogQueue.Add(Tuple.Create<ConsoleColor, string>(color, msg));
@@ -136,21 +155,39 @@ namespace ServerFramework.Managers.Core
 
         public void Log(string message, params object[] args)
         {
-            Log(LogType.None, message, args);
+            Log(LogType.Cmd, message, args);
         }
 
         public void Log(string message)
         {
-            Log(LogType.None, message);
+            Log(LogType.Cmd, message);
         }
 
         public void Log()
         {
-            Log(LogType.None, "");
+            Log(LogType.Cmd, "");
         }
 
         #endregion
 
-        #endregion     
+        #region TimerCallback
+
+        private void TimerCallback(object o)
+        {
+            if (LogList.Count > 0)
+            {
+                using (ApplicationContext context = new ApplicationContext())
+                {
+                    context.Log.AddRange(LogList);
+                    context.SaveChanges();
+                }
+
+                LogList.Clear();
+            }
+        }
+
+        #endregion
+
+        #endregion
     }
 }

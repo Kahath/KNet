@@ -295,9 +295,16 @@ namespace ServerFramework.Network.Socket
             while (remainingBytes > 0)
             {
                 if (!token.HeaderReady)
+                {
                     remainingBytes = headerHandler.HandleHeader(e, token, remainingBytes);
+
+                    if(remainingBytes > 0 && token.HeaderReady)
+                        remainingBytes = messageHandler.HandleMessage(e, token, remainingBytes);
+                }
                 else
+                {
                     remainingBytes = messageHandler.HandleMessage(e, token, remainingBytes);
+                }
 
                 if (token.PacketReady)
                 {

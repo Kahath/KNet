@@ -17,6 +17,7 @@ using DILibrary.DependencyInjection;
 using ServerFramework.Configuration;
 using ServerFramework.Constants.Misc;
 using ServerFramework.Database;
+using ServerFramework.Database.Context;
 using ServerFramework.Managers;
 using ServerFramework.Managers.Core;
 using ServerFramework.Network.Packets;
@@ -110,26 +111,25 @@ namespace ServerFramework
 
             Manager.LogMgr.Log(LogType.Init, "Initialising application database connection.");
 
-            IEnumerable<DbEntityValidationResult> errors = DB.ApplicationContext.GetValidationErrors();
-
-            if(errors.Any())
+            using (ApplicationContext context = new ApplicationContext())
             {
-                foreach(DbEntityValidationResult result in errors)
-                    Manager.LogMgr.Log(LogType.Database, "{0}", result.ToString());
+                IEnumerable<DbEntityValidationResult> errors = context.GetValidationErrors();
 
-                Console.ReadLine();
-                Environment.Exit(0);
+                if (errors.Any())
+                {
+                    foreach (DbEntityValidationResult result in errors)
+                        Manager.LogMgr.Log(LogType.Database, "{0}", result.ToString());
+
+                    Console.ReadLine();
+                    Environment.Exit(0);
+                }
             }
 
             Manager.LogMgr.Log(LogType.Init, "Successfully tested database connection.");
 
             Manager.LogMgr.Log(LogType.Init, "Initialising managers.");
             Manager.Init();
-
-            Manager.LogMgr.Log(LogType.Init, "Initialising server!");
         }
-
-
 
         #endregion 
 

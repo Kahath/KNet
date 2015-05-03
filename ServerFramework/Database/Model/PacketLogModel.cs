@@ -14,21 +14,29 @@
  */
 
 using ServerFramework.Database.Base;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ServerFramework.Database.Model
 {
-    [Table("Command", Schema="Application")]
-    public class CommandModel : EntityBase
+    [Table("Packet.Log", Schema="Application")]
+    public class PacketLogModel : EntityBase
     {
+        #region Properties
+
         [Key]
-        public int ID { get; set; }
-
-        [StringLength(50)]
-        public string Name { get; set; }
-
-        public short CommandLevel { get; set; }
-        public string Description { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int ID                               { get; set; }
+        public string IP                            { get; set; }
+        public int? ClientID                        { get; set; }
+        public int? Size                            { get; set; }
+        public int PacketLogTypeID                  { get; set; }
+        [ForeignKey("PacketLogTypeID")]
+        public PacketLogTypeModel PacketLogType     { get; set; }
+        public int? Opcode                          { get; set; }
+        public string Message                       { get; set; }
+ 
+        #endregion
     }
 }
