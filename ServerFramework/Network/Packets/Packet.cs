@@ -103,7 +103,7 @@ namespace ServerFramework.Network.Packets
 
             Header = new PacketHeader
             {
-                Size = 4,
+                Size = (ushort)ServerConfig.HeaderLength,
                 Opcode = message
             };
 

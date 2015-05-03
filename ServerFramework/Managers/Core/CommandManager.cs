@@ -200,7 +200,7 @@ namespace ServerFramework.Managers.Core
 		protected override void _loadCommandDescriptions()
         {
             Command c = null;
-            Stopwatch sw = new Stopwatch();
+
             using (ApplicationContext context = new ApplicationContext())
             {
                 IEnumerable<CommandModel> commands = context.Commands.Where(x => x.Active);

@@ -77,6 +77,7 @@
     <Compile Include="Database\Model\LogTypeModel.cs" />
     <Compile Include="Database\Model\PacketLogModel.cs" />
     <Compile Include="Database\Model\PacketLogTypeModel.cs" />
+    <Compile Include="Extensions\NetworkExtensions.cs" />
     <Compile Include="Game\CommandHandlers\ClearCommands.cs" />
     <Compile Include="Game\CommandHandlers\CommandCommands.cs" />
     <Compile Include="Game\CommandHandlers\DatabaseCommands.cs" />
@@ -100,10 +101,8 @@
     <Compile Include="Network\Packets\Handlers\ExampleHandler.cs" />
     <Compile Include="Network\Packets\Packet.cs" />
     <Compile Include="Network\Packets\UserToken.cs" />
-    <Compile Include="Network\Handlers\MessageHandler.cs" />
     <Compile Include="Constants\Attributes\OpcodeAttribute.cs" />
     <Compile Include="Network\Packets\PacketHeader.cs" />
-    <Compile Include="Network\Handlers\HeaderHandler.cs" />
     <Compile Include="Constants\Entities\Misc\ObjectPool.cs" />
     <Compile Include="Network\Socket\IServer.cs" />
     <Compile Include="Network\Socket\Saea.cs" />

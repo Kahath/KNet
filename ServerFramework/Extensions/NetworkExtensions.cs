@@ -15,12 +15,11 @@
 
 using ServerFramework.Network.Packets;
 using System;
-
 using System.Net.Sockets;
 
-namespace ServerFramework.Network.Handlers
+namespace ServerFramework.Extensions
 {
-    internal class HeaderHandler
+    public static class NetworkExtensions
     {
         #region Methods
 
@@ -32,8 +31,8 @@ namespace ServerFramework.Network.Handlers
         /// <param name="token">SocketAsyncEventArgs user token</param>
         /// <param name="remainingBytesToProcess">bytes transfered in receiveCallback</param>
         /// <returns></returns>
-        internal int HandleHeader(SocketAsyncEventArgs e,
-            UserToken token, int remainingBytesToProcess)
+        internal static int HandleHeader(this UserToken token
+            , SocketAsyncEventArgs e, int remainingBytesToProcess)
         {
             if (token.HeaderBytesDoneCount == 0)
                 token.Header = new byte[token.HeaderLength];
@@ -95,6 +94,72 @@ namespace ServerFramework.Network.Handlers
             return remainingBytesToProcess;
         }
 
-        #endregion       
+        /// <summary>
+        /// Handles message.  If received bytes length is lesser than 
+        /// message length, multiple method calls are required. 
+        /// </summary>
+        /// <param name="e">SocketAsyncEventArgs object</param>
+        /// <param name="token">SocketAsyncEventArgs UserToken</param>
+        /// <param name="remainingBytesToProcess">bytes transfered in receive callback</param>
+        /// <returns></returns>
+        internal static int HandleMessage(this UserToken token,
+            SocketAsyncEventArgs e, int remainingBytesToProcess)
+        {
+            if (token.MessageBytesDoneCount == 0)
+                token.Packet.Message = new
+                    byte[token.MessageLength];
+
+            if (token.MessageLength == 0)
+            {
+                token.Packet.SessionId = token.SessionId;
+                token.Packet.PrepareRead();
+
+                token.PacketReady = true;
+
+                return remainingBytesToProcess;
+            }
+
+            if ((remainingBytesToProcess +
+                token.MessageBytesDoneCount) >=
+                token.MessageLength)
+            {
+                Buffer.BlockCopy
+                    (
+                        e.Buffer
+                        , token.MessageOffset
+                        , token.Packet.Message
+                        , token.MessageBytesDoneCount
+                        , token.MessageLength - token.MessageBytesDoneCount
+                    );
+
+                remainingBytesToProcess = (remainingBytesToProcess - token.MessageLength)
+                    + token.MessageBytesDoneCount;
+
+                token.Packet.SessionId = token.SessionId;
+                token.Packet.PrepareRead();
+
+                token.PacketReady = true;
+            }
+            else
+            {
+                Buffer.BlockCopy
+                    (
+                        e.Buffer
+                        , token.MessageOffset
+                        , token.Packet.Message
+                        , token.MessageBytesDoneCount
+                        , remainingBytesToProcess
+                    );
+
+                token.MessageOffset -= token.HeaderBytesDoneThisOp;
+
+                token.MessageBytesDoneCount += remainingBytesToProcess;
+                remainingBytesToProcess = 0;
+            }
+
+            return remainingBytesToProcess;
+        }
+
+        #endregion   
     }
 }

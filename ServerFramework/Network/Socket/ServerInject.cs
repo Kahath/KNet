@@ -17,9 +17,9 @@ using ServerFramework.Configuration;
 using ServerFramework.Constants.Entities.Console.Misc;
 using ServerFramework.Constants.Entities.Session;
 using ServerFramework.Constants.Misc;
+using ServerFramework.Extensions;
 using ServerFramework.Managers.Core;
 using ServerFramework.Managers;
-using ServerFramework.Network.Handlers;
 using ServerFramework.Network.Packets;
 using ServerFramework.Singleton;
 using System;
@@ -40,9 +40,6 @@ namespace ServerFramework.Network.Socket
 
         ObjectPool<SocketAsyncEventArgs> AcceptPool;
         ObjectPool<Saea> SendReceivePool;
-
-        HeaderHandler headerHandler;
-        MessageHandler messageHandler;
 
         #endregion 
 
@@ -67,9 +64,6 @@ namespace ServerFramework.Network.Socket
             this.maxConnectionsEnforcer = new Semaphore(
                 this.socketSettings.MaxConnections,
                 this.socketSettings.MaxConnections);
-
-            headerHandler = new HeaderHandler();
-            messageHandler = new MessageHandler();
         }
 
         #endregion
@@ -296,14 +290,14 @@ namespace ServerFramework.Network.Socket
             {
                 if (!token.HeaderReady)
                 {
-                    remainingBytes = headerHandler.HandleHeader(e, token, remainingBytes);
+                    remainingBytes = token.HandleHeader(e, remainingBytes);
 
-                    if(remainingBytes > 0 && token.HeaderReady)
-                        remainingBytes = messageHandler.HandleMessage(e, token, remainingBytes);
+                    if (remainingBytes > 0 && token.HeaderReady)
+                        remainingBytes = token.HandleMessage(e, remainingBytes);
                 }
                 else
                 {
-                    remainingBytes = messageHandler.HandleMessage(e, token, remainingBytes);
+                    remainingBytes = token.HandleMessage(e, remainingBytes);
                 }
 
                 if (token.PacketReady)
