@@ -102,7 +102,7 @@ namespace ServerFramework.Managers.Core
             {
                 packetLog.Message = packet.Stream is BinaryReader ?
                     BitConverter.ToString(packet.Message) :
-                    BitConverter.ToString(packet.Message, 4);
+                    BitConverter.ToString(packet.Message, ServerConfig.HeaderLength);
             }
 
             PacketLog.Add(packetLog);

@@ -109,7 +109,7 @@ namespace ServerFramework.Managers.Core
 
 			if (Clients.TryAdd(id, c))
 			{
-				Manager.LogMgr.Log(LogType.Debug, "New session");
+				Manager.LogMgr.Log(LogType.Info, "New session");
 			}
 			else
 			{

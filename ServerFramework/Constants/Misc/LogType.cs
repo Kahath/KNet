@@ -22,12 +22,12 @@ namespace ServerFramework.Constants.Misc
     {
         None        = 0x00,
         Normal      = 0x01,
-        Error       = 0x02,
-        Init        = 0x04,
-        Database    = 0x08,
-        Debug       = 0x10,
-        Dump        = 0x20,
-        Cmd         = 0x40,
-        Command     = 0x80,
+        Init        = 0x02,
+        Command     = 0x04,
+        DB          = 0x08,
+        Info        = 0x10,
+        Warning     = 0x20,
+        Error       = 0x40,
+        Critical    = 0x80,
     };
 }

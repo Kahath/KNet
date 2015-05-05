@@ -91,22 +91,22 @@ namespace ServerFramework
 						)
 				);
 
-            Manager.LogMgr.Log(LogType.Cmd, "Configuration");
-            Manager.LogMgr.Log(LogType.Cmd, "Bind IP: {0}", ServerConfig.BindIP);
-            Manager.LogMgr.Log(LogType.Cmd, "Bind port: {0}", ServerConfig.BindPort);
-            Manager.LogMgr.Log(LogType.Cmd, "Console log level: {0}", ServerConfig.LogLevel);
-            Manager.LogMgr.Log(LogType.Cmd, "Packet log level: {0}", ServerConfig.PacketLogLevel);
-            Manager.LogMgr.Log(LogType.Cmd, "Opcode allow level: {0}", ServerConfig.OpcodeAllowLevel);
-            Manager.LogMgr.Log(LogType.Cmd, "Buffer size: {0}", ServerConfig.BufferSize);
-            Manager.LogMgr.Log(LogType.Cmd, "Maximum connections: {0}", ServerConfig.MaxConnections);
-            Manager.LogMgr.Log(LogType.Cmd, "Maximum sockets for accept: {0}", ServerConfig.MaxSimultaneousAcceptOps);
-            Manager.LogMgr.Log(LogType.Cmd, "Backlog: {0}", ServerConfig.Backlog);
-            Manager.LogMgr.Log(LogType.Cmd, "Packet header length: {0}", ServerConfig.HeaderLength);
-            Manager.LogMgr.Log(LogType.Cmd, "Database host name: {0}", ServerConfig.DBHost);
-            Manager.LogMgr.Log(LogType.Cmd, "Database port: {0}", ServerConfig.DBPort);
-            Manager.LogMgr.Log(LogType.Cmd, "Database username: {0}", ServerConfig.DBUser);
-            Manager.LogMgr.Log(LogType.Cmd, "Database password: {0}", ServerConfig.DBPass);
-            Manager.LogMgr.Log(LogType.Cmd, "Database name: {0}", ServerConfig.DBName);
+            Manager.LogMgr.Log(LogType.Info, "Configuration");
+            Manager.LogMgr.Log(LogType.Info, "Bind IP: {0}", ServerConfig.BindIP);
+            Manager.LogMgr.Log(LogType.Info, "Bind port: {0}", ServerConfig.BindPort);
+            Manager.LogMgr.Log(LogType.Info, "Console log level: {0}", ServerConfig.LogLevel);
+            Manager.LogMgr.Log(LogType.Info, "Packet log level: {0}", ServerConfig.PacketLogLevel);
+            Manager.LogMgr.Log(LogType.Info, "Opcode allow level: {0}", ServerConfig.OpcodeAllowLevel);
+            Manager.LogMgr.Log(LogType.Info, "Buffer size: {0}", ServerConfig.BufferSize);
+            Manager.LogMgr.Log(LogType.Info, "Maximum connections: {0}", ServerConfig.MaxConnections);
+            Manager.LogMgr.Log(LogType.Info, "Maximum sockets for accept: {0}", ServerConfig.MaxSimultaneousAcceptOps);
+            Manager.LogMgr.Log(LogType.Info, "Backlog: {0}", ServerConfig.Backlog);
+            Manager.LogMgr.Log(LogType.Info, "Packet header length: {0}", ServerConfig.HeaderLength);
+            Manager.LogMgr.Log(LogType.Info, "Database host name: {0}", ServerConfig.DBHost);
+            Manager.LogMgr.Log(LogType.Info, "Database port: {0}", ServerConfig.DBPort);
+            Manager.LogMgr.Log(LogType.Info, "Database username: {0}", ServerConfig.DBUser);
+            Manager.LogMgr.Log(LogType.Info, "Database password: {0}", ServerConfig.DBPass);
+            Manager.LogMgr.Log(LogType.Info, "Database name: {0}", ServerConfig.DBName);
             Manager.LogMgr.Log();
 
             Manager.LogMgr.Log(LogType.Init, "Initialising application database connection.");
@@ -118,7 +118,7 @@ namespace ServerFramework
                 if (errors.Any())
                 {
                     foreach (DbEntityValidationResult result in errors)
-                        Manager.LogMgr.Log(LogType.Database, "{0}", result.ToString());
+                        Manager.LogMgr.Log(LogType.DB, "{0}", result.ToString());
 
                     Console.ReadLine();
                     Environment.Exit(0);

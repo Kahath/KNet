@@ -60,6 +60,7 @@
     <Compile Include="Configuration\ConfigInject.cs" />
     <Compile Include="Configuration\IConfig.cs" />
     <Compile Include="Configuration\ServerConfig.cs" />
+    <Compile Include="Constants\Attributes\AssemblyServerAttribute.cs" />
     <Compile Include="Constants\Attributes\CommandAttribute.cs" />
     <Compile Include="Constants\Entities\Session\IClient.cs" />
     <Compile Include="Constants\Misc\CommandLevel.cs" />

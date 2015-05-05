@@ -85,31 +85,28 @@ namespace ServerFramework.Managers.Core
             switch (type)
             {
                 case LogType.Normal:
-                    color = ConsoleColor.Green;
-                    message = message.Insert(0, "System: ");
-                    break;
-                case LogType.Error:
-                    color = ConsoleColor.Red;
-                    message = message.Insert(0, "Error: ");
+                    color = ConsoleColor.Gray;
                     break;
                 case LogType.Init:
-                    color = ConsoleColor.Cyan;
+                    color = ConsoleColor.Green;
                     break;
-                case LogType.Database:
-                    color = ConsoleColor.Yellow;
-                    break;
-                case LogType.Debug:
-                    message = message.Insert(0, "Debug: ");
-                    color = ConsoleColor.DarkRed;
-                    break;
-                case LogType.Dump:
+                case LogType.DB:
                     color = ConsoleColor.DarkMagenta;
                     break;
-                case LogType.Cmd:
-                    color = ConsoleColor.Gray;
+                case LogType.Info:
+                    color = ConsoleColor.Cyan;
                     break;
                 case LogType.Command:
                     color = ConsoleColor.Blue;
+                    break;
+                case LogType.Warning:
+                    color = ConsoleColor.Yellow;
+                    break;
+                case LogType.Error:
+                    color = ConsoleColor.Red;
+                    break;
+                case LogType.Critical:
+                    color = ConsoleColor.DarkRed;
                     break;
                 default:
                     color = ConsoleColor.White;
@@ -120,7 +117,7 @@ namespace ServerFramework.Managers.Core
             {
                 string msg = String.Empty; 
 
-                if (type == LogType.Debug || type == LogType.Command || type == LogType.Cmd)
+                if (type == LogType.Info || type == LogType.Command || type == LogType.Normal)
                 {
                     msg = String.Format(message, args);
                 }
@@ -155,17 +152,17 @@ namespace ServerFramework.Managers.Core
 
         public void Log(string message, params object[] args)
         {
-            Log(LogType.Cmd, message, args);
+            Log(LogType.Normal, message, args);
         }
 
         public void Log(string message)
         {
-            Log(LogType.Cmd, message);
+            Log(LogType.Normal, message);
         }
 
         public void Log()
         {
-            Log(LogType.Cmd, "");
+            Log(LogType.Normal, "");
         }
 
         #endregion

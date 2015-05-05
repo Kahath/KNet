@@ -20,6 +20,7 @@ using ServerFramework.Managers.Base;
 using ServerFramework.Network.Packets;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace ServerFramework.Managers.Core
@@ -44,11 +45,12 @@ namespace ServerFramework.Managers.Core
             Dictionary<ushort, KeyValuePair<OpcodeAttribute, MethodInfo>> temp 
                 = new Dictionary<ushort, KeyValuePair<OpcodeAttribute, MethodInfo>>();
 
-            foreach (var a in AppDomain.CurrentDomain.GetAssemblies())
+            foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies().
+                Where(x => x.CustomAttributes.Any(y => y.AttributeType == typeof(AssemblyServerAttribute))))
             {
-                foreach (var type in a.GetTypes())
+                foreach (Type type in a.GetTypes())
                 {
-                    foreach (var meth in type.GetMethods())
+                    foreach (MethodInfo meth in type.GetMethods())
                     {
                         foreach (OpcodeAttribute attr in meth.GetCustomAttributes<OpcodeAttribute>())
                         {

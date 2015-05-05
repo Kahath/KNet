@@ -46,11 +46,12 @@ namespace ServerFramework.Managers.Core
 
         internal override void Init()
         {
-            foreach (var a in AppDomain.CurrentDomain.GetAssemblies())
+            foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies().
+                Where(x => x.CustomAttributes.Any(y => y.AttributeType == typeof(AssemblyServerAttribute))))
             {
-                foreach (var type in a.GetTypes())
+                foreach (Type type in a.GetTypes())
                 {
-                    foreach (var attr in type.GetCustomAttributes<CommandAttribute>())
+                    foreach (CommandAttribute attr in type.GetCustomAttributes<CommandAttribute>())
                     {
                         if (attr != null)
                         {
