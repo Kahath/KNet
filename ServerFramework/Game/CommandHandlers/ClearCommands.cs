@@ -15,13 +15,14 @@
 
 using ServerFramework.Constants.Attributes;
 using ServerFramework.Constants.Entities.Console;
+using ServerFramework.Constants.Entities.Session;
 using ServerFramework.Constants.Misc;
 using System;
 
 namespace ServerFramework.Game.CommandHandlers
 {
     [Command]
-    public class ClearCommands
+    public static class ClearCommands
     {
         #region Methods
 
@@ -29,7 +30,7 @@ namespace ServerFramework.Game.CommandHandlers
 
         private static Command GetCommand()
         {
-            return new Command("cls", (CommandLevel)0x7FFF, null, Cls, "");
+            return new Command("cls", CommandLevel.Ten, null, Cls, "");
         }
 
         #endregion
@@ -40,7 +41,7 @@ namespace ServerFramework.Game.CommandHandlers
 
         #region ClsHandler
 
-        private static bool Cls(params string[] args)
+        private static bool Cls(Client user, params string[] args)
         {
             Console.Clear();
             return true;

@@ -13,6 +13,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using ServerFramework.Constants.Misc;
 namespace ServerFramework.Constants.Entities.Session
 {
     public interface IClient

@@ -14,6 +14,8 @@
  */
 
 using ServerFramework.Constants.Entities.Console;
+using ServerFramework.Constants.Entities.Session;
+using ServerFramework.Constants.Misc;
 using System.Collections.Generic;
 
 namespace ServerFramework.Managers.Base
@@ -47,12 +49,12 @@ namespace ServerFramework.Managers.Base
 
 		#region Methods
 
-		public abstract bool InvokeCommand(string command);
-		protected abstract bool _invokeCommandHandler(Command[] commandTable,
+		public abstract bool InvokeCommand(Client user, string command);
+		protected abstract bool InvokeCommandHandler(Client user, Command[] commandTable,
 			List<string> command, string path);
-		protected abstract string _availableSubCommands(Command c);
-		protected abstract void _loadCommandDescriptions();
-		protected abstract Command _getCommand(Command[] commandTable, List<string> command);
+		protected abstract string AvailableSubCommands(CommandLevel userLevel, Command c);
+		protected abstract void LoadCommandDescriptions();
+		protected abstract Command GetCommand(Command[] commandTable, List<string> command);
 		
 		#endregion
 	}

@@ -15,6 +15,7 @@
 
 using ServerFramework.Constants.Attributes;
 using ServerFramework.Constants.Entities.Console;
+using ServerFramework.Constants.Entities.Session;
 using ServerFramework.Constants.Misc;
 using ServerFramework.Database.Context;
 using ServerFramework.Database.Model;
@@ -81,23 +82,23 @@ namespace ServerFramework.Managers.Core
 
             Manager.LogMgr.Log(LogType.Normal, "{0} Commands loaded", CommandTable.Count);
 
-            _loadCommandDescriptions();
+            LoadCommandDescriptions();
         }
 
         #endregion
 
         #region InvokeCommand
 
-        public override bool InvokeCommand(string command)
+        public override bool InvokeCommand(Client user, string command)
         {
 			bool retVal = false;
 
             string com = Regex.Replace(command, @"\s+", " ").Trim();
 
-            if (com != "")
+            if (!String.IsNullOrEmpty(com))
             {
-                retVal = _invokeCommandHandler(CommandTable.ToArray()
-                    , com.Split(' ').ToList(), string.Empty);
+                retVal = InvokeCommandHandler(user, CommandTable.ToArray()
+                    , com.Split(' ').ToList(), String.Empty);
             }
 
             return retVal;
@@ -105,15 +106,15 @@ namespace ServerFramework.Managers.Core
 
         #endregion
 
-        #region _invokeCommandHandler
+        #region InvokeCommandHandler
 
-		protected override bool _invokeCommandHandler(Command[] commandTable,
+		protected override bool InvokeCommandHandler(Client user, Command[] commandTable,
             List<string> command, string path)
         {
             if (commandTable == null || command == null)
                 return false;
 
-            Command c = commandTable.FirstOrDefault(x => x.Name.StartsWith(command[0].Trim()));
+            Command c = commandTable.Where(x => user.UserLevel >= x.CommandLevel).FirstOrDefault(x => x.Name.StartsWith(command[0].Trim()));
 
             if (c != null)
             {
@@ -126,12 +127,12 @@ namespace ServerFramework.Managers.Core
                         command.RemoveAt(0);
                         if(command.Count > 0)
                         {
-                            return _invokeCommandHandler(c.SubCommands, command, path);
+                            return InvokeCommandHandler(user, c.SubCommands, command, path);
                         }
                         else
                         {
                             Manager.LogMgr.Log(LogType.Command, "Error with '{0}' command."
-                                + " Available sub commands:\n{1}", path, _availableSubCommands(c));
+                                + " Available sub commands:\n{1}", path, AvailableSubCommands(user.UserLevel, c));
 
                             return false;
                         }
@@ -140,6 +141,7 @@ namespace ServerFramework.Managers.Core
                     {
                         Manager.LogMgr.Log(LogType.Command, "Error with '{0}' command."
                             + " Missing script or subcommands", path);
+
                         return false;
                     }
                 }
@@ -149,7 +151,7 @@ namespace ServerFramework.Managers.Core
                     
                     try
                     {
-                        return c.Script.Invoke(command.ToArray());
+                        return c.Script.Invoke(user, command.ToArray());
                     }
                     catch (IndexOutOfRangeException)
                     {
@@ -173,19 +175,19 @@ namespace ServerFramework.Managers.Core
 
         #endregion
 
-        #region _availableSubCommands
+        #region AvailableSubCommands
 
-		protected override string _availableSubCommands(Command c)
+		protected override string AvailableSubCommands(CommandLevel userLevel, Command c)
         {
             StringBuilder sb = new StringBuilder();
 
             foreach (Command com in c.SubCommands)
             {
-                if (com.SubCommands != null)
+                if (com.SubCommands != null && userLevel >= com.CommandLevel)
                 {
                     sb.AppendLine(com.Name + "..");
                 }
-                else
+                else if (userLevel >= com.CommandLevel)
                 {
                     sb.AppendLine(com.Name);
                 }
@@ -196,9 +198,9 @@ namespace ServerFramework.Managers.Core
 
         #endregion
 
-        #region _loadCommandDescriptions
+        #region LoadCommandDescriptions
 
-		protected override void _loadCommandDescriptions()
+		protected override void LoadCommandDescriptions()
         {
             Command c = null;
 
@@ -208,7 +210,7 @@ namespace ServerFramework.Managers.Core
 
                 foreach (CommandModel cdo in commands)
                 {
-                    c = _getCommand(CommandTable.ToArray()
+                    c = GetCommand(CommandTable.ToArray()
                         , cdo.Name.Split(' ').ToList());
 
                     if (c != null)
@@ -222,9 +224,9 @@ namespace ServerFramework.Managers.Core
 
         #endregion
 
-        #region _getCommand
+        #region GetCommand
 
-		protected override Command _getCommand(Command[] commandTable, List<string> command)
+		protected override Command GetCommand(Command[] commandTable, List<string> command)
         {
             if (commandTable == null || command == null)
                 return null;
@@ -236,7 +238,7 @@ namespace ServerFramework.Managers.Core
                 command.RemoveAt(0);
                 if (command.Count > 0)
                 {
-                    return _getCommand(c.SubCommands, command);
+                    return GetCommand(c.SubCommands, command);
                 }
             }
 

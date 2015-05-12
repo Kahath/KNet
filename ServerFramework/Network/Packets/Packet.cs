@@ -98,8 +98,9 @@ namespace ServerFramework.Network.Packets
         /// <param name="message">opcode of message</param>
         public Packet(ushort message, Encoding encoder = null)
         {
-            _stream = new BinaryWriter(new MemoryStream());
             Encoder = encoder ?? Encoding.UTF8;
+            _stream = new BinaryWriter(new MemoryStream(), Encoder);
+
 
             Header = new PacketHeader
             {
@@ -123,7 +124,7 @@ namespace ServerFramework.Network.Packets
         internal void PrepareRead()
         {
             if (!(Stream is BinaryWriter))
-                _stream = new BinaryReader(new MemoryStream(this.Message));
+                _stream = new BinaryReader(new MemoryStream(this.Message), Encoder);
         }
 
         #endregion
@@ -190,49 +191,10 @@ namespace ServerFramework.Network.Packets
         /// <param name="value">value of method type</param>
         public void Write<T>(T value)
         {
-            if (Stream is BinaryReader)
-                return;
-
-            switch (typeof(T).Name)
+            if (!(Stream is BinaryReader))
             {
-                case "Byte":
-                    Stream.Write(Convert.ToByte(value));
-                    break;
-                case "SByte":
-                    Stream.Write(Convert.ToSByte(value));
-                    break;
-                case "UInt16":
-                    Stream.Write(Convert.ToUInt16(value));
-                    break;
-                case "Int16":
-                    Stream.Write(Convert.ToInt16(value));
-                    break;
-                case "UInt32":
-                    Stream.Write(Convert.ToUInt32(value));
-                    break;
-                case "Int32":
-                    Stream.Write(Convert.ToInt32(value));
-                    break;
-                case "UInt64":
-                    Stream.Write(Convert.ToUInt64(value));
-                    break;
-                case "Int64":
-                    Stream.Write(Convert.ToInt64(value));
-                    break;
-                case "Single":
-                    Stream.Write(Convert.ToSingle(value));
-                    break;
-                case "String":
-                    var data = Encoder.GetBytes(value as string);
-                    Stream.Write(Convert.ToByte(data.Length));
-                    Stream.Write(data);
-                    break;
-                case "Byte[]":
-                    data = value as byte[];
-
-                    if (data != null)
-                        Stream.Write(data);
-                    break;
+                T trueValue = (T)Convert.ChangeType(value, typeof(T));
+                Stream.Write(trueValue);
             }
         }
 

@@ -11,9 +11,9 @@ using System.Data.Entity.Infrastructure.MappingViews;
 
 [assembly: DbMappingViewCacheTypeAttribute(
     typeof(ServerFramework.Database.Context.ApplicationContext),
-    typeof(Edm_EntityMappingGeneratedViews.ViewsForBaseEntitySets82cc21be635add3e8c49e9e2ef42717041c0f6219d32c671947707eec1998812))]
+    typeof(ServerFramewor.Database.PrecompiledViews.ViewsForBaseEntitySets82cc21be635add3e8c49e9e2ef42717041c0f6219d32c671947707eec1998812))]
 
-namespace Edm_EntityMappingGeneratedViews
+namespace ServerFramewor.Database.PrecompiledViews
 {
     using System;
     using System.CodeDom.Compiler;

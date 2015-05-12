@@ -22,6 +22,8 @@ namespace ServerFramework.Database.Model
     [Table("Command", Schema="Application")]
     public class CommandModel : EntityBase
     {
+        #region Properties
+
         [Key]
         public int ID { get; set; }
 
@@ -30,5 +32,7 @@ namespace ServerFramework.Database.Model
 
         public short CommandLevel { get; set; }
         public string Description { get; set; }
+
+        #endregion
     }
 }

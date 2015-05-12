@@ -13,10 +13,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using System;
 using System.Data.Entity;
-using System.IO;
-using System.Reflection;
 
 namespace ServerFramework.Database.Base
 {
@@ -45,15 +42,6 @@ namespace ServerFramework.Database.Base
         {
             ConnectionString = connectionString;
             Configuration.AutoDetectChangesEnabled = false;
-        }
-
-        #endregion
-
-        #region Methods
-
-        public async void Save()
-        {
-            await SaveChangesAsync();
         }
 
         #endregion

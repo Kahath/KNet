@@ -72,7 +72,7 @@
     <Compile Include="Database\Base\EntityBase.cs" />
     <Compile Include="Database\Base\RepositoryBase.cs" />
     <Compile Include="Database\Context\ApplicationContext.cs" />
-    <Compile Include="Database\Context\ApplicationContext.Views.cs" />
+    <Compile Include="Database\PrecompiledViews\ApplicationContext.Views.cs" />
     <Compile Include="Database\Model\CommandModel.cs" />
     <Compile Include="Database\Model\LogModel.cs" />
     <Compile Include="Database\Model\LogTypeModel.cs" />

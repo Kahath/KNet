@@ -286,6 +286,8 @@ namespace ServerFramework.Network.Socket
 
             int remainingBytes = e.BytesTransferred;
 
+            Manager.LogMgr.Log("Message: {0}", BitConverter.ToString(e.Buffer, ((UserToken)e.UserToken).BufferOffset, remainingBytes));
+
             while (remainingBytes > 0)
             {
                 if (!token.HeaderReady)

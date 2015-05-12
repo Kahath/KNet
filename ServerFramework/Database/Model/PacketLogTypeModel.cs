@@ -29,6 +29,5 @@ namespace ServerFramework.Database.Model
         public string Name  { get; set; }
 
 	    #endregion
-        
     }
 }

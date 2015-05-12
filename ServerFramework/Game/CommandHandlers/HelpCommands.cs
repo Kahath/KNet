@@ -15,6 +15,7 @@
 
 using ServerFramework.Constants.Attributes;
 using ServerFramework.Constants.Entities.Console;
+using ServerFramework.Constants.Entities.Session;
 using ServerFramework.Constants.Misc;
 using ServerFramework.Managers;
 using System.Collections.Generic;
@@ -24,7 +25,7 @@ using System.Text;
 namespace ServerFramework.Game.CommandHandlers
 {
     [Command]
-    internal sealed class HelpCommands
+    internal static class HelpCommands
     {
         #region Methods
 
@@ -32,15 +33,15 @@ namespace ServerFramework.Game.CommandHandlers
 
         private static Command GetCommand()
         {
-            return new Command("help", (CommandLevel)0x7FFF, null, HelpCommandHandler
+            return new Command("help", CommandLevel.Ten, null, HelpCommandHandler
                 , "");
         }
 
         #endregion
 
-        #region _getHelpCommand
+        #region GetHelpCommand
         
-        private static bool _getHelpCommand(Command[] commandTable,
+        private static bool GetHelpCommand(CommandLevel userLevel, Command[] commandTable,
             List<string> command, string path)
         {
             if (commandTable == null || command == null)
@@ -49,7 +50,7 @@ namespace ServerFramework.Game.CommandHandlers
             if(command.Count == 0)
                 command.Add("help");
 
-            Command c = commandTable.FirstOrDefault(x => x.Name.StartsWith(command[0]));
+            Command c = commandTable.Where(x => userLevel >= x.CommandLevel).FirstOrDefault(x => x.Name.StartsWith(command[0].Trim()));
 
             if(c != null)
             {
@@ -58,13 +59,13 @@ namespace ServerFramework.Game.CommandHandlers
                 if(command.Count > 1)
                 {
                     command.RemoveAt(0);
-                    return _getHelpCommand(c.SubCommands, command, path);
+                    return GetHelpCommand(userLevel, c.SubCommands, command, path);
                 }
 
                 if (c.SubCommands != null)
                 {
                     Manager.LogMgr.Log(LogType.Command, "Available sub commands for '{0}' command:", path);
-                    Manager.LogMgr.Log(LogType.Command, "{0}", _availableSubCommands(c, path));
+                    Manager.LogMgr.Log(LogType.Command, "{0}", AvailableSubCommands(userLevel, c, path));
                     return true;
                 }
                 else
@@ -90,17 +91,17 @@ namespace ServerFramework.Game.CommandHandlers
 
         #endregion
 
-        #region _availableSubCommands
+        #region AvailableSubCommands
 
-        private static string _availableSubCommands(Command c, string path)
+        private static string AvailableSubCommands(CommandLevel userLevel, Command c, string path)
         {
             StringBuilder sb = new StringBuilder();
 
             foreach (Command com in c.SubCommands)
             {
-                if(com.SubCommands != null)
+                if(com.SubCommands != null && userLevel >= com.CommandLevel)
                     sb.AppendLine(com.Name + "..");
-                else
+                else if(userLevel >= com.CommandLevel)
                     sb.AppendLine(com.Name);
             }
 
@@ -115,9 +116,9 @@ namespace ServerFramework.Game.CommandHandlers
 
         #region HelpCommandHandler
 
-        public static bool HelpCommandHandler(params string[] args)
+        public static bool HelpCommandHandler(Client user, params string[] args)
         {
-            return _getHelpCommand(Manager.CommandMgr.CommandTable.ToArray(),
+            return GetHelpCommand(user.UserLevel, Manager.CommandMgr.CommandTable.ToArray(),
                 args.ToList(), string.Empty);
         }
 

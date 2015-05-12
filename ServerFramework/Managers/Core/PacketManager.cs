@@ -117,7 +117,7 @@ namespace ServerFramework.Managers.Core
                 }
             }
             else
-                Manager.LogMgr.Log(LogType.Error, "Opcode 0x{0:X} doesn't have handler", packet.Header.Opcode);
+                Manager.LogMgr.Log(LogType.Warning, "Opcode 0x{0:X} doesn't have handler", packet.Header.Opcode);
         }
 
         #endregion

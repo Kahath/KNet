@@ -13,6 +13,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using ServerFramework.Constants.Misc;
 using ServerFramework.Network.Packets;
 using ServerFramework.Network.Socket;
 using System;
@@ -26,6 +27,7 @@ namespace ServerFramework.Constants.Entities.Session
 
         private Saea _saea;
         private IClient _clientToken;
+        private CommandLevel _userLevel;
 
         #endregion
 
@@ -58,9 +60,20 @@ namespace ServerFramework.Constants.Entities.Session
             get { return (Saea.Receiver.UserToken as UserToken).SessionId; }
         }
 
+        public CommandLevel UserLevel
+        {
+            get { return _userLevel; }
+            set { _userLevel = value; }
+        }
+
         #endregion
 
         #region Constructors
+
+        internal Client()
+        {
+
+        }
 
         internal Client(Saea saea)
         {

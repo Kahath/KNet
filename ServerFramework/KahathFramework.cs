@@ -15,6 +15,7 @@
 
 using DILibrary.DependencyInjection;
 using ServerFramework.Configuration;
+using ServerFramework.Constants.Entities.Session;
 using ServerFramework.Constants.Misc;
 using ServerFramework.Database;
 using ServerFramework.Database.Context;
@@ -34,7 +35,7 @@ namespace ServerFramework
 {
     #region Delegates
 
-    public delegate bool CommandScriptHandler(params string[] args);
+    public delegate bool CommandScriptHandler(Client user, params string[] args);
     public delegate void PacketHandler(Packet packet);
     public delegate void ManagerInitialisationEventHandler(object sender, EventArgs e);
     public delegate void PacketSendEventHandler(object sender, EventArgs e);
@@ -47,6 +48,7 @@ namespace ServerFramework
     {
         #region Fields
 
+        private Client _consoleClient;
         private static SocketListenerSettings _socketSettings;
 		private static Server _server;
 
@@ -63,6 +65,22 @@ namespace ServerFramework
 
 				return _server;
 			}
+        }
+
+        private Client ConsoleClient
+        {
+            get
+            {
+                if(_consoleClient == null)
+                {
+                    _consoleClient = new Client()
+                    {
+                        UserLevel = CommandLevel.Ten,
+                    };                
+                }
+
+                return _consoleClient;
+            }
         }
 
         #endregion
@@ -145,8 +163,8 @@ namespace ServerFramework
 			{
 				string command = Console.ReadLine();
 
-				if (command != null)
-					Manager.CommandMgr.InvokeCommand(command.ToLower());
+				if (!String.IsNullOrEmpty(command))
+					Manager.CommandMgr.InvokeCommand(ConsoleClient, command.ToLower());
 				else
 					Manager.LogMgr.Log(LogType.Command, "Wrong input");
 			}

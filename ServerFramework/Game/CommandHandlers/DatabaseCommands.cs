@@ -21,7 +21,7 @@ using ServerFramework.Database;
 namespace ServerFramework.Game.CommandHandlers
 {
     [Command]
-    public sealed class DatabaseCommands
+    public static class DatabaseCommands
     {
         #region Methods
 
@@ -29,7 +29,7 @@ namespace ServerFramework.Game.CommandHandlers
 
         private static Command GetCommand()
         {
-            return new Command("database", (CommandLevel)0x7FFF, null, null, "");
+            return new Command("database", CommandLevel.Ten, null, null, "");
         }
 
         #endregion

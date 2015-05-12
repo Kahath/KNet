@@ -15,13 +15,14 @@
 
 using ServerFramework.Constants.Attributes;
 using ServerFramework.Constants.Entities.Console;
+using ServerFramework.Constants.Entities.Session;
 using ServerFramework.Constants.Misc;
 using ServerFramework.Managers;
 
 namespace ServerFramework.Game.CommandHandlers
 {
     [Command]
-    internal sealed class CommandCommands
+    internal static class CommandCommands
     {
         #region Methods
 
@@ -31,10 +32,10 @@ namespace ServerFramework.Game.CommandHandlers
         {
             Command[] CommandCommandTable = 
             {
-                new Command("list", (CommandLevel)0x7FFF, null, CommandListHandler, "")
+                new Command("list", CommandLevel.Nine, null, CommandListHandler, "")
             };
 
-            return new Command("command", (CommandLevel)0x7FFF,
+            return new Command("command", CommandLevel.Nine,
                 CommandCommandTable, null, "");
         }
 
@@ -46,15 +47,15 @@ namespace ServerFramework.Game.CommandHandlers
 
         #region CommandListHandler
 
-        private static bool CommandListHandler(params string[] args)
+        private static bool CommandListHandler(Client user, params string[] args)
         {
             Manager.LogMgr.Log(LogType.Command, "List of all commands:");
 
             foreach (Command c in Manager.CommandMgr.CommandTable)
             {
-                if (c.SubCommands != null)
+                if (c.SubCommands != null && user.UserLevel >= c.CommandLevel)
                     Manager.LogMgr.Log(LogType.Command, "{0}..", c.Name);
-                else
+                else if (user.UserLevel >= c.CommandLevel) 
                     Manager.LogMgr.Log(LogType.Command, "{0}", c.Name);
             }
 
