@@ -14,7 +14,7 @@
  */
 
 using ServerFramework.Constants.Misc;
-using ServerFramework.Database.Model;
+using ServerFramework.Database.Model.Application.Log;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;

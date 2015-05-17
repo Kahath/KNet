@@ -20,7 +20,7 @@ using System.Text;
 
 namespace ServerFramework.Network.Packets
 {
-    public sealed class Packet : IDisposable
+    public class Packet : IDisposable
     {
         #region Fields
 
@@ -41,13 +41,13 @@ namespace ServerFramework.Network.Packets
         public PacketHeader Header
         {
             get { return _header; }
-            set { _header = value; }
+            internal set { _header = value; }
         }
 
         public byte[] Message
         {
             get { return _message; }
-            set { _message = value; }
+            internal set { _message = value; }
         }
 
         public int SessionId
@@ -56,13 +56,13 @@ namespace ServerFramework.Network.Packets
             internal set { _sessionId = value; }
         }
 
-        public byte Position
+        private byte Position
         {
             get { return _position; }
             set { _position = value; }
         }
 
-        public byte Value
+        private byte Value
         {
             get { return _value; }
             set { _value = value; }
@@ -291,6 +291,7 @@ namespace ServerFramework.Network.Packets
         /// <returns>Size of packet minus header size</returns>
         internal int End()
         {
+            Flush();
             Stream.BaseStream.Seek(0, SeekOrigin.Begin);
             Message = new byte[Stream.BaseStream.Length];
             Header.Size = (ushort)(Message.Length - ServerConfig.HeaderLength);

@@ -15,7 +15,9 @@
 
 using ServerFramework.Configuration;
 using ServerFramework.Database.Base;
-using ServerFramework.Database.Model;
+using ServerFramework.Database.Model.Application.Command;
+using ServerFramework.Database.Model.Application.Log;
+using ServerFramework.Database.Model.Application.PacketLog;
 using System.Data.Entity;
 
 namespace ServerFramework.Database.Context
@@ -25,6 +27,7 @@ namespace ServerFramework.Database.Context
         #region Properties
 
         public DbSet<CommandModel> Commands             { get; set; }
+        public DbSet<CommandLevelModel> CommandLevel    { get; set; }
         public DbSet<PacketLogModel> PacketLog          { get; set; }
         public DbSet<PacketLogTypeModel> PacketLogType  { get; set; }
         public DbSet<LogModel> Log                      { get; set; }

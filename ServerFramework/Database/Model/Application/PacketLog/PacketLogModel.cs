@@ -18,7 +18,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ServerFramework.Database.Model
+namespace ServerFramework.Database.Model.Application.PacketLog
 {
     [Table("Packet.Log", Schema="Application")]
     public class PacketLogModel : EntityBase

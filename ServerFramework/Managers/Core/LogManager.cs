@@ -15,9 +15,8 @@
 
 using ServerFramework.Configuration;
 using ServerFramework.Constants.Misc;
-using ServerFramework.Database;
 using ServerFramework.Database.Context;
-using ServerFramework.Database.Model;
+using ServerFramework.Database.Model.Application.Log;
 using ServerFramework.Managers.Base;
 using System;
 using System.Text;
@@ -27,12 +26,6 @@ namespace ServerFramework.Managers.Core
 {
     public sealed class LogManager : LogManagerBase<LogManager>
     {
-        #region Fields
-
-        private Timer _timer;
-
-        #endregion
-
         #region Constructors
 
         LogManager()
@@ -63,13 +56,13 @@ namespace ServerFramework.Managers.Core
                         {
                             Console.ForegroundColor = item.Item1;
                             Console.WriteLine(item.Item2);
+                            Console.ResetColor();
                         }
                         catch (NullReferenceException) { }
                     }
                 }
             });
 
-            _timer = new Timer(TimerCallback, null, 10000, 10000);
             logThread.IsBackground = true;
             logThread.Start();
         }
@@ -133,7 +126,11 @@ namespace ServerFramework.Managers.Core
                     logModel.LogTypeID = (int)type;
                     logModel.Message = String.Format(message, args);
 
-                    LogList.Add(logModel);
+                    using(ApplicationContext context = new ApplicationContext())
+                    {
+                        context.Log.Add(logModel);
+                        context.SaveChanges();
+                    }
                 }
 
                 ConsoleLogQueue.Add(Tuple.Create<ConsoleColor, string>(color, msg));
@@ -163,24 +160,6 @@ namespace ServerFramework.Managers.Core
         public void Log()
         {
             Log(LogType.Normal, "");
-        }
-
-        #endregion
-
-        #region TimerCallback
-
-        private void TimerCallback(object o)
-        {
-            if (LogList.Count > 0)
-            {
-                using (ApplicationContext context = new ApplicationContext())
-                {
-                    context.Log.AddRange(LogList);
-                    context.SaveChanges();
-                }
-
-                LogList.Clear();
-            }
         }
 
         #endregion

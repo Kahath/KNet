@@ -16,13 +16,11 @@
 using ServerFramework.Configuration;
 using ServerFramework.Constants.Entities.Session;
 using ServerFramework.Constants.Misc;
-using ServerFramework.Database;
 using ServerFramework.Database.Context;
-using ServerFramework.Database.Model;
+using ServerFramework.Database.Model.Application.PacketLog;
 using ServerFramework.Managers.Base;
 using ServerFramework.Network.Packets;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;

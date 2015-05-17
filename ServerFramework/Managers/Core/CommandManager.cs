@@ -18,11 +18,10 @@ using ServerFramework.Constants.Entities.Console;
 using ServerFramework.Constants.Entities.Session;
 using ServerFramework.Constants.Misc;
 using ServerFramework.Database.Context;
-using ServerFramework.Database.Model;
+using ServerFramework.Database.Model.Application.Command;
 using ServerFramework.Managers.Base;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -215,7 +214,7 @@ namespace ServerFramework.Managers.Core
 
                     if (c != null)
                     {
-                        c.CommandLevel = (CommandLevel)cdo.CommandLevel;
+                        c.CommandLevel = (CommandLevel)cdo.CommandLevelID.GetValueOrDefault();
                         c.Description = cdo.Description;
                     }
                 }

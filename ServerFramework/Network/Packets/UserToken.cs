@@ -158,6 +158,7 @@ namespace ServerFramework.Network.Packets
             this.HeaderLength = headerLength;
             this.MessageOffset = bufferOffset + headerLength;
             this.PermanentMessageOffset = MessageOffset;
+            this.Header = new byte[HeaderLength];
         }
 
         #endregion
@@ -169,9 +170,9 @@ namespace ServerFramework.Network.Packets
         /// <summary>
         /// Prepares packet for receiving data
         /// </summary>
-        internal void StartReceive()
+        internal void StartReceive(Encoding encoding = null)
         {
-            Packet = new Packet(Encoding.UTF8);
+            Packet = new Packet(encoding);
         }
 
         #endregion

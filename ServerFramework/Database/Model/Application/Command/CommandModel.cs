@@ -17,19 +17,23 @@ using ServerFramework.Database.Base;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ServerFramework.Database.Model
+namespace ServerFramework.Database.Model.Application.Command
 {
-    [Table("Log", Schema="Application")]
-    public class LogModel : EntityBase
+    [Table("Command", Schema="Application")]
+    public class CommandModel : EntityBase
     {
         #region Properties
 
         [Key]
         public int ID { get; set; }
-        public string Message { get; set; }
-        public int LogTypeID { get; set; }
-        [ForeignKey("LogTypeID")]
-        public LogTypeModel LogType { get; set; }
+
+        [StringLength(50)]
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public int? CommandLevelID { get; set; }
+
+        [ForeignKey("CommandLevelID")]
+        public CommandLevelModel CommandLevel { get; set; }
 
         #endregion
     }

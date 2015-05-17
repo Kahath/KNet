@@ -18,12 +18,9 @@ using ServerFramework.Constants.Entities.Console.Misc;
 using ServerFramework.Constants.Entities.Session;
 using ServerFramework.Constants.Misc;
 using ServerFramework.Extensions;
-using ServerFramework.Managers.Core;
 using ServerFramework.Managers;
 using ServerFramework.Network.Packets;
-using ServerFramework.Singleton;
 using System;
-using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
@@ -78,34 +75,8 @@ namespace ServerFramework.Network.Socket
                 this.AcceptPool.Push(
                     CreateNewSaeaForAccept(AcceptPool));
 
-            Saea SendRecPoolItem;
-            UserToken token;
-
             for (int i = 0; i < socketSettings.NumberOfSaeaForRecSend; i++)
-            {
-                SendRecPoolItem = new Saea();
-
-                Manager.BufferMgr.SetBuffer(SendRecPoolItem.Receiver);
-                Manager.BufferMgr.SetBuffer(SendRecPoolItem.Sender);
-
-                token = new UserToken(socketSettings.BufferSize,
-                    SendRecPoolItem.Receiver.Offset,
-                    socketSettings.HeaderLength);
-                token.StartReceive();
-
-                SendRecPoolItem.Receiver.UserToken = token;
-                SendRecPoolItem.Receiver.Completed +=
-                    new EventHandler<SocketAsyncEventArgs>(receive_completed);
-
-                token = new UserToken(socketSettings.BufferSize, SendRecPoolItem.Sender.Offset,
-                    socketSettings.HeaderLength);
-
-                SendRecPoolItem.Sender.UserToken = token;
-                SendRecPoolItem.Sender.Completed +=
-                    new EventHandler<SocketAsyncEventArgs>(send_completed);
-
-                this.SendReceivePool.Push(SendRecPoolItem);
-            }
+                this.SendReceivePool.Push(CreateNewSendRecPoolItem());
 
             startListen();
         }
@@ -184,7 +155,15 @@ namespace ServerFramework.Network.Socket
                 if (!e.AcceptSocket.ReceiveAsync(e))
                     processReceive(e);
             }
-            catch (Exception)
+            catch (ArgumentOutOfRangeException)
+            {
+                closeClientSocket(e);
+            }
+            catch (SocketException)
+            {
+                closeClientSocket(e);
+            }
+            catch (ObjectDisposedException)
             {
                 closeClientSocket(e);
             }
@@ -278,6 +257,7 @@ namespace ServerFramework.Network.Socket
         private void processReceive(SocketAsyncEventArgs e)
         {
             UserToken token = (UserToken)e.UserToken;
+
             if (e.SocketError != SocketError.Success || e.BytesTransferred == 0)
             {
                 closeClientSocket(e);
@@ -285,8 +265,6 @@ namespace ServerFramework.Network.Socket
             }
 
             int remainingBytes = e.BytesTransferred;
-
-            Manager.LogMgr.Log("Message: {0}", BitConverter.ToString(e.Buffer, ((UserToken)e.UserToken).BufferOffset, remainingBytes));
 
             while (remainingBytes > 0)
             {
@@ -379,6 +357,39 @@ namespace ServerFramework.Network.Socket
             acceptEventArgs.Completed += new EventHandler<SocketAsyncEventArgs>(accept_completed);
 
             return acceptEventArgs;
+        }
+
+        #endregion
+
+        #region CreateNewSendRecPoolItem
+
+        private Saea CreateNewSendRecPoolItem()
+        {
+            Saea retVal = null;
+            UserToken token = null;
+
+            retVal = new Saea();
+
+            Manager.BufferMgr.SetBuffer(retVal.Receiver);
+            Manager.BufferMgr.SetBuffer(retVal.Sender);
+
+            token = new UserToken(socketSettings.BufferSize,
+                retVal.Receiver.Offset,
+                socketSettings.HeaderLength);
+            token.StartReceive();
+
+            retVal.Receiver.UserToken = token;
+            retVal.Receiver.Completed +=
+                new EventHandler<SocketAsyncEventArgs>(receive_completed);
+
+            token = new UserToken(socketSettings.BufferSize, retVal.Sender.Offset,
+                socketSettings.HeaderLength);
+
+            retVal.Sender.UserToken = token;
+            retVal.Sender.Completed +=
+                new EventHandler<SocketAsyncEventArgs>(send_completed);
+
+            return retVal;
         }
 
         #endregion

@@ -34,9 +34,6 @@ namespace ServerFramework.Extensions
         internal static int HandleHeader(this UserToken token
             , SocketAsyncEventArgs e, int remainingBytesToProcess)
         {
-            if (token.HeaderBytesDoneCount == 0)
-                token.Header = new byte[token.HeaderLength];
-
             if (remainingBytesToProcess >= token.HeaderLength -
                 token.HeaderBytesDoneCount)
             {

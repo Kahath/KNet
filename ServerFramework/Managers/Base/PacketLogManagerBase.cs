@@ -13,14 +13,10 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using ServerFramework.Database.Model;
+using ServerFramework.Database.Model.Application.PacketLog;
 using ServerFramework.Network.Packets;
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ServerFramework.Managers.Base
 {

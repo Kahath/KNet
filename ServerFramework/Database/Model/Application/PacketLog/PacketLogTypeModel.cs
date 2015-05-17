@@ -17,17 +17,17 @@ using ServerFramework.Database.Base;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ServerFramework.Database.Model
+namespace ServerFramework.Database.Model.Application.PacketLog
 {
-    [Table("Log.Type", Schema="Application")]
-    public class LogTypeModel : EntityBase
+    [Table("Packet.Log.Type", Schema = "Application")]
+    public class PacketLogTypeModel : EntityBase
     {
         #region Properties
 
         [Key]
-        public int ID { get; set; }
-        public string Name { get; set; }
+        public int ID      { get; set; }
+        public string Name  { get; set; }
 
-        #endregion
+	    #endregion
     }
 }

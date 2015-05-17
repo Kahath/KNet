@@ -17,7 +17,6 @@ using DILibrary.DependencyInjection;
 using ServerFramework.Configuration;
 using ServerFramework.Constants.Entities.Session;
 using ServerFramework.Constants.Misc;
-using ServerFramework.Database;
 using ServerFramework.Database.Context;
 using ServerFramework.Managers;
 using ServerFramework.Managers.Core;

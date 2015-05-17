@@ -15,23 +15,16 @@
 
 using ServerFramework.Database.Base;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ServerFramework.Database.Model
+namespace ServerFramework.Database.Model.Application.Command
 {
-    [Table("Command", Schema="Application")]
-    public class CommandModel : EntityBase
+    public class CommandLevelModel : EntityBase
     {
         #region Properties
 
         [Key]
         public int ID { get; set; }
-
-        [StringLength(50)]
         public string Name { get; set; }
-
-        public short CommandLevel { get; set; }
-        public string Description { get; set; }
 
         #endregion
     }

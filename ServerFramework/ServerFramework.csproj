@@ -72,12 +72,13 @@
     <Compile Include="Database\Base\EntityBase.cs" />
     <Compile Include="Database\Base\RepositoryBase.cs" />
     <Compile Include="Database\Context\ApplicationContext.cs" />
+    <Compile Include="Database\Model\Application\Command\CommandLevelModel.cs" />
     <Compile Include="Database\PrecompiledViews\ApplicationContext.Views.cs" />
-    <Compile Include="Database\Model\CommandModel.cs" />
-    <Compile Include="Database\Model\LogModel.cs" />
-    <Compile Include="Database\Model\LogTypeModel.cs" />
-    <Compile Include="Database\Model\PacketLogModel.cs" />
-    <Compile Include="Database\Model\PacketLogTypeModel.cs" />
+    <Compile Include="Database\Model\Application\Command\CommandModel.cs" />
+    <Compile Include="Database\Model\Application\Log\LogModel.cs" />
+    <Compile Include="Database\Model\Application\Log\LogTypeModel.cs" />
+    <Compile Include="Database\Model\Application\PacketLog\PacketLogModel.cs" />
+    <Compile Include="Database\Model\Application\PacketLog\PacketLogTypeModel.cs" />
     <Compile Include="Extensions\NetworkExtensions.cs" />
     <Compile Include="Game\CommandHandlers\ClearCommands.cs" />
     <Compile Include="Game\CommandHandlers\CommandCommands.cs" />
@@ -113,13 +114,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Singleton\SingletonBase.cs" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Content Include="Configs\ServerConfig.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Libs\DILibrary.dll" />
+    <Content Include="Sql\Application.Command.Level.Table.sql" />
     <Content Include="Sql\Application.Command.Table.sql" />
     <Content Include="Sql\Application.Log.Table.sql" />
     <Content Include="Sql\Application.Log.Type.Table.sql" />
