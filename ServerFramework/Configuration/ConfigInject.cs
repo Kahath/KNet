@@ -77,7 +77,7 @@ namespace ServerFramework.Configuration
             {
 				foreach (XmlNode node in Nodes)
                 {
-                    if (node.NodeType != XmlNodeType.Comment)
+                    if (node.NodeType == XmlNodeType.Element)
                     {
                         if (node.Attributes["name"].Value == config)
                         {

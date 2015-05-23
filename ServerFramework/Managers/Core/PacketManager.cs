@@ -94,7 +94,7 @@ namespace ServerFramework.Managers.Core
                 {
                     PacketHandlers[packet.Header.Opcode].Invoke(packet);
                 }
-                catch(Exception)
+                catch(Exception e)
                 {
                     OpcodeAttribute attr =
                         PacketHandlers[packet.Header.Opcode].
@@ -103,16 +103,17 @@ namespace ServerFramework.Managers.Core
 
                     if (attr != null)
                     {
-                        Manager.LogMgr.Log(LogType.Error, "Error with '0x{0:X}' opcode"
+                        Manager.LogMgr.Log(LogType.Info, "Error with '0x{0:X}' opcode"
                             + " authored by '{1}' using version '{2}' and type '{3}'"
                             , attr.Opcode, attr.Author, attr.Version, attr.Type);
 
-                        Manager.LogMgr.Log(LogType.Error, "Packet size: {0}"
+                        Manager.LogMgr.Log(LogType.Info, "Packet size: {0}"
                             , packet.Header.Size);
-                        Manager.LogMgr.Log(LogType.Error, "Packet opcode: {0:X}"
+                        Manager.LogMgr.Log(LogType.Info, "Packet opcode: {0:X}"
                             , packet.Header.Opcode);
-                        Manager.LogMgr.Log(LogType.Error, "Packet content: {0}"
+                        Manager.LogMgr.Log(LogType.Info, "Packet content: {0}"
                             , BitConverter.ToString(packet.Message));
+                        Manager.LogMgr.Log(LogType.Error, "{0}", e.ToString());
                     }
                 }
             }

@@ -36,7 +36,7 @@ namespace ServerFramework.Network.Socket
         SocketListenerSettings socketSettings;
 
         ObjectPool<SocketAsyncEventArgs> AcceptPool;
-        ObjectPool<Saea> SendReceivePool;
+        ObjectPool<SocketExtended> SendReceivePool;
 
         #endregion 
 
@@ -56,7 +56,7 @@ namespace ServerFramework.Network.Socket
             this.AcceptPool = new
                 ObjectPool<SocketAsyncEventArgs>(this.socketSettings.MaxAcceptOps);
             this.SendReceivePool = new
-                ObjectPool<Saea>(this.socketSettings.NumberOfSaeaForRecSend);
+                ObjectPool<SocketExtended>(this.socketSettings.NumberOfSaeaForRecSend);
 
             this.maxConnectionsEnforcer = new Semaphore(
                 this.socketSettings.MaxConnections,
@@ -155,18 +155,9 @@ namespace ServerFramework.Network.Socket
                 if (!e.AcceptSocket.ReceiveAsync(e))
                     processReceive(e);
             }
-            catch (ArgumentOutOfRangeException)
-            {
-                closeClientSocket(e);
-            }
-            catch (SocketException)
-            {
-                closeClientSocket(e);
-            }
-            catch (ObjectDisposedException)
-            {
-                closeClientSocket(e);
-            }
+            catch (ArgumentOutOfRangeException) { closeClientSocket(e); }
+            catch (SocketException) { closeClientSocket(e); }
+            catch (ObjectDisposedException) { closeClientSocket(e); }
         }
 
         #endregion
@@ -216,9 +207,9 @@ namespace ServerFramework.Network.Socket
 
             loopToStartAccept();
 
-            Saea saea = SendReceivePool.Pop();
+            SocketExtended socketExtended = SendReceivePool.Pop();
 
-            Client c = new Client(saea);
+            Client c = new Client(socketExtended);
             int id = Manager.SessionMgr.AddClient(c);
 
             if (id == 0)
@@ -227,14 +218,14 @@ namespace ServerFramework.Network.Socket
                 return;
             }
 
-            saea.SessionId = id;
-            saea.AcceptSocket = e.AcceptSocket;
+            socketExtended.SessionId = id;
+            socketExtended.AcceptSocket = e.AcceptSocket;
 
             try
             {
                 Manager.LogMgr.Log(LogType.Normal, "Session {0} ({1}) connected",
-                    ((UserToken)saea.Receiver.UserToken).SessionId,
-                    saea.Receiver.AcceptSocket.RemoteEndPoint);
+                    ((UserToken)socketExtended.Receiver.UserToken).SessionId,
+                    socketExtended.Receiver.AcceptSocket.RemoteEndPoint);
             }
             catch(ObjectDisposedException)
             {
@@ -247,7 +238,7 @@ namespace ServerFramework.Network.Socket
             if (OnConnect != null)
                 OnConnect(c, e);
 
-            startReceive(saea.Receiver);
+            startReceive(socketExtended.Receiver);
         }
 
         #endregion
@@ -256,14 +247,13 @@ namespace ServerFramework.Network.Socket
 
         private void processReceive(SocketAsyncEventArgs e)
         {
-            UserToken token = (UserToken)e.UserToken;
-
             if (e.SocketError != SocketError.Success || e.BytesTransferred == 0)
             {
                 closeClientSocket(e);
                 return;
             }
 
+            UserToken token = (UserToken)e.UserToken;
             int remainingBytes = e.BytesTransferred;
 
             while (remainingBytes > 0)
@@ -329,7 +319,7 @@ namespace ServerFramework.Network.Socket
                 Manager.PacketLogMgr.Log(token.Packet);
                 token.Reset(token.PermanentMessageOffset);
 
-                c.Saea.SendResetEvent.Set();
+                c.SocketExtended.SendResetEvent.Set();
             }
             else
             {
@@ -363,12 +353,12 @@ namespace ServerFramework.Network.Socket
 
         #region CreateNewSendRecPoolItem
 
-        private Saea CreateNewSendRecPoolItem()
+        private SocketExtended CreateNewSendRecPoolItem()
         {
-            Saea retVal = null;
+            SocketExtended retVal = null;
             UserToken token = null;
 
-            retVal = new Saea();
+            retVal = new SocketExtended();
 
             Manager.BufferMgr.SetBuffer(retVal.Receiver);
             Manager.BufferMgr.SetBuffer(retVal.Sender);
@@ -417,9 +407,9 @@ namespace ServerFramework.Network.Socket
 
             Manager.LogMgr.Log(LogType.Normal, "Session {0} quit", ((UserToken)e.UserToken).SessionId);
 
-            c.Saea.Disconnect(SocketShutdown.Both);
+            c.SocketExtended.Disconnect(SocketShutdown.Both);
 
-            this.SendReceivePool.Push(c.Saea);
+            this.SendReceivePool.Push(c.SocketExtended);
             c = null;
 
             this.maxConnectionsEnforcer.Release();

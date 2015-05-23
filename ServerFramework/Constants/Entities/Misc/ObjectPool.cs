@@ -63,7 +63,7 @@ namespace ServerFramework.Constants.Entities.Console.Misc
         public void Push(T item)
         {
             if (item == null)
-                throw new ArgumentNullException("Item cannot be null");
+                throw new ArgumentNullException("item");
             lock (_stackPool)
                 this._stackPool.Push(item);
         }

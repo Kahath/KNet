@@ -67,7 +67,7 @@ namespace ServerFramework.Managers.Core
 
         protected override void LogPacket(Packet packet)
         {
-            PacketLogType logtype = packet.Stream is BinaryReader ? PacketLogType.CMSG : PacketLogType.SMSG;
+            PacketLogType logtype = packet.Stream.Reader != null ? PacketLogType.CMSG : PacketLogType.SMSG;
 
             if (!((ServerConfig.PacketLogLevel & logtype) == logtype) ? true : false)
                 return;
@@ -91,14 +91,14 @@ namespace ServerFramework.Managers.Core
 
             using (ApplicationContext context = new ApplicationContext())
             {
-                packetLog.PacketLogTypeID = packet.Stream is BinaryReader ?
+                packetLog.PacketLogTypeID = logtype == PacketLogType.CMSG ?
                     context.PacketLogType.First(x => x.ID == (int)PacketLogType.CMSG && x.Active).ID :
                     context.PacketLogType.First(x => x.ID == (int)PacketLogType.SMSG && x.Active).ID;
             }
 
             if (packet.Header.Size > 0)
             {
-                packetLog.Message = packet.Stream is BinaryReader ?
+                packetLog.Message = logtype == PacketLogType.CMSG ?
                     BitConverter.ToString(packet.Message) :
                     BitConverter.ToString(packet.Message, ServerConfig.HeaderLength);
             }

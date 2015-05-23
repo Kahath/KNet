@@ -83,9 +83,6 @@ namespace ServerFramework.Network.Packets.Handlers
                 packet.WriteBit(true);
                 packet.WriteBit(false);
 
-                //Flush to write remaining bits to stream
-                packet.Flush();
-
                 //Send data
                 pClient.Send(packet);
             }

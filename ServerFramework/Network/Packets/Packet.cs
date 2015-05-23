@@ -14,6 +14,7 @@
  */
 
 using ServerFramework.Configuration;
+using ServerFramework.Extensions;
 using System;
 using System.IO;
 using System.Text;
@@ -32,7 +33,7 @@ namespace ServerFramework.Network.Packets
         private byte _position = 0;
         private byte _value;
 
-        private dynamic _stream;
+        private PacketStream _stream;
 
         #endregion
 
@@ -68,7 +69,7 @@ namespace ServerFramework.Network.Packets
             set { _value = value; }
         }
 
-        public dynamic Stream
+        internal PacketStream Stream
         {
             get { return _stream; }
         }
@@ -99,7 +100,7 @@ namespace ServerFramework.Network.Packets
         public Packet(ushort message, Encoding encoder = null)
         {
             Encoder = encoder ?? Encoding.UTF8;
-            _stream = new BinaryWriter(new MemoryStream(), Encoder);
+            _stream = new PacketStream(Encoder);// new BinaryWriter(new MemoryStream(), Encoder);
 
 
             Header = new PacketHeader
@@ -123,134 +124,36 @@ namespace ServerFramework.Network.Packets
         /// </summary>
         internal void PrepareRead()
         {
-            if (!(Stream is BinaryWriter))
-                _stream = new BinaryReader(new MemoryStream(this.Message), Encoder);
+            _stream = new PacketStream(Encoder, this.Message);
         }
 
         #endregion
 
         #region Read
 
-        /// <summary>
-        /// Used for reading from packet buffer
-        /// </summary>
-        /// <typeparam name="T">type of value</typeparam>
-        /// <param name="count">not used</param>
-        /// <returns>Byte, SByte, UInt16, Int16, UInt32, Int32,
-        /// UInt64, Int64, Char, Double, Single, Boolena, Pascal String
-        /// depending of method type</returns>
         public T Read<T>(int count = 0)
         {
-            if (Stream is BinaryWriter)
-                return default(T);
-
-            switch (typeof(T).Name)
-            {
-                case "Byte":
-                    return Stream.ReadByte();
-                case "SByte":
-                    return Stream.ReadSByte();
-                case "UInt16":
-                    return Stream.ReadUInt16();
-                case "Int16":
-                    return Stream.ReadInt16();
-                case "UInt32":
-                    return Stream.ReadUInt32();
-                case "Int32":
-                    return Stream.ReadInt32();
-                case "UInt64":
-                    return Stream.ReadUInt64();
-                case "Int64":
-                    return Stream.ReadInt64();
-                case "Char":
-                    return Stream.ReadChar();
-                case "Double":
-                    return Stream.ReadDouble();
-                case "Single":
-                    return Stream.ReadSingle();
-                case "Boolean":
-                    return Stream.ReadBoolean();
-                case "String":
-                    var bytes = Stream.ReadBytes(ReadBits<byte>(count));
-                    return Encoder.GetString(bytes);
-                case "Byte[]":
-                    return Stream.ReadBytes(count);
-                default:
-                    return default(T);
-            }
+            return Stream.Read<T>(count);
         }
 
         #endregion
 
         #region Write
 
-        /// <summary>
-        /// Writes value to stream buffer.
-        /// </summary>
-        /// <typeparam name="T">type of value</typeparam>
-        /// <param name="value">value of method type</param>
         public void Write<T>(T value)
         {
-            if (!(Stream is BinaryReader))
-            {
-                T trueValue = (T)Convert.ChangeType(value, typeof(T));
-                Stream.Write(trueValue);
-            }
+            Stream.Write<T>(value);
         }
 
         #endregion
 
         #region BitPack
 
-        #region ReadBit
-
-        public bool ReadBit()
-        {
-            if (Position == 0)
-            {
-                Value = Read<byte>();
-                Position = 8;
-            }
-
-            bool retVal = Convert.ToBoolean(Value >> 7);
-
-            --Position;
-            Value <<= 1;
-
-            return retVal;
-        }
-
-        #endregion
-
-        #region ReadBits
-
-        public T ReadBits<T>(int count)
-        {
-            int retVal = 0;
-
-            for (int i = count - 1; i >= 0; --i)
-                retVal = ReadBit() ? (1 << i) | retVal : retVal;
-
-            return (T)Convert.ChangeType(retVal, typeof(T));
-        }
-
-        #endregion
-
         #region WriteBit
 
         public void WriteBit(bool value)
         {
-            ++Position;
-
-            if (value)
-                Value |= (byte)(1 << (8 - Position));
-
-            if (Position == 8)
-            {
-                Write<byte>(Value);
-                Position = 0;
-                Value = 0;
-            }
+            WriteBits<bool>(value, 1);
         }
 
         #endregion
@@ -259,24 +162,25 @@ namespace ServerFramework.Network.Packets
 
         public void WriteBits<T>(T value, int count)
         {
-            for (int i = count - 1; i >= 0; --i)
-                WriteBit((bool)Convert.ChangeType(
-                    (Convert.ToInt32(value) >> i) & 1, typeof(bool)));
+            Stream.WriteBits<T>(value, count);
         }
 
         #endregion
 
-        #region Flush
+        #region ReadBit
 
-        public void Flush()
+        public bool ReadBit()
         {
-            if (Position != 0)
-            {
-                Write<byte>(Value);
+            return ReadBits<bool>(1);
+        }
 
-                Position = 0;
-                Value = 0;
-            }
+        #endregion
+
+        #region ReadBits
+
+        public T ReadBits<T>(int count)
+        {
+            return Stream.ReadBits<T>(count);
         }
 
         #endregion
@@ -285,26 +189,9 @@ namespace ServerFramework.Network.Packets
 
         #region End
 
-        /// <summary>
-        /// Readies packet for sending.
-        /// </summary>
-        /// <returns>Size of packet minus header size</returns>
-        internal int End()
+        public int End()
         {
-            Flush();
-            Stream.BaseStream.Seek(0, SeekOrigin.Begin);
-            Message = new byte[Stream.BaseStream.Length];
-            Header.Size = (ushort)(Message.Length - ServerConfig.HeaderLength);
-
-            for (int i = 0; i < Message.Length; i++)
-            {
-                Message[i] = (byte)Stream.BaseStream.ReadByte();
-            }
-
-            Message[0] = (byte)(Header.Size & 0xFF);
-            Message[1] = (byte)((Header.Size >> 8) & 0xFF);
-
-            return Message.Length;
+            return Stream.End(out _message);      
         }
 
         #endregion
@@ -313,8 +200,7 @@ namespace ServerFramework.Network.Packets
 
         public void Dispose()
         {
-            if (Stream != null)
-                Stream.Close();
+            Stream.Dispose();
         }
 
         #endregion

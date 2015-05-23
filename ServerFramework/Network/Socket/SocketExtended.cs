@@ -14,12 +14,13 @@
  */
 
 using ServerFramework.Network.Packets;
+using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
 namespace ServerFramework.Network.Socket
 {
-    internal sealed class Saea
+    internal sealed class SocketExtended
     {
         #region Fields
 
@@ -35,7 +36,7 @@ namespace ServerFramework.Network.Socket
         /// Creates object with SocketAsyncEventArgs objects
         /// for sending and receiving data
         /// </summary>
-        internal Saea()
+        internal SocketExtended()
         {
             Sender = new SocketAsyncEventArgs();
             Receiver = new SocketAsyncEventArgs();
@@ -82,6 +83,11 @@ namespace ServerFramework.Network.Socket
             }
         }
 
+        internal EndPoint RemoteEndPoint
+        {
+            get { return Receiver.AcceptSocket.RemoteEndPoint; }
+        }
+
         #endregion
 
         #region Methods
@@ -111,7 +117,7 @@ namespace ServerFramework.Network.Socket
             {
                 this.Sender.AcceptSocket.Shutdown(how);
                 this.Receiver.AcceptSocket.Shutdown(how);
-                this._sendResetEvent.Set();
+                this.SendResetEvent.Set();
                 this.Close();
             }
             catch (SocketException) { }

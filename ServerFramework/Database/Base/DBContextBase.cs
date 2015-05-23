@@ -17,7 +17,7 @@ using System.Data.Entity;
 
 namespace ServerFramework.Database.Base
 {
-    public class DBContextBase : DbContext
+    public abstract class DBContextBase : DbContext
     {
         #region Fields
 

@@ -25,7 +25,7 @@ namespace ServerFramework.Constants.Entities.Session
     {
         #region Fields
 
-        private Saea _saea;
+        private SocketExtended _socketExtended;
         private IClient _clientToken;
         private CommandLevel _userLevel;
 
@@ -33,10 +33,10 @@ namespace ServerFramework.Constants.Entities.Session
 
         #region Properties
 
-        internal Saea Saea
+        internal SocketExtended SocketExtended
         {
-            get { return _saea; }
-            set { _saea = value; }
+            get { return _socketExtended; }
+            set { _socketExtended = value; }
         }
 
         public IClient Token
@@ -47,17 +47,17 @@ namespace ServerFramework.Constants.Entities.Session
 
         public string IP
         {
-            get { return (Saea.Receiver.AcceptSocket.RemoteEndPoint as IPEndPoint).Address.ToString(); }
+            get { return (SocketExtended.Receiver.AcceptSocket.RemoteEndPoint as IPEndPoint).Address.ToString(); }
         }
 
         public int Port
         {
-            get { return (Saea.Receiver.AcceptSocket.RemoteEndPoint as IPEndPoint).Port;}
+            get { return (SocketExtended.Receiver.AcceptSocket.RemoteEndPoint as IPEndPoint).Port;}
         }
 
         public int SessionID
         {
-            get { return (Saea.Receiver.UserToken as UserToken).SessionId; }
+            get { return (SocketExtended.Receiver.UserToken as UserToken).SessionId; }
         }
 
         public CommandLevel UserLevel
@@ -75,9 +75,9 @@ namespace ServerFramework.Constants.Entities.Session
 
         }
 
-        internal Client(Saea saea)
+        internal Client(SocketExtended socketExtended)
         {
-            Saea = saea;
+            SocketExtended = socketExtended;
         }
 
         #endregion
@@ -97,13 +97,13 @@ namespace ServerFramework.Constants.Entities.Session
             if (BeforePacketSend != null)
                 BeforePacketSend(packet, new EventArgs());
 
-            this.Saea.SendResetEvent.WaitOne();
-            UserToken token = Saea.Sender.UserToken as UserToken;
+            this.SocketExtended.SendResetEvent.WaitOne();
+            UserToken token = SocketExtended.Sender.UserToken as UserToken;
             token.Packet = packet;
             token.Finish();
             token.Packet.SessionId = token.SessionId;
 
-            KahathFramework.Server.Send(this.Saea.Sender);
+            KahathFramework.Server.Send(this.SocketExtended.Sender);
         }
 
         #endregion

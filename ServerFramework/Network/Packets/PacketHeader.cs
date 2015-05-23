@@ -39,17 +39,5 @@ namespace ServerFramework.Network.Packets
         }
 
         #endregion
-
-        #region Constructors
-
-        /// <summary>
-        /// Creates new instance of packet header
-        /// </summary>
-        public PacketHeader()
-        {
-
-        }
-
-        #endregion
     }
 }
