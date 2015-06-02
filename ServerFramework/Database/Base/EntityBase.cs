@@ -30,7 +30,7 @@ namespace ServerFramework.Database.Base
 
         #region Constructors
 
-        public EntityBase()
+        protected EntityBase()
         {
             DateCreated = DateTime.Now;
             Active = true;

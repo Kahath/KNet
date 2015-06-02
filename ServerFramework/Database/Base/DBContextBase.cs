@@ -27,7 +27,7 @@ namespace ServerFramework.Database.Base
 
         #region Properties
 
-        public string ConnectionString
+        protected string ConnectionString
         {
             get { return _connectionString; }
             set { _connectionString = value; }
@@ -37,7 +37,7 @@ namespace ServerFramework.Database.Base
 
         #region Constructors
 
-        public DBContextBase(string connectionString)
+        protected DBContextBase(string connectionString)
             : base(connectionString)
         {
             ConnectionString = connectionString;

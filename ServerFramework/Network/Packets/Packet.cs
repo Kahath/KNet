@@ -30,9 +30,6 @@ namespace ServerFramework.Network.Packets
         private int _sessionId;
         private Encoding _encoder;
 
-        private byte _position = 0;
-        private byte _value;
-
         private PacketStream _stream;
 
         #endregion
@@ -55,18 +52,6 @@ namespace ServerFramework.Network.Packets
         {
             get { return _sessionId; }
             internal set { _sessionId = value; }
-        }
-
-        private byte Position
-        {
-            get { return _position; }
-            set { _position = value; }
-        }
-
-        private byte Value
-        {
-            get { return _value; }
-            set { _value = value; }
         }
 
         internal PacketStream Stream
@@ -100,7 +85,7 @@ namespace ServerFramework.Network.Packets
         public Packet(ushort message, Encoding encoder = null)
         {
             Encoder = encoder ?? Encoding.UTF8;
-            _stream = new PacketStream(Encoder);// new BinaryWriter(new MemoryStream(), Encoder);
+            _stream = new PacketStream(Encoder);
 
 
             Header = new PacketHeader
@@ -149,24 +134,6 @@ namespace ServerFramework.Network.Packets
 
         #region BitPack
 
-        #region WriteBit
-
-        public void WriteBit(bool value)
-        {
-            WriteBits<bool>(value, 1);
-        }
-
-        #endregion
-
-        #region WriteBits
-
-        public void WriteBits<T>(T value, int count)
-        {
-            Stream.WriteBits<T>(value, count);
-        }
-
-        #endregion
-
         #region ReadBit
 
         public bool ReadBit()
@@ -176,11 +143,40 @@ namespace ServerFramework.Network.Packets
 
         #endregion
 
+        #region WriteBit
+
+        public void WriteBit(bool value)
+        {
+            WriteBits<bool>(value, 1);
+        }
+
+        #endregion
+
         #region ReadBits
 
-        public T ReadBits<T>(int count)
+        public T ReadBits<T>(int count) where T 
+            : struct, IComparable, IComparable<T>, IConvertible, IEquatable<T>
         {
             return Stream.ReadBits<T>(count);
+        }
+
+        #endregion
+
+        #region WriteBits
+
+        public void WriteBits<T>(T value, int count) where T 
+            : struct, IComparable, IComparable<T>, IConvertible, IEquatable<T>
+        {
+            Stream.WriteBits<T>(value, count);
+        }
+
+        #endregion
+
+        #region Flush
+
+        public void Flush()
+        {
+            Stream.Flush();
         }
 
         #endregion

@@ -74,7 +74,7 @@ namespace ServerFramework.Extensions
             Type type = typeof(T);
             object value = ReadFunctions[type](reader, count);
 
-            return (T)Convert.ChangeType(value, typeof(T));
+            return (T)Convert.ChangeType(value, type);
         }
 
         #endregion

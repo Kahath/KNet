@@ -23,14 +23,14 @@ namespace ServerFramework.Managers.Base
 	{
 		#region Fields
 
-		private Dictionary<ushort, PacketHandler> _packetHandlers
-			= new Dictionary<ushort, PacketHandler>();
+		private Dictionary<ushort, OpcodeHandler> _packetHandlers
+			= new Dictionary<ushort, OpcodeHandler>();
 
 		#endregion
 
 		#region Properties
 
-		internal Dictionary<ushort, PacketHandler> PacketHandlers
+		internal Dictionary<ushort, OpcodeHandler> PacketHandlers
 		{
 			get { return _packetHandlers; }
 			set { _packetHandlers = value; }
@@ -45,7 +45,7 @@ namespace ServerFramework.Managers.Base
 
 		#region Events
 
-		public event PacketManagerInvokeEventHandler BeforePacketInvoke;
+		public event PacketEventHandler BeforePacketInvoke;
 
 		#endregion
 

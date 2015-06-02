@@ -66,7 +66,7 @@ namespace ServerFramework.Managers.Core
                                 {
                                     c = method.Invoke(null, null) as Command;
                                 }
-                                catch(Exception)
+                                catch(TargetInvocationException)
                                 {
                                     Manager.LogMgr.Log(LogType.Error, "Error creating command type {0}", type.ToString());
                                 }
@@ -108,7 +108,7 @@ namespace ServerFramework.Managers.Core
         #region InvokeCommandHandler
 
 		protected override bool InvokeCommandHandler(Client user, Command[] commandTable,
-            List<string> command, string path)
+            IList<string> command, string path)
         {
             if (commandTable == null || command == null)
                 return false;
@@ -225,7 +225,7 @@ namespace ServerFramework.Managers.Core
 
         #region GetCommand
 
-		protected override Command GetCommand(Command[] commandTable, List<string> command)
+        protected override Command GetCommand(Command[] commandTable, IList<string> command)
         {
             if (commandTable == null || command == null)
                 return null;

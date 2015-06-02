@@ -24,7 +24,7 @@ namespace ServerFramework.Constants.Entities.Console
         private string                  _name;
         private CommandLevel            _commandLevel;
         private Command[]               _subCommands;
-        private CommandScriptHandler    _script;
+        private CommandHandler          _script;
         private string                  _description;
 
         #endregion
@@ -37,7 +37,7 @@ namespace ServerFramework.Constants.Entities.Console
             set { _description = value; }
         }
 
-        internal CommandScriptHandler Script
+        internal CommandHandler Script
         {
             get { return _script; }
             set { _script = value; }
@@ -66,7 +66,7 @@ namespace ServerFramework.Constants.Entities.Console
         #region Constructors
 
         public Command(string name, CommandLevel commandLevel
-            , Command[] subCommands, CommandScriptHandler script, string description)
+            , Command[] subCommands, CommandHandler script, string description)
         {
             Name = name;
             CommandLevel = commandLevel;

@@ -44,7 +44,7 @@ namespace ServerFramework.Managers.Core
 		internal override void Init()
 		{
 			BufferBlock = new byte[TotalBytesInBufferBlock];
-			Manager.LogMgr.Log(LogType.Normal, "Buffer alocated size: {0}KB", TotalBytesInBufferBlock / 1024);
+			Manager.LogMgr.Log(LogType.Normal, "Buffer allocated size: {0}KB", TotalBytesInBufferBlock / 1024);
 		}
 
 		#endregion

@@ -34,12 +34,10 @@ namespace ServerFramework
 {
     #region Delegates
 
-    public delegate bool CommandScriptHandler(Client user, params string[] args);
-    public delegate void PacketHandler(Packet packet);
-    public delegate void ManagerInitialisationEventHandler(object sender, EventArgs e);
-    public delegate void PacketSendEventHandler(object sender, EventArgs e);
+    public delegate bool CommandHandler(Client user, params string[] args);
+    public delegate void OpcodeHandler(Packet packet);
     public delegate void ServerEventHandler(object sender, SocketAsyncEventArgs e);
-    public delegate void PacketManagerInvokeEventHandler(object sender, EventArgs e);
+    public delegate void PacketEventHandler(object sender, EventArgs e);
 
     #endregion
 

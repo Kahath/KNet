@@ -84,7 +84,7 @@ namespace ServerFramework.Constants.Entities.Session
 
         #region Events
 
-        public event PacketSendEventHandler BeforePacketSend;
+        public event PacketEventHandler BeforePacketSend;
 
         #endregion
 

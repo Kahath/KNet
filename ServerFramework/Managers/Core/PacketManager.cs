@@ -74,7 +74,7 @@ namespace ServerFramework.Managers.Core
             foreach (KeyValuePair<OpcodeAttribute, MethodInfo> keyval in temp.Values)
             {
                 PacketHandlers[keyval.Key.Opcode] = Delegate.CreateDelegate(
-                    typeof(PacketHandler), keyval.Value) as PacketHandler;
+                    typeof(OpcodeHandler), keyval.Value) as OpcodeHandler;
             }
 
             Manager.LogMgr.Log(LogType.Normal, "{0} packet handlers loaded", PacketHandlersCount);
@@ -104,15 +104,12 @@ namespace ServerFramework.Managers.Core
                     if (attr != null)
                     {
                         Manager.LogMgr.Log(LogType.Info, "Error with '0x{0:X}' opcode"
-                            + " authored by '{1}' using version '{2}' and type '{3}'"
-                            , attr.Opcode, attr.Author, attr.Version, attr.Type);
-
-                        Manager.LogMgr.Log(LogType.Info, "Packet size: {0}"
-                            , packet.Header.Size);
-                        Manager.LogMgr.Log(LogType.Info, "Packet opcode: {0:X}"
-                            , packet.Header.Opcode);
-                        Manager.LogMgr.Log(LogType.Info, "Packet content: {0}"
+                            + " authored by '{1}' using version '{2}' and type '{3}'\n"
+                            + "Packet size: {4}\nPacket opcode: 0x{5:X}\nPacket content: {6}"
+                            , attr.Opcode, attr.Author, attr.Version, attr.Type
+                            , packet.Header.Size, packet.Header.Opcode
                             , BitConverter.ToString(packet.Message));
+
                         Manager.LogMgr.Log(LogType.Error, "{0}", e.ToString());
                     }
                 }

@@ -14,13 +14,14 @@
  */
 
 using ServerFramework.Network.Packets;
+using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
 namespace ServerFramework.Network.Socket
 {
-    internal sealed class SocketExtended
+    internal sealed class SocketExtended : IDisposable
     {
         #region Fields
 
@@ -124,7 +125,16 @@ namespace ServerFramework.Network.Socket
         }
 
         #endregion
-        
+
+        #region Dispose
+
+        public void Dispose()
+        {
+            SendResetEvent.Dispose();
+        }
+
+        #endregion
+
         #endregion
     }
 }

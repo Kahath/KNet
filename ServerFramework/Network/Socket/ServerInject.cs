@@ -417,11 +417,21 @@ namespace ServerFramework.Network.Socket
 
         #endregion
 
+        #region Exit
+
+        internal void Exit()
+        {
+            Environment.Exit(0);
+        }
+
+        #endregion
+
         #region Dispose
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            listenSocket.Dispose();
+            maxConnectionsEnforcer.Dispose();
         }
 
         #endregion

@@ -21,7 +21,7 @@ using System.Text;
 
 namespace ServerFramework.Network.Packets
 {
-    public  class PacketStream : IDisposable
+    internal  class PacketStream : IDisposable
     {
         #region Fields
 
@@ -35,13 +35,13 @@ namespace ServerFramework.Network.Packets
 
         #region Properties
 
-        public BinaryReader Reader
+        internal BinaryReader Reader
         {
             get { return _reader; }
             set { _reader = value; }
         }
 
-        public BinaryWriter Writer
+        internal BinaryWriter Writer
         {
             get { return _writer; }
             set { _writer = value; }
@@ -66,7 +66,7 @@ namespace ServerFramework.Network.Packets
         public PacketStream(Encoding encoder, byte[] data = null)
         {
             if (data != null)
-                Reader = new BinaryReader(new MemoryStream(data));
+                Reader = new BinaryReader(new MemoryStream(data), encoder);
             else
                 Writer = new BinaryWriter(new MemoryStream(), encoder);
         }
@@ -83,7 +83,7 @@ namespace ServerFramework.Network.Packets
         /// <typeparam name="T">type of value</typeparam>
         /// <param name="count">not used</param>
         /// <returns>Generic result</returns>
-        public T Read<T>(int count = 0)
+        internal T Read<T>(int count = 0)
         {
             if (Reader != null)
                 return Reader.Read<T>(count);
@@ -100,7 +100,7 @@ namespace ServerFramework.Network.Packets
         /// </summary>
         /// <typeparam name="T">type of value</typeparam>
         /// <param name="value">value of method type</param>
-        public void Write<T>(T value)
+        internal void Write<T>(T value)
         {
             if (Writer != null)
             {
@@ -119,7 +119,7 @@ namespace ServerFramework.Network.Packets
 
         #region ReadBit
 
-        public bool ReadBit()
+        private bool ReadBit()
         {
             if (Position == 0)
             {
@@ -139,7 +139,7 @@ namespace ServerFramework.Network.Packets
 
         #region ReadBits
 
-        public T ReadBits<T>(int count)
+        internal T ReadBits<T>(int count)
         {
             int retVal = 0;
 
@@ -153,7 +153,7 @@ namespace ServerFramework.Network.Packets
 
         #region WriteBit
 
-        public void WriteBit(bool value)
+        private void WriteBit(bool value)
         {
             ++Position;
 
@@ -172,7 +172,7 @@ namespace ServerFramework.Network.Packets
 
         #region WriteBits
 
-        public void WriteBits<T>(T value, int count)
+        internal void WriteBits<T>(T value, int count)
         {
             for (int i = count - 1; i >= 0; --i)
                 WriteBit((bool)Convert.ChangeType(
@@ -183,7 +183,7 @@ namespace ServerFramework.Network.Packets
 
         #region Flush
 
-        public void Flush()
+        internal void Flush()
         {
             if (Position != 0)
             {
