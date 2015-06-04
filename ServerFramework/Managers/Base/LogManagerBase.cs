@@ -27,7 +27,7 @@ namespace ServerFramework.Managers.Base
 
 		private BlockingCollection<Tuple<ConsoleColor, string>> _consoleLogQueue
 			= new BlockingCollection<Tuple<ConsoleColor, string>>();
-        private List<LogModel> _logList;
+		private List<LogModel> _logList;
 
 		#endregion
 
@@ -39,16 +39,16 @@ namespace ServerFramework.Managers.Base
 			set { _consoleLogQueue = value; }
 		}
 
-        protected List<LogModel> LogList
-        {
-            get 
-            {
-                if (_logList == null)
-                    _logList = new List<LogModel>();
+		protected List<LogModel> LogList
+		{
+			get
+			{
+				if (_logList == null)
+					_logList = new List<LogModel>();
 
-                return _logList; 
-            }
-        }
+				return _logList;
+			}
+		}
 
 		#endregion
 

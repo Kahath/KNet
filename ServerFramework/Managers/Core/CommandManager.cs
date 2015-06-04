@@ -29,223 +29,223 @@ using System.Text.RegularExpressions;
 
 namespace ServerFramework.Managers.Core
 {
-    public sealed class CommandManager : CommandManagerBase<CommandManager>
-    {
-        #region Constructor
+	public sealed class CommandManager : CommandManagerBase<CommandManager>
+	{
+		#region Constructor
 
-        CommandManager()
-        {
-            Init();
-        }
+		CommandManager()
+		{
+			Init();
+		}
 
-        #endregion
+		#endregion
 
-        #region Methods
+		#region Methods
 
-        #region Init
+		#region Init
 
-        internal override void Init()
-        {
-            foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies().
-                Where(x => x.CustomAttributes.Any(y => y.AttributeType == typeof(AssemblyServerAttribute))))
-            {
-                foreach (Type type in a.GetTypes())
-                {
-                    foreach (CommandAttribute attr in type.GetCustomAttributes<CommandAttribute>())
-                    {
-                        if (attr != null)
-                        {
-                            MethodInfo method = type.GetMethod("GetCommand"
-                                , BindingFlags.NonPublic | BindingFlags.Static);
+		internal override void Init()
+		{
+			foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies().
+				Where(x => x.CustomAttributes.Any(y => y.AttributeType == typeof(CommandAttribute))))
+			{
+				foreach (Type type in a.GetTypes())
+				{
+					foreach (CommandAttribute attr in type.GetCustomAttributes<CommandAttribute>())
+					{
+						if (attr != null)
+						{
+							MethodInfo method = type.GetMethod("GetCommand"
+								, BindingFlags.NonPublic | BindingFlags.Static);
 
-                            if (method != null)
-                            {
-                                Command c = null;
+							if (method != null)
+							{
+								Command c = null;
 
-                                try
-                                {
-                                    c = method.Invoke(null, null) as Command;
-                                }
-                                catch(TargetInvocationException)
-                                {
-                                    Manager.LogMgr.Log(LogType.Error, "Error creating command type {0}", type.ToString());
-                                }
+								try
+								{
+									c = method.Invoke(null, null) as Command;
+								}
+								catch (TargetInvocationException)
+								{
+									Manager.LogMgr.Log(LogType.Error, "Error creating command type {0}", type.ToString());
+								}
 
-                                if (c != null)
-                                    CommandTable.Add(c);
-                            }
-                        }
-                    }
-                }
-            }
+								if (c != null)
+									CommandTable.Add(c);
+							}
+						}
+					}
+				}
+			}
 
-            Manager.LogMgr.Log(LogType.Normal, "{0} Commands loaded", CommandTable.Count);
+			Manager.LogMgr.Log(LogType.Normal, "{0} Commands loaded", CommandTable.Count);
 
-            LoadCommandDescriptions();
-        }
+			LoadCommandDescriptions();
+		}
 
-        #endregion
+		#endregion
 
-        #region InvokeCommand
+		#region InvokeCommand
 
-        public override bool InvokeCommand(Client user, string command)
-        {
+		public override bool InvokeCommand(Client user, string command)
+		{
 			bool retVal = false;
 
-            string com = Regex.Replace(command, @"\s+", " ").Trim();
+			string com = Regex.Replace(command, @"\s+", " ").Trim();
 
-            if (!String.IsNullOrEmpty(com))
-            {
-                retVal = InvokeCommandHandler(user, CommandTable.ToArray()
-                    , com.Split(' ').ToList(), String.Empty);
-            }
+			if (!String.IsNullOrEmpty(com))
+			{
+				retVal = InvokeCommandHandler(user, CommandTable.ToArray()
+					, com.Split(' ').ToList(), String.Empty);
+			}
 
-            return retVal;
-        }
+			return retVal;
+		}
 
-        #endregion
+		#endregion
 
-        #region InvokeCommandHandler
+		#region InvokeCommandHandler
 
 		protected override bool InvokeCommandHandler(Client user, Command[] commandTable,
-            IList<string> command, string path)
-        {
-            if (commandTable == null || command == null)
-                return false;
+			IList<string> path, string command)
+		{
+			if (commandTable == null || path == null)
+				return false;
 
-            Command c = commandTable.Where(x => user.UserLevel >= x.CommandLevel).FirstOrDefault(x => x.Name.StartsWith(command[0].Trim()));
+			Command c = commandTable.Where(x => user.UserLevel >= x.CommandLevel).FirstOrDefault(x => x.Name.StartsWith(path[0].Trim()));
 
-            if (c != null)
-            {
-                path += c.Name + " ";
+			if (c != null)
+			{
+				command += c.Name + " ";
 
-                if (c.Script == null)
-                {
-                    if (c.SubCommands != null)
-                    {
-                        command.RemoveAt(0);
-                        if(command.Count > 0)
-                        {
-                            return InvokeCommandHandler(user, c.SubCommands, command, path);
-                        }
-                        else
-                        {
-                            Manager.LogMgr.Log(LogType.Command, "Error with '{0}' command."
-                                + " Available sub commands:\n{1}", path, AvailableSubCommands(user.UserLevel, c));
+				if (c.Script == null)
+				{
+					if (c.SubCommands != null)
+					{
+						path.RemoveAt(0);
+						if (path.Count > 0)
+						{
+							return InvokeCommandHandler(user, c.SubCommands, path, command);
+						}
+						else
+						{
+							Manager.LogMgr.Log(LogType.Command, "Error with '{0}' command."
+								+ " Available sub commands:\n{1}", path, AvailableSubCommands(user.UserLevel, c));
 
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        Manager.LogMgr.Log(LogType.Command, "Error with '{0}' command."
-                            + " Missing script or subcommands", path);
+							return false;
+						}
+					}
+					else
+					{
+						Manager.LogMgr.Log(LogType.Command, "Error with '{0}' command."
+							+ " Missing script or subcommands", path);
 
-                        return false;
-                    }
-                }
-                else
-                {
-                    command.RemoveAt(0);
-                    
-                    try
-                    {
-                        return c.Script.Invoke(user, command.ToArray());
-                    }
-                    catch (IndexOutOfRangeException)
-                    {
-                        Manager.LogMgr.Log(LogType.Error, "Error with '{0}' command. wrong arguments"
-                            , path);
-                        return false;
-                    }
-                    catch (Exception)
-                    {
-                        Manager.LogMgr.Log(LogType.Error, "Error with '{0}' command. Failed to execute handler"
-                            , path);
-                        return false;
-                    }
-                }
-            }
+						return false;
+					}
+				}
+				else
+				{
+					path.RemoveAt(0);
 
-            path += command[0];
-            Manager.LogMgr.Log(LogType.Command, "Command '{0}' not found", path);
-            return false;
-        }
+					try
+					{
+						return c.Script.Invoke(user, path.ToArray());
+					}
+					catch (IndexOutOfRangeException)
+					{
+						Manager.LogMgr.Log(LogType.Error, "Error with '{0}' command. wrong arguments"
+							, path);
+						return false;
+					}
+					catch (Exception)
+					{
+						Manager.LogMgr.Log(LogType.Error, "Error with '{0}' command. Failed to execute handler"
+							, path);
+						return false;
+					}
+				}
+			}
 
-        #endregion
+			command += path[0];
+			Manager.LogMgr.Log(LogType.Command, "Command '{0}' not found", path);
+			return false;
+		}
 
-        #region AvailableSubCommands
+		#endregion
+
+		#region AvailableSubCommands
 
 		protected override string AvailableSubCommands(CommandLevel userLevel, Command c)
-        {
-            StringBuilder sb = new StringBuilder();
+		{
+			StringBuilder sb = new StringBuilder();
 
-            foreach (Command com in c.SubCommands)
-            {
-                if (com.SubCommands != null && userLevel >= com.CommandLevel)
-                {
-                    sb.AppendLine(com.Name + "..");
-                }
-                else if (userLevel >= com.CommandLevel)
-                {
-                    sb.AppendLine(com.Name);
-                }
-            }
+			foreach (Command com in c.SubCommands)
+			{
+				if (com.SubCommands != null && userLevel >= com.CommandLevel)
+				{
+					sb.AppendLine(com.Name + "..");
+				}
+				else if (userLevel >= com.CommandLevel)
+				{
+					sb.AppendLine(com.Name);
+				}
+			}
 
-            return sb.ToString();
-        }
+			return sb.ToString();
+		}
 
-        #endregion
+		#endregion
 
-        #region LoadCommandDescriptions
+		#region LoadCommandDescriptions
 
 		protected override void LoadCommandDescriptions()
-        {
-            Command c = null;
+		{
+			Command c = null;
 
-            using (ApplicationContext context = new ApplicationContext())
-            {
-                IEnumerable<CommandModel> commands = context.Commands.Where(x => x.Active);
+			using (ApplicationContext context = new ApplicationContext())
+			{
+				IEnumerable<CommandModel> commands = context.Commands.Where(x => x.Active);
 
-                foreach (CommandModel cdo in commands)
-                {
-                    c = GetCommand(CommandTable.ToArray()
-                        , cdo.Name.Split(' ').ToList());
+				foreach (CommandModel cdo in commands)
+				{
+					c = GetCommandByPath(CommandTable.ToArray()
+						, cdo.Name.Split(' ').ToList());
 
-                    if (c != null)
-                    {
-                        c.CommandLevel = (CommandLevel)cdo.CommandLevelID.GetValueOrDefault();
-                        c.Description = cdo.Description;
-                    }
-                }
-            }
-        }
+					if (c != null)
+					{
+						c.CommandLevel = (CommandLevel)cdo.CommandLevelID.GetValueOrDefault();
+						c.Description = cdo.Description;
+					}
+				}
+			}
+		}
 
-        #endregion
+		#endregion
 
-        #region GetCommand
+		#region GetCommand
 
-        protected override Command GetCommand(Command[] commandTable, IList<string> command)
-        {
-            if (commandTable == null || command == null)
-                return null;
+		protected override Command GetCommandByPath(Command[] commandTable, IList<string> path)
+		{
+			if (commandTable == null || path == null)
+				return null;
 
-            Command c = commandTable.FirstOrDefault(x => x.Name.StartsWith(command[0].Trim()));
+			Command c = commandTable.FirstOrDefault(x => x.Name.StartsWith(path[0].Trim()));
 
-            if (c != null)
-            {
-                command.RemoveAt(0);
-                if (command.Count > 0)
-                {
-                    return GetCommand(c.SubCommands, command);
-                }
-            }
+			if (c != null)
+			{
+				path.RemoveAt(0);
+				if (path.Count > 0)
+				{
+					return GetCommandByPath(c.SubCommands, path);
+				}
+			}
 
-            return c;
-        }
+			return c;
+		}
 
-        #endregion
+		#endregion
 
-        #endregion
-    }
+		#endregion
+	}
 }

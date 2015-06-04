@@ -22,76 +22,76 @@ using System.Text;
 
 namespace ServerFramework.Network.Packets.Handlers
 {
-    public static class ExampleHandler
-    {
-        #region Handlers
+	public static class ExampleHandler
+	{
+		#region Handlers
 
-        #region ExamplePacketHandler
+		#region ExamplePacketHandler
 
-        #region Version 1
+		#region Version 1
 
-        [Opcode(0x0000, "Kahath", 1, OpcodeType.Test)]
-        public static void ExamplePacketHandler(Packet packet)
-        {
-            Client pClient = Manager.SessionMgr.GetClientBySessionId(packet.SessionId);
+		[Opcode(0x0000, "Kahath", 1, OpcodeType.Test)]
+		public static void ExamplePacketHandler(Packet packet)
+		{
+			Client pClient = Manager.SessionMgr.GetClientBySessionId(packet.SessionId);
 
-            //Read if packet has data
-            string exampleName = packet.Read<string>(8);
-            byte exampleData = packet.Read<byte>();
+			//Read if packet has data
+			string exampleName = packet.Read<string>(8);
+			byte exampleData = packet.Read<byte>();
 
-            //Process data
-            Console.WriteLine(exampleName);
+			//Process data
+			Console.WriteLine(exampleName);
 
-            //Send back if need
-            //Create new packet for send
-            using (packet = new Packet(0x0001))
-            {
-                //Write data
-                packet.Write<string>("Example string data");
+			//Send back if need
+			//Create new packet for send
+			using (packet = new Packet(0x0001))
+			{
+				//Write data
+				packet.Write<string>("Example string data");
 
-                //Send data
-                pClient.Send(packet);
-            }
-        }
+				//Send data
+				pClient.Send(packet);
+			}
+		}
 
-        #endregion
+		#endregion
 
-        #region Version 2
+		#region Version 2
 
-        [Opcode(0x0000, "Kahath", 2, OpcodeType.Test)]
-        public static void ExamplePacketHandlerTwo(Packet packet)
-        {
-            Client pClient = Manager.SessionMgr.GetClientBySessionId(packet.SessionId);
+		[Opcode(0x0000, "Kahath", 2, OpcodeType.Test)]
+		public static void ExamplePacketHandlerTwo(Packet packet)
+		{
+			Client pClient = Manager.SessionMgr.GetClientBySessionId(packet.SessionId);
 
-            //Read if packet has data
-            string exampleName = packet.Read<string>(8);
-            byte exampleData = packet.Read<byte>();
+			//Read if packet has data
+			string exampleName = packet.Read<string>(8);
+			byte exampleData = packet.Read<byte>();
 
-            //Process data
-            Console.WriteLine(exampleName);
+			//Process data
+			Console.WriteLine(exampleName);
 
-            //Send back if need
-            //Create new packet for send
-            using (packet = new Packet(0x0001))
-            {
-                //Write data
-                packet.Write<string>("Example string data");
+			//Send back if need
+			//Create new packet for send
+			using (packet = new Packet(0x0001))
+			{
+				//Write data
+				packet.Write<string>("Example string data");
 
-                //Write bits
-                packet.WriteBits<int>(0x123, 8);
+				//Write bits
+				packet.WriteBits<int>(0x123, 8);
 
-                packet.WriteBit(true);
-                packet.WriteBit(false);
+				packet.WriteBit(true);
+				packet.WriteBit(false);
 
-                //Send data
-                pClient.Send(packet);
-            }
-        }
+				//Send data
+				pClient.Send(packet);
+			}
+		}
 
-        #endregion
-        
-        #endregion
-        
-        #endregion
-    }
+		#endregion
+
+		#endregion
+
+		#endregion
+	}
 }

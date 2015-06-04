@@ -16,7 +16,7 @@
 
 namespace ServerFramework.Configuration
 {
-    public interface IConfig
+	public interface IConfig
 	{
 		#region Methods
 
@@ -27,5 +27,5 @@ namespace ServerFramework.Configuration
 		#endregion
 
 		#endregion
-    }
+	}
 }

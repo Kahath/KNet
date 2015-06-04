@@ -21,222 +21,219 @@ using System.Text;
 
 namespace ServerFramework.Network.Packets
 {
-    internal  class PacketStream : IDisposable
-    {
-        #region Fields
+	internal class PacketStream : IDisposable
+	{
+		#region Fields
 
-        private BinaryReader _reader;
-        private BinaryWriter _writer;
+		private BinaryReader _reader;
+		private BinaryWriter _writer;
 
-        private byte _position = 0;
-        private byte _value;
+		private byte _position = 0;
+		private byte _value;
 
-        #endregion
+		#endregion
 
-        #region Properties
+		#region Properties
 
-        internal BinaryReader Reader
-        {
-            get { return _reader; }
-            set { _reader = value; }
-        }
+		internal BinaryReader Reader
+		{
+			get { return _reader; }
+			set { _reader = value; }
+		}
 
-        internal BinaryWriter Writer
-        {
-            get { return _writer; }
-            set { _writer = value; }
-        }
+		internal BinaryWriter Writer
+		{
+			get { return _writer; }
+			set { _writer = value; }
+		}
 
-        private byte Position
-        {
-            get { return _position; }
-            set { _position = value; }
-        }
+		private byte Position
+		{
+			get { return _position; }
+			set { _position = value; }
+		}
 
-        private byte Value
-        {
-            get { return _value; }
-            set { _value = value; }
-        }
+		private byte Value
+		{
+			get { return _value; }
+			set { _value = value; }
+		}
 
-        #endregion
+		#endregion
 
-        #region Constructors
+		#region Constructors
 
-        public PacketStream(Encoding encoder, byte[] data = null)
-        {
-            if (data != null)
-                Reader = new BinaryReader(new MemoryStream(data), encoder);
-            else
-                Writer = new BinaryWriter(new MemoryStream(), encoder);
-        }
+		public PacketStream(Encoding encoder, byte[] data = null)
+		{
+			if (data != null)
+				Reader = new BinaryReader(new MemoryStream(data), encoder);
+			else
+				Writer = new BinaryWriter(new MemoryStream(), encoder);
+		}
 
-        #endregion
+		#endregion
 
-        #region Methods
+		#region Methods
 
-        #region Read
+		#region Read
 
-        /// <summary>
-        /// Used for reading from packet buffer
-        /// </summary>
-        /// <typeparam name="T">type of value</typeparam>
-        /// <param name="count">not used</param>
-        /// <returns>Generic result</returns>
-        internal T Read<T>(int count = 0)
-        {
-            if (Reader != null)
-                return Reader.Read<T>(count);
+		/// <summary>
+		/// Used for reading from packet buffer
+		/// </summary>
+		/// <typeparam name="T">type of value</typeparam>
+		/// <param name="count">not used</param>
+		/// <returns>Generic result</returns>
+		internal T Read<T>(int count = 0)
+		{
+			if (Reader != null)
+				return Reader.Read<T>(count);
 
-            throw new NullReferenceException("Reader cannot be null");
-        }
+			throw new NullReferenceException("Reader cannot be null");
+		}
 
-        #endregion
+		#endregion
 
-        #region Write
+		#region Write
 
-        /// <summary>
-        /// Writes value to stream buffer.
-        /// </summary>
-        /// <typeparam name="T">type of value</typeparam>
-        /// <param name="value">value of method type</param>
-        internal void Write<T>(T value)
-        {
-            if (Writer != null)
-            {
-                T trueValue = (T)Convert.ChangeType(value, typeof(T));
-                Writer.Write<T>(trueValue);
-            }
-            else
-            {
-                throw new NullReferenceException("Writer cannot be null");
-            }
-        }
+		/// <summary>
+		/// Writes value to stream buffer.
+		/// </summary>
+		/// <typeparam name="T">type of value</typeparam>
+		/// <param name="value">value of method type</param>
+		internal void Write<T>(T value)
+		{
+			if (Writer != null)
+			{
+				T trueValue = (T)Convert.ChangeType(value, typeof(T));
+				Writer.Write<T>(trueValue);
+			}
+			else
+			{
+				throw new NullReferenceException("Writer cannot be null");
+			}
+		}
 
-        #endregion
+		#endregion
 
-        #region BitPack
+		#region BitPack
 
-        #region ReadBit
+		#region ReadBit
 
-        private bool ReadBit()
-        {
-            if (Position == 0)
-            {
-                Value = Read<byte>();
-                Position = 8;
-            }
+		private bool ReadBit()
+		{
+			if (Position == 0)
+			{
+				Value = Read<byte>();
+				Position = 8;
+			}
 
-            bool retVal = Convert.ToBoolean(Value >> 7);
+			bool retVal = Convert.ToBoolean(Value >> 7);
 
-            --Position;
-            Value <<= 1;
+			--Position;
+			Value <<= 1;
 
-            return retVal;
-        }
+			return retVal;
+		}
 
-        #endregion
+		#endregion
 
-        #region ReadBits
+		#region ReadBits
 
-        internal T ReadBits<T>(int count)
-        {
-            int retVal = 0;
+		internal T ReadBits<T>(int count)
+		{
+			int retVal = 0;
 
-            for (int i = count - 1; i >= 0; --i)
-                retVal = ReadBit() ? (1 << i) | retVal : retVal;
+			for (int i = count - 1; i >= 0; --i)
+				retVal = ReadBit() ? (1 << i) | retVal : retVal;
 
-            return (T)Convert.ChangeType(retVal, typeof(T));
-        }
+			return (T)Convert.ChangeType(retVal, typeof(T));
+		}
 
-        #endregion
+		#endregion
 
-        #region WriteBit
+		#region WriteBit
 
-        private void WriteBit(bool value)
-        {
-            ++Position;
+		private void WriteBit(bool value)
+		{
+			++Position;
 
-            if (value)
-                Value |= (byte)(1 << (8 - Position));
+			if (value)
+				Value |= (byte)(1 << (8 - Position));
 
-            if (Position == 8)
-            {
-                Write<byte>(Value);
-                Position = 0;
-                Value = 0;
-            }
-        }
+			if (Position == 8)
+			{
+				Write<byte>(Value);
+				Position = 0;
+				Value = 0;
+			}
+		}
 
-        #endregion
+		#endregion
 
-        #region WriteBits
+		#region WriteBits
 
-        internal void WriteBits<T>(T value, int count)
-        {
-            for (int i = count - 1; i >= 0; --i)
-                WriteBit((bool)Convert.ChangeType(
-                    (Convert.ToInt32(value) >> i) & 1, typeof(bool)));
-        }
+		internal void WriteBits<T>(T value, int count)
+		{
+			for (int i = count - 1; i >= 0; --i)
+				WriteBit((bool)Convert.ChangeType(
+					(Convert.ToInt32(value) >> i) & 1, typeof(bool)));
+		}
 
-        #endregion
+		#endregion
 
-        #region Flush
+		#region Flush
 
-        internal void Flush()
-        {
-            if (Position != 0)
-            {
-                Write<byte>(Value);
+		internal void Flush()
+		{
+			if (Position != 0)
+			{
+				Write<byte>(Value);
 
-                Position = 0;
-                Value = 0;
-            }
-        }
+				Position = 0;
+				Value = 0;
+			}
+		}
 
-        #endregion
+		#endregion
 
-        #endregion
+		#endregion
 
-        #region End
+		#region End
 
-        /// <summary>
-        /// Readies packet for sending.
-        /// </summary>
-        /// <returns>Size of packet minus header size</returns>
-        internal int End(out byte[] message)
-        {
-            Flush();
-            Writer.BaseStream.Seek(0, SeekOrigin.Begin);
-            message = new byte[Writer.BaseStream.Length];
-            ushort size = (ushort)(message.Length - ServerConfig.HeaderLength);
+		/// <summary>
+		/// Readies packet for sending.
+		/// </summary>
+		/// <returns>Size of packet minus header size</returns>
+		internal int End(out byte[] message)
+		{
+			Flush();
+			Writer.BaseStream.Seek(0, SeekOrigin.Begin);
+			message = new byte[Writer.BaseStream.Length];
+			ushort size = (ushort)(message.Length - ServerConfig.HeaderLength);
 
-            for (int i = 0; i < message.Length; i++)
-            {
-                message[i] = (byte)Writer.BaseStream.ReadByte();
-            }
+			Writer.BaseStream.Read(message, 0, message.Length);
 
-            message[0] = (byte)(size & 0xFF);
-            message[1] = (byte)((size >> 8) & 0xFF);
+			message[0] = (byte)(size & 0xFF);
+			message[1] = (byte)((size >> 8) & 0xFF);
 
-            return message.Length;
-        }
+			return message.Length;
+		}
 
-        #endregion
+		#endregion
 
-        #region Dispose
+		#region Dispose
 
-        public void Dispose()
-        {
-            if (Reader != null)
-                Reader.Close();
+		public void Dispose()
+		{
+			if (Reader != null)
+				Reader.Close();
 
-            if (Writer != null)
-                Writer.Close();
-        }
+			if (Writer != null)
+				Writer.Close();
+		}
 
-        #endregion
+		#endregion
 
-        #endregion
-    }
+		#endregion
+	}
 }

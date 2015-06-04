@@ -21,34 +21,34 @@ using System;
 
 namespace ServerFramework.Game.CommandHandlers
 {
-    [Command]
-    public static class ClearCommands
-    {
-        #region Methods
+	[Command]
+	public static class ClearCommands
+	{
+		#region Methods
 
-        #region GetCommand
+		#region GetCommand
 
-        private static Command GetCommand()
-        {
-            return new Command("cls", CommandLevel.Ten, null, Cls, "");
-        }
+		private static Command GetCommand()
+		{
+			return new Command("cls", CommandLevel.Ten, null, Cls, "");
+		}
 
-        #endregion
+		#endregion
 
-        #endregion
+		#endregion
 
-        #region Handlers
+		#region Handlers
 
-        #region ClsHandler
+		#region ClsHandler
 
-        private static bool Cls(Client user, params string[] args)
-        {
-            Console.Clear();
-            return true;
-        }
+		private static bool Cls(Client user, params string[] args)
+		{
+			Console.Clear();
+			return true;
+		}
 
-        #endregion
+		#endregion
 
-        #endregion
-    }
+		#endregion
+	}
 }

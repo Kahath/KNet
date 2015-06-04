@@ -16,7 +16,7 @@
 using ServerFramework.Constants.Misc;
 namespace ServerFramework.Constants.Entities.Session
 {
-    public interface IClient
+	public interface IClient
 	{
 		#region Properties
 
@@ -26,12 +26,12 @@ namespace ServerFramework.Constants.Entities.Session
 			set;
 		}
 
-        int ID
-        {
-            get;
-            set;
-        }
+		int ID
+		{
+			get;
+			set;
+		}
 
 		#endregion
-    }
+	}
 }

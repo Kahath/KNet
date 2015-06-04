@@ -18,33 +18,33 @@ using System;
 
 namespace ServerFramework.Configuration
 {
-    internal static class ServerConfig
-    {
-        #region Fields
+	internal static class ServerConfig
+	{
+		#region Fields
 
-        private static Config _config;
-	
-        private static string _bindIp;
-        private static int _bindPort;
+		private static Config _config;
 
-        private static LogType _logLevel;
-        private static PacketLogType _packetLogLevel;
-        private static OpcodeType _opcodeAllowLevel;
-        private static byte _packetLogSize;
+		private static string _bindIp;
+		private static int _bindPort;
 
-        private static int _bufferSize;
-        private static int _maxConnections;
-        private static int _maxSimultaneousAcceptOps;
-        private static int _backlog;
-        private static int _headerLength;
+		private static LogType _logLevel;
+		private static PacketLogType _packetLogLevel;
+		private static OpcodeType _opcodeAllowLevel;
+		private static byte _packetLogSize;
 
-        private static string _dbHost;
-        private static int _dbPort;
-        private static string _dbUser;
-        private static string _dbPass;
-        private static string _dbName;
+		private static int _bufferSize;
+		private static int _maxConnections;
+		private static int _maxSimultaneousAcceptOps;
+		private static int _backlog;
+		private static int _headerLength;
 
-        #endregion 
+		private static string _dbHost;
+		private static int _dbPort;
+		private static string _dbUser;
+		private static string _dbPass;
+		private static string _dbName;
+
+		#endregion
 
 		#region Properties
 
@@ -150,18 +150,18 @@ namespace ServerFramework.Configuration
 			set { _dbName = value; }
 		}
 
-        internal static string ConnectionString
-        {
-            get
-            {
-                string retVal = String.Empty;
+		internal static string ConnectionString
+		{
+			get
+			{
+				string retVal = String.Empty;
 
-                retVal = String.Format("Data Source={0},{1};Network Library=DBMSSOCN;Initial Catalog={2};User ID={3};Password={4};"
-                    , DBHost, DBPort, DBName, DBUser, DBPass);
+				retVal = String.Format("Data Source={0},{1};Network Library=DBMSSOCN;Initial Catalog={2};User ID={3};Password={4};"
+					, DBHost, DBPort, DBName, DBUser, DBPass);
 
-                return retVal;
-            }
-        }
+				return retVal;
+			}
+		}
 
 		#endregion
 
@@ -191,11 +191,11 @@ namespace ServerFramework.Configuration
 			DBPort = Config.Read<int>("dbport");
 			DBUser = Config.Read<string>("dbuser");
 			DBPass = Config.Read<string>("dbpass");
-            DBName = Config.Read<string>("dbname");
+			DBName = Config.Read<string>("dbname");
 		}
 
-        #endregion
-		
-        #endregion      
-    }
+		#endregion
+
+		#endregion
+	}
 }

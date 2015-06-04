@@ -21,7 +21,7 @@ using System.Net.Sockets;
 namespace ServerFramework.Managers.Core
 {
 	public sealed class BufferManager : BufferManagerBase<BufferManager>
-    {
+	{
 		#region Constructors
 
 		BufferManager(int totalBytes, int totalBytesInEachSaeaObject)

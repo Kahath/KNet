@@ -20,21 +20,21 @@ using ServerFramework.Database;
 
 namespace ServerFramework.Game.CommandHandlers
 {
-    [Command]
-    public static class DatabaseCommands
-    {
-        #region Methods
+	[Command]
+	public static class DatabaseCommands
+	{
+		#region Methods
 
-        #region GetCommand
+		#region GetCommand
 
-        private static Command GetCommand()
-        {
-            return new Command("database", CommandLevel.Ten, null, null, "");
-        }
+		private static Command GetCommand()
+		{
+			return new Command("database", CommandLevel.Ten, null, null, "");
+		}
 
-        #endregion
+		#endregion
 
-        #endregion
+		#endregion
 
-    }
+	}
 }

@@ -19,11 +19,12 @@ using System.IO;
 
 namespace ServerFramework.Extensions
 {
-    public static class PacketStreamExtensions
-    {
-        #region Fields
+	public static class PacketStreamExtensions
+	{
+		#region Fields
 
-        private static Dictionary<Type, Func<BinaryReader, int, object>> ReadFunctions = new Dictionary<Type, Func<BinaryReader, int, object>>()
+		private static Dictionary<Type, Func<BinaryReader, int, object>> ReadFunctions
+			= new Dictionary<Type, Func<BinaryReader, int, object>>()
         {
             { typeof(bool),     (reader, count) => reader.ReadBoolean()     },
             { typeof(sbyte),    (reader, count) => reader.ReadSByte()       },
@@ -43,7 +44,8 @@ namespace ServerFramework.Extensions
             { typeof(string),   (reader, count) => reader.ReadString()      },  
         };
 
-        private static Dictionary<Type, Action<BinaryWriter, object>> WriteActions = new Dictionary<Type, Action<BinaryWriter, object>>()
+		private static Dictionary<Type, Action<BinaryWriter, object>> WriteActions
+			= new Dictionary<Type, Action<BinaryWriter, object>>()
         {
             { typeof(bool),     (writer, value) => writer.Write((bool)value)    },
             { typeof(sbyte),    (writer, value) => writer.Write((sbyte)value)   },
@@ -63,32 +65,32 @@ namespace ServerFramework.Extensions
             { typeof(string),   (writer, value) => writer.Write((string)value)  },
         };
 
-        #endregion
+		#endregion
 
-        #region Methods
+		#region Methods
 
-        #region Read
+		#region Read
 
-        public static T Read<T>(this BinaryReader reader, int count)
-        {
-            Type type = typeof(T);
-            object value = ReadFunctions[type](reader, count);
+		public static T Read<T>(this BinaryReader reader, int count)
+		{
+			Type type = typeof(T);
+			object value = ReadFunctions[type](reader, count);
 
-            return (T)Convert.ChangeType(value, type);
-        }
+			return (T)Convert.ChangeType(value, type);
+		}
 
-        #endregion
+		#endregion
 
-        #region Write
+		#region Write
 
-        public static void Write<T>(this BinaryWriter writer, object value)
-        {
-            Type type = typeof(T);
-            WriteActions[type](writer, value);
-        }
+		public static void Write<T>(this BinaryWriter writer, object value)
+		{
+			Type type = typeof(T);
+			WriteActions[type](writer, value);
+		}
 
-        #endregion
+		#endregion
 
-        #endregion
-    }
+		#endregion
+	}
 }

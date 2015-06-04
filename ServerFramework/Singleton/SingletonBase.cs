@@ -21,64 +21,64 @@ using System.Reflection;
 
 namespace ServerFramework.Singleton
 {
-    public abstract class SingletonBase<T> where T : class
-    {
-        #region Fields
+	public abstract class SingletonBase<T> where T : class
+	{
+		#region Fields
 
-        private static T _instance;
-        private static object _syncObject = new object();
+		private static T _instance;
+		private static object _syncObject = new object();
 
-        #endregion
+		#endregion
 
-        #region Methods
+		#region Methods
 
-        #region GetInstance
+		#region GetInstance
 
 		/// <summary>
 		/// Gets instance of type T
 		/// </summary>
 		/// <param name="args">constructor parameters</param>
 		/// <returns>new instance or already initialized instance</returns>
-        public static T GetInstance(params object[] args)
-        {
-            object ctor = null;
+		public static T GetInstance(params object[] args)
+		{
+			object ctor = null;
 
-            if (_instance == null)
-            {
-                lock (_syncObject)
-                {
-                    if (_instance == null)
-                    {
-                        try
-                        {
-                            ctor = Activator.CreateInstance(typeof(T), BindingFlags.Instance | BindingFlags.NonPublic
-                            , null, args, CultureInfo.CurrentCulture);
-                        }
-                        catch (Exception e)
-                        { 
-                            Manager.LogMgr.Log(LogType.Error, "Error with creating instance of {0} type", typeof(T));
+			if (_instance == null)
+			{
+				lock (_syncObject)
+				{
+					if (_instance == null)
+					{
+						try
+						{
+							ctor = Activator.CreateInstance(typeof(T), BindingFlags.Instance | BindingFlags.NonPublic
+							, null, args, CultureInfo.CurrentCulture);
+						}
+						catch (Exception e)
+						{
+							Manager.LogMgr.Log(LogType.Error, "Error with creating instance of {0} type", typeof(T));
 							Manager.LogMgr.Log(LogType.Error, "{0}", e.InnerException.ToString());
 							Console.ReadLine();
-                            Environment.Exit(0);
-                        }
+							Environment.Exit(0);
+						}
 
-                        _instance = ctor as T;
+						_instance = ctor as T;
 
-                        return _instance;
-                    }
-                }
-            }
+						return _instance;
+					}
+				}
+			}
 
-            return _instance;
-        }
+			return _instance;
+		}
 
-        #endregion
+		#endregion
 
-        #region Init
+		#region Init
 
 		internal abstract void Init();
 
-        #endregion
+		#endregion
 
 		#endregion
 	}

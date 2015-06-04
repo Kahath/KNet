@@ -17,11 +17,11 @@ using System;
 
 namespace ServerFramework.Constants.Misc
 {
-    [Flags]
-    enum PacketLogType : byte
-    {
-        None    = 0x00,
-        CMSG    = 0x01,
-        SMSG    = 0x02,
-    };
+	[Flags]
+	enum PacketLogType : byte
+	{
+		None	= 0x00,
+		CMSG	= 0x01,
+		SMSG	= 0x02,
+	};
 }

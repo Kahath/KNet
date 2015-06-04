@@ -19,144 +19,144 @@ using System.Net.Sockets;
 
 namespace ServerFramework.Extensions
 {
-    public static class NetworkExtensions
-    {
-        #region Methods
+	public static class NetworkExtensions
+	{
+		#region Methods
 
-        /// <summary>
-        /// Handles message header. If received bytes length is lesser than 
-        /// header length, multiple method calls are required.
-        /// </summary>
-        /// <param name="e">SocketAsyncEventArgs object</param>
-        /// <param name="token">SocketAsyncEventArgs user token</param>
-        /// <param name="remainingBytesToProcess">bytes transfered in receiveCallback</param>
-        /// <returns></returns>
-        internal static int HandleHeader(this UserToken token
-            , SocketAsyncEventArgs e, int remainingBytesToProcess)
-        {
-            if (remainingBytesToProcess >= token.HeaderLength -
-                token.HeaderBytesDoneCount)
-            {
-                Buffer.BlockCopy(e.Buffer,
-                    token.MessageOffset -
-                    token.HeaderLength +
-                    token.HeaderBytesDoneCount,
-                    token.Header,
-                    token.HeaderBytesDoneCount,
-                    token.HeaderLength -
-                    token.HeaderBytesDoneCount);
+		/// <summary>
+		/// Handles message header. If received bytes length is lesser than 
+		/// header length, multiple method calls are required.
+		/// </summary>
+		/// <param name="e">SocketAsyncEventArgs object</param>
+		/// <param name="token">SocketAsyncEventArgs user token</param>
+		/// <param name="remainingBytesToProcess">bytes transfered in receiveCallback</param>
+		/// <returns></returns>
+		internal static int HandleHeader(this UserToken token
+			, SocketAsyncEventArgs e, int remainingBytesToProcess)
+		{
+			if (remainingBytesToProcess >= token.HeaderLength -
+				token.HeaderBytesDoneCount)
+			{
+				Buffer.BlockCopy(e.Buffer,
+					token.MessageOffset -
+					token.HeaderLength +
+					token.HeaderBytesDoneCount,
+					token.Header,
+					token.HeaderBytesDoneCount,
+					token.HeaderLength -
+					token.HeaderBytesDoneCount);
 
-                remainingBytesToProcess = (remainingBytesToProcess - token.HeaderLength) +
-                    token.HeaderBytesDoneCount;
+				remainingBytesToProcess = (remainingBytesToProcess - token.HeaderLength) +
+					token.HeaderBytesDoneCount;
 
-                token.HeaderBytesDoneThisOp = token.HeaderLength -
-                    token.HeaderBytesDoneCount;
+				token.HeaderBytesDoneThisOp = token.HeaderLength -
+					token.HeaderBytesDoneCount;
 
-                token.HeaderBytesDoneCount = token.HeaderLength;
+				token.HeaderBytesDoneCount = token.HeaderLength;
 
-                token.MessageLength = BitConverter.ToInt16(
-                    token.Header, 0);
+				token.MessageLength = BitConverter.ToInt16(
+					token.Header, 0);
 
-                token.StartReceive();
+				token.StartReceive();
 
-                token.Packet.Header = new PacketHeader
-                {
-                    Size = BitConverter.ToUInt16(token.Header, 0),
-                    Opcode = BitConverter.ToUInt16(token.Header, 2)
-                };
+				token.Packet.Header = new PacketHeader
+				{
+					Size = BitConverter.ToUInt16(token.Header, 0),
+					Opcode = BitConverter.ToUInt16(token.Header, 2)
+				};
 
-                token.HeaderReady = true;
-            }
-            else
-            {
-                Buffer.BlockCopy(e.Buffer,
-                    token.MessageOffset -
-                    token.HeaderLength +
-                    token.HeaderBytesDoneCount,
-                    token.Header,
-                    token.HeaderBytesDoneCount,
-                    remainingBytesToProcess);
+				token.HeaderReady = true;
+			}
+			else
+			{
+				Buffer.BlockCopy(e.Buffer,
+					token.MessageOffset -
+					token.HeaderLength +
+					token.HeaderBytesDoneCount,
+					token.Header,
+					token.HeaderBytesDoneCount,
+					remainingBytesToProcess);
 
-                token.HeaderBytesDoneThisOp = remainingBytesToProcess;
-                token.HeaderBytesDoneCount += remainingBytesToProcess;
-                remainingBytesToProcess = 0;
-            }
+				token.HeaderBytesDoneThisOp = remainingBytesToProcess;
+				token.HeaderBytesDoneCount += remainingBytesToProcess;
+				remainingBytesToProcess = 0;
+			}
 
-            if (remainingBytesToProcess == 0)
-            {
-                token.MessageOffset -= token.HeaderBytesDoneThisOp;
-                token.HeaderBytesDoneThisOp = 0;
-            }
+			if (remainingBytesToProcess == 0)
+			{
+				token.MessageOffset -= token.HeaderBytesDoneThisOp;
+				token.HeaderBytesDoneThisOp = 0;
+			}
 
-            return remainingBytesToProcess;
-        }
+			return remainingBytesToProcess;
+		}
 
-        /// <summary>
-        /// Handles message.  If received bytes length is lesser than 
-        /// message length, multiple method calls are required. 
-        /// </summary>
-        /// <param name="e">SocketAsyncEventArgs object</param>
-        /// <param name="token">SocketAsyncEventArgs UserToken</param>
-        /// <param name="remainingBytesToProcess">bytes transfered in receive callback</param>
-        /// <returns></returns>
-        internal static int HandleMessage(this UserToken token,
-            SocketAsyncEventArgs e, int remainingBytesToProcess)
-        {
-            if (token.MessageBytesDoneCount == 0)
-                token.Packet.Message = new
-                    byte[token.MessageLength];
+		/// <summary>
+		/// Handles message.  If received bytes length is lesser than 
+		/// message length, multiple method calls are required. 
+		/// </summary>
+		/// <param name="e">SocketAsyncEventArgs object</param>
+		/// <param name="token">SocketAsyncEventArgs UserToken</param>
+		/// <param name="remainingBytesToProcess">bytes transfered in receive callback</param>
+		/// <returns></returns>
+		internal static int HandleMessage(this UserToken token,
+			SocketAsyncEventArgs e, int remainingBytesToProcess)
+		{
+			if (token.MessageBytesDoneCount == 0)
+				token.Packet.Message = new
+					byte[token.MessageLength];
 
-            if (token.MessageLength == 0)
-            {
-                token.Packet.SessionId = token.SessionId;
-                token.Packet.PrepareRead();
+			if (token.MessageLength == 0)
+			{
+				token.Packet.SessionId = token.SessionId;
+				token.Packet.PrepareRead();
 
-                token.PacketReady = true;
+				token.PacketReady = true;
 
-                return remainingBytesToProcess;
-            }
+				return remainingBytesToProcess;
+			}
 
-            if ((remainingBytesToProcess +
-                token.MessageBytesDoneCount) >=
-                token.MessageLength)
-            {
-                Buffer.BlockCopy
-                    (
-                        e.Buffer
-                        , token.MessageOffset
-                        , token.Packet.Message
-                        , token.MessageBytesDoneCount
-                        , token.MessageLength - token.MessageBytesDoneCount
-                    );
+			if ((remainingBytesToProcess +
+				token.MessageBytesDoneCount) >=
+				token.MessageLength)
+			{
+				Buffer.BlockCopy
+					(
+						e.Buffer
+						, token.MessageOffset
+						, token.Packet.Message
+						, token.MessageBytesDoneCount
+						, token.MessageLength - token.MessageBytesDoneCount
+					);
 
-                remainingBytesToProcess = (remainingBytesToProcess - token.MessageLength)
-                    + token.MessageBytesDoneCount;
+				remainingBytesToProcess = (remainingBytesToProcess - token.MessageLength)
+					+ token.MessageBytesDoneCount;
 
-                token.Packet.SessionId = token.SessionId;
-                token.Packet.PrepareRead();
+				token.Packet.SessionId = token.SessionId;
+				token.Packet.PrepareRead();
 
-                token.PacketReady = true;
-            }
-            else
-            {
-                Buffer.BlockCopy
-                    (
-                        e.Buffer
-                        , token.MessageOffset
-                        , token.Packet.Message
-                        , token.MessageBytesDoneCount
-                        , remainingBytesToProcess
-                    );
+				token.PacketReady = true;
+			}
+			else
+			{
+				Buffer.BlockCopy
+					(
+						e.Buffer
+						, token.MessageOffset
+						, token.Packet.Message
+						, token.MessageBytesDoneCount
+						, remainingBytesToProcess
+					);
 
-                token.MessageOffset -= token.HeaderBytesDoneThisOp;
+				token.MessageOffset -= token.HeaderBytesDoneThisOp;
 
-                token.MessageBytesDoneCount += remainingBytesToProcess;
-                remainingBytesToProcess = 0;
-            }
+				token.MessageBytesDoneCount += remainingBytesToProcess;
+				remainingBytesToProcess = 0;
+			}
 
-            return remainingBytesToProcess;
-        }
+			return remainingBytesToProcess;
+		}
 
-        #endregion   
-    }
+		#endregion
+	}
 }

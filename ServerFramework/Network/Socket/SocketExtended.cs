@@ -21,120 +21,120 @@ using System.Threading;
 
 namespace ServerFramework.Network.Socket
 {
-    internal sealed class SocketExtended : IDisposable
-    {
-        #region Fields
+	internal sealed class SocketExtended : IDisposable
+	{
+		#region Fields
 
-        private SocketAsyncEventArgs _sender;
-        private SocketAsyncEventArgs _receiver;
-        private AutoResetEvent _sendResetEvent;
+		private SocketAsyncEventArgs _sender;
+		private SocketAsyncEventArgs _receiver;
+		private AutoResetEvent _sendResetEvent;
 
-        #endregion
+		#endregion
 
-        #region Constructors
+		#region Constructors
 
-        /// <summary>
-        /// Creates object with SocketAsyncEventArgs objects
-        /// for sending and receiving data
-        /// </summary>
-        internal SocketExtended()
-        {
-            Sender = new SocketAsyncEventArgs();
-            Receiver = new SocketAsyncEventArgs();
-            _sendResetEvent = new AutoResetEvent(true);
-        }
+		/// <summary>
+		/// Creates object with SocketAsyncEventArgs objects
+		/// for sending and receiving data
+		/// </summary>
+		internal SocketExtended()
+		{
+			Sender = new SocketAsyncEventArgs();
+			Receiver = new SocketAsyncEventArgs();
+			_sendResetEvent = new AutoResetEvent(true);
+		}
 
-        #endregion
+		#endregion
 
-        #region Properties
+		#region Properties
 
-        internal SocketAsyncEventArgs Sender
-        {
-            get { return _sender; }
-            set { _sender = value; }
-        }
+		internal SocketAsyncEventArgs Sender
+		{
+			get { return _sender; }
+			set { _sender = value; }
+		}
 
-        internal SocketAsyncEventArgs Receiver
-        {
-            get { return _receiver; }
-            set { _receiver = value; }
-        }
+		internal SocketAsyncEventArgs Receiver
+		{
+			get { return _receiver; }
+			set { _receiver = value; }
+		}
 
-        internal AutoResetEvent SendResetEvent 
-        {
-            get { return _sendResetEvent; }
-            set { _sendResetEvent = value; }
-        }
+		internal AutoResetEvent SendResetEvent
+		{
+			get { return _sendResetEvent; }
+			set { _sendResetEvent = value; }
+		}
 
-        internal System.Net.Sockets.Socket AcceptSocket
-        {
-            set 
-            { 
-                Sender.AcceptSocket = value;
-                Receiver.AcceptSocket = value;
-            }
-        }
+		internal System.Net.Sockets.Socket AcceptSocket
+		{
+			set
+			{
+				Sender.AcceptSocket = value;
+				Receiver.AcceptSocket = value;
+			}
+		}
 
-        internal int SessionId
-        {
-            set
-            {
-                ((UserToken)Sender.UserToken).SessionId = value;
-                ((UserToken)Receiver.UserToken).SessionId = value;
-            }
-        }
+		internal int SessionId
+		{
+			set
+			{
+				((UserToken)Sender.UserToken).SessionId = value;
+				((UserToken)Receiver.UserToken).SessionId = value;
+			}
+		}
 
-        internal EndPoint RemoteEndPoint
-        {
-            get { return Receiver.AcceptSocket.RemoteEndPoint; }
-        }
+		internal EndPoint RemoteEndPoint
+		{
+			get { return Receiver.AcceptSocket.RemoteEndPoint; }
+		}
 
-        #endregion
+		#endregion
 
-        #region Methods
+		#region Methods
 
-        #region Close
+		#region Close
 
-        /// <summary>
-        /// Closes both SocketAsyncEventArgs objects
-        /// </summary>
-        private void Close()
-        {
-            this.Sender.AcceptSocket.Close();
-            this.Receiver.AcceptSocket.Close();
-        }
+		/// <summary>
+		/// Closes both SocketAsyncEventArgs objects
+		/// </summary>
+		private void Close()
+		{
+			this.Sender.AcceptSocket.Close();
+			this.Receiver.AcceptSocket.Close();
+		}
 
-        #endregion
+		#endregion
 
-        #region Disconnect
+		#region Disconnect
 
-        /// <summary>
-        /// Shutdown both SocketAsyncEventArgs objects
-        /// </summary>
-        /// <param name="how"></param>
-        internal void Disconnect(SocketShutdown how)
-        {
-            try
-            {
-                this.Sender.AcceptSocket.Shutdown(how);
-                this.Receiver.AcceptSocket.Shutdown(how);
-                this.SendResetEvent.Set();
-                this.Close();
-            }
-            catch (SocketException) { }
-        }
+		/// <summary>
+		/// Shutdown both SocketAsyncEventArgs objects
+		/// </summary>
+		/// <param name="how"></param>
+		internal void Disconnect(SocketShutdown how)
+		{
+			try
+			{
+				this.Sender.AcceptSocket.Shutdown(how);
+				this.Receiver.AcceptSocket.Shutdown(how);
+				this.SendResetEvent.Set();
+				this.Close();
+			}
+			catch (SocketException) { }
+		}
 
-        #endregion
+		#endregion
 
-        #region Dispose
+		#region Dispose
 
-        public void Dispose()
-        {
-            SendResetEvent.Dispose();
-        }
+		public void Dispose()
+		{
+			SendResetEvent.Dispose();
+		}
 
-        #endregion
+		#endregion
 
-        #endregion
-    }
+		#endregion
+	}
 }

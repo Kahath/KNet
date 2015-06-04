@@ -32,67 +32,67 @@ using System.Net.Sockets;
 
 namespace ServerFramework
 {
-    #region Delegates
+	#region Delegates
 
-    public delegate bool CommandHandler(Client user, params string[] args);
-    public delegate void OpcodeHandler(Packet packet);
-    public delegate void ServerEventHandler(object sender, SocketAsyncEventArgs e);
-    public delegate void PacketEventHandler(object sender, EventArgs e);
+	public delegate bool CommandHandler(Client user, params string[] args);
+	public delegate void OpcodeHandler(Packet packet);
+	public delegate void ServerEventHandler(object sender, SocketAsyncEventArgs e);
+	public delegate void PacketEventHandler(object sender, EventArgs e);
 
-    #endregion
+	#endregion
 
-    public sealed class KahathFramework
-    {
-        #region Fields
+	public sealed class KahathFramework
+	{
+		#region Fields
 
-        private Client _consoleClient;
-        private static SocketListenerSettings _socketSettings;
+		private Client _consoleClient;
+		private static SocketListenerSettings _socketSettings;
 		private static Server _server;
 
-        #endregion
+		#endregion
 
-        #region Properties
+		#region Properties
 
 		public static Server Server
-        {
-			get 
+		{
+			get
 			{
 				if (_server == null)
 					_server = new Server(_socketSettings);
 
 				return _server;
 			}
-        }
+		}
 
-        private Client ConsoleClient
-        {
-            get
-            {
-                if(_consoleClient == null)
-                {
-                    _consoleClient = new Client()
-                    {
-                        UserLevel = CommandLevel.Ten,
-                    };                
-                }
+		private Client ConsoleClient
+		{
+			get
+			{
+				if (_consoleClient == null)
+				{
+					_consoleClient = new Client()
+					{
+						UserLevel = CommandLevel.Ten,
+					};
+				}
 
-                return _consoleClient;
-            }
-        }
+				return _consoleClient;
+			}
+		}
 
-        #endregion
+		#endregion
 
-        #region Constructors
+		#region Constructors
 
-        public KahathFramework()
-        {
-            DependencyManager.Map(typeof(IConfig), typeof(ConfigInject));
-			DependencyManager.Map(typeof(IServer), typeof(ServerInject));
+		public KahathFramework()
+		{
+			DependencyManager.Map<IConfig, ConfigInject>();
+			DependencyManager.Map<IServer, ServerInject>();
 
-            ServerConfig.Init();
+			ServerConfig.Init();
 			Manager.LogMgr = LogManager.GetInstance();
 
-            _socketSettings = new SocketListenerSettings
+			_socketSettings = new SocketListenerSettings
 				(
 					ServerConfig.MaxConnections
 				,	ServerConfig.Backlog
@@ -106,47 +106,47 @@ namespace ServerFramework
 						)
 				);
 
-            Manager.LogMgr.Log(LogType.Info, "Configuration");
-            Manager.LogMgr.Log(LogType.Info, "Bind IP: {0}", ServerConfig.BindIP);
-            Manager.LogMgr.Log(LogType.Info, "Bind port: {0}", ServerConfig.BindPort);
-            Manager.LogMgr.Log(LogType.Info, "Console log level: {0}", ServerConfig.LogLevel);
-            Manager.LogMgr.Log(LogType.Info, "Packet log level: {0}", ServerConfig.PacketLogLevel);
-            Manager.LogMgr.Log(LogType.Info, "Opcode allow level: {0}", ServerConfig.OpcodeAllowLevel);
-            Manager.LogMgr.Log(LogType.Info, "Buffer size: {0}", ServerConfig.BufferSize);
-            Manager.LogMgr.Log(LogType.Info, "Maximum connections: {0}", ServerConfig.MaxConnections);
-            Manager.LogMgr.Log(LogType.Info, "Maximum sockets for accept: {0}", ServerConfig.MaxSimultaneousAcceptOps);
-            Manager.LogMgr.Log(LogType.Info, "Backlog: {0}", ServerConfig.Backlog);
-            Manager.LogMgr.Log(LogType.Info, "Packet header length: {0}", ServerConfig.HeaderLength);
-            Manager.LogMgr.Log(LogType.Info, "Database host name: {0}", ServerConfig.DBHost);
-            Manager.LogMgr.Log(LogType.Info, "Database port: {0}", ServerConfig.DBPort);
-            Manager.LogMgr.Log(LogType.Info, "Database username: {0}", ServerConfig.DBUser);
-            Manager.LogMgr.Log(LogType.Info, "Database password: {0}", ServerConfig.DBPass);
-            Manager.LogMgr.Log(LogType.Info, "Database name: {0}", ServerConfig.DBName);
-            Manager.LogMgr.Log();
+			Manager.LogMgr.Log(LogType.Info, "Configuration");
+			Manager.LogMgr.Log(LogType.Info, "Bind IP: {0}", ServerConfig.BindIP);
+			Manager.LogMgr.Log(LogType.Info, "Bind port: {0}", ServerConfig.BindPort);
+			Manager.LogMgr.Log(LogType.Info, "Console log level: {0}", ServerConfig.LogLevel);
+			Manager.LogMgr.Log(LogType.Info, "Packet log level: {0}", ServerConfig.PacketLogLevel);
+			Manager.LogMgr.Log(LogType.Info, "Opcode allow level: {0}", ServerConfig.OpcodeAllowLevel);
+			Manager.LogMgr.Log(LogType.Info, "Buffer size: {0}", ServerConfig.BufferSize);
+			Manager.LogMgr.Log(LogType.Info, "Maximum connections: {0}", ServerConfig.MaxConnections);
+			Manager.LogMgr.Log(LogType.Info, "Maximum sockets for accept: {0}", ServerConfig.MaxSimultaneousAcceptOps);
+			Manager.LogMgr.Log(LogType.Info, "Backlog: {0}", ServerConfig.Backlog);
+			Manager.LogMgr.Log(LogType.Info, "Packet header length: {0}", ServerConfig.HeaderLength);
+			Manager.LogMgr.Log(LogType.Info, "Database host name: {0}", ServerConfig.DBHost);
+			Manager.LogMgr.Log(LogType.Info, "Database port: {0}", ServerConfig.DBPort);
+			Manager.LogMgr.Log(LogType.Info, "Database username: {0}", ServerConfig.DBUser);
+			Manager.LogMgr.Log(LogType.Info, "Database password: {0}", ServerConfig.DBPass);
+			Manager.LogMgr.Log(LogType.Info, "Database name: {0}", ServerConfig.DBName);
+			Manager.LogMgr.Log();
 
-            Manager.LogMgr.Log(LogType.Init, "Initialising application database connection.");
+			Manager.LogMgr.Log(LogType.Init, "Initialising application database connection.");
 
-            using (ApplicationContext context = new ApplicationContext())
-            {
-                IEnumerable<DbEntityValidationResult> errors = context.GetValidationErrors();
+			using (ApplicationContext context = new ApplicationContext())
+			{
+				IEnumerable<DbEntityValidationResult> errors = context.GetValidationErrors();
 
-                if (errors.Any())
-                {
-                    foreach (DbEntityValidationResult result in errors)
-                        Manager.LogMgr.Log(LogType.DB, "{0}", result.ToString());
+				if (errors.Any())
+				{
+					foreach (DbEntityValidationResult result in errors)
+						Manager.LogMgr.Log(LogType.DB, "{0}", result.ToString());
 
-                    Console.ReadLine();
-                    Environment.Exit(0);
-                }
-            }
+					Console.ReadLine();
+					Environment.Exit(0);
+				}
+			}
 
-            Manager.LogMgr.Log(LogType.Init, "Successfully tested database connection.");
+			Manager.LogMgr.Log(LogType.Init, "Successfully tested database connection.");
 
-            Manager.LogMgr.Log(LogType.Init, "Initialising managers.");
-            Manager.Init();
-        }
+			Manager.LogMgr.Log(LogType.Init, "Initialising managers.");
+			Manager.Init();
+		}
 
-        #endregion 
+		#endregion
 
 		#region Methods
 

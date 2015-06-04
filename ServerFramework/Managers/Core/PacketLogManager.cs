@@ -27,107 +27,107 @@ using System.Threading;
 
 namespace ServerFramework.Managers.Core
 {
-    public sealed class PacketLogManager : PacketLogManagerBase<PacketLogManager>
-    {
-        #region Constructors
+	public sealed class PacketLogManager : PacketLogManagerBase<PacketLogManager>
+	{
+		#region Constructors
 
-        PacketLogManager()
-        {
-            Init();
-        }
+		PacketLogManager()
+		{
+			Init();
+		}
 
-        #endregion
+		#endregion
 
-        #region Methods
+		#region Methods
 
-        #region Init
+		#region Init
 
-        internal override void Init()
-        {
-            Thread logThread = new Thread(() =>
-            {
-                while (true)
-                {
-                    var item = PacketLogQueue.Take();
+		internal override void Init()
+		{
+			Thread logThread = new Thread(() =>
+			{
+				while (true)
+				{
+					var item = PacketLogQueue.Take();
 
-                    if (item != null)
-                    {
-                        LogPacket(item);
-                    }
-                }
-            });
+					if (item != null)
+					{
+						LogPacket(item);
+					}
+				}
+			});
 
-            logThread.IsBackground = true;
-            logThread.Start();
-        }
+			logThread.IsBackground = true;
+			logThread.Start();
+		}
 
-        #endregion
+		#endregion
 
-        #region LogPacket
+		#region LogPacket
 
-        protected override void LogPacket(Packet packet)
-        {
-            PacketLogType logtype = packet.Stream.Reader != null ? PacketLogType.CMSG : PacketLogType.SMSG;
+		protected override void LogPacket(Packet packet)
+		{
+			PacketLogType logtype = packet.Stream.Reader != null ? PacketLogType.CMSG : PacketLogType.SMSG;
 
-            if (!((ServerConfig.PacketLogLevel & logtype) == logtype) ? true : false)
-                return;
+			if (!((ServerConfig.PacketLogLevel & logtype) == logtype) ? true : false)
+				return;
 
-            Client pClient = Manager.SessionMgr.GetClientBySessionId(packet.SessionId);
+			Client pClient = Manager.SessionMgr.GetClientBySessionId(packet.SessionId);
 
-            PacketLogModel packetLog = new PacketLogModel();
-            
-            if(pClient != null)
-            {
-                packetLog.IP = pClient.IP;
+			PacketLogModel packetLog = new PacketLogModel();
 
-                if(pClient.Token != null)
-                {
-                    packetLog.ClientID = pClient.Token.ID;
-                }
-            }
+			if (pClient != null)
+			{
+				packetLog.IP = pClient.IP;
 
-            packetLog.Size = packet.Header.Size;
-            packetLog.Opcode = packet.Header.Opcode;
+				if (pClient.Token != null)
+				{
+					packetLog.ClientID = pClient.Token.ID;
+				}
+			}
 
-            using (ApplicationContext context = new ApplicationContext())
-            {
-                packetLog.PacketLogTypeID = logtype == PacketLogType.CMSG ?
-                    context.PacketLogType.First(x => x.ID == (int)PacketLogType.CMSG && x.Active).ID :
-                    context.PacketLogType.First(x => x.ID == (int)PacketLogType.SMSG && x.Active).ID;
-            }
+			packetLog.Size = packet.Header.Size;
+			packetLog.Opcode = packet.Header.Opcode;
 
-            if (packet.Header.Size > 0)
-            {
-                packetLog.Message = logtype == PacketLogType.CMSG ?
-                    BitConverter.ToString(packet.Message) :
-                    BitConverter.ToString(packet.Message, ServerConfig.HeaderLength);
-            }
+			using (ApplicationContext context = new ApplicationContext())
+			{
+				packetLog.PacketLogTypeID = logtype == PacketLogType.CMSG ?
+					context.PacketLogType.First(x => x.ID == (int)PacketLogType.CMSG && x.Active).ID :
+					context.PacketLogType.First(x => x.ID == (int)PacketLogType.SMSG && x.Active).ID;
+			}
 
-            PacketLog.Add(packetLog);
+			if (packet.Header.Size > 0)
+			{
+				packetLog.Message = logtype == PacketLogType.CMSG ?
+					BitConverter.ToString(packet.Message) :
+					BitConverter.ToString(packet.Message, ServerConfig.HeaderLength);
+			}
 
-            if(PacketLog.Count > 1000)
-            {
-                using(ApplicationContext context = new ApplicationContext())
-                {
-                    context.PacketLog.AddRange(PacketLog);
-                    context.SaveChanges();
-                }
+			PacketLog.Add(packetLog);
 
-                PacketLog.Clear();
-            }
-        }
+			if (PacketLog.Count > 1000)
+			{
+				using (ApplicationContext context = new ApplicationContext())
+				{
+					context.PacketLog.AddRange(PacketLog);
+					context.SaveChanges();
+				}
 
-        #endregion
+				PacketLog.Clear();
+			}
+		}
 
-        #region Log
+		#endregion
+
+		#region Log
 
 		internal override void Log(Packet packet)
-        {
-            PacketLogQueue.Add(packet);
-        }
+		{
+			PacketLogQueue.Add(packet);
+		}
 
-        #endregion
+		#endregion
 
-        #endregion
-    }
+		#endregion
+	}
 }

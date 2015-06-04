@@ -47,13 +47,13 @@ namespace ServerFramework.Managers.Base
 
 		protected List<PacketLogModel> PacketLog
 		{
-            get
-            {
-                if (_packetLog == null)
-                    _packetLog = new List<PacketLogModel>();
+			get
+			{
+				if (_packetLog == null)
+					_packetLog = new List<PacketLogModel>();
 
-                return _packetLog;
-            }
+				return _packetLog;
+			}
 		}
 
 		#endregion

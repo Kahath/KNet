@@ -21,93 +21,93 @@ using System.Net;
 
 namespace ServerFramework.Constants.Entities.Session
 {
-    public sealed class Client
-    {
-        #region Fields
+	public sealed class Client
+	{
+		#region Fields
 
-        private SocketExtended _socketExtended;
-        private IClient _clientToken;
-        private CommandLevel _userLevel;
+		private SocketExtended _socketExtended;
+		private IClient _clientToken;
+		private CommandLevel _userLevel;
 
-        #endregion
+		#endregion
 
-        #region Properties
+		#region Properties
 
-        internal SocketExtended SocketExtended
-        {
-            get { return _socketExtended; }
-            set { _socketExtended = value; }
-        }
+		internal SocketExtended SocketExtended
+		{
+			get { return _socketExtended; }
+			set { _socketExtended = value; }
+		}
 
-        public IClient Token
-        {
-            get { return _clientToken; }
-            set { _clientToken = value; }
-        }
+		public IClient Token
+		{
+			get { return _clientToken; }
+			set { _clientToken = value; }
+		}
 
-        public string IP
-        {
-            get { return (SocketExtended.Receiver.AcceptSocket.RemoteEndPoint as IPEndPoint).Address.ToString(); }
-        }
+		public string IP
+		{
+			get { return (SocketExtended.Receiver.AcceptSocket.RemoteEndPoint as IPEndPoint).Address.ToString(); }
+		}
 
-        public int Port
-        {
-            get { return (SocketExtended.Receiver.AcceptSocket.RemoteEndPoint as IPEndPoint).Port;}
-        }
+		public int Port
+		{
+			get { return (SocketExtended.Receiver.AcceptSocket.RemoteEndPoint as IPEndPoint).Port; }
+		}
 
-        public int SessionID
-        {
-            get { return (SocketExtended.Receiver.UserToken as UserToken).SessionId; }
-        }
+		public int SessionID
+		{
+			get { return (SocketExtended.Receiver.UserToken as UserToken).SessionId; }
+		}
 
-        public CommandLevel UserLevel
-        {
-            get { return _userLevel; }
-            set { _userLevel = value; }
-        }
+		public CommandLevel UserLevel
+		{
+			get { return _userLevel; }
+			set { _userLevel = value; }
+		}
 
-        #endregion
+		#endregion
 
-        #region Constructors
+		#region Constructors
 
-        internal Client()
-        {
+		internal Client()
+		{
 
-        }
+		}
 
-        internal Client(SocketExtended socketExtended)
-        {
-            SocketExtended = socketExtended;
-        }
+		internal Client(SocketExtended socketExtended)
+		{
+			SocketExtended = socketExtended;
+		}
 
-        #endregion
+		#endregion
 
-        #region Events
+		#region Events
 
-        public event PacketEventHandler BeforePacketSend;
+		public event PacketEventHandler BeforePacketSend;
 
-        #endregion
+		#endregion
 
-        #region Methods
+		#region Methods
 
-        #region Send
-		
-        public void Send(Packet packet)
-        {
-            if (BeforePacketSend != null)
-                BeforePacketSend(packet, new EventArgs());
+		#region Send
 
-            this.SocketExtended.SendResetEvent.WaitOne();
-            UserToken token = SocketExtended.Sender.UserToken as UserToken;
-            token.Packet = packet;
-            token.Finish();
-            token.Packet.SessionId = token.SessionId;
+		public void Send(Packet packet)
+		{
+			if (BeforePacketSend != null)
+				BeforePacketSend(packet, new EventArgs());
 
-            KahathFramework.Server.Send(this.SocketExtended.Sender);
-        }
+			this.SocketExtended.SendResetEvent.WaitOne();
+			UserToken token = SocketExtended.Sender.UserToken as UserToken;
+			token.Packet = packet;
+			token.Finish();
+			token.Packet.SessionId = token.SessionId;
 
-        #endregion
+			KahathFramework.Server.Send(this.SocketExtended.Sender);
+		}
 
-        #endregion  
-    }
+		#endregion
+
+		#endregion
+	}
 }

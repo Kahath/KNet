@@ -21,186 +21,186 @@ using System.Text;
 
 namespace ServerFramework.Network.Packets
 {
-    public class Packet : IDisposable
-    {
-        #region Fields
+	public class Packet : IDisposable
+	{
+		#region Fields
 
-        private PacketHeader _header;
-        private byte[] _message;
-        private int _sessionId;
-        private Encoding _encoder;
+		private PacketHeader _header;
+		private byte[] _message;
+		private int _sessionId;
+		private Encoding _encoder;
 
-        private PacketStream _stream;
+		private PacketStream _stream;
 
-        #endregion
+		#endregion
 
-        #region Properties
+		#region Properties
 
-        public PacketHeader Header
-        {
-            get { return _header; }
-            internal set { _header = value; }
-        }
+		public PacketHeader Header
+		{
+			get { return _header; }
+			internal set { _header = value; }
+		}
 
-        public byte[] Message
-        {
-            get { return _message; }
-            internal set { _message = value; }
-        }
+		public byte[] Message
+		{
+			get { return _message; }
+			internal set { _message = value; }
+		}
 
-        public int SessionId
-        {
-            get { return _sessionId; }
-            internal set { _sessionId = value; }
-        }
+		public int SessionId
+		{
+			get { return _sessionId; }
+			internal set { _sessionId = value; }
+		}
 
-        internal PacketStream Stream
-        {
-            get { return _stream; }
-        }
+		internal PacketStream Stream
+		{
+			get { return _stream; }
+		}
 
-        private Encoding Encoder
-        {
-            get { return _encoder; }
-            set { _encoder = value; }
-        }
+		private Encoding Encoder
+		{
+			get { return _encoder; }
+			set { _encoder = value; }
+		}
 
-        #endregion
+		#endregion
 
-        #region Constructors
+		#region Constructors
 
-        /// <summary>
-        /// Creates new object for reading message.
-        /// </summary>
-        internal Packet(Encoding encoder = null)
-        {
-            Header = new PacketHeader();
-            Encoder = encoder ?? Encoding.UTF8;
-        }
+		/// <summary>
+		/// Creates new object for reading message.
+		/// </summary>
+		internal Packet(Encoding encoder = null)
+		{
+			Header = new PacketHeader();
+			Encoder = encoder ?? Encoding.UTF8;
+		}
 
-        /// <summary>
-        /// Creates new object for writing message
-        /// </summary>
-        /// <param name="message">opcode of message</param>
-        public Packet(ushort message, Encoding encoder = null)
-        {
-            Encoder = encoder ?? Encoding.UTF8;
-            _stream = new PacketStream(Encoder);
+		/// <summary>
+		/// Creates new object for writing message
+		/// </summary>
+		/// <param name="message">opcode of message</param>
+		public Packet(ushort message, Encoding encoder = null)
+		{
+			Encoder = encoder ?? Encoding.UTF8;
+			_stream = new PacketStream(Encoder);
 
 
-            Header = new PacketHeader
-            {
-                Size = (ushort)ServerConfig.HeaderLength,
-                Opcode = message
-            };
+			Header = new PacketHeader
+			{
+				Size = (ushort)ServerConfig.HeaderLength,
+				Opcode = message
+			};
 
-            Write<ushort>(Header.Size);
-            Write<ushort>(Header.Opcode);
-        }
+			Write<ushort>(Header.Size);
+			Write<ushort>(Header.Opcode);
+		}
 
-        #endregion
+		#endregion
 
-        #region Methods
+		#region Methods
 
-        #region PrepareRead
+		#region PrepareRead
 
-        /// <summary>
-        /// Readies buffer for reading
-        /// </summary>
-        internal void PrepareRead()
-        {
-            _stream = new PacketStream(Encoder, this.Message);
-        }
+		/// <summary>
+		/// Readies buffer for reading
+		/// </summary>
+		internal void PrepareRead()
+		{
+			_stream = new PacketStream(Encoder, this.Message);
+		}
 
-        #endregion
+		#endregion
 
-        #region Read
+		#region Read
 
-        public T Read<T>(int count = 0)
-        {
-            return Stream.Read<T>(count);
-        }
+		public T Read<T>(int count = 0)
+		{
+			return Stream.Read<T>(count);
+		}
 
-        #endregion
+		#endregion
 
-        #region Write
+		#region Write
 
-        public void Write<T>(T value)
-        {
-            Stream.Write<T>(value);
-        }
+		public void Write<T>(T value)
+		{
+			Stream.Write<T>(value);
+		}
 
-        #endregion
+		#endregion
 
-        #region BitPack
+		#region BitPack
 
-        #region ReadBit
+		#region ReadBit
 
-        public bool ReadBit()
-        {
-            return ReadBits<bool>(1);
-        }
+		public bool ReadBit()
+		{
+			return ReadBits<bool>(1);
+		}
 
-        #endregion
+		#endregion
 
-        #region WriteBit
+		#region WriteBit
 
-        public void WriteBit(bool value)
-        {
-            WriteBits<bool>(value, 1);
-        }
+		public void WriteBit(bool value)
+		{
+			WriteBits<bool>(value, 1);
+		}
 
-        #endregion
+		#endregion
 
-        #region ReadBits
+		#region ReadBits
 
-        public T ReadBits<T>(int count) where T 
-            : struct, IComparable, IComparable<T>, IConvertible, IEquatable<T>
-        {
-            return Stream.ReadBits<T>(count);
-        }
+		public T ReadBits<T>(int count) where T
+			: struct, IComparable, IComparable<T>, IConvertible, IEquatable<T>
+		{
+			return Stream.ReadBits<T>(count);
+		}
 
-        #endregion
+		#endregion
 
-        #region WriteBits
+		#region WriteBits
 
-        public void WriteBits<T>(T value, int count) where T 
-            : struct, IComparable, IComparable<T>, IConvertible, IEquatable<T>
-        {
-            Stream.WriteBits<T>(value, count);
-        }
+		public void WriteBits<T>(T value, int count) where T
+			: struct, IComparable, IComparable<T>, IConvertible, IEquatable<T>
+		{
+			Stream.WriteBits<T>(value, count);
+		}
 
-        #endregion
+		#endregion
 
-        #region Flush
+		#region Flush
 
-        public void Flush()
-        {
-            Stream.Flush();
-        }
+		public void Flush()
+		{
+			Stream.Flush();
+		}
 
-        #endregion
+		#endregion
 
-        #endregion
+		#endregion
 
-        #region End
+		#region End
 
-        public int End()
-        {
-            return Stream.End(out _message);      
-        }
+		public int End()
+		{
+			return Stream.End(out _message);
+		}
 
-        #endregion
+		#endregion
 
-        #region Dispose
+		#region Dispose
 
-        public void Dispose()
-        {
-            Stream.Dispose();
-        }
+		public void Dispose()
+		{
+			Stream.Dispose();
+		}
 
-        #endregion
+		#endregion
 
-        #endregion
-    }
+		#endregion
+	}
 }

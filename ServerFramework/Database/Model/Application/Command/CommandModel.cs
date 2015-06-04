@@ -19,22 +19,22 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ServerFramework.Database.Model.Application.Command
 {
-    [Table("Command", Schema="Application")]
-    public class CommandModel : EntityBase
-    {
-        #region Properties
+	[Table("Command", Schema = "Application")]
+	public class CommandModel : EntityBase
+	{
+		#region Properties
 
-        [Key]
-        public int ID { get; set; }
+		[Key]
+		public int ID							{ get; set; }
 
-        [StringLength(50)]
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public int? CommandLevelID { get; set; }
+		[StringLength(50)]
+		public string Name						{ get; set; }
+		public string Description				{ get; set; }
+		public int? CommandLevelID				{ get; set; }
 
-        [ForeignKey("CommandLevelID")]
-        public CommandLevelModel CommandLevel { get; set; }
+		[ForeignKey("CommandLevelID")]
+		public CommandLevelModel CommandLevel	{ get; set; }
 
-        #endregion
-    }
+		#endregion
+	}
 }

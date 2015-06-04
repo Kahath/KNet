@@ -24,146 +24,146 @@ using System.Threading;
 
 namespace ServerFramework.Managers.Core
 {
-    public sealed class LogManager : LogManagerBase<LogManager>
-    {
-        #region Constructors
+	public sealed class LogManager : LogManagerBase<LogManager>
+	{
+		#region Constructors
 
-        LogManager()
-        {
-            Init();
-        }
+		LogManager()
+		{
+			Init();
+		}
 
-        #endregion
+		#endregion
 
 		#region Methods
 
 		#region Init
 
 		internal override void Init()
-        {
-            Console.InputEncoding = Encoding.UTF8;
-            Console.OutputEncoding = Encoding.UTF8;
+		{
+			Console.InputEncoding = Encoding.UTF8;
+			Console.OutputEncoding = Encoding.UTF8;
 
-            Thread logThread = new Thread(() =>
-            {
-                while (true)
-                {
-                    var item = ConsoleLogQueue.Take();
+			Thread logThread = new Thread(() =>
+			{
+				while (true)
+				{
+					var item = ConsoleLogQueue.Take();
 
-                    if (item != null)
-                    {
-                        try
-                        {
-                            Console.ForegroundColor = item.Item1;
-                            Console.WriteLine(item.Item2);
-                            Console.ResetColor();
-                        }
-                        catch (NullReferenceException) { }
-                    }
-                }
-            });
+					if (item != null)
+					{
+						try
+						{
+							Console.ForegroundColor = item.Item1;
+							Console.WriteLine(item.Item2);
+							Console.ResetColor();
+						}
+						catch (NullReferenceException) { }
+					}
+				}
+			});
 
-            logThread.IsBackground = true;
-            logThread.Start();
-        }
+			logThread.IsBackground = true;
+			logThread.Start();
+		}
 
-        #endregion
+		#endregion
 
-        #region Message
+		#region Message
 
-        protected override void Message(LogType type, string message, params object[] args)
-        {
-            ConsoleColor color;
+		protected override void Message(LogType type, string message, params object[] args)
+		{
+			ConsoleColor color;
 
-            switch (type)
-            {
-                case LogType.Normal:
-                    color = ConsoleColor.Gray;
-                    break;
-                case LogType.Init:
-                    color = ConsoleColor.Green;
-                    break;
-                case LogType.DB:
-                    color = ConsoleColor.DarkMagenta;
-                    break;
-                case LogType.Info:
-                    color = ConsoleColor.Cyan;
-                    break;
-                case LogType.Command:
-                    color = ConsoleColor.Blue;
-                    break;
-                case LogType.Warning:
-                    color = ConsoleColor.Yellow;
-                    break;
-                case LogType.Error:
-                    color = ConsoleColor.Red;
-                    break;
-                case LogType.Critical:
-                    color = ConsoleColor.DarkRed;
-                    break;
-                default:
-                    color = ConsoleColor.White;
-                    break;
-            }
+			switch (type)
+			{
+				case LogType.Normal:
+					color = ConsoleColor.Gray;
+					break;
+				case LogType.Init:
+					color = ConsoleColor.Green;
+					break;
+				case LogType.DB:
+					color = ConsoleColor.DarkMagenta;
+					break;
+				case LogType.Info:
+					color = ConsoleColor.Cyan;
+					break;
+				case LogType.Command:
+					color = ConsoleColor.Blue;
+					break;
+				case LogType.Warning:
+					color = ConsoleColor.Yellow;
+					break;
+				case LogType.Error:
+					color = ConsoleColor.Red;
+					break;
+				case LogType.Critical:
+					color = ConsoleColor.DarkRed;
+					break;
+				default:
+					color = ConsoleColor.White;
+					break;
+			}
 
-            if ((ServerConfig.LogLevel & type) == type)
-            {
-                string msg = String.Empty; 
+			if ((ServerConfig.LogLevel & type) == type)
+			{
+				string msg = String.Empty;
 
-                if (type == LogType.Info || type == LogType.Command || type == LogType.Normal)
-                {
-                    msg = String.Format(message, args);
-                }
-                else
-                {
-                    msg = String.Format
-                        (
-                            "[{0}] {1}", DateTime.Now.ToString("HH:mm:ss.fff")
-                        , String.Format(message, args)
-                        );
+				if (type == LogType.Info || type == LogType.Command || type == LogType.Normal)
+				{
+					msg = String.Format(message, args);
+				}
+				else
+				{
+					msg = String.Format
+						(
+							"[{0}] {1}", DateTime.Now.ToString("HH:mm:ss.fff")
+						, String.Format(message, args)
+						);
 
-                    LogModel logModel = new LogModel();
-                    logModel.LogTypeID = (int)type;
-                    logModel.Message = String.Format(message, args);
+					LogModel logModel = new LogModel();
+					logModel.LogTypeID = (int)type;
+					logModel.Message = String.Format(message, args);
 
-                    using(ApplicationContext context = new ApplicationContext())
-                    {
-                        context.Log.Add(logModel);
-                        context.SaveChanges();
-                    }
-                }
+					using (ApplicationContext context = new ApplicationContext())
+					{
+						context.Log.Add(logModel);
+						context.SaveChanges();
+					}
+				}
 
-                ConsoleLogQueue.Add(Tuple.Create<ConsoleColor, string>(color, msg));
-            }
+				ConsoleLogQueue.Add(Tuple.Create<ConsoleColor, string>(color, msg));
+			}
 
-        }
+		}
 
-        #endregion
+		#endregion
 
-        #region Log
+		#region Log
 
-        public override void Log(LogType type, string message, params object[] args)
-        {
-            Message(type, message, args);
-        }
+		public override void Log(LogType type, string message, params object[] args)
+		{
+			Message(type, message, args);
+		}
 
-        public void Log(string message, params object[] args)
-        {
-            Log(LogType.Normal, message, args);
-        }
+		public void Log(string message, params object[] args)
+		{
+			Log(LogType.Normal, message, args);
+		}
 
-        public void Log(string message)
-        {
-            Log(LogType.Normal, message);
-        }
+		public void Log(string message)
+		{
+			Log(LogType.Normal, message);
+		}
 
-        public void Log()
-        {
-            Log(LogType.Normal, "");
-        }
+		public void Log()
+		{
+			Log(LogType.Normal, "");
+		}
 
-        #endregion
+		#endregion
 
-        #endregion
-    }
+		#endregion
+	}
 }

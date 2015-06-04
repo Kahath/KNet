@@ -17,14 +17,14 @@ using System;
 
 namespace ServerFramework.Constants.Misc
 {
-    [Flags]
-    public enum OpcodeType : byte
-    {
-        None                    = 0x00,
-        Test                    = 0x01,
-        Broken                  = 0x02,
-        Finished                = 0x04,
-        NotUsed                 = 0x08,
-        InDevelopment           = 0x10,
-    };
+	[Flags]
+	public enum OpcodeType : byte
+	{
+		None			= 0x00,
+		Test			= 0x01,
+		Broken			= 0x02,
+		Finished		= 0x04,
+		NotUsed			= 0x08,
+		InDevelopment	= 0x10,
+	};
 }

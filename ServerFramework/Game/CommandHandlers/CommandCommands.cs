@@ -21,49 +21,49 @@ using ServerFramework.Managers;
 
 namespace ServerFramework.Game.CommandHandlers
 {
-    [Command]
-    internal static class CommandCommands
-    {
-        #region Methods
+	[Command]
+	internal static class CommandCommands
+	{
+		#region Methods
 
-        #region GetCommand
+		#region GetCommand
 
-        private static Command GetCommand()
-        {
-            Command[] CommandCommandTable = 
+		private static Command GetCommand()
+		{
+			Command[] CommandCommandTable = 
             {
                 new Command("list", CommandLevel.Nine, null, CommandListHandler, "")
             };
 
-            return new Command("command", CommandLevel.Nine,
-                CommandCommandTable, null, "");
-        }
+			return new Command("command", CommandLevel.Nine,
+				CommandCommandTable, null, "");
+		}
 
-        #endregion
+		#endregion
 
-        #endregion    
- 
-        #region Handlers
+		#endregion
 
-        #region CommandListHandler
+		#region Handlers
 
-        private static bool CommandListHandler(Client user, params string[] args)
-        {
-            Manager.LogMgr.Log(LogType.Command, "List of all commands:");
+		#region CommandListHandler
 
-            foreach (Command c in Manager.CommandMgr.CommandTable)
-            {
-                if (c.SubCommands != null && user.UserLevel >= c.CommandLevel)
-                    Manager.LogMgr.Log(LogType.Command, "{0}..", c.Name);
-                else if (user.UserLevel >= c.CommandLevel) 
-                    Manager.LogMgr.Log(LogType.Command, "{0}", c.Name);
-            }
+		private static bool CommandListHandler(Client user, params string[] args)
+		{
+			Manager.LogMgr.Log(LogType.Command, "List of all commands:");
 
-            return true;
-        }
+			foreach (Command c in Manager.CommandMgr.CommandTable)
+			{
+				if (c.SubCommands != null && user.UserLevel >= c.CommandLevel)
+					Manager.LogMgr.Log(LogType.Command, "{0}..", c.Name);
+				else if (user.UserLevel >= c.CommandLevel)
+					Manager.LogMgr.Log(LogType.Command, "{0}", c.Name);
+			}
 
-        #endregion
+			return true;
+		}
 
-        #endregion
-    }
+		#endregion
+
+		#endregion
+	}
 }

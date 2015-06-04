@@ -24,52 +24,52 @@ using System.Threading;
 
 namespace ServerFramework.Managers.Core
 {
-    public sealed class SessionManager : SessionManagerBase<SessionManager>
-    {
-        #region Constructors
+	public sealed class SessionManager : SessionManagerBase<SessionManager>
+	{
+		#region Constructors
 
-        SessionManager()
-        {
-            Init();
-        }
+		SessionManager()
+		{
+			Init();
+		}
 
-        #endregion
+		#endregion
 
-        #region Methods
+		#region Methods
 
-        #region Init
+		#region Init
 
-        internal override void Init()
-        {
-            Clients = new ConcurrentDictionary<int, Client>();
-            FreeSessionIDPool = new Stack<int>();
-        }
+		internal override void Init()
+		{
+			Clients = new ConcurrentDictionary<int, Client>();
+			FreeSessionIDPool = new Stack<int>();
+		}
 
-        #endregion
+		#endregion
 
-        #region RemoveClient
+		#region RemoveClient
 
-        internal override Client RemoveClient(int id)
-        {
-            Client client = null;
+		internal override Client RemoveClient(int id)
+		{
+			Client client = null;
 
-            if(Clients.TryRemove(id, out client))
-                FreeSessionIDPool.Push(id);
+			if (Clients.TryRemove(id, out client))
+				FreeSessionIDPool.Push(id);
 
-            return client;
-        }
+			return client;
+		}
 
-        #endregion
+		#endregion
 
-        #region GetClient
+		#region GetClient
 
 		public override Client GetClient(Func<Client, bool> func)
-        {
-            Client client = null;
-            client = Clients.Values.FirstOrDefault(func);
+		{
+			Client client = null;
+			client = Clients.Values.FirstOrDefault(func);
 
-            return client;
-        }
+			return client;
+		}
 
 		public override Client GetClientBySessionId(int sessionId)
 		{
@@ -80,12 +80,12 @@ namespace ServerFramework.Managers.Core
 			return c;
 		}
 
-        #endregion
+		#endregion
 
-        #region GetClients
+		#region GetClients
 
 		public override IEnumerable<Client> GetClients(Func<Client, bool> func = null)
-        {
+		{
 			IEnumerable<Client> clients = null;
 
 			if (func != null)
@@ -93,19 +93,19 @@ namespace ServerFramework.Managers.Core
 			else
 				clients = Clients.Values;
 
-            return clients;
-        }
+			return clients;
+		}
 
-        #endregion
+		#endregion
 
-        #region AddClient
+		#region AddClient
 
 		internal override int AddClient(Client c)
-        {
-            int id = 0;
+		{
+			int id = 0;
 
-            id = FreeSessionIDPool.Count > 0 ? FreeSessionIDPool.Pop() :
-                Interlocked.Increment(ref _sessionId);
+			id = FreeSessionIDPool.Count > 0 ? FreeSessionIDPool.Pop() 
+				: Interlocked.Increment(ref _sessionId);
 
 			if (Clients.TryAdd(id, c))
 			{
@@ -113,17 +113,17 @@ namespace ServerFramework.Managers.Core
 			}
 			else
 			{
-				if(id > 0)
+				if (id > 0)
 					FreeSessionIDPool.Push(id);
 
 				id = 0;
 			}
 
-            return id;
-        }
+			return id;
+		}
 
-        #endregion
+		#endregion
 
-        #endregion
-    }
+		#endregion
+	}
 }

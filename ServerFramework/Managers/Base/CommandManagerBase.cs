@@ -40,22 +40,22 @@ namespace ServerFramework.Managers.Base
 
 		#region Constructor
 
-        protected CommandManagerBase()
-        {
-            _commandTable = new List<Command>();
-        }
+		protected CommandManagerBase()
+		{
+			_commandTable = new List<Command>();
+		}
 
-        #endregion
+		#endregion
 
 		#region Methods
 
 		public abstract bool InvokeCommand(Client user, string command);
 		protected abstract bool InvokeCommandHandler(Client user, Command[] commandTable,
-            IList<string> command, string path);
+			IList<string> command, string path);
 		protected abstract string AvailableSubCommands(CommandLevel userLevel, Command c);
 		protected abstract void LoadCommandDescriptions();
-        protected abstract Command GetCommand(Command[] commandTable, IList<string> command);
-		
+		protected abstract Command GetCommandByPath(Command[] commandTable, IList<string> command);
+
 		#endregion
 	}
 }

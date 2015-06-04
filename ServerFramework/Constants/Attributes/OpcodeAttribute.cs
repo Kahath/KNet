@@ -18,8 +18,8 @@ using System;
 
 namespace ServerFramework.Constants.Attributes
 {
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple=true)]
-    public sealed class OpcodeAttribute : Attribute
+	[AttributeUsage(AttributeTargets.Method |AttributeTargets.Assembly, AllowMultiple = true)]
+	public sealed class OpcodeAttribute : Attribute
 	{
 		#region Fields
 
@@ -75,6 +75,11 @@ namespace ServerFramework.Constants.Attributes
 			this.Type = type;
 		}
 
+		public OpcodeAttribute()
+		{
+
+		}
+
 		#endregion
-    }
+	}
 }

@@ -17,25 +17,25 @@ using System;
 
 namespace ServerFramework.Database.Base
 {
-    public abstract class EntityBase
-    {
-        #region Properties
+	public abstract class EntityBase
+	{
+		#region Properties
 
-        public bool Active { get; set; }
-        public DateTime DateCreated { get; set; }
-        public DateTime? DateModified { get; set; }
-        public DateTime? DateDeactivated { get; set; }
+		public bool Active { get; set; }
+		public DateTime DateCreated { get; set; }
+		public DateTime? DateModified { get; set; }
+		public DateTime? DateDeactivated { get; set; }
 
-        #endregion
+		#endregion
 
-        #region Constructors
+		#region Constructors
 
-        protected EntityBase()
-        {
-            DateCreated = DateTime.Now;
-            Active = true;
-        }
+		protected EntityBase()
+		{
+			DateCreated = DateTime.Now;
+			Active = true;
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

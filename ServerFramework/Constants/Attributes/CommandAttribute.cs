@@ -17,8 +17,8 @@ using System;
 
 namespace ServerFramework.Constants.Attributes
 {
-    [AttributeUsage(AttributeTargets.Class)]
-    public sealed class CommandAttribute : Attribute
+	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Assembly)]
+	public sealed class CommandAttribute : Attribute
 	{
-    }
+	}
 }

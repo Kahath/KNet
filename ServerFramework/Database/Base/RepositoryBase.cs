@@ -19,32 +19,32 @@ using System.Linq;
 
 namespace ServerFramework.Database.Base
 {
-    public abstract class RepositoryBase<T> where T : EntityBase
-    {
-        #region Fields
+	public abstract class RepositoryBase<T> where T : EntityBase
+	{
+		#region Fields
 
-        private DBContextBase _context;
+		private DBContextBase _context;
 
-        #endregion
+		#endregion
 
-        #region Properties
+		#region Properties
 
-        public DBContextBase Context
-        {
-            get { return _context; }
-            set { _context = value; }
-        }
+		public DBContextBase Context
+		{
+			get { return _context; }
+			set { _context = value; }
+		}
 
-        #endregion
+		#endregion
 
-        #region Constructors
+		#region Constructors
 
-        public RepositoryBase(DBContextBase context)
-        {
-            Context = context;
-        }
+		public RepositoryBase(DBContextBase context)
+		{
+			Context = context;
+		}
 
-        #endregion
+		#endregion
 
-    }
+	}
 }

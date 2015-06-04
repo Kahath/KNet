@@ -19,71 +19,71 @@ using System.Collections.Generic;
 
 namespace ServerFramework.Constants.Entities.Console.Misc
 {
-    public class ObjectPool<T>
-    {
-        #region Fields
+	public class ObjectPool<T>
+	{
+		#region Fields
 
-        private Stack<T> _stackPool;
+		private Stack<T> _stackPool;
 
-        #endregion
+		#endregion
 
-        #region Constructors
+		#region Constructors
 
-        /// <summary>
-        /// Creates new stack for objects
-        /// </summary>
-        /// <param name="capacity">capacity of stack</param>
-        public ObjectPool(int capacity)
-        {
-            _stackPool = new Stack<T>(capacity);
-        }
+		/// <summary>
+		/// Creates new stack for objects
+		/// </summary>
+		/// <param name="capacity">capacity of stack</param>
+		public ObjectPool(int capacity)
+		{
+			_stackPool = new Stack<T>(capacity);
+		}
 
-        #endregion
+		#endregion
 
-        #region Properties
+		#region Properties
 
-        /// <summary>
-        /// Returns number of objects on stack.
-        /// </summary>
-        public int Count
-        {
-            get { return this._stackPool.Count; }
-        }
+		/// <summary>
+		/// Returns number of objects on stack.
+		/// </summary>
+		public int Count
+		{
+			get { return this._stackPool.Count; }
+		}
 
-        #endregion
+		#endregion
 
-        #region Methods
+		#region Methods
 
-        #region Push
+		#region Push
 
-        /// <summary>
-        /// Pushes item onto stack
-        /// </summary>
-        /// <param name="item">object</param>
-        public void Push(T item)
-        {
-            if (item == null)
-                throw new ArgumentNullException("item");
-            lock (_stackPool)
-                this._stackPool.Push(item);
-        }
+		/// <summary>
+		/// Pushes item onto stack
+		/// </summary>
+		/// <param name="item">object</param>
+		public void Push(T item)
+		{
+			if (item == null)
+				throw new ArgumentNullException("item");
+			lock (_stackPool)
+				this._stackPool.Push(item);
+		}
 
-        #endregion
+		#endregion
 
-        #region Pop
+		#region Pop
 
-        /// <summary>
-        /// Pops object from stack.
-        /// </summary>
-        /// <returns>object</returns>
-        public T Pop()
-        {
-            lock (_stackPool)
-                return this._stackPool.Pop();
-        }
+		/// <summary>
+		/// Pops object from stack.
+		/// </summary>
+		/// <returns>object</returns>
+		public T Pop()
+		{
+			lock (_stackPool)
+				return this._stackPool.Pop();
+		}
 
-        #endregion
+		#endregion
 
-        #endregion
-    }
+		#endregion
+	}
 }

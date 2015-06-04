@@ -17,33 +17,33 @@ using System.Data.Entity;
 
 namespace ServerFramework.Database.Base
 {
-    public abstract class DBContextBase : DbContext
-    {
-        #region Fields
+	public abstract class DBContextBase : DbContext
+	{
+		#region Fields
 
-        private string _connectionString;
+		private string _connectionString;
 
-        #endregion
+		#endregion
 
-        #region Properties
+		#region Properties
 
-        protected string ConnectionString
-        {
-            get { return _connectionString; }
-            set { _connectionString = value; }
-        }
+		protected string ConnectionString
+		{
+			get { return _connectionString; }
+			set { _connectionString = value; }
+		}
 
-        #endregion
+		#endregion
 
-        #region Constructors
+		#region Constructors
 
-        protected DBContextBase(string connectionString)
-            : base(connectionString)
-        {
-            ConnectionString = connectionString;
-            Configuration.AutoDetectChangesEnabled = false;
-        }
+		protected DBContextBase(string connectionString)
+			: base(connectionString)
+		{
+			ConnectionString = connectionString;
+			Configuration.AutoDetectChangesEnabled = false;
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

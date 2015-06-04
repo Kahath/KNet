@@ -15,29 +15,29 @@
 
 namespace ServerFramework.Network.Packets
 {
-    public class PacketHeader
-    {
-        #region Fields
+	public class PacketHeader
+	{
+		#region Fields
 
-        private ushort _size;
-        private ushort _opcode;
+		private ushort _size;
+		private ushort _opcode;
 
-        #endregion
+		#endregion
 
-        #region Properties
+		#region Properties
 
-        public ushort Size
-        {
-            get { return _size; }
-            set { _size = value; }
-        }
+		public ushort Size
+		{
+			get { return _size; }
+			set { _size = value; }
+		}
 
-        public ushort Opcode
-        {
-            get { return _opcode; }
-            set { _opcode = value; }
-        }
+		public ushort Opcode
+		{
+			get { return _opcode; }
+			set { _opcode = value; }
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

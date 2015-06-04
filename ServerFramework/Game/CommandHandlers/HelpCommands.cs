@@ -18,112 +18,113 @@ using ServerFramework.Constants.Entities.Console;
 using ServerFramework.Constants.Entities.Session;
 using ServerFramework.Constants.Misc;
 using ServerFramework.Managers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace ServerFramework.Game.CommandHandlers
 {
-    [Command]
-    internal static class HelpCommands
-    {
-        #region Methods
+	[Command]
+	internal static class HelpCommands
+	{
+		#region Methods
 
-        #region GetCommand
+		#region GetCommand
 
-        private static Command GetCommand()
-        {
-            return new Command("help", CommandLevel.Ten, null, HelpCommandHandler
-                , "");
-        }
+		private static Command GetCommand()
+		{
+			return new Command("help", CommandLevel.Ten, null, HelpCommandHandler
+				, "");
+		}
 
-        #endregion
+		#endregion
 
-        #region GetHelpCommand
-        
-        private static bool GetHelpCommand(CommandLevel userLevel, Command[] commandTable,
-            List<string> command, string path)
-        {
-            if (commandTable == null || command == null)
-                return false;
+		#region GetHelpCommand
 
-            if(command.Count == 0)
-                command.Add("help");
+		private static bool ShowCommandDescription(CommandLevel userLevel, Command[] commandTable,
+			IList<string> path, string command)
+		{
+			if (commandTable == null || path == null)
+				return false;
 
-            Command c = commandTable.Where(x => userLevel >= x.CommandLevel).FirstOrDefault(x => x.Name.StartsWith(command[0].Trim()));
+			if (path.Count == 0)
+				path.Add("help");
 
-            if(c != null)
-            {
-                path += c.Name + " ";
+			Command c = commandTable.Where(x => userLevel >= x.CommandLevel).FirstOrDefault(x => x.Name.StartsWith(path[0].Trim()));
 
-                if(command.Count > 1)
-                {
-                    command.RemoveAt(0);
-                    return GetHelpCommand(userLevel, c.SubCommands, command, path);
-                }
+			if (c != null)
+			{
+				command += c.Name + " ";
+				path.RemoveAt(0);
 
-                if (c.SubCommands != null)
-                {
-                    Manager.LogMgr.Log(LogType.Command, "Available sub commands for '{0}' command:", path);
-                    Manager.LogMgr.Log(LogType.Command, "{0}", AvailableSubCommands(userLevel, c, path));
-                    return true;
-                }
-                else
-                {
-                    if (c.Description != null && c.Description != "")
-                    {
-                        Manager.LogMgr.Log(LogType.Command, "{0}", c.Description);
-                        return true;
-                    }
-                    else
-                    {
-                        Manager.LogMgr.Log(LogType.Command, "Command '{0}' is missing description", path);
-                        return true;
-                    }
-                }    
-            }
+				if (path.Count > 0)
+				{
+					return ShowCommandDescription(userLevel, c.SubCommands, path, command);
+				}
 
-            path += command[0];
+				if (c.SubCommands != null)
+				{
+					Manager.LogMgr.Log(LogType.Command, "Available sub commands for '{0}' command:", path);
+					Manager.LogMgr.Log(LogType.Command, "{0}", AvailableSubCommands(userLevel, c));
+					return true;
+				}
+				else
+				{
+					if (c.Description != null && c.Description != "")
+					{
+						Manager.LogMgr.Log(LogType.Command, "{0}", c.Description);
+						return true;
+					}
+					else
+					{
+						Manager.LogMgr.Log(LogType.Command, "Command '{0}' is missing description", path);
+						return true;
+					}
+				}
+			}
 
-            Manager.LogMgr.Log(LogType.Command, "Command '{0}' not found", path);
-            return false;
-        }
+			command += path[0];
 
-        #endregion
+			Manager.LogMgr.Log(LogType.Command, "Command '{0}' not found", path);
+			return false;
+		}
 
-        #region AvailableSubCommands
+		#endregion
 
-        private static string AvailableSubCommands(CommandLevel userLevel, Command c, string path)
-        {
-            StringBuilder sb = new StringBuilder();
+		#region AvailableSubCommands
 
-            foreach (Command com in c.SubCommands)
-            {
-                if(com.SubCommands != null && userLevel >= com.CommandLevel)
-                    sb.AppendLine(com.Name + "..");
-                else if(userLevel >= com.CommandLevel)
-                    sb.AppendLine(com.Name);
-            }
+		private static string AvailableSubCommands(CommandLevel userLevel, Command c)
+		{
+			StringBuilder sb = new StringBuilder();
 
-            return sb.ToString();
-        }
+			foreach (Command com in c.SubCommands)
+			{
+				if (com.SubCommands != null && userLevel >= com.CommandLevel)
+					sb.AppendLine(String.Format("{0}..", com.Name));
+				else if (userLevel >= com.CommandLevel)
+					sb.AppendLine(com.Name);
+			}
 
-	    #endregion
+			return sb.ToString();
+		}
 
-        #endregion
+		#endregion
 
-        #region Handlers
+		#endregion
 
-        #region HelpCommandHandler
+		#region Handlers
 
-        public static bool HelpCommandHandler(Client user, params string[] args)
-        {
-            return GetHelpCommand(user.UserLevel, Manager.CommandMgr.CommandTable.ToArray(),
-                args.ToList(), string.Empty);
-        }
+		#region HelpCommandHandler
 
-        #endregion
+		public static bool HelpCommandHandler(Client user, params string[] args)
+		{
+			return ShowCommandDescription(user.UserLevel, Manager.CommandMgr.CommandTable.ToArray(),
+				args.ToList(), String.Empty);
+		}
 
-        #endregion
-    }
+		#endregion
+
+		#endregion
+	}
 }

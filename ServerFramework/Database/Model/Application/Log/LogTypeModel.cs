@@ -19,15 +19,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ServerFramework.Database.Model.Application.Log
 {
-    [Table("Log.Type", Schema="Application")]
-    public class LogTypeModel : EntityBase
-    {
-        #region Properties
+	[Table("Log.Type", Schema = "Application")]
+	public class LogTypeModel : EntityBase
+	{
+		#region Properties
 
-        [Key]
-        public int ID { get; set; }
-        public string Name { get; set; }
+		[Key]
+		public int ID		{ get; set; }
+		public string Name	{ get; set; }
 
-        #endregion
-    }
+		#endregion
+	}
 }

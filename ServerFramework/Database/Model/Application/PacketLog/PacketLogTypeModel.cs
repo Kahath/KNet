@@ -19,15 +19,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ServerFramework.Database.Model.Application.PacketLog
 {
-    [Table("Packet.Log.Type", Schema = "Application")]
-    public class PacketLogTypeModel : EntityBase
-    {
-        #region Properties
+	[Table("Packet.Log.Type", Schema = "Application")]
+	public class PacketLogTypeModel : EntityBase
+	{
+		#region Properties
 
-        [Key]
-        public int ID      { get; set; }
-        public string Name  { get; set; }
+		[Key]
+		public int ID		{ get; set; }
+		public string Name	{ get; set; }
 
-	    #endregion
-    }
+		#endregion
+	}
 }

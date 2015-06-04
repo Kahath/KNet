@@ -17,195 +17,195 @@ using System.Text;
 
 namespace ServerFramework.Network.Packets
 {
-    internal sealed class UserToken
-    {
-        #region Fields
+	internal sealed class UserToken
+	{
+		#region Fields
 
-        private Packet _packet;
+		private Packet _packet;
 
-        private readonly int _bufferOffset;
-        private readonly int _bufferSize;
-        private int _sessionId;
+		private readonly int _bufferOffset;
+		private readonly int _bufferSize;
+		private int _sessionId;
 
-        private byte[] _header;
+		private byte[] _header;
 
-        private int _messageLength;
-        private int _messageOffset;
-        private int _headerLength;
-        private int _permanentMessageOffset;
+		private int _messageLength;
+		private int _messageOffset;
+		private int _headerLength;
+		private int _permanentMessageOffset;
 
-        private int _headerBytesDoneCount = 0;
-        private int _messageBytesDoneCount = 0;
-        private int _headerBytesRemainingCount = 0;
-        private int _messageBytesRemainingCount = 0;
-        private int _headerBytesDoneThisOp = 0;
+		private int _headerBytesDoneCount = 0;
+		private int _messageBytesDoneCount = 0;
+		private int _headerBytesRemainingCount = 0;
+		private int _messageBytesRemainingCount = 0;
+		private int _headerBytesDoneThisOp = 0;
 
-        private bool _headerReady = false;
-        private bool _packetReady = false;
+		private bool _headerReady = false;
+		private bool _packetReady = false;
 
-        #endregion
+		#endregion
 
-        #region Properties
+		#region Properties
 
-        internal int MessageLength
-        {
-            get { return _messageLength; }
-            set { _messageLength = value; }
-        }
+		internal int MessageLength
+		{
+			get { return _messageLength; }
+			set { _messageLength = value; }
+		}
 
-        internal int MessageOffset
-        {
-            get { return _messageOffset; }
-            set { _messageOffset = value; }
-        }
+		internal int MessageOffset
+		{
+			get { return _messageOffset; }
+			set { _messageOffset = value; }
+		}
 
-        internal int HeaderLength
-        {
-            get { return _headerLength; }
-            set { _headerLength = value; }
-        }
+		internal int HeaderLength
+		{
+			get { return _headerLength; }
+			set { _headerLength = value; }
+		}
 
-        internal int PermanentMessageOffset
-        {
-            get { return _permanentMessageOffset; }
-            set { _permanentMessageOffset = value; }
-        }
+		internal int PermanentMessageOffset
+		{
+			get { return _permanentMessageOffset; }
+			set { _permanentMessageOffset = value; }
+		}
 
-        internal int HeaderBytesDoneCount
-        {
-            get { return _headerBytesDoneCount; }
-            set { _headerBytesDoneCount = value; }
-        }
+		internal int HeaderBytesDoneCount
+		{
+			get { return _headerBytesDoneCount; }
+			set { _headerBytesDoneCount = value; }
+		}
 
-        internal int MessageBytesDoneCount
-        {
-            get { return _messageBytesDoneCount; }
-            set { _messageBytesDoneCount = value; }
-        }
+		internal int MessageBytesDoneCount
+		{
+			get { return _messageBytesDoneCount; }
+			set { _messageBytesDoneCount = value; }
+		}
 
-        internal int HeaderBytesRemainingCount
-        {
-            get { return _headerBytesRemainingCount; }
-            set { _headerBytesRemainingCount = value; }
-        }
+		internal int HeaderBytesRemainingCount
+		{
+			get { return _headerBytesRemainingCount; }
+			set { _headerBytesRemainingCount = value; }
+		}
 
-        internal int MessageBytesRemainingCount
-        {
-            get { return _messageBytesRemainingCount; }
-            set { _messageBytesRemainingCount = value; }
-        }
+		internal int MessageBytesRemainingCount
+		{
+			get { return _messageBytesRemainingCount; }
+			set { _messageBytesRemainingCount = value; }
+		}
 
-        internal int HeaderBytesDoneThisOp
-        {
-            get { return _headerBytesDoneThisOp; }
-            set { _headerBytesDoneThisOp = value; }
-        }
+		internal int HeaderBytesDoneThisOp
+		{
+			get { return _headerBytesDoneThisOp; }
+			set { _headerBytesDoneThisOp = value; }
+		}
 
-        internal bool HeaderReady
-        {
-            get { return _headerReady; }
-            set { _headerReady = value; }
-        }
+		internal bool HeaderReady
+		{
+			get { return _headerReady; }
+			set { _headerReady = value; }
+		}
 
-        internal bool PacketReady
-        {
-            get { return _packetReady; }
-            set { _packetReady = value; }
-        }
+		internal bool PacketReady
+		{
+			get { return _packetReady; }
+			set { _packetReady = value; }
+		}
 
-        internal int BufferSize
-        {
-            get { return _bufferSize; }
-        }
+		internal int BufferSize
+		{
+			get { return _bufferSize; }
+		}
 
-        internal int BufferOffset
-        {
-            get { return _bufferOffset; }
-        }
+		internal int BufferOffset
+		{
+			get { return _bufferOffset; }
+		}
 
-        internal Packet Packet
-        {
-            get { return _packet; }
-            set { _packet = value; }
-        }
+		internal Packet Packet
+		{
+			get { return _packet; }
+			set { _packet = value; }
+		}
 
-        public int SessionId
-        {
-            get { return _sessionId; }
-            internal set { _sessionId = value; }
-        }
+		public int SessionId
+		{
+			get { return _sessionId; }
+			internal set { _sessionId = value; }
+		}
 
-        internal byte[] Header
-        {
-            get { return _header; }
-            set { _header = value; }
-        }
+		internal byte[] Header
+		{
+			get { return _header; }
+			set { _header = value; }
+		}
 
-        #endregion
+		#endregion
 
-        #region Constructors
+		#region Constructors
 
-        /// <summary>
-        /// Creates new token for SocketAsyncEventArgs.UserToken property
-        /// </summary>
-        /// <param name="bufferSize">Buffer size for client</param>
-        /// <param name="bufferOffset">Buffer offset in large alocated buffer</param>
-        /// <param name="headerLength">Length of message header</param>
-        internal UserToken(int bufferSize, int bufferOffset, int headerLength)
-        {
-            this._bufferSize = bufferSize;
-            this._bufferOffset = bufferOffset;
-            this.HeaderLength = headerLength;
-            this.MessageOffset = bufferOffset + headerLength;
-            this.PermanentMessageOffset = MessageOffset;
-            this.Header = new byte[HeaderLength];
-        }
+		/// <summary>
+		/// Creates new token for SocketAsyncEventArgs.UserToken property
+		/// </summary>
+		/// <param name="bufferSize">Buffer size for client</param>
+		/// <param name="bufferOffset">Buffer offset in large alocated buffer</param>
+		/// <param name="headerLength">Length of message header</param>
+		internal UserToken(int bufferSize, int bufferOffset, int headerLength)
+		{
+			this._bufferSize = bufferSize;
+			this._bufferOffset = bufferOffset;
+			this.HeaderLength = headerLength;
+			this.MessageOffset = bufferOffset + headerLength;
+			this.PermanentMessageOffset = MessageOffset;
+			this.Header = new byte[HeaderLength];
+		}
 
-        #endregion
+		#endregion
 
-        #region Methods
+		#region Methods
 
-        #region StartReceive
+		#region StartReceive
 
-        /// <summary>
-        /// Prepares packet for receiving data
-        /// </summary>
-        internal void StartReceive(Encoding encoding = null)
-        {
-            Packet = new Packet(encoding);
-        }
+		/// <summary>
+		/// Prepares packet for receiving data
+		/// </summary>
+		internal void StartReceive(Encoding encoding = null)
+		{
+			Packet = new Packet(encoding);
+		}
 
-        #endregion
+		#endregion
 
-        #region Finish
+		#region Finish
 
-        internal void Finish()
-        {
-            this.MessageBytesRemainingCount = Packet.End();
-        }
+		internal void Finish()
+		{
+			this.MessageBytesRemainingCount = Packet.End();
+		}
 
-        #endregion
+		#endregion
 
-        #region Reset
+		#region Reset
 
-        /// <summary>
-        /// Resets packet to its initial state;
-        /// </summary>
-        internal void Reset(int messageOffset)
-        {
-            this.Packet = null;
-            this.HeaderReady = false;
-            this.PacketReady = false;
-            this.HeaderBytesDoneCount = 0;
-            this.HeaderBytesRemainingCount = 0;
-            this.MessageBytesDoneCount = 0;
-            this.MessageBytesRemainingCount = 0;
-            this.MessageLength = 0;
-            this.MessageOffset = messageOffset;
-        }
+		/// <summary>
+		/// Resets packet to its initial state;
+		/// </summary>
+		internal void Reset(int messageOffset)
+		{
+			this.Packet = null;
+			this.HeaderReady = false;
+			this.PacketReady = false;
+			this.HeaderBytesDoneCount = 0;
+			this.HeaderBytesRemainingCount = 0;
+			this.MessageBytesDoneCount = 0;
+			this.MessageBytesRemainingCount = 0;
+			this.MessageLength = 0;
+			this.MessageOffset = messageOffset;
+		}
 
-        #endregion
+		#endregion
 
-        #endregion
-    }
+		#endregion
+	}
 }

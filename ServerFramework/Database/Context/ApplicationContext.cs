@@ -22,37 +22,28 @@ using System.Data.Entity;
 
 namespace ServerFramework.Database.Context
 {
-    public class ApplicationContext : DBContextBase
-    {
-        #region Properties
+	public class ApplicationContext : DBContextBase
+	{
+		#region Properties
 
-        public DbSet<CommandModel> Commands             { get; set; }
-        public DbSet<CommandLevelModel> CommandLevel    { get; set; }
-        public DbSet<PacketLogModel> PacketLog          { get; set; }
-        public DbSet<PacketLogTypeModel> PacketLogType  { get; set; }
-        public DbSet<LogModel> Log                      { get; set; }
-        public DbSet<LogTypeModel> LogType              { get; set; }
+		public DbSet<CommandModel> Commands				{ get; set; }
+		public DbSet<CommandLevelModel> CommandLevel	{ get; set; }
+		public DbSet<PacketLogModel> PacketLog			{ get; set; }
+		public DbSet<PacketLogTypeModel> PacketLogType	{ get; set; }
+		public DbSet<LogModel> Log						{ get; set; }
+		public DbSet<LogTypeModel> LogType				{ get; set; }
 
-        #endregion
+		#endregion
 
 
-        #region Constructors
+		#region Constructors
 
-        public ApplicationContext()
-            : base(ServerConfig.ConnectionString)
-        {
+		public ApplicationContext()
+			: base(ServerConfig.ConnectionString)
+		{
 
-        }
+		}
 
-        #endregion
-
-        #region Methods
-
-        public void AddPacketLog(PacketLogModel entity)
-        {
-            PacketLog.Add(entity);
-        }
-
-        #endregion
-    }
+		#endregion
+	}
 }

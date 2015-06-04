@@ -20,6 +20,6 @@ namespace ServerFramework.Managers.Base
 {
 	public abstract class ManagerBase<T> : SingletonBase<T> where T : class
 	{
-		
+
 	}
 }

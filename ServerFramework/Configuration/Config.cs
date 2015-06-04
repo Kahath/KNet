@@ -18,7 +18,7 @@ using DILibrary.DependencyInjection;
 
 namespace ServerFramework.Configuration
 {
-    public class Config : Dependency<IConfig>
+	public class Config : Dependency<IConfig>
 	{
 		#region Constructors
 
@@ -42,5 +42,5 @@ namespace ServerFramework.Configuration
 		#endregion
 
 		#endregion
-    }
+	}
 }

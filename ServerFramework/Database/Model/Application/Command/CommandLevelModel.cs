@@ -18,14 +18,14 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ServerFramework.Database.Model.Application.Command
 {
-    public class CommandLevelModel : EntityBase
-    {
-        #region Properties
+	public class CommandLevelModel : EntityBase
+	{
+		#region Properties
 
-        [Key]
-        public int ID { get; set; }
-        public string Name { get; set; }
+		[Key]
+		public int ID		{ get; set; }
+		public string Name	{ get; set; }
 
-        #endregion
-    }
+		#endregion
+	}
 }

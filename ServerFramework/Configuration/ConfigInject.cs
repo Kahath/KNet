@@ -19,13 +19,13 @@ using System.Xml;
 
 namespace ServerFramework.Configuration
 {
-    public sealed class ConfigInject : IConfig
-    {
-        #region Fields
+	public sealed class ConfigInject : IConfig
+	{
+		#region Fields
 
-        private XmlNodeList _nodes;
+		private XmlNodeList _nodes;
 
-        #endregion
+		#endregion
 
 		#region Properties
 
@@ -40,94 +40,94 @@ namespace ServerFramework.Configuration
 		#region Constructor
 
 		/// <summary>
-        /// Provides configuration
-        /// </summary>
-        /// <param name="path">Path to configuration file</param>
-        ConfigInject(string path)
-        {
-            if (!File.Exists(path))
-            {
-                Environment.Exit(0);
-            }
+		/// Provides configuration
+		/// </summary>
+		/// <param name="path">Path to configuration file</param>
+		ConfigInject(string path)
+		{
+			if (!File.Exists(path))
+			{
+				Environment.Exit(0);
+			}
 
-            XmlDocument doc = new XmlDocument();
-            doc.Load(path);
+			XmlDocument doc = new XmlDocument();
+			doc.Load(path);
 			Nodes = doc.DocumentElement.ChildNodes;
-        }
+		}
 
-        #endregion
+		#endregion
 
-        #region Methods
+		#region Methods
 
-        #region Read
+		#region Read
 
-        /// <summary>
-        /// Reads configuration value with specified data type
-        /// </summary>
-        /// <typeparam name="T">type of value</typeparam>
-        /// <param name="config">name of configuration in xml file</param>
-        /// <param name="hex">if value is written as hexadecimal value</param>
-        /// <returns>Configuration value of specified data type.</returns>
-        public T Read<T>(string config, bool hex = false)
-        {
-            string nameValue = null;
-            T trueValue = default(T);
+		/// <summary>
+		/// Reads configuration value with specified data type
+		/// </summary>
+		/// <typeparam name="T">type of value</typeparam>
+		/// <param name="config">name of configuration in xml file</param>
+		/// <param name="hex">if value is written as hexadecimal value</param>
+		/// <returns>Configuration value of specified data type.</returns>
+		public T Read<T>(string config, bool hex = false)
+		{
+			string nameValue = null;
+			T trueValue = default(T);
 
-            try
-            {
+			try
+			{
 				foreach (XmlNode node in Nodes)
-                {
-                    if (node.NodeType == XmlNodeType.Element)
-                    {
-                        if (node.Attributes["name"].Value == config)
-                        {
-                            nameValue = node.Attributes["value"].Value;
-                            break;
-                        }
-                    }
-                }
+				{
+					if (node.NodeType == XmlNodeType.Element)
+					{
+						if (node.Attributes["name"].Value == config)
+						{
+							nameValue = node.Attributes["value"].Value;
+							break;
+						}
+					}
+				}
 
-                if (hex)
-                    trueValue = (T)Convert.ChangeType(Convert.ToInt32(nameValue, 16), typeof(T));
-                else
-                    trueValue = (T)Convert.ChangeType(nameValue, typeof(T));
-            }
-            catch (IndexOutOfRangeException)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Error while reading '{0}' config. Missing argument in line", config);
-                Console.ReadLine();
-                Environment.Exit(0);
+				if (hex)
+					trueValue = (T)Convert.ChangeType(Convert.ToInt32(nameValue, 16), typeof(T));
+				else
+					trueValue = (T)Convert.ChangeType(nameValue, typeof(T));
+			}
+			catch (IndexOutOfRangeException)
+			{
+				Console.ForegroundColor = ConsoleColor.Red;
+				Console.WriteLine("Error while reading '{0}' config. Missing argument in line", config);
+				Console.ReadLine();
+				Environment.Exit(0);
 
-            }
-            catch (NullReferenceException)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Error while reading '{0}' config. Argument is null", config);
-                Console.ReadLine();
-                Environment.Exit(0);
-            }
-            catch (FormatException)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Error while reading '{0}' config. Cannot convert '{1}' into type '{2}'"
-                    , config, nameValue, typeof(T));
-                Console.ReadLine();
-                Environment.Exit(0);
-            }
-            catch (Exception)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Error while reading '{0}' config", config);
-                Console.ReadLine();
-                Environment.Exit(0);
-            }
+			}
+			catch (NullReferenceException)
+			{
+				Console.ForegroundColor = ConsoleColor.Red;
+				Console.WriteLine("Error while reading '{0}' config. Argument is null", config);
+				Console.ReadLine();
+				Environment.Exit(0);
+			}
+			catch (FormatException)
+			{
+				Console.ForegroundColor = ConsoleColor.Red;
+				Console.WriteLine("Error while reading '{0}' config. Cannot convert '{1}' into type '{2}'"
+					, config, nameValue, typeof(T));
+				Console.ReadLine();
+				Environment.Exit(0);
+			}
+			catch (Exception)
+			{
+				Console.ForegroundColor = ConsoleColor.Red;
+				Console.WriteLine("Error while reading '{0}' config", config);
+				Console.ReadLine();
+				Environment.Exit(0);
+			}
 
-            return trueValue;
-        }
+			return trueValue;
+		}
 
-        #endregion
+		#endregion
 
-        #endregion
-    }
+		#endregion
+	}
 }
