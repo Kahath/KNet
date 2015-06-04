@@ -32,6 +32,12 @@ namespace ServerFramework.Constants.Entities.Session
 			set;
 		}
 
+		string Name
+		{
+			get;
+			set;
+		}
+
 		#endregion
 	}
 }

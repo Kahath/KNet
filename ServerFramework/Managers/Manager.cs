@@ -93,8 +93,11 @@ namespace ServerFramework.Managers
 			PacketMgr = PacketManager.GetInstance();
 
 			LogMgr.Log(LogType.Init, "Initialising buffer manager");
-			BufferMgr = BufferManager.GetInstance(ServerConfig.BufferSize * 2
-				* ServerConfig.MaxConnections, ServerConfig.BufferSize);
+			BufferMgr = BufferManager.GetInstance
+				(
+					ServerConfig.BufferSize * ServerConfig.MaxConnections * 2
+				,	ServerConfig.BufferSize
+				);
 		}
 
 		#endregion

@@ -28,13 +28,13 @@ namespace ServerFramework.Database.Context
 
 		public DbSet<CommandModel> Commands				{ get; set; }
 		public DbSet<CommandLevelModel> CommandLevel	{ get; set; }
+		public DbSet<CommandLogModel> CommandLog		{ get; set; }
 		public DbSet<PacketLogModel> PacketLog			{ get; set; }
 		public DbSet<PacketLogTypeModel> PacketLogType	{ get; set; }
 		public DbSet<LogModel> Log						{ get; set; }
 		public DbSet<LogTypeModel> LogType				{ get; set; }
 
 		#endregion
-
 
 		#region Constructors
 

@@ -68,7 +68,12 @@ namespace ServerFramework.Managers.Core
 								}
 								catch (TargetInvocationException)
 								{
-									Manager.LogMgr.Log(LogType.Error, "Error creating command type {0}", type.ToString());
+									Manager.LogMgr.Log
+										(
+											LogType.Error
+										,	"Error creating command type {0}"
+										,	type.ToString()
+										);
 								}
 
 								if (c != null)
@@ -90,14 +95,39 @@ namespace ServerFramework.Managers.Core
 
 		public override bool InvokeCommand(Client user, string command)
 		{
-			bool retVal = false;
+			StringBuilder sb = new StringBuilder();
+			bool retVal = default(bool);
 
+			sb.Append("Command: ");
 			string com = Regex.Replace(command, @"\s+", " ").Trim();
+			List<string> commandPath = com.Split(' ').ToList();
 
 			if (!String.IsNullOrEmpty(com))
 			{
-				retVal = InvokeCommandHandler(user, CommandTable.ToArray()
-					, com.Split(' ').ToList(), String.Empty);
+				retVal = InvokeCommandHandler
+					(
+						user
+					,	CommandTable.ToArray()
+					,	commandPath
+					,	sb
+					);
+
+				if(retVal)
+				{
+					if(commandPath.Any())
+						sb.AppendFormat("\nParameters: {0}", String.Join(", ", commandPath));
+
+					CommandLogModel commandLog = new CommandLogModel();
+					commandLog.UserID = user.Token.ID;
+					commandLog.UserName = user.Token.Name;
+					commandLog.Command = sb.ToString();
+
+					using(ApplicationContext context = new ApplicationContext())
+					{
+						context.CommandLog.Add(commandLog);
+						context.SaveChanges();
+					}
+				}
 			}
 
 			return retVal;
@@ -107,17 +137,19 @@ namespace ServerFramework.Managers.Core
 
 		#region InvokeCommandHandler
 
-		protected override bool InvokeCommandHandler(Client user, Command[] commandTable,
-			IList<string> path, string command)
+		protected override bool InvokeCommandHandler(Client user
+			, Command[] commandTable, IList<string> path, StringBuilder command)
 		{
 			if (commandTable == null || path == null)
 				return false;
 
-			Command c = commandTable.Where(x => user.UserLevel >= x.CommandLevel).FirstOrDefault(x => x.Name.StartsWith(path[0].Trim()));
+			Command c = commandTable
+				.Where(x => user.UserLevel >= x.CommandLevel)
+				.FirstOrDefault(x => x.Name.StartsWith(path[0].Trim()));
 
 			if (c != null)
 			{
-				command += c.Name + " ";
+				command.AppendFormat("{0} ", c.Name);
 
 				if (c.Script == null)
 				{
@@ -130,8 +162,12 @@ namespace ServerFramework.Managers.Core
 						}
 						else
 						{
-							Manager.LogMgr.Log(LogType.Command, "Error with '{0}' command."
-								+ " Available sub commands:\n{1}", path, AvailableSubCommands(user.UserLevel, c));
+							Manager.LogMgr.Log
+								(
+									LogType.Command
+								,	"Error with '{0}' command. Available sub commands:\n{1}"
+								,	command
+								,	AvailableSubCommands(user.UserLevel, c));
 
 							return false;
 						}
@@ -139,7 +175,7 @@ namespace ServerFramework.Managers.Core
 					else
 					{
 						Manager.LogMgr.Log(LogType.Command, "Error with '{0}' command."
-							+ " Missing script or subcommands", path);
+							+ " Missing script or subcommands", command);
 
 						return false;
 					}
@@ -155,20 +191,20 @@ namespace ServerFramework.Managers.Core
 					catch (IndexOutOfRangeException)
 					{
 						Manager.LogMgr.Log(LogType.Error, "Error with '{0}' command. wrong arguments"
-							, path);
+							, command);
 						return false;
 					}
 					catch (Exception)
 					{
 						Manager.LogMgr.Log(LogType.Error, "Error with '{0}' command. Failed to execute handler"
-							, path);
+							, command);
 						return false;
 					}
 				}
 			}
 
-			command += path[0];
-			Manager.LogMgr.Log(LogType.Command, "Command '{0}' not found", path);
+			command.Append(path[0]);
+			Manager.LogMgr.Log(LogType.Command, "Command '{0}' not found", command);
 			return false;
 		}
 

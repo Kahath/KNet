@@ -11,7 +11,7 @@ using System.Data.Entity.Infrastructure.MappingViews;
 
 [assembly: DbMappingViewCacheTypeAttribute(
 	typeof(ServerFramework.Database.Context.ApplicationContext),
-	typeof(ServerFramework.Database.PrecompiledViews.ViewsForBaseEntitySetsba3b17e39636e5d9d827fa5400e93d960fb738e4735db2b757d8a7f9206f59c4))]
+	typeof(ServerFramework.Database.PrecompiledViews.ViewsForBaseEntitySets0f9975b1040574423b88fc41a687babc54cc888c2af4bd8d1d0867dd3d901bd7))]
 
 namespace ServerFramework.Database.PrecompiledViews
 {
@@ -23,14 +23,14 @@ namespace ServerFramework.Database.PrecompiledViews
 	/// Implements a mapping view cache.
 	/// </summary>
 	[GeneratedCode("Entity Framework Power Tools", "0.9.0.0")]
-	internal sealed class ViewsForBaseEntitySetsba3b17e39636e5d9d827fa5400e93d960fb738e4735db2b757d8a7f9206f59c4 : DbMappingViewCache
+	internal sealed class ViewsForBaseEntitySets0f9975b1040574423b88fc41a687babc54cc888c2af4bd8d1d0867dd3d901bd7 : DbMappingViewCache
 	{
 		/// <summary>
 		/// Gets a hash value computed over the mapping closure.
 		/// </summary>
 		public override string MappingHashValue
 		{
-			get { return "ba3b17e39636e5d9d827fa5400e93d960fb738e4735db2b757d8a7f9206f59c4"; }
+			get { return "0f9975b1040574423b88fc41a687babc54cc888c2af4bd8d1d0867dd3d901bd7"; }
 		}
 
 		/// <summary>
@@ -67,44 +67,54 @@ namespace ServerFramework.Database.PrecompiledViews
 				return GetView3();
 			}
 
-			if (extentName == "CodeFirstDatabase.LogModel")
+			if (extentName == "CodeFirstDatabase.CommandLogModel")
 			{
 				return GetView4();
 			}
 
-			if (extentName == "CodeFirstDatabase.LogTypeModel")
+			if (extentName == "ApplicationContext.CommandLog")
 			{
 				return GetView5();
 			}
 
-			if (extentName == "ApplicationContext.Log")
+			if (extentName == "CodeFirstDatabase.LogModel")
 			{
 				return GetView6();
 			}
 
-			if (extentName == "ApplicationContext.LogType")
+			if (extentName == "CodeFirstDatabase.LogTypeModel")
 			{
 				return GetView7();
 			}
 
-			if (extentName == "CodeFirstDatabase.PacketLogModel")
+			if (extentName == "ApplicationContext.Log")
 			{
 				return GetView8();
 			}
 
-			if (extentName == "CodeFirstDatabase.PacketLogTypeModel")
+			if (extentName == "ApplicationContext.LogType")
 			{
 				return GetView9();
 			}
 
-			if (extentName == "ApplicationContext.PacketLog")
+			if (extentName == "CodeFirstDatabase.PacketLogModel")
 			{
 				return GetView10();
 			}
 
-			if (extentName == "ApplicationContext.PacketLogType")
+			if (extentName == "CodeFirstDatabase.PacketLogTypeModel")
 			{
 				return GetView11();
+			}
+
+			if (extentName == "ApplicationContext.PacketLog")
+			{
+				return GetView12();
+			}
+
+			if (extentName == "ApplicationContext.PacketLogType")
+			{
+				return GetView13();
 			}
 
 			return null;
@@ -203,10 +213,58 @@ namespace ServerFramework.Database.PrecompiledViews
 		}
 
 		/// <summary>
-		/// Gets the view for CodeFirstDatabase.LogModel.
+		/// Gets the view for CodeFirstDatabase.CommandLogModel.
 		/// </summary>
 		/// <returns>The mapping view.</returns>
 		private static DbMappingView GetView4()
+		{
+			return new DbMappingView(@"
+    SELECT VALUE -- Constructing CommandLogModel
+        [CodeFirstDatabaseSchema.CommandLogModel](T1.CommandLogModel_ID, T1.CommandLogModel_UserID, T1.CommandLogModel_UserName, T1.CommandLogModel_Command, T1.CommandLogModel_Active, T1.CommandLogModel_DateCreated, T1.CommandLogModel_DateModified, T1.CommandLogModel_DateDeactivated)
+    FROM (
+        SELECT 
+            T.ID AS CommandLogModel_ID, 
+            T.UserID AS CommandLogModel_UserID, 
+            T.UserName AS CommandLogModel_UserName, 
+            T.Command AS CommandLogModel_Command, 
+            T.Active AS CommandLogModel_Active, 
+            T.DateCreated AS CommandLogModel_DateCreated, 
+            T.DateModified AS CommandLogModel_DateModified, 
+            T.DateDeactivated AS CommandLogModel_DateDeactivated, 
+            True AS _from0
+        FROM ApplicationContext.CommandLog AS T
+    ) AS T1");
+		}
+
+		/// <summary>
+		/// Gets the view for ApplicationContext.CommandLog.
+		/// </summary>
+		/// <returns>The mapping view.</returns>
+		private static DbMappingView GetView5()
+		{
+			return new DbMappingView(@"
+    SELECT VALUE -- Constructing CommandLog
+        [ServerFramework.Database.Context.CommandLogModel](T1.CommandLogModel_ID, T1.CommandLogModel_UserID, T1.CommandLogModel_UserName, T1.CommandLogModel_Command, T1.CommandLogModel_Active, T1.CommandLogModel_DateCreated, T1.CommandLogModel_DateModified, T1.CommandLogModel_DateDeactivated)
+    FROM (
+        SELECT 
+            T.ID AS CommandLogModel_ID, 
+            T.UserID AS CommandLogModel_UserID, 
+            T.UserName AS CommandLogModel_UserName, 
+            T.Command AS CommandLogModel_Command, 
+            T.Active AS CommandLogModel_Active, 
+            T.DateCreated AS CommandLogModel_DateCreated, 
+            T.DateModified AS CommandLogModel_DateModified, 
+            T.DateDeactivated AS CommandLogModel_DateDeactivated, 
+            True AS _from0
+        FROM CodeFirstDatabase.CommandLogModel AS T
+    ) AS T1");
+		}
+
+		/// <summary>
+		/// Gets the view for CodeFirstDatabase.LogModel.
+		/// </summary>
+		/// <returns>The mapping view.</returns>
+		private static DbMappingView GetView6()
 		{
 			return new DbMappingView(@"
     SELECT VALUE -- Constructing LogModel
@@ -229,7 +287,7 @@ namespace ServerFramework.Database.PrecompiledViews
 		/// Gets the view for CodeFirstDatabase.LogTypeModel.
 		/// </summary>
 		/// <returns>The mapping view.</returns>
-		private static DbMappingView GetView5()
+		private static DbMappingView GetView7()
 		{
 			return new DbMappingView(@"
     SELECT VALUE -- Constructing LogTypeModel
@@ -251,7 +309,7 @@ namespace ServerFramework.Database.PrecompiledViews
 		/// Gets the view for ApplicationContext.Log.
 		/// </summary>
 		/// <returns>The mapping view.</returns>
-		private static DbMappingView GetView6()
+		private static DbMappingView GetView8()
 		{
 			return new DbMappingView(@"
     SELECT VALUE -- Constructing Log
@@ -274,7 +332,7 @@ namespace ServerFramework.Database.PrecompiledViews
 		/// Gets the view for ApplicationContext.LogType.
 		/// </summary>
 		/// <returns>The mapping view.</returns>
-		private static DbMappingView GetView7()
+		private static DbMappingView GetView9()
 		{
 			return new DbMappingView(@"
     SELECT VALUE -- Constructing LogType
@@ -296,7 +354,7 @@ namespace ServerFramework.Database.PrecompiledViews
 		/// Gets the view for CodeFirstDatabase.PacketLogModel.
 		/// </summary>
 		/// <returns>The mapping view.</returns>
-		private static DbMappingView GetView8()
+		private static DbMappingView GetView10()
 		{
 			return new DbMappingView(@"
     SELECT VALUE -- Constructing PacketLogModel
@@ -323,7 +381,7 @@ namespace ServerFramework.Database.PrecompiledViews
 		/// Gets the view for CodeFirstDatabase.PacketLogTypeModel.
 		/// </summary>
 		/// <returns>The mapping view.</returns>
-		private static DbMappingView GetView9()
+		private static DbMappingView GetView11()
 		{
 			return new DbMappingView(@"
     SELECT VALUE -- Constructing PacketLogTypeModel
@@ -345,7 +403,7 @@ namespace ServerFramework.Database.PrecompiledViews
 		/// Gets the view for ApplicationContext.PacketLog.
 		/// </summary>
 		/// <returns>The mapping view.</returns>
-		private static DbMappingView GetView10()
+		private static DbMappingView GetView12()
 		{
 			return new DbMappingView(@"
     SELECT VALUE -- Constructing PacketLog
@@ -372,7 +430,7 @@ namespace ServerFramework.Database.PrecompiledViews
 		/// Gets the view for ApplicationContext.PacketLogType.
 		/// </summary>
 		/// <returns>The mapping view.</returns>
-		private static DbMappingView GetView11()
+		private static DbMappingView GetView13()
 		{
 			return new DbMappingView(@"
     SELECT VALUE -- Constructing PacketLogType

@@ -18,6 +18,8 @@ using ServerFramework.Constants.Entities.Console;
 using ServerFramework.Constants.Entities.Session;
 using ServerFramework.Constants.Misc;
 using ServerFramework.Managers;
+using System;
+using System.Text;
 
 namespace ServerFramework.Game.CommandHandlers
 {
@@ -31,9 +33,9 @@ namespace ServerFramework.Game.CommandHandlers
 		private static Command GetCommand()
 		{
 			Command[] CommandCommandTable = 
-            {
-                new Command("list", CommandLevel.Nine, null, CommandListHandler, "")
-            };
+			{
+				new Command("list", CommandLevel.Nine, null, CommandListHandler, "")
+			};
 
 			return new Command("command", CommandLevel.Nine,
 				CommandCommandTable, null, "");
@@ -49,16 +51,18 @@ namespace ServerFramework.Game.CommandHandlers
 
 		private static bool CommandListHandler(Client user, params string[] args)
 		{
+			StringBuilder sb = new StringBuilder();
 			Manager.LogMgr.Log(LogType.Command, "List of all commands:");
 
 			foreach (Command c in Manager.CommandMgr.CommandTable)
 			{
 				if (c.SubCommands != null && user.UserLevel >= c.CommandLevel)
-					Manager.LogMgr.Log(LogType.Command, "{0}..", c.Name);
+					sb.AppendLine(String.Format("{0}..", c.Name));
 				else if (user.UserLevel >= c.CommandLevel)
-					Manager.LogMgr.Log(LogType.Command, "{0}", c.Name);
+					sb.AppendLine(c.Name);
 			}
 
+			Manager.LogMgr.Log(LogType.Command, "{0}", sb.ToString());
 			return true;
 		}
 

@@ -16,7 +16,9 @@
 using ServerFramework.Constants.Entities.Console;
 using ServerFramework.Constants.Entities.Session;
 using ServerFramework.Constants.Misc;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Text;
 
 namespace ServerFramework.Managers.Base
 {
@@ -24,13 +26,13 @@ namespace ServerFramework.Managers.Base
 	{
 		#region Fields
 
-		private List<Command> _commandTable;
+		private BlockingCollection<Command> _commandTable;
 
 		#endregion
 
 		#region Properties
 
-		internal List<Command> CommandTable
+		internal BlockingCollection<Command> CommandTable
 		{
 			get { return _commandTable; }
 			set { _commandTable = value; }
@@ -42,7 +44,7 @@ namespace ServerFramework.Managers.Base
 
 		protected CommandManagerBase()
 		{
-			_commandTable = new List<Command>();
+			_commandTable = new BlockingCollection<Command>();
 		}
 
 		#endregion
@@ -51,7 +53,7 @@ namespace ServerFramework.Managers.Base
 
 		public abstract bool InvokeCommand(Client user, string command);
 		protected abstract bool InvokeCommandHandler(Client user, Command[] commandTable,
-			IList<string> command, string path);
+			IList<string> command, StringBuilder path);
 		protected abstract string AvailableSubCommands(CommandLevel userLevel, Command c);
 		protected abstract void LoadCommandDescriptions();
 		protected abstract Command GetCommandByPath(Command[] commandTable, IList<string> command);

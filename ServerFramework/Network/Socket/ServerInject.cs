@@ -219,9 +219,13 @@ namespace ServerFramework.Network.Socket
 
 				try
 				{
-					Manager.LogMgr.Log(LogType.Normal, "Session {0} ({1}) connected",
-						((UserToken)socketExtended.Receiver.UserToken).SessionId,
-						socketExtended.Receiver.AcceptSocket.RemoteEndPoint);
+					Manager.LogMgr.Log
+						(
+							LogType.Normal
+						,	"Session {0} ({1}) connected"
+						,	((UserToken)socketExtended.Receiver.UserToken).SessionId
+						,	socketExtended.Receiver.AcceptSocket.RemoteEndPoint
+						);
 				}
 				catch (ObjectDisposedException)
 				{

@@ -51,7 +51,9 @@ namespace ServerFramework.Game.CommandHandlers
 			if (path.Count == 0)
 				path.Add("help");
 
-			Command c = commandTable.Where(x => userLevel >= x.CommandLevel).FirstOrDefault(x => x.Name.StartsWith(path[0].Trim()));
+			Command c = commandTable
+				.Where(x => userLevel >= x.CommandLevel)
+				.FirstOrDefault(x => x.Name.StartsWith(path[0].Trim()));
 
 			if (c != null)
 			{
@@ -65,8 +67,13 @@ namespace ServerFramework.Game.CommandHandlers
 
 				if (c.SubCommands != null)
 				{
-					Manager.LogMgr.Log(LogType.Command, "Available sub commands for '{0}' command:", path);
-					Manager.LogMgr.Log(LogType.Command, "{0}", AvailableSubCommands(userLevel, c));
+					Manager.LogMgr.Log
+						(
+							LogType.Command
+						,	"Available sub commands for '{0}' command:\n{1}"
+						,	command
+						,	AvailableSubCommands(userLevel, c)
+						);
 					return true;
 				}
 				else
@@ -78,7 +85,7 @@ namespace ServerFramework.Game.CommandHandlers
 					}
 					else
 					{
-						Manager.LogMgr.Log(LogType.Command, "Command '{0}' is missing description", path);
+						Manager.LogMgr.Log(LogType.Command, "Command '{0}' is missing description", command);
 						return true;
 					}
 				}
@@ -86,7 +93,7 @@ namespace ServerFramework.Game.CommandHandlers
 
 			command += path[0];
 
-			Manager.LogMgr.Log(LogType.Command, "Command '{0}' not found", path);
+			Manager.LogMgr.Log(LogType.Command, "Command '{0}' not found", command);
 			return false;
 		}
 
@@ -119,8 +126,13 @@ namespace ServerFramework.Game.CommandHandlers
 
 		public static bool HelpCommandHandler(Client user, params string[] args)
 		{
-			return ShowCommandDescription(user.UserLevel, Manager.CommandMgr.CommandTable.ToArray(),
-				args.ToList(), String.Empty);
+			return ShowCommandDescription
+				(
+					user.UserLevel
+				,	Manager.CommandMgr.CommandTable.ToArray()
+				,	args.ToList()
+				,	String.Empty
+				);
 		}
 
 		#endregion

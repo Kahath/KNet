@@ -110,27 +110,36 @@ namespace ServerFramework.Managers.Core
 			{
 				string msg = String.Empty;
 
-				if (type == LogType.Info || type == LogType.Command || type == LogType.Normal)
+				switch (type)
 				{
-					msg = String.Format(message, args);
-				}
-				else
-				{
-					msg = String.Format
+					case LogType.Normal:
+					case LogType.Info:
+					case LogType.Command:
+						msg = String.Format(message, args);
+					break;
+					case LogType.Init:
+					case LogType.DB:
+					case LogType.Warning:
+					case LogType.Error:
+					case LogType.Critical:
+					default:
+						msg = String.Format
 						(
-							"[{0}] {1}", DateTime.Now.ToString("HH:mm:ss.fff")
-						, String.Format(message, args)
+							"[{0}] {1}"
+						,	DateTime.Now.ToString("HH:mm:ss.fff")
+						,	String.Format(message, args)
 						);
 
-					LogModel logModel = new LogModel();
-					logModel.LogTypeID = (int)type;
-					logModel.Message = String.Format(message, args);
+						LogModel logModel = new LogModel();
+						logModel.LogTypeID = (int)type;
+						logModel.Message = String.Format(message, args);
 
-					using (ApplicationContext context = new ApplicationContext())
-					{
-						context.Log.Add(logModel);
-						context.SaveChanges();
-					}
+						using (ApplicationContext context = new ApplicationContext())
+						{
+							context.Log.Add(logModel);
+							context.SaveChanges();
+						}
+					break;
 				}
 
 				ConsoleLogQueue.Add(Tuple.Create<ConsoleColor, string>(color, msg));

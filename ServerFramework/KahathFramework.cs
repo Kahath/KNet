@@ -72,7 +72,13 @@ namespace ServerFramework
 				{
 					_consoleClient = new Client()
 					{
-						UserLevel = CommandLevel.Ten,
+						UserLevel = CommandLevel.Ten
+					,	Token = new ConsoleClient()
+						{
+							SessionId = 0
+						,	ID = 0
+						,	Name = "Console"
+						}
 					};
 				}
 

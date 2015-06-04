@@ -61,6 +61,7 @@
     <Compile Include="Configuration\IConfig.cs" />
     <Compile Include="Configuration\ServerConfig.cs" />
     <Compile Include="Constants\Attributes\CommandAttribute.cs" />
+    <Compile Include="Constants\Entities\Session\ConsoleClient.cs" />
     <Compile Include="Constants\Entities\Session\IClient.cs" />
     <Compile Include="Constants\Misc\CommandLevel.cs" />
     <Compile Include="Constants\Entities\Console\Command.cs" />
@@ -72,6 +73,7 @@
     <Compile Include="Database\Base\RepositoryBase.cs" />
     <Compile Include="Database\Context\ApplicationContext.cs" />
     <Compile Include="Database\Model\Application\Command\CommandLevelModel.cs" />
+    <Compile Include="Database\Model\Application\Command\CommandLogModel.cs" />
     <Compile Include="Database\PrecompiledViews\ApplicationContext.Views.cs" />
     <Compile Include="Database\Model\Application\Command\CommandModel.cs" />
     <Compile Include="Database\Model\Application\Log\LogModel.cs" />
@@ -122,6 +124,7 @@
     </Content>
     <Content Include="Libs\DILibrary.dll" />
     <Content Include="Sql\Application.Command.Level.Table.sql" />
+    <Content Include="Sql\Application.Command.Log.Table.sql" />
     <Content Include="Sql\Application.Command.Table.sql" />
     <Content Include="Sql\Application.Log.Table.sql" />
     <Content Include="Sql\Application.Log.Type.Table.sql" />

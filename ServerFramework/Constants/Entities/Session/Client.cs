@@ -60,6 +60,11 @@ namespace ServerFramework.Constants.Entities.Session
 			get { return (SocketExtended.Receiver.UserToken as UserToken).SessionId; }
 		}
 
+		public bool IsConsole
+		{
+			get { return Token is ConsoleClient; }
+		}
+
 		public CommandLevel UserLevel
 		{
 			get { return _userLevel; }
