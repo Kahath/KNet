@@ -60,6 +60,16 @@ namespace ServerFramework.Network.Socket
 			set { _receiver = value; }
 		}
 
+		internal UserToken ReceiverToken
+		{
+			get { return ((UserToken)Receiver.UserToken); }
+		}
+
+		internal UserToken SenderToken
+		{
+			get { return ((UserToken)Sender.UserToken); }
+		}
+
 		internal AutoResetEvent SendResetEvent
 		{
 			get { return _sendResetEvent; }
@@ -79,14 +89,14 @@ namespace ServerFramework.Network.Socket
 		{
 			set
 			{
-				((UserToken)Sender.UserToken).SessionId = value;
-				((UserToken)Receiver.UserToken).SessionId = value;
+				SenderToken.SessionId = value;
+				ReceiverToken.SessionId = value;
 			}
 		}
 
-		internal EndPoint RemoteEndPoint
+		internal IPEndPoint RemoteEndPoint
 		{
-			get { return Receiver.AcceptSocket.RemoteEndPoint; }
+			get { return Receiver.AcceptSocket.RemoteEndPoint as IPEndPoint; }
 		}
 
 		#endregion

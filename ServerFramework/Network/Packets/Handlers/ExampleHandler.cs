@@ -31,10 +31,8 @@ namespace ServerFramework.Network.Packets.Handlers
 		#region Version 1
 
 		[Opcode(0x0000, "Kahath", 1, OpcodeType.Test)]
-		public static void ExamplePacketHandler(Packet packet)
+		public static void ExamplePacketHandler(Client pClient, Packet packet)
 		{
-			Client pClient = Manager.SessionMgr.GetClientBySessionId(packet.SessionId);
-
 			//Read if packet has data
 			string exampleName = packet.Read<string>(8);
 			byte exampleData = packet.Read<byte>();
@@ -59,10 +57,8 @@ namespace ServerFramework.Network.Packets.Handlers
 		#region Version 2
 
 		[Opcode(0x0000, "Kahath", 2, OpcodeType.Test)]
-		public static void ExamplePacketHandlerTwo(Packet packet)
+		public static void ExamplePacketHandlerTwo(Client pClient, Packet packet)
 		{
-			Client pClient = Manager.SessionMgr.GetClientBySessionId(packet.SessionId);
-
 			//Read if packet has data
 			string exampleName = packet.Read<string>(8);
 			byte exampleData = packet.Read<byte>();

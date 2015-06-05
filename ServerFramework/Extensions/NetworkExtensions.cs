@@ -54,7 +54,7 @@ namespace ServerFramework.Extensions
 
 				token.HeaderBytesDoneCount = token.HeaderLength;
 
-				token.MessageLength = BitConverter.ToInt16(
+				token.MessageLength = BitConverter.ToUInt16(
 					token.Header, 0);
 
 				token.StartReceive();

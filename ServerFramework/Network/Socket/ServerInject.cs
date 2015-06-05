@@ -223,7 +223,7 @@ namespace ServerFramework.Network.Socket
 						(
 							LogType.Normal
 						,	"Session {0} ({1}) connected"
-						,	((UserToken)socketExtended.Receiver.UserToken).SessionId
+						,	socketExtended.ReceiverToken.SessionId
 						,	socketExtended.Receiver.AcceptSocket.RemoteEndPoint
 						);
 				}

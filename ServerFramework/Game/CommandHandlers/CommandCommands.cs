@@ -19,6 +19,7 @@ using ServerFramework.Constants.Entities.Session;
 using ServerFramework.Constants.Misc;
 using ServerFramework.Managers;
 using System;
+using System.Linq;
 using System.Text;
 
 namespace ServerFramework.Game.CommandHandlers
@@ -54,13 +55,8 @@ namespace ServerFramework.Game.CommandHandlers
 			StringBuilder sb = new StringBuilder();
 			Manager.LogMgr.Log(LogType.Command, "List of all commands:");
 
-			foreach (Command c in Manager.CommandMgr.CommandTable)
-			{
-				if (c.SubCommands != null && user.UserLevel >= c.CommandLevel)
-					sb.AppendLine(String.Format("{0}..", c.Name));
-				else if (user.UserLevel >= c.CommandLevel)
-					sb.AppendLine(c.Name);
-			}
+			sb.AppendLine(String.Join("\n", Manager.CommandMgr.CommandTable
+				.Select(x => x.SubCommands != null ? String.Format("{0}..", x.Name) : x.Name)));
 
 			Manager.LogMgr.Log(LogType.Command, "{0}", sb.ToString());
 			return true;

@@ -47,17 +47,17 @@ namespace ServerFramework.Constants.Entities.Session
 
 		public string IP
 		{
-			get { return (SocketExtended.Receiver.AcceptSocket.RemoteEndPoint as IPEndPoint).Address.ToString(); }
+			get { return SocketExtended.RemoteEndPoint.Address.ToString(); }
 		}
 
 		public int Port
 		{
-			get { return (SocketExtended.Receiver.AcceptSocket.RemoteEndPoint as IPEndPoint).Port; }
+			get { return SocketExtended.RemoteEndPoint.Port; }
 		}
 
 		public int SessionID
 		{
-			get { return (SocketExtended.Receiver.UserToken as UserToken).SessionId; }
+			get { return SocketExtended.ReceiverToken.SessionId; }
 		}
 
 		public bool IsConsole
@@ -102,8 +102,8 @@ namespace ServerFramework.Constants.Entities.Session
 			if (BeforePacketSend != null)
 				BeforePacketSend(packet, new EventArgs());
 
-			this.SocketExtended.SendResetEvent.WaitOne();
-			UserToken token = SocketExtended.Sender.UserToken as UserToken;
+			SocketExtended.SendResetEvent.WaitOne();
+			UserToken token = SocketExtended.SenderToken;
 			token.Packet = packet;
 			token.Finish();
 			token.Packet.SessionId = token.SessionId;

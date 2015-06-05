@@ -116,6 +116,7 @@ namespace ServerFramework.Managers.Core
 					case LogType.Info:
 					case LogType.Command:
 						msg = String.Format(message, args);
+						ConsoleLogQueue.Add(Tuple.Create<ConsoleColor, string>(color, msg));
 					break;
 					case LogType.Init:
 					case LogType.DB:
@@ -129,6 +130,7 @@ namespace ServerFramework.Managers.Core
 						,	DateTime.Now.ToString("HH:mm:ss.fff")
 						,	String.Format(message, args)
 						);
+						ConsoleLogQueue.Add(Tuple.Create<ConsoleColor, string>(color, msg));
 
 						LogModel logModel = new LogModel();
 						logModel.LogTypeID = (int)type;
@@ -141,8 +143,6 @@ namespace ServerFramework.Managers.Core
 						}
 					break;
 				}
-
-				ConsoleLogQueue.Add(Tuple.Create<ConsoleColor, string>(color, msg));
 			}
 
 		}

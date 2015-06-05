@@ -42,8 +42,8 @@ namespace ServerFramework.Game.CommandHandlers
 
 		#region GetHelpCommand
 
-		private static bool ShowCommandDescription(CommandLevel userLevel, Command[] commandTable,
-			IList<string> path, string command)
+		private static bool ShowCommandDescription(CommandLevel userLevel
+			, Command[] commandTable, IList<string> path, string command)
 		{
 			if (commandTable == null || path == null)
 				return false;
@@ -105,13 +105,8 @@ namespace ServerFramework.Game.CommandHandlers
 		{
 			StringBuilder sb = new StringBuilder();
 
-			foreach (Command com in c.SubCommands)
-			{
-				if (com.SubCommands != null && userLevel >= com.CommandLevel)
-					sb.AppendLine(String.Format("{0}..", com.Name));
-				else if (userLevel >= com.CommandLevel)
-					sb.AppendLine(com.Name);
-			}
+			sb.AppendLine(String.Join("\n", c.SubCommands
+				.Select(x => x.SubCommands != null ? String.Format("{0}..", x.Name) : x.Name)));
 
 			return sb.ToString();
 		}

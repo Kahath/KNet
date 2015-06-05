@@ -15,6 +15,7 @@
 
 using ServerFramework.Configuration;
 using ServerFramework.Constants.Attributes;
+using ServerFramework.Constants.Entities.Session;
 using ServerFramework.Constants.Misc;
 using ServerFramework.Managers.Base;
 using ServerFramework.Network.Packets;
@@ -92,7 +93,15 @@ namespace ServerFramework.Managers.Core
 			{
 				try
 				{
-					PacketHandlers[packet.Header.Opcode].Invoke(packet);
+					using (packet)
+					{
+						Client pClient = Manager.SessionMgr.GetClientBySessionId(packet.SessionId);
+
+						if (pClient != null)
+							PacketHandlers[packet.Header.Opcode].Invoke(pClient, packet);
+						else
+							throw new ArgumentNullException("pClient");
+					}
 				}
 				catch (Exception e)
 				{
