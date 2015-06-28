@@ -13,6 +13,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using ServerFramework.Configuration;
 using ServerFramework.Network.Packets;
 using System;
 using System.Net.Sockets;
@@ -34,17 +35,25 @@ namespace ServerFramework.Extensions
 		internal static int HandleHeader(this UserToken token
 			, SocketAsyncEventArgs e, int remainingBytesToProcess)
 		{
+			if (token.Header == null)
+			{
+				token.IsBigPacket = Convert.ToBoolean(e.Buffer[token.HeaderOffset] >> 7);
+				token.HeaderLength = token.IsBigPacket ? ServerConfig.BigHeaderLength : ServerConfig.HeaderLength;
+				token.Header = new byte[token.HeaderLength];
+				token.MessageOffset = token.HeaderOffset + token.HeaderLength;
+			}
+
 			if (remainingBytesToProcess >= token.HeaderLength -
 				token.HeaderBytesDoneCount)
 			{
-				Buffer.BlockCopy(e.Buffer,
-					token.MessageOffset -
-					token.HeaderLength +
-					token.HeaderBytesDoneCount,
-					token.Header,
-					token.HeaderBytesDoneCount,
-					token.HeaderLength -
-					token.HeaderBytesDoneCount);
+				Buffer.BlockCopy
+					(
+						e.Buffer
+					,	token.HeaderOffset + token.HeaderBytesDoneCount
+					,	token.Header
+					,	token.HeaderBytesDoneCount
+					,	token.HeaderLength - token.HeaderBytesDoneCount
+					);
 
 				remainingBytesToProcess = (remainingBytesToProcess - token.HeaderLength) +
 					token.HeaderBytesDoneCount;
@@ -54,28 +63,28 @@ namespace ServerFramework.Extensions
 
 				token.HeaderBytesDoneCount = token.HeaderLength;
 
-				token.MessageLength = BitConverter.ToUInt16(
-					token.Header, 0);
+				Array.Reverse(token.Header, 0, token.HeaderLength - ServerConfig.OpcodeLength);
+
+				token.MessageLength = token.IsBigPacket
+					? BitConverter.ToInt32(token.Header, 0) & Int32.MaxValue
+					: BitConverter.ToInt16(token.Header, 0);
 
 				token.StartReceive();
 
-				token.Packet.Header = new PacketHeader
-				{
-					Size = BitConverter.ToUInt16(token.Header, 0),
-					Opcode = BitConverter.ToUInt16(token.Header, 2)
-				};
+				token.Packet.Header = new PacketHeader(token.Header, token.IsBigPacket);
 
-				token.HeaderReady = true;
+				token.IsHeaderReady = true;
 			}
 			else
 			{
-				Buffer.BlockCopy(e.Buffer,
-					token.MessageOffset -
-					token.HeaderLength +
-					token.HeaderBytesDoneCount,
-					token.Header,
-					token.HeaderBytesDoneCount,
-					remainingBytesToProcess);
+				Buffer.BlockCopy
+					(
+						e.Buffer
+					,	token.HeaderOffset + token.HeaderBytesDoneCount
+					,	token.Header
+					,	token.HeaderBytesDoneCount
+					,	remainingBytesToProcess
+					);
 
 				token.HeaderBytesDoneThisOp = remainingBytesToProcess;
 				token.HeaderBytesDoneCount += remainingBytesToProcess;
@@ -103,54 +112,52 @@ namespace ServerFramework.Extensions
 			SocketAsyncEventArgs e, int remainingBytesToProcess)
 		{
 			if (token.MessageBytesDoneCount == 0)
-				token.Packet.Message = new
-					byte[token.MessageLength];
+				token.Packet.Message = new byte[token.MessageLength];
 
 			if (token.MessageLength == 0)
 			{
 				token.Packet.SessionId = token.SessionId;
 				token.Packet.PrepareRead();
 
-				token.PacketReady = true;
-
-				return remainingBytesToProcess;
+				token.IsPacketReady = true;
 			}
-
-			if ((remainingBytesToProcess +
+			else if ((remainingBytesToProcess +
 				token.MessageBytesDoneCount) >=
 				token.MessageLength)
 			{
 				Buffer.BlockCopy
 					(
 						e.Buffer
-						, token.MessageOffset
-						, token.Packet.Message
-						, token.MessageBytesDoneCount
-						, token.MessageLength - token.MessageBytesDoneCount
+					,	token.MessageOffset
+					,	token.Packet.Message
+					,	token.MessageBytesDoneCount
+					,	token.MessageLength - token.MessageBytesDoneCount
 					);
 
 				remainingBytesToProcess = (remainingBytesToProcess - token.MessageLength)
 					+ token.MessageBytesDoneCount;
 
+				token.MessageBytesDoneThisOp = token.MessageLength - token.MessageBytesDoneCount;
+
 				token.Packet.SessionId = token.SessionId;
 				token.Packet.PrepareRead();
 
-				token.PacketReady = true;
+				token.IsPacketReady = true;
 			}
 			else
 			{
 				Buffer.BlockCopy
 					(
 						e.Buffer
-						, token.MessageOffset
-						, token.Packet.Message
-						, token.MessageBytesDoneCount
-						, remainingBytesToProcess
+					,	token.MessageOffset
+					,	token.Packet.Message
+					,	token.MessageBytesDoneCount
+					,	remainingBytesToProcess
 					);
 
 				token.MessageOffset -= token.HeaderBytesDoneThisOp;
-
 				token.MessageBytesDoneCount += remainingBytesToProcess;
+
 				remainingBytesToProcess = 0;
 			}
 

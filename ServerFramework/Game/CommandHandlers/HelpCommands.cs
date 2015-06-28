@@ -106,6 +106,7 @@ namespace ServerFramework.Game.CommandHandlers
 			StringBuilder sb = new StringBuilder();
 
 			sb.AppendLine(String.Join("\n", c.SubCommands
+				.Where(x => userLevel >= x.CommandLevel)
 				.Select(x => x.SubCommands != null ? String.Format("{0}..", x.Name) : x.Name)));
 
 			return sb.ToString();

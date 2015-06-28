@@ -21,6 +21,7 @@ using ServerFramework.Database.Context;
 using ServerFramework.Database.Model.Application.Command;
 using ServerFramework.Managers.Base;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -29,12 +30,29 @@ using System.Text.RegularExpressions;
 
 namespace ServerFramework.Managers.Core
 {
-	public sealed class CommandManager : CommandManagerBase<CommandManager>
+	public sealed class CommandManager : ManagerBase<CommandManager>, IDisposable
 	{
+		#region Fields
+
+		private BlockingCollection<Command> _commandTable;
+
+		#endregion
+
+		#region Properties
+
+		internal BlockingCollection<Command> CommandTable
+		{
+			get { return _commandTable; }
+			set { _commandTable = value; }
+		}
+
+		#endregion
+
 		#region Constructor
 
 		CommandManager()
 		{
+			_commandTable = new BlockingCollection<Command>();
 			Init();
 		}
 
@@ -93,7 +111,7 @@ namespace ServerFramework.Managers.Core
 
 		#region InvokeCommand
 
-		public override bool InvokeCommand(Client user, string command)
+		public bool InvokeCommand(Client user, string command)
 		{
 			StringBuilder sb = new StringBuilder();
 			bool retVal = default(bool);
@@ -137,7 +155,7 @@ namespace ServerFramework.Managers.Core
 
 		#region InvokeCommandHandler
 
-		protected override bool InvokeCommandHandler(Client user
+		private bool InvokeCommandHandler(Client user
 			, Command[] commandTable, IList<string> path, StringBuilder command)
 		{
 			if (commandTable == null || path == null)
@@ -212,7 +230,7 @@ namespace ServerFramework.Managers.Core
 
 		#region AvailableSubCommands
 
-		protected override string AvailableSubCommands(CommandLevel userLevel, Command c)
+		private string AvailableSubCommands(CommandLevel userLevel, Command c)
 		{
 			StringBuilder sb = new StringBuilder();
 
@@ -235,7 +253,7 @@ namespace ServerFramework.Managers.Core
 
 		#region LoadCommandDescriptions
 
-		protected override void LoadCommandDescriptions()
+		private void LoadCommandDescriptions()
 		{
 			Command c = null;
 
@@ -261,7 +279,7 @@ namespace ServerFramework.Managers.Core
 
 		#region GetCommand
 
-		protected override Command GetCommandByPath(Command[] commandTable, IList<string> path)
+		private Command GetCommandByPath(Command[] commandTable, IList<string> path)
 		{
 			if (commandTable == null || path == null)
 				return null;
@@ -278,6 +296,15 @@ namespace ServerFramework.Managers.Core
 			}
 
 			return c;
+		}
+
+		#endregion
+
+		#region Dispose
+
+		public void Dispose()
+		{
+			_commandTable.Dispose();
 		}
 
 		#endregion

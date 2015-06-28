@@ -34,16 +34,16 @@ namespace ServerFramework.Network.Socket
 
 		#region Events
 
-		public event ServerEventHandler OnCloseClientSocket
+		public event ServerEventHandler CloseClientSocket
 		{
-			add { Instance.OnCloseClientSocket += value; }
-			remove { Instance.OnCloseClientSocket -= value; }
+			add { Instance.CloseClientSocket += value; }
+			remove { Instance.CloseClientSocket -= value; }
 		}
 
-		public event ServerEventHandler OnConnect
+		public event ServerEventHandler Connect
 		{
-			add { Instance.OnConnect += value; }
-			remove { Instance.OnConnect -= value; }
+			add { Instance.Connect += value; }
+			remove { Instance.Connect -= value; }
 		}
 
 		#endregion

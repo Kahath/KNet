@@ -91,6 +91,15 @@ namespace ServerFramework.Extensions
 
 		#endregion
 
+		#region Skip
+
+		public static void Skip(this Stream stream, int count)
+		{
+			stream.Position += count;
+		}
+
+		#endregion
+
 		#endregion
 	}
 }

@@ -32,16 +32,18 @@ namespace ServerFramework.Network.Packets
 		private int _messageLength;
 		private int _messageOffset;
 		private int _headerLength;
-		private int _permanentMessageOffset;
+		private int _headerOffset;
 
 		private int _headerBytesDoneCount = 0;
 		private int _messageBytesDoneCount = 0;
 		private int _headerBytesRemainingCount = 0;
 		private int _messageBytesRemainingCount = 0;
 		private int _headerBytesDoneThisOp = 0;
+		private int _messageBytesDoneThisOp = 0;
 
-		private bool _headerReady = false;
-		private bool _packetReady = false;
+		private bool _isHeaderReady = false;
+		private bool _isPacketReady = false;
+		private bool _isBigPacket = false;
 
 		#endregion
 
@@ -59,16 +61,16 @@ namespace ServerFramework.Network.Packets
 			set { _messageOffset = value; }
 		}
 
+		internal int HeaderOffset
+		{
+			get { return _headerOffset; }
+			set { _headerOffset = value; }
+		}
+
 		internal int HeaderLength
 		{
 			get { return _headerLength; }
 			set { _headerLength = value; }
-		}
-
-		internal int PermanentMessageOffset
-		{
-			get { return _permanentMessageOffset; }
-			set { _permanentMessageOffset = value; }
 		}
 
 		internal int HeaderBytesDoneCount
@@ -101,16 +103,28 @@ namespace ServerFramework.Network.Packets
 			set { _headerBytesDoneThisOp = value; }
 		}
 
-		internal bool HeaderReady
+		internal int MessageBytesDoneThisOp
 		{
-			get { return _headerReady; }
-			set { _headerReady = value; }
+			get { return _messageBytesDoneThisOp; }
+			set { _messageBytesDoneThisOp = value; }
 		}
 
-		internal bool PacketReady
+		internal bool IsHeaderReady
 		{
-			get { return _packetReady; }
-			set { _packetReady = value; }
+			get { return _isHeaderReady; }
+			set { _isHeaderReady = value; }
+		}
+
+		internal bool IsPacketReady
+		{
+			get { return _isPacketReady; }
+			set { _isPacketReady = value; }
+		}
+
+		internal bool IsBigPacket
+		{
+			get { return _isBigPacket; }
+			set { _isBigPacket = value; }
 		}
 
 		internal int BufferSize
@@ -156,9 +170,7 @@ namespace ServerFramework.Network.Packets
 			this._bufferSize = bufferSize;
 			this._bufferOffset = bufferOffset;
 			this.HeaderLength = headerLength;
-			this.MessageOffset = bufferOffset + headerLength;
-			this.PermanentMessageOffset = MessageOffset;
-			this.Header = new byte[HeaderLength];
+			this.HeaderOffset = bufferOffset;
 		}
 
 		#endregion
@@ -189,19 +201,24 @@ namespace ServerFramework.Network.Packets
 		#region Reset
 
 		/// <summary>
-		/// Resets packet to its initial state;
+		/// Resets user token to its initial state;
 		/// </summary>
-		internal void Reset(int messageOffset)
+		internal void Reset(int headerOffset)
 		{
-			this.Packet = null;
-			this.HeaderReady = false;
-			this.PacketReady = false;
-			this.HeaderBytesDoneCount = 0;
-			this.HeaderBytesRemainingCount = 0;
-			this.MessageBytesDoneCount = 0;
-			this.MessageBytesRemainingCount = 0;
-			this.MessageLength = 0;
-			this.MessageOffset = messageOffset;
+			Packet = null;
+			Header = null;
+			IsHeaderReady = false;
+			IsPacketReady = false;
+			IsBigPacket = false;
+			HeaderBytesDoneCount = 0;
+			HeaderBytesRemainingCount = 0;
+			HeaderBytesDoneThisOp = 0;
+			MessageBytesDoneCount = 0;
+			MessageBytesRemainingCount = 0;
+			MessageBytesDoneThisOp = 0;
+			MessageLength = 0;
+			HeaderLength = 0;
+			HeaderOffset = headerOffset;
 		}
 
 		#endregion

@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -87,16 +88,10 @@
     <Compile Include="Game\CommandHandlers\DatabaseCommands.cs" />
     <Compile Include="Game\CommandHandlers\HelpCommands.cs" />
     <Compile Include="KahathFramework.cs" />
-    <Compile Include="Managers\Base\LogManagerBase.cs" />
-    <Compile Include="Managers\Base\PacketLogManagerBase.cs" />
     <Compile Include="Managers\Core\LogManager.cs" />
     <Compile Include="Constants\Misc\LogType.cs" />
     <Compile Include="Managers\Core\PacketLogManager.cs" />
-    <Compile Include="Managers\Base\BufferManagerBase.cs" />
-    <Compile Include="Managers\Base\CommandManagerBase.cs" />
     <Compile Include="Managers\Base\ManagerBase.cs" />
-    <Compile Include="Managers\Base\PacketManagerBase.cs" />
-    <Compile Include="Managers\Base\SessionManagerBase.cs" />
     <Compile Include="Managers\Core\BufferManager.cs" />
     <Compile Include="Managers\Core\CommandManager.cs" />
     <Compile Include="Managers\Manager.cs" />

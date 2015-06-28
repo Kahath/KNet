@@ -14,7 +14,6 @@
  */
 
 using ServerFramework.Configuration;
-using ServerFramework.Extensions;
 using System;
 using System.IO;
 using System.Text;
@@ -26,11 +25,10 @@ namespace ServerFramework.Network.Packets
 		#region Fields
 
 		private PacketHeader _header;
+		private PacketStream _stream;
+		private Encoding _encoder;
 		private byte[] _message;
 		private int _sessionId;
-		private Encoding _encoder;
-
-		private PacketStream _stream;
 
 		#endregion
 
@@ -87,14 +85,13 @@ namespace ServerFramework.Network.Packets
 			Encoder = encoder ?? Encoding.UTF8;
 			_stream = new PacketStream(Encoder);
 
-
 			Header = new PacketHeader
 			{
-				Size = (ushort)ServerConfig.HeaderLength,
+				Size = ServerConfig.BigHeaderLength,
 				Opcode = message
 			};
 
-			Write<ushort>(Header.Size);
+			Write<int>(Header.Size);
 			Write<ushort>(Header.Opcode);
 		}
 
@@ -196,7 +193,16 @@ namespace ServerFramework.Network.Packets
 
 		public void Dispose()
 		{
-			Stream.Dispose();
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		private void Dispose(bool isDisposing)
+		{
+			if(isDisposing)
+			{
+				_stream.Dispose();
+			}
 		}
 
 		#endregion

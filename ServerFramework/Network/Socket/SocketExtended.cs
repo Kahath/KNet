@@ -140,7 +140,7 @@ namespace ServerFramework.Network.Socket
 
 		public void Dispose()
 		{
-			SendResetEvent.Dispose();
+			_sendResetEvent.Dispose();
 		}
 
 		#endregion

@@ -92,11 +92,24 @@ namespace ServerFramework
 
 		public KahathFramework()
 		{
+			Init();
+		}
+
+		#endregion
+
+		#region Methods
+
+		#region Init
+
+		public void Init()
+		{
 			DependencyManager.Map<IConfig, ConfigInject>();
 			DependencyManager.Map<IServer, ServerInject>();
 
 			ServerConfig.Init();
 			Manager.LogMgr = LogManager.GetInstance();
+
+			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledExceptionHandler);
 
 			_socketSettings = new SocketListenerSettings
 				(
@@ -154,8 +167,6 @@ namespace ServerFramework
 
 		#endregion
 
-		#region Methods
-
 		#region Start
 
 		public void Start()
@@ -171,6 +182,15 @@ namespace ServerFramework
 				else
 					Manager.LogMgr.Log(LogType.Command, "Wrong input");
 			}
+		}
+
+		#endregion
+
+		#region UnhandledExceptionHandler
+
+		private void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs e) 
+		{
+			Manager.LogMgr.Log(LogType.Error, "{0}", e.ExceptionObject.ToString());
 		}
 
 		#endregion

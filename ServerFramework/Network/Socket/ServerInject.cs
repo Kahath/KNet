@@ -42,8 +42,8 @@ namespace ServerFramework.Network.Socket
 
 		#region Events
 
-		public event ServerEventHandler OnCloseClientSocket;
-		public event ServerEventHandler OnConnect;
+		public event ServerEventHandler CloseClientSocket;
+		public event ServerEventHandler Connect;
 
 		#endregion
 
@@ -72,8 +72,7 @@ namespace ServerFramework.Network.Socket
 		public void Init()
 		{
 			for (int i = 0; i < socketSettings.MaxAcceptOps; i++)
-				this.AcceptPool.Push(
-					CreateNewSaeaForAccept(AcceptPool));
+				this.AcceptPool.Push(CreateNewSaeaForAccept());
 
 			for (int i = 0; i < socketSettings.NumberOfSaeaForRecSend; i++)
 				this.SendReceivePool.Push(CreateNewSendRecPoolItem());
@@ -127,12 +126,12 @@ namespace ServerFramework.Network.Socket
 				}
 				catch
 				{
-					acceptEventArgs = CreateNewSaeaForAccept(AcceptPool);
+					acceptEventArgs = CreateNewSaeaForAccept();
 				}
 			}
 			else
 			{
-				acceptEventArgs = CreateNewSaeaForAccept(AcceptPool);
+				acceptEventArgs = CreateNewSaeaForAccept();
 			}
 
 			this.maxConnectionsEnforcer.WaitOne();
@@ -235,8 +234,8 @@ namespace ServerFramework.Network.Socket
 				e.AcceptSocket = null;
 				this.AcceptPool.Push(e);
 
-				if (OnConnect != null)
-					OnConnect(c, e);
+				if (Connect != null)
+					Connect(c, e);
 
 				startReceive(socketExtended.Receiver);
 			}
@@ -259,11 +258,11 @@ namespace ServerFramework.Network.Socket
 
 			while (remainingBytes > 0)
 			{
-				if (!token.HeaderReady)
+				if (!token.IsHeaderReady)
 				{
 					remainingBytes = token.HandleHeader(e, remainingBytes);
 
-					if (remainingBytes > 0 && token.HeaderReady)
+					if (remainingBytes > 0 && token.IsHeaderReady)
 						remainingBytes = token.HandleMessage(e, remainingBytes);
 				}
 				else
@@ -271,19 +270,19 @@ namespace ServerFramework.Network.Socket
 					remainingBytes = token.HandleMessage(e, remainingBytes);
 				}
 
-				if (token.PacketReady)
+				if (token.IsPacketReady)
 				{
 					Manager.PacketLogMgr.Log(token.Packet);
 					Manager.PacketMgr.InvokeHandler(token.Packet);
 
 					if (remainingBytes > 0)
-						token.Reset(token.MessageOffset + token.MessageLength + socketSettings.HeaderLength);
+						token.Reset(token.MessageOffset + token.MessageBytesDoneThisOp);
 					else
-						token.Reset(token.PermanentMessageOffset);
+						token.Reset(token.BufferOffset);
 				}
 				else
 				{
-					if (token.HeaderReady)
+					if (token.IsHeaderReady)
 					{
 						token.MessageOffset = token.BufferOffset;
 						token.HeaderBytesDoneCount = 0;
@@ -312,13 +311,13 @@ namespace ServerFramework.Network.Socket
 
 			if (token.MessageBytesRemainingCount == 0)
 			{
-				Client c = Manager.SessionMgr.GetClientBySessionId(token.SessionId);
+				Client c = Manager.SessionMgr.GetClientBySession(token.SessionId);
 
 				if (c == null)
 					return;
 
 				Manager.PacketLogMgr.Log(token.Packet);
-				token.Reset(token.PermanentMessageOffset);
+				token.Reset(token.BufferOffset);
 
 				c.SocketExtended.SendResetEvent.Set();
 			}
@@ -342,7 +341,7 @@ namespace ServerFramework.Network.Socket
 
 		#region CreateNewSaeaForAccept
 
-		private SocketAsyncEventArgs CreateNewSaeaForAccept(ObjectPool<SocketAsyncEventArgs> pool)
+		private SocketAsyncEventArgs CreateNewSaeaForAccept()
 		{
 			SocketAsyncEventArgs acceptEventArgs = new SocketAsyncEventArgs();
 			acceptEventArgs.Completed += new EventHandler<SocketAsyncEventArgs>(accept_completed);
@@ -402,8 +401,8 @@ namespace ServerFramework.Network.Socket
 
 			if (c != null)
 			{
-				if (OnCloseClientSocket != null)
-					OnCloseClientSocket(c, e);
+				if (CloseClientSocket != null)
+					CloseClientSocket(c, e);
 
 				Manager.LogMgr.Log(LogType.Normal, "Session {0} quit", ((UserToken)e.UserToken).SessionId);
 
@@ -431,8 +430,17 @@ namespace ServerFramework.Network.Socket
 
 		public void Dispose()
 		{
-			listenSocket.Dispose();
-			maxConnectionsEnforcer.Dispose();
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		private void Dispose(bool isDisposing)
+		{
+			if(isDisposing)
+			{
+				listenSocket.Dispose();
+				maxConnectionsEnforcer.Dispose();
+			}
 		}
 
 		#endregion

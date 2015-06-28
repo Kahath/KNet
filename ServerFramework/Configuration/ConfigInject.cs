@@ -24,6 +24,8 @@ namespace ServerFramework.Configuration
 		#region Fields
 
 		private XmlNodeList _nodes;
+		private const string _configName = "name";
+		private const string _configValue = "value";
 
 		#endregion
 
@@ -79,9 +81,9 @@ namespace ServerFramework.Configuration
 				{
 					if (node.NodeType == XmlNodeType.Element)
 					{
-						if (node.Attributes["name"].Value == config)
+						if (node.Attributes[_configName].Value == config)
 						{
-							nameValue = node.Attributes["value"].Value;
+							nameValue = node.Attributes[_configValue].Value;
 							break;
 						}
 					}

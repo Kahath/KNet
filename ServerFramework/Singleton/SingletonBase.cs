@@ -74,12 +74,6 @@ namespace ServerFramework.Singleton
 
 		#endregion
 
-		#region Init
-
-		internal abstract void Init();
-
-		#endregion
-
 		#endregion
 	}
 }

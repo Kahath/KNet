@@ -26,8 +26,36 @@ using System.Reflection;
 
 namespace ServerFramework.Managers.Core
 {
-	public sealed class PacketManager : PacketManagerBase<PacketManager>
+	public sealed class PacketManager : ManagerBase<PacketManager>
 	{
+		#region Fields
+
+		private Dictionary<ushort, OpcodeHandler> _packetHandlers
+			= new Dictionary<ushort, OpcodeHandler>();
+
+		#endregion
+
+		#region Properties
+
+		internal Dictionary<ushort, OpcodeHandler> PacketHandlers
+		{
+			get { return _packetHandlers; }
+			set { _packetHandlers = value; }
+		}
+
+		public int PacketHandlersCount
+		{
+			get { return _packetHandlers.Count; }
+		}
+
+		#endregion
+
+		#region Events
+
+		public event PacketEventHandler BeforePacketInvoke;
+
+		#endregion
+
 		#region Constructor
 
 		PacketManager()
@@ -85,7 +113,7 @@ namespace ServerFramework.Managers.Core
 
 		#region InvokeHandler
 
-		internal override void InvokeHandler(Packet packet)
+		internal void InvokeHandler(Packet packet)
 		{
 			BeforePacketInvokeEvent(packet);
 
@@ -95,7 +123,7 @@ namespace ServerFramework.Managers.Core
 				{
 					using (packet)
 					{
-						Client pClient = Manager.SessionMgr.GetClientBySessionId(packet.SessionId);
+						Client pClient = Manager.SessionMgr.GetClientBySession(packet.SessionId);
 
 						if (pClient != null)
 							PacketHandlers[packet.Header.Opcode].Invoke(pClient, packet);
@@ -131,6 +159,16 @@ namespace ServerFramework.Managers.Core
 			{
 				Manager.LogMgr.Log(LogType.Warning, "Opcode 0x{0:X} doesn't have handler", packet.Header.Opcode);
 			}
+		}
+
+		#endregion
+
+		#region BeforePacketInvokeEvent
+
+		private void BeforePacketInvokeEvent(Packet packet)
+		{
+			if (BeforePacketInvoke != null)
+				BeforePacketInvoke(packet, new EventArgs());
 		}
 
 		#endregion

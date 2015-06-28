@@ -62,7 +62,7 @@ namespace ServerFramework.Constants.Entities.Session
 
 		public bool IsConsole
 		{
-			get { return Token is ConsoleClient; }
+			get { return Token != null ? Token is ConsoleClient : false; }
 		}
 
 		public CommandLevel UserLevel
@@ -108,7 +108,7 @@ namespace ServerFramework.Constants.Entities.Session
 			token.Finish();
 			token.Packet.SessionId = token.SessionId;
 
-			KahathFramework.Server.Send(this.SocketExtended.Sender);
+			KahathFramework.Server.Send(SocketExtended.Sender);
 		}
 
 		#endregion

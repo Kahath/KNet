@@ -36,7 +36,9 @@ namespace ServerFramework.Configuration
 		private static int _maxConnections;
 		private static int _maxSimultaneousAcceptOps;
 		private static int _backlog;
+		private static int _opcodeLength;
 		private static int _headerLength;
+		private static int _bigHeaderLength;
 
 		private static string _dbHost;
 		private static int _dbPort;
@@ -114,10 +116,22 @@ namespace ServerFramework.Configuration
 			set { _backlog = value; }
 		}
 
+		internal static int OpcodeLength
+		{
+			get { return _opcodeLength; }
+			set { _opcodeLength = value; }
+		}
+
 		internal static int HeaderLength
 		{
 			get { return _headerLength; }
 			set { _headerLength = value; }
+		}
+
+		internal static int BigHeaderLength
+		{
+			get { return _bigHeaderLength; }
+			set { _bigHeaderLength = value; }
 		}
 
 		internal static string DBHost
@@ -185,13 +199,16 @@ namespace ServerFramework.Configuration
 			MaxConnections = Config.Read<int>("maxconnections");
 			MaxSimultaneousAcceptOps = Config.Read<int>("maxsimultaneousacceptops");
 			Backlog = Config.Read<int>("backlog");
-			HeaderLength = 4;
 
 			DBHost = Config.Read<string>("dbhost");
 			DBPort = Config.Read<int>("dbport");
 			DBUser = Config.Read<string>("dbuser");
 			DBPass = Config.Read<string>("dbpass");
 			DBName = Config.Read<string>("dbname");
+
+			OpcodeLength = 2;
+			HeaderLength = 4;
+			BigHeaderLength = 6;
 		}
 
 		#endregion

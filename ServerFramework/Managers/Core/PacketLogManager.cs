@@ -21,14 +21,51 @@ using ServerFramework.Database.Model.Application.PacketLog;
 using ServerFramework.Managers.Base;
 using ServerFramework.Network.Packets;
 using System;
-using System.IO;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
 namespace ServerFramework.Managers.Core
 {
-	public sealed class PacketLogManager : PacketLogManagerBase<PacketLogManager>
+	public sealed class PacketLogManager : ManagerBase<PacketLogManager>, IDisposable
 	{
+		#region Fields
+
+		private string _path;
+		private List<PacketLogModel> _packetLog;
+		private BlockingCollection<Packet> _packetLogQueue
+			= new BlockingCollection<Packet>();
+
+		#endregion
+
+		#region Properties
+
+		internal string Path
+		{
+			get { return _path; }
+			set { _path = value; }
+		}
+
+		private BlockingCollection<Packet> PacketLogQueue
+		{
+			get { return _packetLogQueue; }
+			set { _packetLogQueue = value; }
+		}
+
+		private List<PacketLogModel> PacketLog
+		{
+			get
+			{
+				if (_packetLog == null)
+					_packetLog = new List<PacketLogModel>();
+
+				return _packetLog;
+			}
+		}
+
+		#endregion
+
 		#region Constructors
 
 		PacketLogManager()
@@ -65,14 +102,11 @@ namespace ServerFramework.Managers.Core
 
 		#region LogPacket
 
-		protected override void LogPacket(Packet packet)
+		private void LogPacket(Packet packet)
 		{
 			PacketLogType logtype = packet.Stream.Reader != null ? PacketLogType.CMSG : PacketLogType.SMSG;
 
-			if (!((ServerConfig.PacketLogLevel & logtype) == logtype) ? true : false)
-				return;
-
-			Client pClient = Manager.SessionMgr.GetClientBySessionId(packet.SessionId);
+			Client pClient = Manager.SessionMgr.GetClientBySession(packet.SessionId);
 
 			PacketLogModel packetLog = new PacketLogModel();
 
@@ -100,12 +134,13 @@ namespace ServerFramework.Managers.Core
 			{
 				packetLog.Message = logtype == PacketLogType.CMSG ?
 					BitConverter.ToString(packet.Message) :
-					BitConverter.ToString(packet.Message, ServerConfig.HeaderLength);
+					BitConverter.ToString(packet.Message
+					, packet.Header.Size > Int16.MaxValue ? ServerConfig.BigHeaderLength : ServerConfig.HeaderLength);
 			}
 
 			PacketLog.Add(packetLog);
 
-			if (PacketLog.Count > 1000)
+			if (PacketLog.Count > ServerConfig.PacketLogSize)
 			{
 				using (ApplicationContext context = new ApplicationContext())
 				{
@@ -121,9 +156,21 @@ namespace ServerFramework.Managers.Core
 
 		#region Log
 
-		internal override void Log(Packet packet)
+		internal void Log(Packet packet)
 		{
-			PacketLogQueue.Add(packet);
+			PacketLogType logtype = packet.Stream.Reader != null ? PacketLogType.CMSG : PacketLogType.SMSG;
+			
+			if ((ServerConfig.PacketLogLevel & logtype) == logtype)
+				PacketLogQueue.Add(packet);
+		}
+
+		#endregion
+
+		#region Dispose
+
+		public void Dispose()
+		{
+			_packetLogQueue.Dispose();
 		}
 
 		#endregion

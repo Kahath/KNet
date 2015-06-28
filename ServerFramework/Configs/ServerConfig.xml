@@ -2,43 +2,45 @@
 <ServerSettings>
 
 				<!--  Server settings -->
-<property name="bindip" value="0.0.0.0"/>						<!--Server bind IP-->
-<property name="bindport" value=""/>								<!--Server port-->
+<property name="bindip" value="0.0.0.0"/>				<!--Server bind IP-->
+<property name="bindport" value=""/>					<!--Server port-->
 
 				<!-- Database settings-->
-<property name="dbhost" value="127.0.0.1"/>					<!--Database IP-->
-<property name="dbport" value="1433"/>							<!--Database port-->
-<property name="dbuser" value="root"/>							<!--Database username-->
-<property name="dbpass" value="root"/>							<!--Database password-->
-<property name="dbname" value=""/>									<!--Database name-->
+<property name="dbhost" value="127.0.0.1"/>				<!--Database IP-->
+<property name="dbport" value="1433"/>					<!--Database port-->
+<property name="dbuser" value="root"/>					<!--Database username-->
+<property name="dbpass" value="root"/>					<!--Database password-->
+<property name="dbname" value=""/>						<!--Database name-->
 
 				<!-- Log level settings-->
-<property name="loglevel" value="0xFF" />						<!--Console log level mask
-																											None				= 0x00
-																											Normal			= 0x01
-																											Init				= 0x02
-																											Command			= 0x04
-																											DB					= 0x08
-																											Info				= 0x10
-																											Warning			= 0x20
-																											Error				= 0x40
-																											Critical		= 0x80
-																											All					= 0xFF-->
+<property name="loglevel" value="0xFF" />				<!--Console log level mask
+															None				= 0x00
+															Normal				= 0x01
+															Init				= 0x02
+															Command				= 0x04
+															DB					= 0x08
+															Info				= 0x10
+															Warning				= 0x20
+															Error				= 0x40
+															Critical			= 0x80
+															All					= 0xFF-->
 		<!--Packet log level settings-->
 <property name="packetloglevel" value="0x00" />			<!--Packet log level mask
-																											None				= 0x00
-																											SMSG				= 0x01
-																											CMSG				= 0x02
-																											All					= 0x03-->
-<property name="packetlogsize" value="10" />
-  
+															None				= 0x00
+															SMSG				= 0x01
+															CMSG				= 0x02
+															All					= 0x03-->
+
+<property name="packetlogsize" value="1000" />
+
 				<!--Opcode settings-->
-<property name="opcodeallowlevel" value="0xFF"/>		<!--Opcode allow type mask
-																											Test						= 0x01,
-																											Broken					= 0x02,
-																											Finished				= 0x04,
-																											NotUsed					= 0x08,
-																											InDevelopment		= 0x10,-->
+<property name="opcodeallowlevel" value="0x1F"/>		<!--Opcode allow type mask
+															Test				= 0x01
+															Broken				= 0x02
+															Finished			= 0x04
+															NotUsed				= 0x08
+															InDevelopment		= 0x10
+															All					= 0x1F-->
 
 				<!-- Socket settings-->
 <property name="maxconnections" value="10" />

@@ -14,12 +14,19 @@
  */
 
 using ServerFramework.Singleton;
-using System;
 
 namespace ServerFramework.Managers.Base
 {
 	public abstract class ManagerBase<T> : SingletonBase<T> where T : class
 	{
+		#region Methods
 
+		#region Init
+
+		internal abstract void Init();
+
+		#endregion
+
+		#endregion
 	}
 }

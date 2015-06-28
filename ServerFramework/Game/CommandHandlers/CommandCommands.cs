@@ -56,6 +56,7 @@ namespace ServerFramework.Game.CommandHandlers
 			Manager.LogMgr.Log(LogType.Command, "List of all commands:");
 
 			sb.AppendLine(String.Join("\n", Manager.CommandMgr.CommandTable
+				.Where(x => user.UserLevel >= x.CommandLevel)
 				.Select(x => x.SubCommands != null ? String.Format("{0}..", x.Name) : x.Name)));
 
 			Manager.LogMgr.Log(LogType.Command, "{0}", sb.ToString());

@@ -21,11 +21,41 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace ServerFramework.Managers.Core
 {
-	public sealed class SessionManager : SessionManagerBase<SessionManager>
+	public sealed class SessionManager : ManagerBase<SessionManager>
 	{
+		#region Fields
+
+		private ConcurrentDictionary<int, Client> _clients;
+		private Stack<int> _freeSessionIDPool;
+		private int _sessionId = 0;
+
+		#endregion
+
+		#region Properties
+
+		internal ConcurrentDictionary<int, Client> Clients
+		{
+			get { return _clients; }
+			set { _clients = value; }
+		}
+
+		internal Stack<int> FreeSessionIDPool
+		{
+			get { return _freeSessionIDPool; }
+			set { _freeSessionIDPool = value; }
+		}
+
+		public int ClientsCount
+		{
+			get { return _clients.Count; }
+		}
+
+		#endregion
+
 		#region Constructors
 
 		SessionManager()
@@ -49,7 +79,7 @@ namespace ServerFramework.Managers.Core
 
 		#region RemoveClient
 
-		internal override Client RemoveClient(int id)
+		internal Client RemoveClient(int id)
 		{
 			Client client = null;
 
@@ -63,7 +93,7 @@ namespace ServerFramework.Managers.Core
 
 		#region GetClient
 
-		public override Client GetClient(Func<Client, bool> func)
+		public Client GetClient(Func<Client, bool> func)
 		{
 			Client client = null;
 			client = Clients.Values.FirstOrDefault(func);
@@ -71,7 +101,7 @@ namespace ServerFramework.Managers.Core
 			return client;
 		}
 
-		public override Client GetClientBySessionId(int sessionId)
+		public Client GetClientBySession(int sessionId)
 		{
 			Client c = null;
 
@@ -84,7 +114,7 @@ namespace ServerFramework.Managers.Core
 
 		#region GetClients
 
-		public override IEnumerable<Client> GetClients(Func<Client, bool> func = null)
+		public IEnumerable<Client> GetClients(Func<Client, bool> func = null)
 		{
 			IEnumerable<Client> clients = null;
 
@@ -100,7 +130,7 @@ namespace ServerFramework.Managers.Core
 
 		#region AddClient
 
-		internal override int AddClient(Client c)
+		internal int AddClient(Client c)
 		{
 			int id = 0;
 
@@ -120,6 +150,31 @@ namespace ServerFramework.Managers.Core
 			}
 
 			return id;
+		}
+
+		#endregion
+
+		#region ForEachParallel
+
+		public ParallelLoopResult ForEachParallel(Action<Client> body)
+		{
+			ParallelLoopResult retVal;
+
+			retVal = Parallel.ForEach(Clients.Values, body);
+
+			return retVal;
+		}
+
+		#endregion
+
+		#region ForEach
+
+		public void ForEach(Action<Client> body)
+		{
+			foreach (Client client in Clients.Values)
+			{
+				body(client);
+			}
 		}
 
 		#endregion

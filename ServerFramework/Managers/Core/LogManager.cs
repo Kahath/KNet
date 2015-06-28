@@ -19,13 +19,44 @@ using ServerFramework.Database.Context;
 using ServerFramework.Database.Model.Application.Log;
 using ServerFramework.Managers.Base;
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 
 namespace ServerFramework.Managers.Core
 {
-	public sealed class LogManager : LogManagerBase<LogManager>
+	public sealed class LogManager : ManagerBase<LogManager>, IDisposable
 	{
+		#region Fields
+
+		private BlockingCollection<Tuple<ConsoleColor, string>> _consoleLogQueue
+			= new BlockingCollection<Tuple<ConsoleColor, string>>();
+		private List<LogModel> _logList;
+
+		#endregion
+
+		#region Properties
+
+		private BlockingCollection<Tuple<ConsoleColor, string>> ConsoleLogQueue
+		{
+			get { return _consoleLogQueue; }
+			set { _consoleLogQueue = value; }
+		}
+
+		private List<LogModel> LogList
+		{
+			get
+			{
+				if (_logList == null)
+					_logList = new List<LogModel>();
+
+				return _logList;
+			}
+		}
+
+		#endregion
+
 		#region Constructors
 
 		LogManager()
@@ -71,7 +102,7 @@ namespace ServerFramework.Managers.Core
 
 		#region Message
 
-		protected override void Message(LogType type, string message, params object[] args)
+		private void Message(LogType type, string message, params object[] args)
 		{
 			ConsoleColor color;
 
@@ -130,6 +161,7 @@ namespace ServerFramework.Managers.Core
 						,	DateTime.Now.ToString("HH:mm:ss.fff")
 						,	String.Format(message, args)
 						);
+
 						ConsoleLogQueue.Add(Tuple.Create<ConsoleColor, string>(color, msg));
 
 						LogModel logModel = new LogModel();
@@ -151,7 +183,7 @@ namespace ServerFramework.Managers.Core
 
 		#region Log
 
-		public override void Log(LogType type, string message, params object[] args)
+		public void Log(LogType type, string message, params object[] args)
 		{
 			Message(type, message, args);
 		}
@@ -169,6 +201,15 @@ namespace ServerFramework.Managers.Core
 		public void Log()
 		{
 			Log(LogType.Normal, "");
+		}
+
+		#endregion
+
+		#region Dispose
+
+		public void Dispose()
+		{
+			_consoleLogQueue.Dispose();
 		}
 
 		#endregion

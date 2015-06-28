@@ -20,12 +20,55 @@ using System.Net.Sockets;
 
 namespace ServerFramework.Managers.Core
 {
-	public sealed class BufferManager : BufferManagerBase<BufferManager>
+	public sealed class BufferManager : ManagerBase<BufferManager>
 	{
+		#region Fields
+
+		private int _bufferBytesAllocatedForEachSaea;
+		private int _totalBytesInBufferBlock;
+		private int _currentIndex;
+		private byte[] _bufferBlock;
+		private Stack<int> _freeIndexPool;
+
+		#endregion
+
+		#region Properties
+
+		private int BufferBytesAllocatedForEachSaea
+		{
+			get { return _bufferBytesAllocatedForEachSaea; }
+			set { _bufferBytesAllocatedForEachSaea = value; }
+		}
+
+		public int TotalBytesInBufferBlock
+		{
+			get { return _totalBytesInBufferBlock; }
+			private set { _totalBytesInBufferBlock = value; }
+		}
+
+		private int CurrentIndex
+		{
+			get { return _currentIndex; }
+			set { _currentIndex = value; }
+		}
+
+		private byte[] BufferBlock
+		{
+			get { return _bufferBlock; }
+			set { _bufferBlock = value; }
+		}
+
+		private Stack<int> FreeIndexPool
+		{
+			get { return _freeIndexPool; }
+			set { _freeIndexPool = value; }
+		}
+
+		#endregion
+
 		#region Constructors
 
 		BufferManager(int totalBytes, int totalBytesInEachSaeaObject)
-			: base(totalBytes, totalBytesInEachSaeaObject)
 		{
 			TotalBytesInBufferBlock = totalBytes;
 			CurrentIndex = 0;
@@ -51,7 +94,7 @@ namespace ServerFramework.Managers.Core
 
 		#region SetBuffer
 
-		internal override bool SetBuffer(SocketAsyncEventArgs e)
+		internal bool SetBuffer(SocketAsyncEventArgs e)
 		{
 			if (FreeIndexPool.Count > 0)
 			{
@@ -77,7 +120,7 @@ namespace ServerFramework.Managers.Core
 
 		#region FreeBuffer
 
-		internal override void FreeBuffer(SocketAsyncEventArgs e)
+		internal void FreeBuffer(SocketAsyncEventArgs e)
 		{
 			FreeIndexPool.Push(e.Offset);
 			e.SetBuffer(null, 0, 0);

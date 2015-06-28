@@ -22,8 +22,8 @@ namespace ServerFramework.Network.Socket
 	{
 		#region Events
 
-		event ServerEventHandler OnCloseClientSocket;
-		event ServerEventHandler OnConnect;
+		event ServerEventHandler CloseClientSocket;
+		event ServerEventHandler Connect;
 
 		#endregion
 

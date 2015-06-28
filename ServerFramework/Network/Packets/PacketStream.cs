@@ -66,7 +66,7 @@ namespace ServerFramework.Network.Packets
 		public PacketStream(Encoding encoder, byte[] data = null)
 		{
 			if (data != null)
-				Reader = new BinaryReader(new MemoryStream(data), encoder);
+				Reader = new BinaryReader(new MemoryStream(data, false), encoder);
 			else
 				Writer = new BinaryWriter(new MemoryStream(), encoder);
 		}
@@ -208,13 +208,34 @@ namespace ServerFramework.Network.Packets
 		{
 			Flush();
 			Writer.BaseStream.Seek(0, SeekOrigin.Begin);
-			message = new byte[Writer.BaseStream.Length];
-			ushort size = (ushort)(message.Length - ServerConfig.HeaderLength);
 
-			Writer.BaseStream.Read(message, 0, message.Length);
+			int length = (int)Writer.BaseStream.Length;
+			int size = length - ServerConfig.BigHeaderLength;
+			int headerSize = size > Int16.MaxValue
+				? ServerConfig.BigHeaderLength
+				: ServerConfig.HeaderLength;
 
-			message[0] = (byte)(size & 0xFF);
-			message[1] = (byte)((size >> 8) & 0xFF);
+			message = new byte[size + headerSize];
+
+			if (size > Int16.MaxValue)
+			{				
+				Writer.BaseStream.Read(message, 0, size + headerSize);
+
+				size |= Int32.MinValue; // indicator for big packet
+
+				message.SetValue((byte)((size >> 24) & Byte.MaxValue), 0);
+				message.SetValue((byte)((size >> 16) & Byte.MaxValue), 1);
+				message.SetValue((byte)((size >> 8) & Byte.MaxValue), 2);
+				message.SetValue((byte)(size & Byte.MaxValue), 3);
+			}
+			else
+			{
+				Writer.BaseStream.Skip(2);
+				Writer.BaseStream.Read(message, 0, size + headerSize);
+
+				message.SetValue((byte)((size >> 8) & Byte.MaxValue), 0);
+				message.SetValue((byte)(size & Byte.MaxValue), 1);
+			}
 
 			return message.Length;
 		}
