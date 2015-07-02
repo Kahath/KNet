@@ -13,7 +13,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using ServerFramework.Constants.Entities.Session;
 using ServerFramework.Constants.Misc;
+using System;
+using System.Text;
+using System.Linq;
 
 namespace ServerFramework.Constants.Entities.Console
 {
@@ -74,6 +78,34 @@ namespace ServerFramework.Constants.Entities.Console
 			Script = script;
 			Description = description;
 		}
+
+		#endregion
+
+		#region Methods
+
+		#region Invoke
+
+		public bool Invoke(Client user, params string[] args)
+		{
+			return Script.Invoke(user, args);
+		}
+
+		#endregion
+
+		#region AvailableSubCommands
+
+		public string AvailableSubCommands(CommandLevel userLevel = CommandLevel.Zero)
+		{
+			StringBuilder retVal = new StringBuilder();
+
+			retVal.AppendLine(String.Join("\n", SubCommands
+				.Where(x => userLevel >= x.CommandLevel)
+				.Select(x => x.SubCommands != null ? String.Format("{0}..", x.Name) : x.Name)));
+
+			return retVal.ToString();
+		}
+
+		#endregion
 
 		#endregion
 	}

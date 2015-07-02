@@ -60,14 +60,14 @@ namespace ServerFramework.Network.Socket
 			set { _receiver = value; }
 		}
 
-		internal UserToken ReceiverToken
+		internal SocketData ReceiverData
 		{
-			get { return ((UserToken)Receiver.UserToken); }
+			get { return ((SocketData)Receiver.UserToken); }
 		}
 
-		internal UserToken SenderToken
+		internal SocketData SenderData
 		{
-			get { return ((UserToken)Sender.UserToken); }
+			get { return ((SocketData)Sender.UserToken); }
 		}
 
 		internal AutoResetEvent SendResetEvent
@@ -89,8 +89,8 @@ namespace ServerFramework.Network.Socket
 		{
 			set
 			{
-				SenderToken.SessionId = value;
-				ReceiverToken.SessionId = value;
+				SenderData.SessionId = value;
+				ReceiverData.SessionId = value;
 			}
 		}
 

@@ -148,8 +148,8 @@ namespace ServerFramework.Network.Socket
 		{
 			try
 			{
-				UserToken token = (UserToken)e.UserToken;
-				e.SetBuffer(token.BufferOffset, this.socketSettings.BufferSize);
+				SocketData data = (SocketData)e.UserToken;
+				e.SetBuffer(data.BufferOffset, this.socketSettings.BufferSize);
 
 				if (!e.AcceptSocket.ReceiveAsync(e))
 					processReceive(e);
@@ -167,21 +167,21 @@ namespace ServerFramework.Network.Socket
 		{
 			try
 			{
-				UserToken token = (UserToken)e.UserToken;
+				SocketData data = (SocketData)e.UserToken;
 
-				if (token.MessageBytesRemainingCount > this.socketSettings.BufferSize)
+				if (data.MessageBytesRemainingCount > this.socketSettings.BufferSize)
 				{
-					e.SetBuffer(token.BufferOffset, this.socketSettings.BufferSize);
+					e.SetBuffer(data.BufferOffset, this.socketSettings.BufferSize);
 
-					Buffer.BlockCopy(token.Packet.Message, token.MessageBytesDoneCount,
-						e.Buffer, token.BufferOffset, this.socketSettings.BufferSize);
+					Buffer.BlockCopy(data.Packet.Message, data.MessageBytesDoneCount,
+						e.Buffer, data.BufferOffset, this.socketSettings.BufferSize);
 				}
 				else
 				{
-					e.SetBuffer(token.BufferOffset, token.MessageBytesRemainingCount);
+					e.SetBuffer(data.BufferOffset, data.MessageBytesRemainingCount);
 
-					Buffer.BlockCopy(token.Packet.Message, token.MessageBytesDoneCount,
-						e.Buffer, token.BufferOffset, token.MessageBytesRemainingCount);
+					Buffer.BlockCopy(data.Packet.Message, data.MessageBytesDoneCount,
+						e.Buffer, data.BufferOffset, data.MessageBytesRemainingCount);
 				}
 
 				if (!e.AcceptSocket.SendAsync(e))
@@ -222,7 +222,7 @@ namespace ServerFramework.Network.Socket
 						(
 							LogType.Normal
 						,	"Session {0} ({1}) connected"
-						,	socketExtended.ReceiverToken.SessionId
+						,	socketExtended.ReceiverData.SessionId
 						,	socketExtended.Receiver.AcceptSocket.RemoteEndPoint
 						);
 				}
@@ -253,39 +253,39 @@ namespace ServerFramework.Network.Socket
 				return;
 			}
 
-			UserToken token = (UserToken)e.UserToken;
+			SocketData data = (SocketData)e.UserToken;
 			int remainingBytes = e.BytesTransferred;
 
 			while (remainingBytes > 0)
 			{
-				if (!token.IsHeaderReady)
+				if (!data.IsHeaderReady)
 				{
-					remainingBytes = token.HandleHeader(e, remainingBytes);
+					remainingBytes = data.HandleHeader(e, remainingBytes);
 
-					if (remainingBytes > 0 && token.IsHeaderReady)
-						remainingBytes = token.HandleMessage(e, remainingBytes);
+					if (remainingBytes > 0 && data.IsHeaderReady)
+						remainingBytes = data.HandleMessage(e, remainingBytes);
 				}
 				else
 				{
-					remainingBytes = token.HandleMessage(e, remainingBytes);
+					remainingBytes = data.HandleMessage(e, remainingBytes);
 				}
 
-				if (token.IsPacketReady)
+				if (data.IsPacketReady)
 				{
-					Manager.PacketLogMgr.Log(token.Packet);
-					Manager.PacketMgr.InvokeHandler(token.Packet);
+					Manager.PacketLogMgr.Log(data.Packet);
+					Manager.PacketMgr.InvokeHandler(data.Packet);
 
 					if (remainingBytes > 0)
-						token.Reset(token.MessageOffset + token.MessageBytesDoneThisOp);
+						data.Reset(data.MessageOffset + data.MessageBytesDoneThisOp);
 					else
-						token.Reset(token.BufferOffset);
+						data.Reset(data.BufferOffset);
 				}
 				else
 				{
-					if (token.IsHeaderReady)
+					if (data.IsHeaderReady)
 					{
-						token.MessageOffset = token.BufferOffset;
-						token.HeaderBytesDoneCount = 0;
+						data.MessageOffset = data.BufferOffset;
+						data.HeaderBytesDoneCount = 0;
 					}
 				}
 			}
@@ -305,25 +305,25 @@ namespace ServerFramework.Network.Socket
 				return;
 			}
 
-			UserToken token = (UserToken)e.UserToken;
+			SocketData data = (SocketData)e.UserToken;
 
-			token.MessageBytesRemainingCount -= e.BytesTransferred;
+			data.MessageBytesRemainingCount -= e.BytesTransferred;
 
-			if (token.MessageBytesRemainingCount == 0)
+			if (data.MessageBytesRemainingCount == 0)
 			{
-				Client c = Manager.SessionMgr.GetClientBySession(token.SessionId);
+				Client c = Manager.SessionMgr.GetClientBySession(data.SessionId);
 
 				if (c == null)
 					return;
 
-				Manager.PacketLogMgr.Log(token.Packet);
-				token.Reset(token.BufferOffset);
+				Manager.PacketLogMgr.Log(data.Packet);
+				data.Reset(data.BufferOffset);
 
 				c.SocketExtended.SendResetEvent.Set();
 			}
 			else
 			{
-				token.MessageBytesDoneCount += e.BytesTransferred;
+				data.MessageBytesDoneCount += e.BytesTransferred;
 				StartSend(e);
 			}
 		}
@@ -356,26 +356,26 @@ namespace ServerFramework.Network.Socket
 		private SocketExtended CreateNewSendRecPoolItem()
 		{
 			SocketExtended retVal = null;
-			UserToken token = null;
+			SocketData data = null;
 
 			retVal = new SocketExtended();
 
 			Manager.BufferMgr.SetBuffer(retVal.Receiver);
 			Manager.BufferMgr.SetBuffer(retVal.Sender);
 
-			token = new UserToken(socketSettings.BufferSize,
+			data = new SocketData(socketSettings.BufferSize,
 				retVal.Receiver.Offset,
 				socketSettings.HeaderLength);
-			token.StartReceive();
+			data.StartReceive();
 
-			retVal.Receiver.UserToken = token;
+			retVal.Receiver.UserToken = data;
 			retVal.Receiver.Completed +=
 				new EventHandler<SocketAsyncEventArgs>(receive_completed);
 
-			token = new UserToken(socketSettings.BufferSize, retVal.Sender.Offset,
+			data = new SocketData(socketSettings.BufferSize, retVal.Sender.Offset,
 				socketSettings.HeaderLength);
 
-			retVal.Sender.UserToken = token;
+			retVal.Sender.UserToken = data;
 			retVal.Sender.Completed +=
 				new EventHandler<SocketAsyncEventArgs>(send_completed);
 
@@ -397,14 +397,14 @@ namespace ServerFramework.Network.Socket
 
 		private void closeClientSocket(SocketAsyncEventArgs e)
 		{
-			Client c = Manager.SessionMgr.RemoveClient(((UserToken)e.UserToken).SessionId);
+			Client c = Manager.SessionMgr.RemoveClient(((SocketData)e.UserToken).SessionId);
 
 			if (c != null)
 			{
 				if (CloseClientSocket != null)
 					CloseClientSocket(c, e);
 
-				Manager.LogMgr.Log(LogType.Normal, "Session {0} quit", ((UserToken)e.UserToken).SessionId);
+				Manager.LogMgr.Log(LogType.Normal, "Session {0} quit", ((SocketData)e.UserToken).SessionId);
 
 				c.SocketExtended.Disconnect(SocketShutdown.Both);
 

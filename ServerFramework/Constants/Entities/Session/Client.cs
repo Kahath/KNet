@@ -57,7 +57,7 @@ namespace ServerFramework.Constants.Entities.Session
 
 		public int SessionID
 		{
-			get { return SocketExtended.ReceiverToken.SessionId; }
+			get { return SocketExtended.ReceiverData.SessionId; }
 		}
 
 		public bool IsConsole
@@ -103,10 +103,10 @@ namespace ServerFramework.Constants.Entities.Session
 				BeforePacketSend(packet, new EventArgs());
 
 			SocketExtended.SendResetEvent.WaitOne();
-			UserToken token = SocketExtended.SenderToken;
-			token.Packet = packet;
-			token.Finish();
-			token.Packet.SessionId = token.SessionId;
+			SocketData data = SocketExtended.SenderData;
+			data.Packet = packet;
+			data.Finish();
+			data.Packet.SessionId = data.SessionId;
 
 			KahathFramework.Server.Send(SocketExtended.Sender);
 		}

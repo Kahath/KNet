@@ -185,7 +185,8 @@ namespace ServerFramework.Managers.Core
 									LogType.Command
 								,	"Error with '{0}' command. Available sub commands:\n{1}"
 								,	command
-								,	AvailableSubCommands(user.UserLevel, c));
+								,	c.AvailableSubCommands(user.UserLevel)
+								);
 
 							return false;
 						}
@@ -204,7 +205,7 @@ namespace ServerFramework.Managers.Core
 
 					try
 					{
-						return c.Script.Invoke(user, path.ToArray());
+						return c.Invoke(user, path.ToArray());
 					}
 					catch (IndexOutOfRangeException)
 					{
@@ -224,29 +225,6 @@ namespace ServerFramework.Managers.Core
 			command.Append(path[0]);
 			Manager.LogMgr.Log(LogType.Command, "Command '{0}' not found", command);
 			return false;
-		}
-
-		#endregion
-
-		#region AvailableSubCommands
-
-		private string AvailableSubCommands(CommandLevel userLevel, Command c)
-		{
-			StringBuilder sb = new StringBuilder();
-
-			foreach (Command com in c.SubCommands)
-			{
-				if (com.SubCommands != null && userLevel >= com.CommandLevel)
-				{
-					sb.AppendLine(com.Name + "..");
-				}
-				else if (userLevel >= com.CommandLevel)
-				{
-					sb.AppendLine(com.Name);
-				}
-			}
-
-			return sb.ToString();
 		}
 
 		#endregion

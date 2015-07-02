@@ -100,7 +100,7 @@
     <Compile Include="Network\Packets\Handlers\ExampleHandler.cs" />
     <Compile Include="Network\Packets\Packet.cs" />
     <Compile Include="Network\Packets\PacketStream.cs" />
-    <Compile Include="Network\Packets\UserToken.cs" />
+    <Compile Include="Network\Packets\SocketData.cs" />
     <Compile Include="Constants\Attributes\OpcodeAttribute.cs" />
     <Compile Include="Network\Packets\PacketHeader.cs" />
     <Compile Include="Constants\Entities\Misc\ObjectPool.cs" />

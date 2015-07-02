@@ -17,7 +17,7 @@ using System.Text;
 
 namespace ServerFramework.Network.Packets
 {
-	internal sealed class UserToken
+	internal sealed class SocketData
 	{
 		#region Fields
 
@@ -165,7 +165,7 @@ namespace ServerFramework.Network.Packets
 		/// <param name="bufferSize">Buffer size for client</param>
 		/// <param name="bufferOffset">Buffer offset in large alocated buffer</param>
 		/// <param name="headerLength">Length of message header</param>
-		internal UserToken(int bufferSize, int bufferOffset, int headerLength)
+		internal SocketData(int bufferSize, int bufferOffset, int headerLength)
 		{
 			this._bufferSize = bufferSize;
 			this._bufferOffset = bufferOffset;

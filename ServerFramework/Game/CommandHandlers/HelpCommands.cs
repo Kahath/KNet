@@ -72,7 +72,7 @@ namespace ServerFramework.Game.CommandHandlers
 							LogType.Command
 						,	"Available sub commands for '{0}' command:\n{1}"
 						,	command
-						,	AvailableSubCommands(userLevel, c)
+						,	c.AvailableSubCommands(userLevel)
 						);
 					return true;
 				}
@@ -95,21 +95,6 @@ namespace ServerFramework.Game.CommandHandlers
 
 			Manager.LogMgr.Log(LogType.Command, "Command '{0}' not found", command);
 			return false;
-		}
-
-		#endregion
-
-		#region AvailableSubCommands
-
-		private static string AvailableSubCommands(CommandLevel userLevel, Command c)
-		{
-			StringBuilder sb = new StringBuilder();
-
-			sb.AppendLine(String.Join("\n", c.SubCommands
-				.Where(x => userLevel >= x.CommandLevel)
-				.Select(x => x.SubCommands != null ? String.Format("{0}..", x.Name) : x.Name)));
-
-			return sb.ToString();
 		}
 
 		#endregion
