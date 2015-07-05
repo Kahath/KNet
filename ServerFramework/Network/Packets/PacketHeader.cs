@@ -14,6 +14,7 @@
  */
 
 using ServerFramework.Configuration;
+using ServerFramework.Constants.Misc;
 using System;
 
 namespace ServerFramework.Network.Packets
@@ -24,7 +25,7 @@ namespace ServerFramework.Network.Packets
 
 		private int _size;
 		private ushort _opcode;
-		private bool _isBigHeader;
+		private byte _flags;
 
 		#endregion
 
@@ -42,31 +43,44 @@ namespace ServerFramework.Network.Packets
 			set { _opcode = value; }
 		}
 
+		public byte Flags
+		{
+			get { return _flags; }
+			set { _flags = value; }
+		}
+
 		public bool IsBigHeader
 		{
-			get { return _isBigHeader; }
-			set { _isBigHeader = value; }
+			get { return Convert.ToBoolean(Flags & (byte)PacketFlag.BigPacket); }
+		}
+
+		public bool IsUnicode
+		{
+			get { return Convert.ToBoolean(Flags & (byte)PacketFlag.Unicode); }
 		}
 
 		#endregion
 
 		#region Constructors
 
-		public PacketHeader(byte[] header, bool isBigHeader)
+		public PacketHeader(byte[] header)
 		{
-			IsBigHeader = isBigHeader;
+			Flags = header[0];
 
-			Size = isBigHeader 
-				? BitConverter.ToInt32(header, 0) & Int32.MaxValue
-				: BitConverter.ToInt16(header, 0);
-			Opcode = isBigHeader
-				? BitConverter.ToUInt16(header, ServerConfig.BigHeaderLength - ServerConfig.OpcodeLength)
-				: BitConverter.ToUInt16(header, ServerConfig.HeaderLength - ServerConfig.OpcodeLength);
+			Size = IsBigHeader
+				? BitConverter.ToInt32(header, ServerConfig.PacketFlagsLength)
+				: BitConverter.ToUInt16(header, ServerConfig.PacketFlagsLength);
+			Opcode = IsBigHeader
+				? BitConverter.ToUInt16(header
+				,	ServerConfig.BigHeaderLength 
+					- ServerConfig.OpcodeLength)
+				: BitConverter.ToUInt16(header
+				,	ServerConfig.HeaderLength 
+					- ServerConfig.OpcodeLength);
 		}
 
 		public PacketHeader()
 		{
-			IsBigHeader = false;
 		}
 
 		#endregion

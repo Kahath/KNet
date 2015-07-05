@@ -14,8 +14,10 @@
  */
 
 using ServerFramework.Configuration;
+using ServerFramework.Constants.Misc;
 using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace ServerFramework.Network.Packets
@@ -80,19 +82,15 @@ namespace ServerFramework.Network.Packets
 		/// Creates new object for writing message
 		/// </summary>
 		/// <param name="message">opcode of message</param>
-		public Packet(ushort message, Encoding encoder = null)
+		public Packet(ushort message, Encoding encoder, byte flags = 0)
 		{
 			Encoder = encoder ?? Encoding.UTF8;
 			_stream = new PacketStream(Encoder);
 
-			Header = new PacketHeader
-			{
-				Size = ServerConfig.BigHeaderLength,
-				Opcode = message
-			};
 
-			Write<int>(Header.Size);
-			Write<ushort>(Header.Opcode);
+			Write<byte>(flags);
+			Write<int>(ServerConfig.BigHeaderLength);
+			Write<ushort>(message);
 		}
 
 		#endregion
@@ -184,7 +182,13 @@ namespace ServerFramework.Network.Packets
 
 		public int End()
 		{
-			return Stream.End(out _message);
+			byte[] header;
+
+			int retVal = Stream.End(out _message, out header);
+
+			Header = new PacketHeader(header);
+
+			return retVal;
 		}
 
 		#endregion

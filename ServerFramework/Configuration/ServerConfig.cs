@@ -39,6 +39,7 @@ namespace ServerFramework.Configuration
 		private static int _opcodeLength;
 		private static int _headerLength;
 		private static int _bigHeaderLength;
+		private static int _packetFlagsLength;
 
 		private static string _dbHost;
 		private static int _dbPort;
@@ -134,6 +135,12 @@ namespace ServerFramework.Configuration
 			set { _bigHeaderLength = value; }
 		}
 
+		public static int PacketFlagsLength
+		{
+			get { return _packetFlagsLength; }
+			set { _packetFlagsLength = value; }
+		}
+
 		internal static string DBHost
 		{
 			get { return _dbHost; }
@@ -206,9 +213,10 @@ namespace ServerFramework.Configuration
 			DBPass = Config.Read<string>("dbpass");
 			DBName = Config.Read<string>("dbname");
 
+			PacketFlagsLength = 1;
 			OpcodeLength = 2;
-			HeaderLength = 4;
-			BigHeaderLength = 6;
+			HeaderLength = 5;
+			BigHeaderLength = 7;
 		}
 
 		#endregion

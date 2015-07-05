@@ -14,9 +14,11 @@
  */
 
 using ServerFramework.Configuration;
+using ServerFramework.Constants.Misc;
 using ServerFramework.Network.Packets;
 using System;
 using System.Net.Sockets;
+using System.Text;
 
 namespace ServerFramework.Extensions
 {
@@ -37,8 +39,15 @@ namespace ServerFramework.Extensions
 		{
 			if (data.Header == null)
 			{
-				data.IsBigPacket = Convert.ToBoolean(e.Buffer[data.HeaderOffset] >> 7);
-				data.HeaderLength = data.IsBigPacket ? ServerConfig.BigHeaderLength : ServerConfig.HeaderLength;
+				byte flags = e.Buffer[data.HeaderOffset];
+
+				data.IsBigPacket = Convert.ToBoolean(flags & (byte)PacketFlag.BigPacket);
+				data.IsUnicode = Convert.ToBoolean(flags & (byte)PacketFlag.Unicode);
+				
+				data.HeaderLength = data.IsBigPacket 
+					? ServerConfig.BigHeaderLength 
+					: ServerConfig.HeaderLength;
+
 				data.Header = new byte[data.HeaderLength];
 				data.MessageOffset = data.HeaderOffset + data.HeaderLength;
 			}
@@ -63,15 +72,13 @@ namespace ServerFramework.Extensions
 
 				data.HeaderBytesDoneCount = data.HeaderLength;
 
-				Array.Reverse(data.Header, 0, data.HeaderLength - ServerConfig.OpcodeLength);
-
 				data.MessageLength = data.IsBigPacket
-					? BitConverter.ToInt32(data.Header, 0) & Int32.MaxValue
-					: BitConverter.ToInt16(data.Header, 0);
+					? BitConverter.ToInt32(data.Header, ServerConfig.PacketFlagsLength)
+					: BitConverter.ToUInt16(data.Header, ServerConfig.PacketFlagsLength);
 
-				data.StartReceive();
+				data.StartReceive(data.IsUnicode ? Encoding.Unicode : Encoding.UTF8);
 
-				data.Packet.Header = new PacketHeader(data.Header, data.IsBigPacket);
+				data.Packet.Header = new PacketHeader(data.Header);
 
 				data.IsHeaderReady = true;
 			}

@@ -262,7 +262,7 @@ namespace ServerFramework.Network.Socket
 				{
 					remainingBytes = data.HandleHeader(e, remainingBytes);
 
-					if (remainingBytes > 0 && data.IsHeaderReady)
+					if (data.IsHeaderReady)
 						remainingBytes = data.HandleMessage(e, remainingBytes);
 				}
 				else
@@ -285,9 +285,11 @@ namespace ServerFramework.Network.Socket
 					if (data.IsHeaderReady)
 					{
 						data.MessageOffset = data.BufferOffset;
-						data.HeaderBytesDoneCount = 0;
 					}
 				}
+
+				data.HeaderBytesDoneThisOp = 0;
+				data.MessageBytesDoneThisOp = 0;
 			}
 
 			startReceive(e);
@@ -366,7 +368,6 @@ namespace ServerFramework.Network.Socket
 			data = new SocketData(socketSettings.BufferSize,
 				retVal.Receiver.Offset,
 				socketSettings.HeaderLength);
-			data.StartReceive();
 
 			retVal.Receiver.UserToken = data;
 			retVal.Receiver.Completed +=
@@ -397,7 +398,10 @@ namespace ServerFramework.Network.Socket
 
 		private void closeClientSocket(SocketAsyncEventArgs e)
 		{
-			Client c = Manager.SessionMgr.RemoveClient(((SocketData)e.UserToken).SessionId);
+			SocketData data = (SocketData)e.UserToken;
+
+			Client c = Manager.SessionMgr.RemoveClient(data.SessionId);
+			data.Reset(data.BufferOffset);
 
 			if (c != null)
 			{

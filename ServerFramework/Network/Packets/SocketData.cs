@@ -44,6 +44,7 @@ namespace ServerFramework.Network.Packets
 		private bool _isHeaderReady = false;
 		private bool _isPacketReady = false;
 		private bool _isBigPacket = false;
+		private bool _isUnicode = false;
 
 		#endregion
 
@@ -127,6 +128,12 @@ namespace ServerFramework.Network.Packets
 			set { _isBigPacket = value; }
 		}
 
+		internal bool IsUnicode
+		{
+			get { return _isUnicode; }
+			set { _isUnicode = value; }
+		}
+
 		internal int BufferSize
 		{
 			get { return _bufferSize; }
@@ -182,7 +189,7 @@ namespace ServerFramework.Network.Packets
 		/// <summary>
 		/// Prepares packet for receiving data
 		/// </summary>
-		internal void StartReceive(Encoding encoding = null)
+		internal void StartReceive(Encoding encoding)
 		{
 			Packet = new Packet(encoding);
 		}
@@ -210,6 +217,7 @@ namespace ServerFramework.Network.Packets
 			IsHeaderReady = false;
 			IsPacketReady = false;
 			IsBigPacket = false;
+			IsUnicode = false;
 			HeaderBytesDoneCount = 0;
 			HeaderBytesRemainingCount = 0;
 			HeaderBytesDoneThisOp = 0;

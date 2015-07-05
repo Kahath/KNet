@@ -14,6 +14,7 @@
  */
 
 using ServerFramework.Configuration;
+using ServerFramework.Constants.Misc;
 using ServerFramework.Extensions;
 using System;
 using System.IO;
@@ -27,6 +28,7 @@ namespace ServerFramework.Network.Packets
 
 		private BinaryReader _reader;
 		private BinaryWriter _writer;
+		private Encoding _encoder;
 
 		private byte _position = 0;
 		private byte _value;
@@ -47,6 +49,12 @@ namespace ServerFramework.Network.Packets
 			set { _writer = value; }
 		}
 
+		internal Encoding Encoder
+		{
+			get { return _encoder; }
+			set { _encoder = value; }
+		}
+
 		private byte Position
 		{
 			get { return _position; }
@@ -65,6 +73,8 @@ namespace ServerFramework.Network.Packets
 
 		public PacketStream(Encoding encoder, byte[] data = null)
 		{
+			Encoder = encoder;
+
 			if (data != null)
 				Reader = new BinaryReader(new MemoryStream(data, false), encoder);
 			else
@@ -204,40 +214,60 @@ namespace ServerFramework.Network.Packets
 		/// Readies packet for sending.
 		/// </summary>
 		/// <returns>Size of packet minus header size</returns>
-		internal int End(out byte[] message)
+		internal int End(out byte[] message, out byte[] header)
 		{
 			Flush();
 			Writer.BaseStream.Seek(0, SeekOrigin.Begin);
 
 			int length = (int)Writer.BaseStream.Length;
 			int size = length - ServerConfig.BigHeaderLength;
-			int headerSize = size > Int16.MaxValue
+
+			bool isBigHeader = size > UInt16.MaxValue;
+			bool isUnicode = Encoder == Encoding.Unicode;
+			
+			int headerSize = isBigHeader
 				? ServerConfig.BigHeaderLength
 				: ServerConfig.HeaderLength;
 
 			message = new byte[size + headerSize];
 
-			if (size > Int16.MaxValue)
+			Writer.BaseStream.Skip(ServerConfig.BigHeaderLength - headerSize);
+			Writer.BaseStream.Read(message, 0, size + headerSize);
+
+			byte flags = message[0];
+
+			flags = SetupFlag(flags, PacketFlag.BigPacket, isBigHeader);
+			flags = SetupFlag(flags, PacketFlag.Unicode, isUnicode);
+
+			message.SetValue(flags, 0);
+			message.SetValue((byte)(size & Byte.MaxValue), 1);
+			message.SetValue((byte)((size >> 8) & Byte.MaxValue), 2);
+
+			if (isBigHeader)
 			{				
-				Writer.BaseStream.Read(message, 0, size + headerSize);
-
-				size |= Int32.MinValue; // indicator for big packet
-
-				message.SetValue((byte)((size >> 24) & Byte.MaxValue), 0);
-				message.SetValue((byte)((size >> 16) & Byte.MaxValue), 1);
-				message.SetValue((byte)((size >> 8) & Byte.MaxValue), 2);
-				message.SetValue((byte)(size & Byte.MaxValue), 3);
+				message.SetValue((byte)((size >> 16) & Byte.MaxValue), 3);
+				message.SetValue((byte)((size >> 24) & Byte.MaxValue), 4);
 			}
-			else
-			{
-				Writer.BaseStream.Skip(2);
-				Writer.BaseStream.Read(message, 0, size + headerSize);
 
-				message.SetValue((byte)((size >> 8) & Byte.MaxValue), 0);
-				message.SetValue((byte)(size & Byte.MaxValue), 1);
-			}
+			header = new byte[headerSize];
+
+			Array.Copy(message, header, headerSize);
 
 			return message.Length;
+		}
+
+		#endregion
+
+		#region SetupFlag
+
+		public byte SetupFlag(byte flags, PacketFlag flag, bool isTrue)
+		{
+			if (isTrue)
+				flags |= (byte)flag;
+			else
+				flags &= (byte)~flag;
+
+			return flags;
 		}
 
 		#endregion

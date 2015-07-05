@@ -67,6 +67,7 @@
     <Compile Include="Constants\Misc\CommandLevel.cs" />
     <Compile Include="Constants\Entities\Console\Command.cs" />
     <Compile Include="Constants\Misc\OpcodeType.cs" />
+    <Compile Include="Constants\Misc\PacketFlag.cs" />
     <Compile Include="Constants\Misc\PacketLogType.cs" />
     <Compile Include="Constants\Entities\Session\Client.cs" />
     <Compile Include="Database\Base\DBContextBase.cs" />
