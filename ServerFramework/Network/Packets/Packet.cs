@@ -72,25 +72,24 @@ namespace ServerFramework.Network.Packets
 		/// <summary>
 		/// Creates new object for reading message.
 		/// </summary>
-		internal Packet(Encoding encoder = null)
+		internal Packet(byte[] header)
 		{
-			Header = new PacketHeader();
-			Encoder = encoder ?? Encoding.UTF8;
+			Header = new PacketHeader(header);
+			Encoder = Header.IsUnicode ? Encoding.Unicode : Encoding.UTF8;
 		}
 
 		/// <summary>
 		/// Creates new object for writing message
 		/// </summary>
-		/// <param name="message">opcode of message</param>
-		public Packet(ushort message, Encoding encoder, byte flags = 0)
+		/// <param name="opcode">opcode of message</param>
+		public Packet(ushort opcode, Encoding encoder, byte flags = 0)
 		{
 			Encoder = encoder ?? Encoding.UTF8;
 			_stream = new PacketStream(Encoder);
 
-
 			Write<byte>(flags);
 			Write<int>(ServerConfig.BigHeaderLength);
-			Write<ushort>(message);
+			Write<ushort>(opcode);
 		}
 
 		#endregion
@@ -163,6 +162,12 @@ namespace ServerFramework.Network.Packets
 			: struct, IComparable, IComparable<T>, IConvertible, IEquatable<T>
 		{
 			Stream.WriteBits<T>(value, count);
+		}
+
+		public void WriteBits<T>(T value, int startIndex, int count) where T
+			: struct, IComparable, IComparable<T>, IConvertible, IEquatable<T>
+		{
+			Stream.WriteBits<T>(value, startIndex, count);
 		}
 
 		#endregion

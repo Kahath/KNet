@@ -72,13 +72,8 @@ namespace ServerFramework.Extensions
 
 				data.HeaderBytesDoneCount = data.HeaderLength;
 
-				data.MessageLength = data.IsBigPacket
-					? BitConverter.ToInt32(data.Header, ServerConfig.PacketFlagsLength)
-					: BitConverter.ToUInt16(data.Header, ServerConfig.PacketFlagsLength);
-
-				data.StartReceive(data.IsUnicode ? Encoding.Unicode : Encoding.UTF8);
-
-				data.Packet.Header = new PacketHeader(data.Header);
+				data.Packet = new Packet(data.Header);
+				data.MessageLength = data.Packet.Header.Size;
 
 				data.IsHeaderReady = true;
 			}

@@ -136,6 +136,7 @@ namespace ServerFramework
 			Manager.LogMgr.Log(LogType.Info, "Maximum sockets for accept: {0}", ServerConfig.MaxSimultaneousAcceptOps);
 			Manager.LogMgr.Log(LogType.Info, "Backlog: {0}", ServerConfig.Backlog);
 			Manager.LogMgr.Log(LogType.Info, "Packet header length: {0}", ServerConfig.HeaderLength);
+			Manager.LogMgr.Log(LogType.Info, "Big Packet header length: {0}", ServerConfig.BigHeaderLength);
 			Manager.LogMgr.Log(LogType.Info, "Database host name: {0}", ServerConfig.DBHost);
 			Manager.LogMgr.Log(LogType.Info, "Database port: {0}", ServerConfig.DBPort);
 			Manager.LogMgr.Log(LogType.Info, "Database username: {0}", ServerConfig.DBUser);

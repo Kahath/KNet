@@ -36,10 +36,10 @@ namespace ServerFramework.Configuration
 		private static int _maxConnections;
 		private static int _maxSimultaneousAcceptOps;
 		private static int _backlog;
-		private static int _opcodeLength;
-		private static int _headerLength;
-		private static int _bigHeaderLength;
 		private static int _packetFlagsLength;
+		private static int _opcodeLength;
+		private static int _messageSizeLength;
+		private static int _bigMessageSizeLength;
 
 		private static string _dbHost;
 		private static int _dbPort;
@@ -117,28 +117,38 @@ namespace ServerFramework.Configuration
 			set { _backlog = value; }
 		}
 
+		public static int PacketFlagsLength
+		{
+			get { return _packetFlagsLength; }
+			set { _packetFlagsLength = value; }
+		}
+
 		internal static int OpcodeLength
 		{
 			get { return _opcodeLength; }
 			set { _opcodeLength = value; }
 		}
 
+		internal static int MessageSizeLength
+		{
+			get { return _messageSizeLength; }
+			set { _messageSizeLength = value; }
+		}
+
+		internal static int BigMessageSizeLength
+		{
+			get { return _bigMessageSizeLength; }
+			set { _bigMessageSizeLength = value; }
+		}
+
 		internal static int HeaderLength
 		{
-			get { return _headerLength; }
-			set { _headerLength = value; }
+			get { return PacketFlagsLength + OpcodeLength + MessageSizeLength; }
 		}
 
 		internal static int BigHeaderLength
 		{
-			get { return _bigHeaderLength; }
-			set { _bigHeaderLength = value; }
-		}
-
-		public static int PacketFlagsLength
-		{
-			get { return _packetFlagsLength; }
-			set { _packetFlagsLength = value; }
+			get { return PacketFlagsLength + OpcodeLength + BigMessageSizeLength; }
 		}
 
 		internal static string DBHost
@@ -213,10 +223,10 @@ namespace ServerFramework.Configuration
 			DBPass = Config.Read<string>("dbpass");
 			DBName = Config.Read<string>("dbname");
 
-			PacketFlagsLength = 1;
-			OpcodeLength = 2;
-			HeaderLength = 5;
-			BigHeaderLength = 7;
+			PacketFlagsLength = sizeof(byte);
+			OpcodeLength = sizeof(ushort);
+			MessageSizeLength = sizeof(ushort);
+			BigMessageSizeLength = sizeof(int);
 		}
 
 		#endregion

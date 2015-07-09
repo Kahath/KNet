@@ -189,6 +189,13 @@ namespace ServerFramework.Network.Packets
 					(Convert.ToInt32(value) >> i) & 1, typeof(bool)));
 		}
 
+		internal void WriteBits<T>(T value, int startIndex, int count)
+		{
+			for (int i = startIndex + count - 1; i >= startIndex; --i)
+				WriteBit((bool)Convert.ChangeType(
+					(Convert.ToInt32(value) >> i) & 1, typeof(bool)));
+		}
+
 		#endregion
 
 		#region Flush

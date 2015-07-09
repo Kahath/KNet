@@ -160,7 +160,7 @@ namespace ServerFramework.Managers.Core
 		{
 			PacketLogType logtype = packet.Stream.Reader != null ? PacketLogType.CMSG : PacketLogType.SMSG;
 			
-			if ((ServerConfig.PacketLogLevel & logtype) == logtype)
+			if ((ServerConfig.PacketLogLevel & logtype) == logtype && packet.Header.IsForLog)
 				PacketLogQueue.Add(packet);
 		}
 

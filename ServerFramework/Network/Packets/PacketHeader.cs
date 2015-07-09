@@ -59,6 +59,11 @@ namespace ServerFramework.Network.Packets
 			get { return Convert.ToBoolean(Flags & (byte)PacketFlag.Unicode); }
 		}
 
+		public bool IsForLog
+		{
+			get { return Convert.ToBoolean(Flags & (byte)PacketFlag.Log); }
+		}
+
 		#endregion
 
 		#region Constructors
@@ -77,10 +82,6 @@ namespace ServerFramework.Network.Packets
 				: BitConverter.ToUInt16(header
 				,	ServerConfig.HeaderLength 
 					- ServerConfig.OpcodeLength);
-		}
-
-		public PacketHeader()
-		{
 		}
 
 		#endregion

@@ -184,18 +184,6 @@ namespace ServerFramework.Network.Packets
 
 		#region Methods
 
-		#region StartReceive
-
-		/// <summary>
-		/// Prepares packet for receiving data
-		/// </summary>
-		internal void StartReceive(Encoding encoding)
-		{
-			Packet = new Packet(encoding);
-		}
-
-		#endregion
-
 		#region Finish
 
 		internal void Finish()
