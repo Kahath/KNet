@@ -58,6 +58,9 @@ namespace ServerFramework.Managers.Core
 
 		#region Constructor
 
+		/// <summary>
+		/// Creates new Instance of <see cref="ServerFramework.Managers.Core.PacketManager"/> type.
+		/// </summary>
 		PacketManager()
 		{
 			Init();
@@ -69,6 +72,9 @@ namespace ServerFramework.Managers.Core
 
 		#region Init
 
+		/// <summary>
+		/// Initialises PacketManager.
+		/// </summary>
 		internal override void Init()
 		{
 			Dictionary<ushort, KeyValuePair<OpcodeAttribute, MethodInfo>> temp
@@ -113,6 +119,10 @@ namespace ServerFramework.Managers.Core
 
 		#region InvokeHandler
 
+		/// <summary>
+		/// Invokes packet script.
+		/// </summary>
+		/// <param name="packet">Instance of <see cref="ServerFramework.Network.Packets.Packet"/> type.</param>
 		internal void InvokeHandler(Packet packet)
 		{
 			BeforePacketInvokeEvent(packet);
@@ -165,6 +175,10 @@ namespace ServerFramework.Managers.Core
 
 		#region BeforePacketInvokeEvent
 
+		/// <summary>
+		/// Handles BeforePacketInvoke event.
+		/// </summary>
+		/// <param name="packet">Instance of <see cref="ServerFramework.Network.Packets.Packet"/> type.</param>
 		private void BeforePacketInvokeEvent(Packet packet)
 		{
 			if (BeforePacketInvoke != null)

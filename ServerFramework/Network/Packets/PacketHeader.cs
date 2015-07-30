@@ -49,16 +49,25 @@ namespace ServerFramework.Network.Packets
 			set { _flags = value; }
 		}
 
+		/// <summary>
+		/// Is big packet (>64kb)
+		/// </summary>
 		public bool IsBigHeader
 		{
 			get { return Convert.ToBoolean(Flags & (byte)PacketFlag.BigPacket); }
 		}
 
+		/// <summary>
+		/// Is packet encoding unicode
+		/// </summary>
 		public bool IsUnicode
 		{
 			get { return Convert.ToBoolean(Flags & (byte)PacketFlag.Unicode); }
 		}
 
+		/// <summary>
+		/// Is packet loged in database
+		/// </summary>
 		public bool IsForLog
 		{
 			get { return Convert.ToBoolean(Flags & (byte)PacketFlag.Log); }
@@ -68,6 +77,10 @@ namespace ServerFramework.Network.Packets
 
 		#region Constructors
 
+		/// <summary>
+		/// Creates instance of <see cref="ServerFramework.Network.Packets.PacketHeader"/> type.
+		/// </summary>
+		/// <param name="header">Header byte array.</param>
 		public PacketHeader(byte[] header)
 		{
 			Flags = header[0];

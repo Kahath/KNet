@@ -75,11 +75,18 @@ namespace ServerFramework.Constants.Entities.Session
 
 		#region Constructors
 
+		/// <summary>
+		/// Creates default instance of <see cref="ServerFramework.Constants.Entities.Session.Client"/> type.
+		/// </summary>
 		internal Client()
 		{
 
 		}
 
+		/// <summary>
+		/// Creates instance of <see cref="ServerFramework.Constants.Entities.Session.Client"/> type.
+		/// </summary>
+		/// <param name="socketExtended">Instance of <see cref="ServerFramework.Network.Socket.SocketExtended"/> type.</param>
 		internal Client(SocketExtended socketExtended)
 		{
 			SocketExtended = socketExtended;
@@ -97,6 +104,10 @@ namespace ServerFramework.Constants.Entities.Session
 
 		#region Send
 
+		/// <summary>
+		/// Sends packet to client.
+		/// </summary>
+		/// <param name="packet">Instance of <see cref="ServerFramework.Network.Packets.Packet"/> type.</param>
 		public void Send(Packet packet)
 		{
 			if (BeforePacketSend != null)

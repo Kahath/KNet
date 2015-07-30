@@ -59,6 +59,9 @@ namespace ServerFramework.Managers.Core
 
 		#region Constructors
 
+		/// <summary>
+		/// Creates instance of <see cref="ServerFramework.Managers.Core.LogManager"/> type.
+		/// </summary>
 		LogManager()
 		{
 			Init();
@@ -70,6 +73,9 @@ namespace ServerFramework.Managers.Core
 
 		#region Init
 
+		/// <summary>
+		/// Initialises LogManager.
+		/// </summary>
 		internal override void Init()
 		{
 			Console.InputEncoding = Encoding.UTF8;
@@ -102,6 +108,12 @@ namespace ServerFramework.Managers.Core
 
 		#region Message
 
+		/// <summary>
+		/// Adds message to queue.
+		/// </summary>
+		/// <param name="type"><see cref="ServerFramework.Constants.Misc.LogType"/> enum type.</param>
+		/// <param name="message">Message.</param>
+		/// <param name="args">Message arguments.</param>
 		private void Message(LogType type, string message, params object[] args)
 		{
 			ConsoleColor color;
@@ -183,21 +195,39 @@ namespace ServerFramework.Managers.Core
 
 		#region Log
 
+		/// <summary>
+		/// Adds message to queue.
+		/// </summary>
+		/// <param name="type"><see cref="ServerFramework.Constants.Misc.LogType"/> enum type.</param>
+		/// <param name="message">Message.</param>
+		/// <param name="args">Message arguments.</param>
 		public void Log(LogType type, string message, params object[] args)
 		{
 			Message(type, message, args);
 		}
 
+		/// <summary>
+		/// Adds message to queue with Normal LogType.
+		/// </summary>
+		/// <param name="message">Message.</param>
+		/// <param name="args">Message arguments</param>
 		public void Log(string message, params object[] args)
 		{
 			Log(LogType.Normal, message, args);
 		}
 
+		/// <summary>
+		/// Adds Message to queue with Normal LogType.
+		/// </summary>
+		/// <param name="message">Message.</param>
 		public void Log(string message)
 		{
 			Log(LogType.Normal, message);
 		}
 
+		/// <summary>
+		/// Adds empty message to queue with Normal LogType.
+		/// </summary>
 		public void Log()
 		{
 			Log(LogType.Normal, "");
@@ -207,6 +237,9 @@ namespace ServerFramework.Managers.Core
 
 		#region Dispose
 
+		/// <summary>
+		/// Disposes object.
+		/// </summary>
 		public void Dispose()
 		{
 			_consoleLogQueue.Dispose();

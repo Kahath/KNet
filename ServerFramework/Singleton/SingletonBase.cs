@@ -35,10 +35,10 @@ namespace ServerFramework.Singleton
 		#region GetInstance
 
 		/// <summary>
-		/// Gets instance of type T
+		/// Gets instance of generic type.
 		/// </summary>
-		/// <param name="args">constructor parameters</param>
-		/// <returns>new instance or already initialized instance</returns>
+		/// <param name="args">Constructor parameters.</param>
+		/// <returns>New instance or already initialized instance.</returns>
 		public static T GetInstance(params object[] args)
 		{
 			object ctor = null;

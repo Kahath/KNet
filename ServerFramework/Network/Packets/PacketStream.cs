@@ -71,14 +71,19 @@ namespace ServerFramework.Network.Packets
 
 		#region Constructors
 
-		public PacketStream(Encoding encoder, byte[] data = null)
+		/// <summary>
+		/// Creates new instance of <see cref="ServerFramework.Network.Packets.PacketStream"/> type.
+		/// </summary>
+		/// <param name="encoding">Encoding used in underlying stream.</param>
+		/// <param name="data">Data to read if stream should instance as reader.</param>
+		public PacketStream(Encoding encoding, byte[] data = null)
 		{
-			Encoder = encoder;
+			Encoder = encoding;
 
 			if (data != null)
-				Reader = new BinaryReader(new MemoryStream(data, false), encoder);
+				Reader = new BinaryReader(new MemoryStream(data, false), encoding);
 			else
-				Writer = new BinaryWriter(new MemoryStream(), encoder);
+				Writer = new BinaryWriter(new MemoryStream(), encoding);
 		}
 
 		#endregion
@@ -88,17 +93,21 @@ namespace ServerFramework.Network.Packets
 		#region Read
 
 		/// <summary>
-		/// Used for reading from packet buffer
+		/// Reads generic value from underlying stream.
 		/// </summary>
-		/// <typeparam name="T">type of value</typeparam>
-		/// <param name="count">not used</param>
-		/// <returns>Generic result</returns>
+		/// <typeparam name="T">Type of return value.</typeparam>
+		/// <param name="count">Length to read if T is array.</param>
+		/// <returns>Value of generic type</returns>
 		internal T Read<T>(int count = 0)
 		{
-			if (Reader != null)
-				return Reader.Read<T>(count);
+			T retVal = default(T);
 
-			throw new NullReferenceException("Reader cannot be null");
+			if (Reader != null)
+				retVal = Reader.Read<T>(count);
+			else
+				throw new NullReferenceException("Reader cannot be null");
+
+			return retVal;
 		}
 
 		#endregion
@@ -106,10 +115,10 @@ namespace ServerFramework.Network.Packets
 		#region Write
 
 		/// <summary>
-		/// Writes value to stream buffer.
+		/// Writes generic value to underlying stream.
 		/// </summary>
-		/// <typeparam name="T">type of value</typeparam>
-		/// <param name="value">value of method type</param>
+		/// <typeparam name="T">Type of value.</typeparam>
+		/// <param name="value">Value.</param>
 		internal void Write<T>(T value)
 		{
 			if (Writer != null)
@@ -129,6 +138,10 @@ namespace ServerFramework.Network.Packets
 
 		#region ReadBit
 
+		/// <summary>
+		/// Reads one bit from underlying stream.
+		/// </summary>
+		/// <returns>Bit as boolean.</returns>
 		private bool ReadBit()
 		{
 			if (Position == 0)
@@ -149,6 +162,12 @@ namespace ServerFramework.Network.Packets
 
 		#region ReadBits
 
+		/// <summary>
+		/// Reads number of bits from underlying stream
+		/// </summary>
+		/// <typeparam name="T">Type of return value.</typeparam>
+		/// <param name="count">Number of bits.</param>
+		/// <returns>Value of generic type.</returns>
 		internal T ReadBits<T>(int count)
 		{
 			int retVal = 0;
@@ -163,6 +182,10 @@ namespace ServerFramework.Network.Packets
 
 		#region WriteBit
 
+		/// <summary>
+		/// Writes one bit to underlying stream.
+		/// </summary>
+		/// <param name="value">Value.</param>
 		private void WriteBit(bool value)
 		{
 			++Position;
@@ -182,6 +205,12 @@ namespace ServerFramework.Network.Packets
 
 		#region WriteBits
 
+		/// <summary>
+		/// Writes number of bits to underlying stream.
+		/// </summary>
+		/// <typeparam name="T">Type of value.</typeparam>
+		/// <param name="value">Value.</param>
+		/// <param name="count">Number of bits.</param>
 		internal void WriteBits<T>(T value, int count)
 		{
 			for (int i = count - 1; i >= 0; --i)
@@ -189,6 +218,13 @@ namespace ServerFramework.Network.Packets
 					(Convert.ToInt32(value) >> i) & 1, typeof(bool)));
 		}
 
+		/// <summary>
+		/// Writes number of bits with start index to underlying stream.
+		/// </summary>
+		/// <typeparam name="T">Type of value.</typeparam>
+		/// <param name="value">Value.</param>
+		/// <param name="startIndex">Start index.</param>
+		/// <param name="count">Number of bits.</param>
 		internal void WriteBits<T>(T value, int startIndex, int count)
 		{
 			for (int i = startIndex + count - 1; i >= startIndex; --i)
@@ -200,6 +236,9 @@ namespace ServerFramework.Network.Packets
 
 		#region Flush
 
+		/// <summary>
+		/// Writes remaining bits to underlying stream.
+		/// </summary>
 		internal void Flush()
 		{
 			if (Position != 0)
@@ -218,9 +257,11 @@ namespace ServerFramework.Network.Packets
 		#region End
 
 		/// <summary>
-		/// Readies packet for sending.
+		/// Finishes writing data to underlying stream.
 		/// </summary>
-		/// <returns>Size of packet minus header size</returns>
+		/// <param name="message">Packet message.</param>
+		/// <param name="header">Packet header.</param>
+		/// <returns>message + header array length.</returns>
 		internal int End(out byte[] message, out byte[] header)
 		{
 			Flush();
@@ -267,9 +308,16 @@ namespace ServerFramework.Network.Packets
 
 		#region SetupFlag
 
-		public byte SetupFlag(byte flags, PacketFlag flag, bool isTrue)
+		/// <summary>
+		/// Sets or removes flag.
+		/// </summary>
+		/// <param name="flags">Flags to setup.</param>
+		/// <param name="flag">Flag to set or remove.</param>
+		/// <param name="isSet">Set or remove.</param>
+		/// <returns>New flags value.</returns>
+		public byte SetupFlag(byte flags, PacketFlag flag, bool isSet)
 		{
-			if (isTrue)
+			if (isSet)
 				flags |= (byte)flag;
 			else
 				flags &= (byte)~flag;
@@ -281,6 +329,9 @@ namespace ServerFramework.Network.Packets
 
 		#region Dispose
 
+		/// <summary>
+		/// Disposes object rsources.
+		/// </summary>
 		public void Dispose()
 		{
 			if (Reader != null)

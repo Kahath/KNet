@@ -68,6 +68,11 @@ namespace ServerFramework.Managers.Core
 
 		#region Constructors
 
+		/// <summary>
+		/// Creates instance of <see cref="ServerFramework.Managers.Core.BufferManager"/> type.
+		/// </summary>
+		/// <param name="totalBytes">Total bytes in buffer</param>
+		/// <param name="totalBytesInEachSaeaObject">Total bytes for each connetion socket.</param>
 		BufferManager(int totalBytes, int totalBytesInEachSaeaObject)
 		{
 			TotalBytesInBufferBlock = totalBytes;
@@ -84,6 +89,9 @@ namespace ServerFramework.Managers.Core
 
 		#region Init
 
+		/// <summary>
+		/// Initialises BufferManager.
+		/// </summary>
 		internal override void Init()
 		{
 			BufferBlock = new byte[TotalBytesInBufferBlock];
@@ -94,6 +102,11 @@ namespace ServerFramework.Managers.Core
 
 		#region SetBuffer
 
+		/// <summary>
+		/// Sets buffer for Socket.
+		/// </summary>
+		/// <param name="e">Instance of <see cref="System.Net.Sockets.SocketAsyncEventArgs"/> type.</param>
+		/// <returns>True if set.</returns>
 		internal bool SetBuffer(SocketAsyncEventArgs e)
 		{
 			if (FreeIndexPool.Count > 0)
@@ -120,6 +133,10 @@ namespace ServerFramework.Managers.Core
 
 		#region FreeBuffer
 
+		/// <summary>
+		/// Sets buffer for socket to null
+		/// </summary>
+		/// <param name="e">>Instance of <see cref="System.Net.Sockets.SocketAsyncEventArgs"/> type.</param>
 		internal void FreeBuffer(SocketAsyncEventArgs e)
 		{
 			FreeIndexPool.Push(e.Offset);

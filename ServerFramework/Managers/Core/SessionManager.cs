@@ -58,6 +58,9 @@ namespace ServerFramework.Managers.Core
 
 		#region Constructors
 
+		/// <summary>
+		/// Creates instance of <see cref="ServerFramework.Managers.Core.SessionManager"/> type.
+		/// </summary>
 		SessionManager()
 		{
 			Init();
@@ -69,6 +72,9 @@ namespace ServerFramework.Managers.Core
 
 		#region Init
 
+		/// <summary>
+		/// Initialises SessionManager.
+		/// </summary>
 		internal override void Init()
 		{
 			Clients = new ConcurrentDictionary<int, Client>();
@@ -79,6 +85,11 @@ namespace ServerFramework.Managers.Core
 
 		#region RemoveClient
 
+		/// <summary>
+		/// Removes client from collection.
+		/// </summary>
+		/// <param name="id">ID of client to remove.</param>
+		/// <returns>Instance of removed <see cref="ServerFramework.Constants.Entities.Session.Client"/> type.</returns>
 		internal Client RemoveClient(int id)
 		{
 			Client client = null;
@@ -93,6 +104,11 @@ namespace ServerFramework.Managers.Core
 
 		#region GetClient
 
+		/// <summary>
+		/// Gets client from collection.
+		/// </summary>
+		/// <param name="func">Function as filter for client.</param>
+		/// <returns>Instance of filtered <see cref="ServerFramework.Constants.Entities.Session.Client"/> type.</returns>
 		public Client GetClient(Func<Client, bool> func)
 		{
 			Client client = null;
@@ -101,6 +117,11 @@ namespace ServerFramework.Managers.Core
 			return client;
 		}
 
+		/// <summary>
+		/// Gets client from collection by sessionID.
+		/// </summary>
+		/// <param name="sessionId">Session ID.</param>
+		/// <returns>Instance of <see cref="ServerFramework.Constants.Entities.Session.Client"/> type.</returns>
 		public Client GetClientBySession(int sessionId)
 		{
 			Client c = null;
@@ -114,6 +135,11 @@ namespace ServerFramework.Managers.Core
 
 		#region GetClients
 
+		/// <summary>
+		/// Gets collection of clients
+		/// </summary>
+		/// <param name="func">function as filter</param>
+		/// <returns>Collection of <see cref="ServerFramework.Constants.Entities.Session.Client"/> type.</returns>
 		public IEnumerable<Client> GetClients(Func<Client, bool> func = null)
 		{
 			IEnumerable<Client> clients = null;
@@ -130,6 +156,11 @@ namespace ServerFramework.Managers.Core
 
 		#region AddClient
 
+		/// <summary>
+		/// Adds client to session.
+		/// </summary>
+		/// <param name="c">Instance of <see cref="ServerFramework.Constants.Entities.Session.Client"/> type.</param>
+		/// <returns>Session ID.</returns>
 		internal int AddClient(Client c)
 		{
 			int id = 0;
@@ -156,6 +187,11 @@ namespace ServerFramework.Managers.Core
 
 		#region ForEachParallel
 
+		/// <summary>
+		/// Executes action for each Client in session parallel.
+		/// </summary>
+		/// <param name="body">Action method</param>
+		/// <returns>Instance of <see cref="System.Threading.Tasks.ParallelLoopResult"/> type.</returns>
 		public ParallelLoopResult ForEachParallel(Action<Client> body)
 		{
 			ParallelLoopResult retVal;
@@ -169,6 +205,10 @@ namespace ServerFramework.Managers.Core
 
 		#region ForEach
 
+		/// <summary>
+		/// Executes action for each Client in session.
+		/// </summary>
+		/// <param name="body">Action method.</param>
 		public void ForEach(Action<Client> body)
 		{
 			foreach (Client client in Clients.Values)

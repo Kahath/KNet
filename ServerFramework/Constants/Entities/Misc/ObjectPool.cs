@@ -30,9 +30,9 @@ namespace ServerFramework.Constants.Entities.Console.Misc
 		#region Constructors
 
 		/// <summary>
-		/// Creates new stack for objects
+		/// Creates new instance of <see cref="ServerFramework.Constants.Entities.Console.Misc.ObjectPool{T}"/> type.
 		/// </summary>
-		/// <param name="capacity">capacity of stack</param>
+		/// <param name="capacity">Capacity of pool.</param>
 		public ObjectPool(int capacity)
 		{
 			_stackPool = new Stack<T>(capacity);
@@ -43,7 +43,7 @@ namespace ServerFramework.Constants.Entities.Console.Misc
 		#region Properties
 
 		/// <summary>
-		/// Returns number of objects on stack.
+		/// Gets stack count.
 		/// </summary>
 		public int Count
 		{
@@ -57,9 +57,9 @@ namespace ServerFramework.Constants.Entities.Console.Misc
 		#region Push
 
 		/// <summary>
-		/// Pushes item onto stack
+		/// Pushes item onto stack.
 		/// </summary>
-		/// <param name="item">object</param>
+		/// <param name="item">object.</param>
 		public void Push(T item)
 		{
 			if (item == null)
@@ -75,7 +75,7 @@ namespace ServerFramework.Constants.Entities.Console.Misc
 		/// <summary>
 		/// Pops object from stack.
 		/// </summary>
-		/// <returns>object</returns>
+		/// <returns>object.</returns>
 		public T Pop()
 		{
 			lock (_stackPool)

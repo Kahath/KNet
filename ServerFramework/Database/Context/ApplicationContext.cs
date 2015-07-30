@@ -38,6 +38,9 @@ namespace ServerFramework.Database.Context
 
 		#region Constructors
 
+		/// <summary>
+		/// Creates new instance of <see cref="ServerFramework.Database.Context.ApplicationContex"/> type.
+		/// </summary>
 		public ApplicationContext()
 			: base(ServerConfig.ConnectionString)
 		{

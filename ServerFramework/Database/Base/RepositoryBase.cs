@@ -19,7 +19,7 @@ using System.Linq;
 
 namespace ServerFramework.Database.Base
 {
-	public abstract class RepositoryBase<T> : IDisposable where T : EntityBase
+	public abstract class RepositoryBase<T> : IDisposable where T : IEntity
 	{
 		#region Fields
 
@@ -39,6 +39,10 @@ namespace ServerFramework.Database.Base
 
 		#region Constructors
 
+		/// <summary>
+		/// Creates instance of <see cref="ServerFramework.Database.Base.RepositoryBase{T}"/> type.
+		/// </summary>
+		/// <param name="context">Instance of <see cref="ServerFramework.Database.Base.DBContextBase"/> type.</param>
 		public RepositoryBase(DBContextBase context)
 		{
 			Context = context;
@@ -48,12 +52,19 @@ namespace ServerFramework.Database.Base
 
 		#region Methods
 
+		/// <summary>
+		/// Disposes object.
+		/// </summary>
 		public void Dispose()
 		{
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
 
+		/// <summary>
+		/// Disposes object
+		/// </summary>
+		/// <param name="disposing">disposing</param>
 		private void Dispose(bool disposing)
 		{
 			if(disposing)

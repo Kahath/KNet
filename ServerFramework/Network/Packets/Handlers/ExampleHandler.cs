@@ -34,7 +34,7 @@ namespace ServerFramework.Network.Packets.Handlers
 		public static void ExamplePacketHandler(Client pClient, Packet packet)
 		{
 			//Read if packet has data
-			string exampleName = packet.Read<string>(8);
+			string exampleName = packet.Read<string>();
 			byte exampleData = packet.Read<byte>();
 
 			//Process data
@@ -42,7 +42,7 @@ namespace ServerFramework.Network.Packets.Handlers
 
 			//Send back if need
 			//Create new packet for send
-			using (packet = new Packet(0x0001, Encoding.UTF8))
+			using (packet = new Packet(0x0001, Encoding.UTF8, (byte)PacketFlag.Log))
 			{
 				//Write data
 				packet.Write<string>("Example string data");
@@ -60,7 +60,7 @@ namespace ServerFramework.Network.Packets.Handlers
 		public static void ExamplePacketHandlerTwo(Client pClient, Packet packet)
 		{
 			//Read if packet has data
-			string exampleName = packet.Read<string>(8);
+			string exampleName = packet.Read<string>();
 			byte exampleData = packet.Read<byte>();
 
 			//Process data

@@ -68,6 +68,9 @@ namespace ServerFramework.Managers.Core
 
 		#region Constructors
 
+		/// <summary>
+		/// Creates new instance of <see cref="ServerFramework.Managers.Core.PacketLogManager"/> type.
+		/// </summary>
 		PacketLogManager()
 		{
 			Init();
@@ -79,6 +82,9 @@ namespace ServerFramework.Managers.Core
 
 		#region Init
 
+		/// <summary>
+		/// Initialises PacketLogManager.
+		/// </summary>
 		internal override void Init()
 		{
 			Thread logThread = new Thread(() =>
@@ -102,6 +108,10 @@ namespace ServerFramework.Managers.Core
 
 		#region LogPacket
 
+		/// <summary>
+		/// Logs packet.
+		/// </summary>
+		/// <param name="packet">Instance of <see cref="ServerFramework.Network.Packets.Packet"/> type.</param>
 		private void LogPacket(Packet packet)
 		{
 			PacketLogType logtype = packet.Stream.Reader != null ? PacketLogType.CMSG : PacketLogType.SMSG;
@@ -156,6 +166,10 @@ namespace ServerFramework.Managers.Core
 
 		#region Log
 
+		/// <summary>
+		/// Adds packet to queue for logging.
+		/// </summary>
+		/// <param name="packet">Instance of <see cref="ServerFramework.Network.Packets.Packet"/> type.</param>
 		internal void Log(Packet packet)
 		{
 			PacketLogType logtype = packet.Stream.Reader != null ? PacketLogType.CMSG : PacketLogType.SMSG;
@@ -168,6 +182,9 @@ namespace ServerFramework.Managers.Core
 
 		#region Dispose
 
+		/// <summary>
+		/// Disposes object.
+		/// </summary>
 		public void Dispose()
 		{
 			_packetLogQueue.Dispose();

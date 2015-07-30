@@ -61,7 +61,7 @@ namespace ServerFramework.Constants.Attributes
 		#region Constructors
 
 		/// <summary>
-		/// Attribute used for reading opcodes.
+		/// Creates new instance of <see cref="ServerFramework.Constants.Attributes.OpcodeAttribute"/> type.
 		/// </summary>
 		/// <param name="opcode">Client packet opcode</param>
 		/// <param name="author">Author of method</param>

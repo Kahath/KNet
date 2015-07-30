@@ -73,14 +73,14 @@ namespace ServerFramework.Configuration
 		#region Constructors
 
 		/// <summary>
-		/// Creates new object with settings for Buffer and Socket.
+		/// Creates new instance of <see cref="ServerFramework.Configuration.SocketListenerSettings"/> type.
 		/// </summary>
-		/// <param name="maxConnections">Maximum number of connections allowed on server</param>
-		/// <param name="backlog">Number of queued connections if maximum number is surpassed</param>
-		/// <param name="maxAcceptOps">Maximum number of SocketAsyncEventArgs objects for accepting connections</param>
-		/// <param name="bufferSize">Buffer size for each SocketAsyncEventArgs object</param>
-		/// <param name="headerLength">Length of message header</param>
-		/// <param name="localEndPoint">IP address and port of listening</param>
+		/// <param name="maxConnections">Maximum number of connections allowed on server.</param>
+		/// <param name="backlog">Number of queued connections if maximum number is surpassed.</param>
+		/// <param name="maxAcceptOps">Maximum number of SocketAsyncEventArgs objects for accepting connections.</param>
+		/// <param name="bufferSize">Buffer size for each SocketAsyncEventArgs object.</param>
+		/// <param name="headerLength">Length of message header.</param>
+		/// <param name="localEndPoint">IP address and port of listening.</param>
 		internal SocketListenerSettings(int maxConnections, int backlog,
 			int maxAcceptOps, int bufferSize,
 			int headerLength, IPEndPoint localEndPoint)

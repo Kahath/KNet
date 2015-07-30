@@ -14,18 +14,17 @@
  */
 
 using System;
-using System.ComponentModel;
 
 namespace ServerFramework.Database.Base
 {
-	public abstract class EntityBase : IEntity
+	public interface IEntity
 	{
 		#region Properties
 
-		public bool Active					{ get; set; }
-		public DateTime DateCreated			{ get; set; }
-		public DateTime? DateModified		{ get; set; }
-		public DateTime? DateDeactivated	{ get; set; }
+		bool Active { get; set; }
+		DateTime DateCreated { get; set; }
+		DateTime? DateModified { get; set; }
+		DateTime? DateDeactivated { get; set; }
 
 		#endregion
 	}

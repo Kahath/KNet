@@ -103,7 +103,7 @@ namespace ServerFramework
 
 		public void Init()
 		{
-			DependencyManager.Map<IConfig, ConfigInject>();
+			DependencyManager.Map<IConfig, XmlConfiguration>();
 			DependencyManager.Map<IServer, ServerInject>();
 
 			ServerConfig.Init();

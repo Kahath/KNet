@@ -69,6 +69,14 @@ namespace ServerFramework.Constants.Entities.Console
 
 		#region Constructors
 
+		/// <summary>
+		/// Creates new object of <see cref="ServerFramework.Constants.Entities.Console.Command"/> type.
+		/// </summary>
+		/// <param name="name">Command name.</param>
+		/// <param name="commandLevel">Command level.</param>
+		/// <param name="subCommands">Command sub commands.</param>
+		/// <param name="script">Command script.</param>
+		/// <param name="description">Command description.</param>
 		public Command(string name, CommandLevel commandLevel
 			, Command[] subCommands, CommandHandler script, string description)
 		{
@@ -85,6 +93,12 @@ namespace ServerFramework.Constants.Entities.Console
 
 		#region Invoke
 
+		/// <summary>
+		/// Executes command script.
+		/// </summary>
+		/// <param name="user">Client who executes script.</param>
+		/// <param name="args">Command arguments.</param>
+		/// <returns></returns>
 		public bool Invoke(Client user, params string[] args)
 		{
 			return Script.Invoke(user, args);
@@ -94,6 +108,11 @@ namespace ServerFramework.Constants.Entities.Console
 
 		#region AvailableSubCommands
 
+		/// <summary>
+		/// Gets available sub commands.
+		/// </summary>
+		/// <param name="userLevel">User level.</param>
+		/// <returns>String formated available commands based on user level.</returns>
 		public string AvailableSubCommands(CommandLevel userLevel = CommandLevel.Zero)
 		{
 			StringBuilder retVal = new StringBuilder();

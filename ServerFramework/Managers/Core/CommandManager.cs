@@ -50,6 +50,9 @@ namespace ServerFramework.Managers.Core
 
 		#region Constructor
 
+		/// <summary>
+		/// Creates instance of <see cref="ServerFramework.Managers.Core.CommandManager"/> type.
+		/// </summary>
 		CommandManager()
 		{
 			_commandTable = new BlockingCollection<Command>();
@@ -62,6 +65,9 @@ namespace ServerFramework.Managers.Core
 
 		#region Init
 
+		/// <summary>
+		/// Initialises CommandManager.
+		/// </summary>
 		internal override void Init()
 		{
 			foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies().
@@ -111,6 +117,12 @@ namespace ServerFramework.Managers.Core
 
 		#region InvokeCommand
 
+		/// <summary>
+		/// Invokes command
+		/// </summary>
+		/// <param name="user">Instance of <see cref="ServerFramework.Constants.Entities.Session.Client"/> type invoking command.</param>
+		/// <param name="command">Command name.</param>
+		/// <returns></returns>
 		public bool InvokeCommand(Client user, string command)
 		{
 			StringBuilder sb = new StringBuilder();
@@ -155,6 +167,14 @@ namespace ServerFramework.Managers.Core
 
 		#region InvokeCommandHandler
 
+		/// <summary>
+		/// Invokes Command script
+		/// </summary>
+		/// <param name="user">Instance of <see cref="ServerFramework.Constants.Entities.Session.Client"/> type invoking command.</param>
+		/// <param name="commandTable">Array of available commands.</param>
+		/// <param name="path">Command name as string list.</param>
+		/// <param name="command">Clean command.</param>
+		/// <returns>True if executed.</returns>
 		private bool InvokeCommandHandler(Client user
 			, Command[] commandTable, IList<string> path, StringBuilder command)
 		{
@@ -231,6 +251,9 @@ namespace ServerFramework.Managers.Core
 
 		#region LoadCommandDescriptions
 
+		/// <summary>
+		/// Loads descriptions and user level for commands from database.
+		/// </summary>
 		private void LoadCommandDescriptions()
 		{
 			Command c = null;
@@ -257,6 +280,12 @@ namespace ServerFramework.Managers.Core
 
 		#region GetCommand
 
+		/// <summary>
+		/// Gets command by name
+		/// </summary>
+		/// <param name="commandTable">Array of available command.</param>
+		/// <param name="path">Command name as string list.</param>
+		/// <returns></returns>
 		private Command GetCommandByPath(Command[] commandTable, IList<string> path)
 		{
 			if (commandTable == null || path == null)
@@ -280,6 +309,9 @@ namespace ServerFramework.Managers.Core
 
 		#region Dispose
 
+		/// <summary>
+		/// Disposes object.
+		/// </summary>
 		public void Dispose()
 		{
 			_commandTable.Dispose();

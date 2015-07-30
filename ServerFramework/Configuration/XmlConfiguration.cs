@@ -19,7 +19,10 @@ using System.Xml;
 
 namespace ServerFramework.Configuration
 {
-	public sealed class ConfigInject : IConfig
+	/// <summary>
+	/// Provides xml configuration injection.
+	/// </summary>
+	public sealed class XmlConfiguration : IConfig
 	{
 		#region Fields
 
@@ -42,10 +45,10 @@ namespace ServerFramework.Configuration
 		#region Constructor
 
 		/// <summary>
-		/// Provides configuration
+		/// Creates instance of <see cref="ServerFramework.Configuration.XmlConfiguration"/> type.
 		/// </summary>
 		/// <param name="path">Path to configuration file</param>
-		ConfigInject(string path)
+		XmlConfiguration(string path)
 		{
 			if (!File.Exists(path))
 			{
@@ -64,11 +67,11 @@ namespace ServerFramework.Configuration
 		#region Read
 
 		/// <summary>
-		/// Reads configuration value with specified data type
+		/// Reads generic value from xml configuration file.
 		/// </summary>
-		/// <typeparam name="T">type of value</typeparam>
-		/// <param name="config">name of configuration in xml file</param>
-		/// <param name="hex">if value is written as hexadecimal value</param>
+		/// <typeparam name="T">Type of value.</typeparam>
+		/// <param name="config">Name of configuration in xml file.</param>
+		/// <param name="hex">Is value is written as hexadecimal value.</param>
 		/// <returns>Configuration value of specified data type.</returns>
 		public T Read<T>(string config, bool hex = false)
 		{

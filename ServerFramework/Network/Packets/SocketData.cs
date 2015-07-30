@@ -167,11 +167,11 @@ namespace ServerFramework.Network.Packets
 		#region Constructors
 
 		/// <summary>
-		/// Creates new token for SocketAsyncEventArgs.UserToken property
+		/// Creates new instance of <see cref="ServerFramework.Network.Packets.SocketData"/> type.
 		/// </summary>
-		/// <param name="bufferSize">Buffer size for client</param>
-		/// <param name="bufferOffset">Buffer offset in large alocated buffer</param>
-		/// <param name="headerLength">Length of message header</param>
+		/// <param name="bufferSize">Buffer size for client.</param>
+		/// <param name="bufferOffset">Buffer offset in large alocated buffer.</param>
+		/// <param name="headerLength">Length of message header.</param>
 		internal SocketData(int bufferSize, int bufferOffset, int headerLength)
 		{
 			this._bufferSize = bufferSize;
@@ -186,6 +186,9 @@ namespace ServerFramework.Network.Packets
 
 		#region Finish
 
+		/// <summary>
+		/// Finishes writing data to packet.
+		/// </summary>
 		internal void Finish()
 		{
 			this.MessageBytesRemainingCount = Packet.End();
@@ -196,8 +199,9 @@ namespace ServerFramework.Network.Packets
 		#region Reset
 
 		/// <summary>
-		/// Resets user token to its initial state;
+		/// Resets user token to its initial state.
 		/// </summary>
+		/// <param name="headerOffset">Header offset</param>
 		internal void Reset(int headerOffset)
 		{
 			Packet = null;
