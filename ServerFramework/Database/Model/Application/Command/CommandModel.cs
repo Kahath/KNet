@@ -13,6 +13,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using CCommand = ServerFramework.Constants.Entities.Console.Command;
 using ServerFramework.Database.Base;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -26,6 +27,9 @@ namespace ServerFramework.Database.Model.Application.Command
 
 		[Key]
 		public int ID							{ get; set; }
+		public string AssemblyName				{ get; set; }
+		public string TypeName					{ get; set; }
+		public string MethodName				{ get; set; }
 
 		[StringLength(50)]
 		public string Name						{ get; set; }
@@ -34,6 +38,22 @@ namespace ServerFramework.Database.Model.Application.Command
 
 		[ForeignKey("CommandLevelID")]
 		public CommandLevelModel CommandLevel	{ get; set; }
+
+		#endregion
+
+		#region Constructors
+
+		public CommandModel()
+		{
+
+		}
+
+		public CommandModel(CCommand command)
+		{
+			Name = command.Name;
+			Description = command.Description;
+			CommandLevelID = (int)command.CommandLevel;
+		}
 
 		#endregion
 	}

@@ -26,6 +26,7 @@ namespace ServerFramework.Constants.Entities.Session
 		#region Fields
 
 		private SocketExtended _socketExtended;
+		private IServer _server;
 		private IClient _clientToken;
 		private CommandLevel _userLevel;
 
@@ -33,10 +34,10 @@ namespace ServerFramework.Constants.Entities.Session
 
 		#region Properties
 
-		internal SocketExtended SocketExtended
+		private IServer Server
 		{
-			get { return _socketExtended; }
-			set { _socketExtended = value; }
+			get { return _server; }
+			set { _server = value; }
 		}
 
 		public IClient Token
@@ -45,19 +46,62 @@ namespace ServerFramework.Constants.Entities.Session
 			set { _clientToken = value; }
 		}
 
+		internal SocketExtended SocketExtended
+		{
+			get { return _socketExtended; }
+			set { _socketExtended = value; }
+		}
+
+		private IPEndPoint EndPoint
+		{
+			get
+			{
+				IPEndPoint retVal = null;
+
+				if (SocketExtended != null && SocketExtended.RemoteEndPoint != null)
+					retVal = SocketExtended.RemoteEndPoint;
+
+				return retVal;
+			}
+		}
+
 		public string IP
 		{
-			get { return SocketExtended.RemoteEndPoint.Address.ToString(); }
+			get 
+			{
+				string retVal = String.Empty;
+
+				if(EndPoint != null && EndPoint.Address != null)
+					retVal =  EndPoint.Address.ToString();
+
+				return retVal;
+			}
 		}
 
 		public int Port
 		{
-			get { return SocketExtended.RemoteEndPoint.Port; }
+			get 
+			{
+				int retVal = 0;
+
+				if (EndPoint != null)
+					retVal = EndPoint.Port;
+
+				return retVal;
+			}
 		}
 
 		public int SessionID
 		{
-			get { return SocketExtended.ReceiverData.SessionId; }
+			get 
+			{
+				int retVal = 0;
+
+				if (SocketExtended != null)
+					retVal = SocketExtended.ReceiverData.SessionId;
+
+				return retVal;
+			}
 		}
 
 		public bool IsConsole
@@ -87,8 +131,9 @@ namespace ServerFramework.Constants.Entities.Session
 		/// Creates instance of <see cref="ServerFramework.Constants.Entities.Session.Client"/> type.
 		/// </summary>
 		/// <param name="socketExtended">Instance of <see cref="ServerFramework.Network.Socket.SocketExtended"/> type.</param>
-		internal Client(SocketExtended socketExtended)
+		internal Client(IServer server, SocketExtended socketExtended)
 		{
+			Server = server;
 			SocketExtended = socketExtended;
 		}
 
@@ -119,7 +164,7 @@ namespace ServerFramework.Constants.Entities.Session
 			data.Finish();
 			data.Packet.SessionId = data.SessionId;
 
-			KahathFramework.Server.Send(SocketExtended.Sender);
+			Server.Send(SocketExtended.Sender);
 		}
 
 		#endregion

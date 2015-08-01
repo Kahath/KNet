@@ -13,12 +13,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using ServerFramework.Configuration;
+using ServerFramework.Configuration.Helpers;
 using ServerFramework.Constants.Misc;
 using ServerFramework.Network.Packets;
 using System;
 using System.Net.Sockets;
-using System.Text;
 
 namespace ServerFramework.Extensions
 {

@@ -13,7 +13,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using ServerFramework.Configuration;
+using ServerFramework.Configuration.Helpers;
 using ServerFramework.Constants.Misc;
 using ServerFramework.Database.Context;
 using ServerFramework.Database.Model.Application.Log;
@@ -182,7 +182,7 @@ namespace ServerFramework.Managers.Core
 
 						using (ApplicationContext context = new ApplicationContext())
 						{
-							context.Log.Add(logModel);
+							context.Logs.Add(logModel);
 							context.SaveChanges();
 						}
 					break;

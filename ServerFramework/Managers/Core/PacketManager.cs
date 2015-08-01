@@ -13,10 +13,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using ServerFramework.Configuration;
 using ServerFramework.Constants.Attributes;
 using ServerFramework.Constants.Entities.Session;
 using ServerFramework.Constants.Misc;
+using ServerFramework.Database.Context;
+using ServerFramework.Database.Model.Application.Opcode;
 using ServerFramework.Managers.Base;
 using ServerFramework.Network.Packets;
 using System;
@@ -77,39 +78,23 @@ namespace ServerFramework.Managers.Core
 		/// </summary>
 		internal override void Init()
 		{
-			Dictionary<ushort, KeyValuePair<OpcodeAttribute, MethodInfo>> temp
-				= new Dictionary<ushort, KeyValuePair<OpcodeAttribute, MethodInfo>>();
-
-			foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies().
-				Where(x => x.CustomAttributes.Any(y => y.AttributeType == typeof(OpcodeAttribute))))
+			using (ApplicationContext context = new ApplicationContext())
 			{
-				foreach (Type type in a.GetTypes())
+				IEnumerable<OpcodeModel> opcodes = context.Opcodes
+					.Where(x => x.Active)
+					.GroupBy(x => x.Code)
+					.OrderByDescending(x => x.Max(y => y.TypeID))
+					.ThenByDescending(x => x.Max(y => y.Version))
+					.Select(x => x.FirstOrDefault());
+
+				foreach (OpcodeModel opcode in opcodes)
 				{
-					foreach (MethodInfo meth in type.GetMethods())
-					{
-						foreach (OpcodeAttribute attr in meth.GetCustomAttributes<OpcodeAttribute>())
-						{
-							if (attr != null)
-							{
-								if ((ServerConfig.OpcodeAllowLevel & attr.Type) == attr.Type)
-								{
-									if (!temp.ContainsKey(attr.Opcode))
-										temp[attr.Opcode]
-											= new KeyValuePair<OpcodeAttribute, MethodInfo>(attr, meth);
-									else
-										if (temp[attr.Opcode].Key.Version < attr.Version)
-											temp[attr.Opcode] = new KeyValuePair<OpcodeAttribute, MethodInfo>(attr, meth);
-								}
-							}
-						}
-					}
+					PacketHandlers[(ushort)opcode.Code] = Delegate.CreateDelegate
+					(
+						typeof(OpcodeHandler)
+					,	Manager.AssemblyMgr.GetMethod(opcode.AssemblyName, opcode.TypeName, opcode.MethodName)
+					) as OpcodeHandler;
 				}
-			}
-
-			foreach (KeyValuePair<OpcodeAttribute, MethodInfo> keyval in temp.Values)
-			{
-				PacketHandlers[keyval.Key.Opcode] = Delegate.CreateDelegate(
-					typeof(OpcodeHandler), keyval.Value) as OpcodeHandler;
 			}
 
 			Manager.LogMgr.Log(LogType.Normal, "{0} packet handlers loaded", PacketHandlersCount);
@@ -137,8 +122,6 @@ namespace ServerFramework.Managers.Core
 
 						if (pClient != null)
 							PacketHandlers[packet.Header.Opcode].Invoke(pClient, packet);
-						else
-							throw new ArgumentNullException("pClient");
 					}
 				}
 				catch (Exception e)

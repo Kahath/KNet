@@ -13,10 +13,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using ServerFramework.Configuration.Core;
 using ServerFramework.Constants.Misc;
 using System;
 
-namespace ServerFramework.Configuration
+namespace ServerFramework.Configuration.Helpers
 {
 	internal static class ServerConfig
 	{
@@ -181,13 +182,26 @@ namespace ServerFramework.Configuration
 			set { _dbName = value; }
 		}
 
+		//internal static string ConnectionString
+		//{
+		//	get
+		//	{
+		//		string retVal = String.Empty;
+
+		//		retVal = String.Format("Data Source={0},{1};Network Library=DBMSSOCN;Initial Catalog={2};User ID={3};Password={4};"
+		//			, DBHost, DBPort, DBName, DBUser, DBPass);
+
+		//		return retVal;
+		//	}
+		//}
+
 		internal static string ConnectionString
 		{
 			get
 			{
 				string retVal = String.Empty;
 
-				retVal = String.Format("Data Source={0},{1};Network Library=DBMSSOCN;Initial Catalog={2};User ID={3};Password={4};"
+				retVal = String.Format("Data Source=127.0.0.1,1433;Network Library=DBMSSOCN;Initial Catalog=Zavrsni;User ID=Kahath;Password=Diablo91;"
 					, DBHost, DBPort, DBName, DBUser, DBPass);
 
 				return retVal;
@@ -202,26 +216,26 @@ namespace ServerFramework.Configuration
 
 		internal static void Init()
 		{
-			Config = new Config("ServerConfig.xml");
+			Config = new Config(ConfigurationHelper.Path);
 
-			BindIP = Config.Read<string>("bindip");
-			BindPort = Config.Read<int>("bindport");
+			BindIP = Config.Read<string>(ConfigurationHelper.BindIPKey);
+			BindPort = Config.Read<int>(ConfigurationHelper.BindPortKey);
 
-			LogLevel = (LogType)Config.Read<byte>("loglevel", true);
-			PacketLogLevel = (PacketLogType)Config.Read<byte>("packetloglevel", true);
-			OpcodeAllowLevel = (OpcodeType)Config.Read<byte>("opcodeallowlevel", true);
-			PacketLogSize = Config.Read<byte>("packetlogsize");
+			LogLevel = (LogType)Config.Read<byte>(ConfigurationHelper.LogLevelKey, true);
+			PacketLogLevel = (PacketLogType)Config.Read<byte>(ConfigurationHelper.PacketLogLevelKey, true);
+			OpcodeAllowLevel = (OpcodeType)Config.Read<byte>(ConfigurationHelper.OpcodeAllowLevelKey, true);
+			PacketLogSize = Config.Read<byte>(ConfigurationHelper.PacketLogSizeKey);
 
-			BufferSize = Config.Read<int>("buffersize");
-			MaxConnections = Config.Read<int>("maxconnections");
-			MaxSimultaneousAcceptOps = Config.Read<int>("maxsimultaneousacceptops");
-			Backlog = Config.Read<int>("backlog");
+			BufferSize = Config.Read<int>(ConfigurationHelper.BufferSIzeKey);
+			MaxConnections = Config.Read<int>(ConfigurationHelper.MaxConnectionsKey);
+			MaxSimultaneousAcceptOps = Config.Read<int>(ConfigurationHelper.MaxSimultaneousAcceptOpsKey);
+			Backlog = Config.Read<int>(ConfigurationHelper.BacklogKey);
 
-			DBHost = Config.Read<string>("dbhost");
-			DBPort = Config.Read<int>("dbport");
-			DBUser = Config.Read<string>("dbuser");
-			DBPass = Config.Read<string>("dbpass");
-			DBName = Config.Read<string>("dbname");
+			DBHost = Config.Read<string>(ConfigurationHelper.DBHostKey);
+			DBPort = Config.Read<int>(ConfigurationHelper.DBPortKey);
+			DBUser = Config.Read<string>(ConfigurationHelper.DBUserKey);
+			DBPass = Config.Read<string>(ConfigurationHelper.DBPassKey);
+			DBName = Config.Read<string>(ConfigurationHelper.DBNameKey);
 
 			PacketFlagsLength = sizeof(byte);
 			OpcodeLength = sizeof(ushort);

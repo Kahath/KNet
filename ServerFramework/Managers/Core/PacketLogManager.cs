@@ -13,7 +13,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using ServerFramework.Configuration;
+using ServerFramework.Configuration.Helpers;
 using ServerFramework.Constants.Entities.Session;
 using ServerFramework.Constants.Misc;
 using ServerFramework.Database.Context;
@@ -136,8 +136,8 @@ namespace ServerFramework.Managers.Core
 			using (ApplicationContext context = new ApplicationContext())
 			{
 				packetLog.PacketLogTypeID = logtype == PacketLogType.CMSG ?
-					context.PacketLogType.First(x => x.ID == (int)PacketLogType.CMSG && x.Active).ID :
-					context.PacketLogType.First(x => x.ID == (int)PacketLogType.SMSG && x.Active).ID;
+					context.PacketLogTypes.First(x => x.ID == (int)PacketLogType.CMSG && x.Active).ID :
+					context.PacketLogTypes.First(x => x.ID == (int)PacketLogType.SMSG && x.Active).ID;
 			}
 
 			if (packet.Header.Size > 0)
@@ -154,7 +154,7 @@ namespace ServerFramework.Managers.Core
 			{
 				using (ApplicationContext context = new ApplicationContext())
 				{
-					context.PacketLog.AddRange(PacketLog);
+					context.PacketLogs.AddRange(PacketLog);
 					context.SaveChanges();
 				}
 

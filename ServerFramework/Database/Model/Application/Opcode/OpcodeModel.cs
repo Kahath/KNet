@@ -13,31 +13,50 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using ServerFramework.Constants.Attributes;
 using ServerFramework.Database.Base;
-using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ServerFramework.Database.Model.Application.PacketLog
+namespace ServerFramework.Database.Model.Application.Opcode
 {
-	[Table("Packet.Log", Schema = "Application")]
-	public class PacketLogModel : EntityBase
+	[Table("Opcode", Schema="Application")]
+	public class OpcodeModel : EntityBase
 	{
 		#region Properties
 
 		[Key]
-		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-		public int ID							{ get; set; }
-		public string IP						{ get; set; }
-		public int? ClientID					{ get; set; }
-		public int? Size						{ get; set; }
-		public int PacketLogTypeID				{ get; set; }
-		public int? Opcode						{ get; set; }
-		public string Message					{ get; set; }
+		public int ID					{ get; set; }
+		public int Code					{ get; set; }
+		public int TypeID				{ get; set; }
+		public int Version				{ get; set; }
+		public string Author			{ get; set; }
+		public string AssemblyName		{ get; set; }
+		public string TypeName			{ get; set; }
+		public string MethodName		{ get; set; }
 
-		[ForeignKey("PacketLogTypeID")]
-		public PacketLogTypeModel PacketLogType { get; set; }
+
+		[ForeignKey("TypeID")]
+		public OpcodeTypeModel Type		{ get; set; }
 
 		#endregion
+
+		#region Constructors
+
+		public OpcodeModel()
+		{
+
+		}
+
+		public OpcodeModel(OpcodeAttribute opcode)
+		{
+			Code = opcode.Opcode;
+			TypeID = (int)opcode.Type;
+			Version = opcode.Version;
+			Author = opcode.Author;
+		}
+
+		#endregion
+
 	}
 }

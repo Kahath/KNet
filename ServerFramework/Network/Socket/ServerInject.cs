@@ -13,7 +13,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using ServerFramework.Configuration;
+using ServerFramework.Configuration.Helpers;
 using ServerFramework.Constants.Entities.Console.Misc;
 using ServerFramework.Constants.Entities.Session;
 using ServerFramework.Constants.Misc;
@@ -204,7 +204,7 @@ namespace ServerFramework.Network.Socket
 			{
 				SocketExtended socketExtended = SendReceivePool.Pop();
 
-				Client c = new Client(socketExtended);
+				Client c = new Client(this, socketExtended);
 				int id = Manager.SessionMgr.AddClient(c);
 
 				if (id == 0)

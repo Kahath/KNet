@@ -14,8 +14,11 @@
  */
 
 using DILibrary.DependencyInjection;
-using ServerFramework.Configuration;
+using ServerFramework.Configuration.Base;
+using ServerFramework.Configuration.Core;
+using ServerFramework.Configuration.Helpers;
 using ServerFramework.Constants.Entities.Session;
+using ServerFramework.Constants.Events;
 using ServerFramework.Constants.Misc;
 using ServerFramework.Database.Context;
 using ServerFramework.Managers;
@@ -38,6 +41,7 @@ namespace ServerFramework
 	public delegate void OpcodeHandler(Client pClient, Packet packet);
 	public delegate void ServerEventHandler(object sender, SocketAsyncEventArgs e);
 	public delegate void PacketEventHandler(object sender, EventArgs e);
+	public delegate void AssemblyEventHandler(object sender, AssemblyEventArgs e);
 
 	#endregion
 
@@ -53,7 +57,7 @@ namespace ServerFramework
 
 		#region Properties
 
-		public static Server Server
+		public Server Server
 		{
 			get
 			{
@@ -107,7 +111,6 @@ namespace ServerFramework
 			DependencyManager.Map<IServer, ServerInject>();
 
 			ServerConfig.Init();
-			Manager.LogMgr = LogManager.GetInstance();
 
 			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledExceptionHandler);
 
@@ -155,7 +158,6 @@ namespace ServerFramework
 					foreach (DbEntityValidationResult result in errors)
 						Manager.LogMgr.Log(LogType.DB, "{0}", result.ToString());
 
-					Console.ReadLine();
 					Environment.Exit(0);
 				}
 			}

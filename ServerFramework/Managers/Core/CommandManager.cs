@@ -13,7 +13,6 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using ServerFramework.Constants.Attributes;
 using ServerFramework.Constants.Entities.Console;
 using ServerFramework.Constants.Entities.Session;
 using ServerFramework.Constants.Misc;
@@ -70,47 +69,25 @@ namespace ServerFramework.Managers.Core
 		/// </summary>
 		internal override void Init()
 		{
-			foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies().
-				Where(x => x.CustomAttributes.Any(y => y.AttributeType == typeof(CommandAttribute))))
+			using(ApplicationContext context = new ApplicationContext())
 			{
-				foreach (Type type in a.GetTypes())
+				IEnumerable<CommandModel> commands = context.Commands.Where(x => x.Active);
+
+				foreach(CommandModel command in commands)
 				{
-					foreach (CommandAttribute attr in type.GetCustomAttributes<CommandAttribute>())
+					MethodInfo method = Manager.AssemblyMgr.GetMethod(command.AssemblyName, command.TypeName, command.MethodName);
+
+					if(method != null)
 					{
-						if (attr != null)
-						{
-							MethodInfo method = type.GetMethod("GetCommand"
-								, BindingFlags.NonPublic | BindingFlags.Static);
+						Command c = Manager.AssemblyMgr.InvokeStaticMethod<Command>(method);
 
-							if (method != null)
-							{
-								Command c = null;
-
-								try
-								{
-									c = method.Invoke(null, null) as Command;
-								}
-								catch (TargetInvocationException)
-								{
-									Manager.LogMgr.Log
-										(
-											LogType.Error
-										,	"Error creating command type {0}"
-										,	type.ToString()
-										);
-								}
-
-								if (c != null)
-									CommandTable.Add(c);
-							}
-						}
+						if (c != null)
+							CommandTable.Add(c);
 					}
 				}
 			}
 
 			Manager.LogMgr.Log(LogType.Normal, "{0} Commands loaded", CommandTable.Count);
-
-			LoadCommandDescriptions();
 		}
 
 		#endregion
@@ -154,7 +131,7 @@ namespace ServerFramework.Managers.Core
 
 					using(ApplicationContext context = new ApplicationContext())
 					{
-						context.CommandLog.Add(commandLog);
+						context.CommandLogs.Add(commandLog);
 						context.SaveChanges();
 					}
 				}
@@ -245,64 +222,6 @@ namespace ServerFramework.Managers.Core
 			command.Append(path[0]);
 			Manager.LogMgr.Log(LogType.Command, "Command '{0}' not found", command);
 			return false;
-		}
-
-		#endregion
-
-		#region LoadCommandDescriptions
-
-		/// <summary>
-		/// Loads descriptions and user level for commands from database.
-		/// </summary>
-		private void LoadCommandDescriptions()
-		{
-			Command c = null;
-
-			using (ApplicationContext context = new ApplicationContext())
-			{
-				IEnumerable<CommandModel> commands = context.Commands.Where(x => x.Active);
-
-				foreach (CommandModel cdo in commands)
-				{
-					c = GetCommandByPath(CommandTable.ToArray()
-						, cdo.Name.Split(' ').ToList());
-
-					if (c != null)
-					{
-						c.CommandLevel = (CommandLevel)cdo.CommandLevelID.GetValueOrDefault();
-						c.Description = cdo.Description;
-					}
-				}
-			}
-		}
-
-		#endregion
-
-		#region GetCommand
-
-		/// <summary>
-		/// Gets command by name
-		/// </summary>
-		/// <param name="commandTable">Array of available command.</param>
-		/// <param name="path">Command name as string list.</param>
-		/// <returns></returns>
-		private Command GetCommandByPath(Command[] commandTable, IList<string> path)
-		{
-			if (commandTable == null || path == null)
-				return null;
-
-			Command c = commandTable.FirstOrDefault(x => x.Name.StartsWith(path[0].Trim()));
-
-			if (c != null)
-			{
-				path.RemoveAt(0);
-				if (path.Count > 0)
-				{
-					return GetCommandByPath(c.SubCommands, path);
-				}
-			}
-
-			return c;
 		}
 
 		#endregion

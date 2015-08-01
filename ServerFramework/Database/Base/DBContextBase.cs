@@ -60,7 +60,7 @@ namespace ServerFramework.Database.Base
 		/// entries are created for many-to-many relationships and relationships where
 		/// there is no foreign key property included in the entity class (often referred
 		/// to as independent associations)
-		///</returns>
+		/// </returns>
 		public override int SaveChanges()
 		{
 			ObjectContext context = ((IObjectContextAdapter)this).ObjectContext;

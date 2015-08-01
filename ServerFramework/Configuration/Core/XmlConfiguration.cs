@@ -13,11 +13,13 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using ServerFramework.Configuration.Base;
+using ServerFramework.Configuration.Helpers;
 using System;
 using System.IO;
 using System.Xml;
 
-namespace ServerFramework.Configuration
+namespace ServerFramework.Configuration.Core
 {
 	/// <summary>
 	/// Provides xml configuration injection.
@@ -27,8 +29,6 @@ namespace ServerFramework.Configuration
 		#region Fields
 
 		private XmlNodeList _nodes;
-		private const string _configName = "name";
-		private const string _configValue = "value";
 
 		#endregion
 
@@ -84,9 +84,9 @@ namespace ServerFramework.Configuration
 				{
 					if (node.NodeType == XmlNodeType.Element)
 					{
-						if (node.Attributes[_configName].Value == config)
+						if (node.Attributes[ConfigurationHelper.Key].Value == config)
 						{
-							nameValue = node.Attributes[_configValue].Value;
+							nameValue = node.Attributes[ConfigurationHelper.Value].Value;
 							break;
 						}
 					}

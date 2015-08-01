@@ -15,7 +15,7 @@
 
 using DILibrary.Constants;
 using DILibrary.DependencyInjection;
-using ServerFramework.Configuration;
+using ServerFramework.Configuration.Helpers;
 using System.Net.Sockets;
 
 namespace ServerFramework.Network.Socket

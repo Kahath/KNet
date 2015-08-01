@@ -19,7 +19,7 @@ using System;
 namespace ServerFramework.Constants.Attributes
 {
 	[AttributeUsage(AttributeTargets.Method | AttributeTargets.Assembly, AllowMultiple = true)]
-	public sealed class OpcodeAttribute : Attribute
+	public sealed class OpcodeAttribute : Attribute, ICustomAttribute
 	{
 		#region Fields
 

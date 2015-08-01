@@ -28,6 +28,7 @@ namespace ServerFramework.Database.Model.Application.Log
 		public int ID				{ get; set; }
 		public string Message		{ get; set; }
 		public int LogTypeID		{ get; set; }
+
 		[ForeignKey("LogTypeID")]
 		public LogTypeModel LogType { get; set; }
 

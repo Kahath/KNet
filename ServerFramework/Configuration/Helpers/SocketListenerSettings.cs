@@ -15,7 +15,7 @@
 
 using System.Net;
 
-namespace ServerFramework.Configuration
+namespace ServerFramework.Configuration.Helpers
 {
 	public class SocketListenerSettings
 	{

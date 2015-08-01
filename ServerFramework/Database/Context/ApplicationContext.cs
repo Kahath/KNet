@@ -13,10 +13,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using ServerFramework.Configuration;
+using ServerFramework.Configuration.Helpers;
 using ServerFramework.Database.Base;
 using ServerFramework.Database.Model.Application.Command;
 using ServerFramework.Database.Model.Application.Log;
+using ServerFramework.Database.Model.Application.Opcode;
 using ServerFramework.Database.Model.Application.PacketLog;
 using System.Data.Entity;
 
@@ -27,12 +28,14 @@ namespace ServerFramework.Database.Context
 		#region Properties
 
 		public DbSet<CommandModel> Commands				{ get; set; }
-		public DbSet<CommandLevelModel> CommandLevel	{ get; set; }
-		public DbSet<CommandLogModel> CommandLog		{ get; set; }
-		public DbSet<PacketLogModel> PacketLog			{ get; set; }
-		public DbSet<PacketLogTypeModel> PacketLogType	{ get; set; }
-		public DbSet<LogModel> Log						{ get; set; }
-		public DbSet<LogTypeModel> LogType				{ get; set; }
+		public DbSet<CommandLevelModel> CommandLevels	{ get; set; }
+		public DbSet<CommandLogModel> CommandLogs		{ get; set; }
+		public DbSet<PacketLogModel> PacketLogs			{ get; set; }
+		public DbSet<PacketLogTypeModel> PacketLogTypes	{ get; set; }
+		public DbSet<LogModel> Logs						{ get; set; }
+		public DbSet<LogTypeModel> LogTypes				{ get; set; }
+		public DbSet<OpcodeModel> Opcodes				{ get; set; }
+		public DbSet<OpcodeTypeModel> OpcodeTypes		{ get; set; }
 
 		#endregion
 

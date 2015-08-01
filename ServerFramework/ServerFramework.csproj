@@ -57,13 +57,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Configuration\Config.cs" />
-    <Compile Include="Configuration\XmlConfiguration.cs" />
-    <Compile Include="Configuration\IConfig.cs" />
-    <Compile Include="Configuration\ServerConfig.cs" />
+    <Compile Include="Configuration\Core\Config.cs" />
+    <Compile Include="Configuration\Helpers\ConfigurationHelper.cs" />
+    <Compile Include="Configuration\Core\XmlConfiguration.cs" />
+    <Compile Include="Configuration\Base\IConfig.cs" />
+    <Compile Include="Configuration\Helpers\ServerConfig.cs" />
     <Compile Include="Constants\Attributes\CommandAttribute.cs" />
+    <Compile Include="Constants\Attributes\ICustomAttribute.cs" />
     <Compile Include="Constants\Entities\Session\ConsoleClient.cs" />
     <Compile Include="Constants\Entities\Session\IClient.cs" />
+    <Compile Include="Constants\Events\AssemblyEventArgs.cs" />
     <Compile Include="Constants\Misc\CommandLevel.cs" />
     <Compile Include="Constants\Entities\Console\Command.cs" />
     <Compile Include="Constants\Misc\OpcodeType.cs" />
@@ -77,6 +80,8 @@
     <Compile Include="Database\Context\ApplicationContext.cs" />
     <Compile Include="Database\Model\Application\Command\CommandLevelModel.cs" />
     <Compile Include="Database\Model\Application\Command\CommandLogModel.cs" />
+    <Compile Include="Database\Model\Application\Opcode\OpcodeModel.cs" />
+    <Compile Include="Database\Model\Application\Opcode\OpcodeTypeModel.cs" />
     <Compile Include="Database\PrecompiledViews\ApplicationContext.Views.cs" />
     <Compile Include="Database\Model\Application\Command\CommandModel.cs" />
     <Compile Include="Database\Model\Application\Log\LogModel.cs" />
@@ -85,11 +90,14 @@
     <Compile Include="Database\Model\Application\PacketLog\PacketLogTypeModel.cs" />
     <Compile Include="Extensions\NetworkExtensions.cs" />
     <Compile Include="Extensions\PacketStreamExtensions.cs" />
+    <Compile Include="Game\CommandHandlers\AssemblyCommands.cs" />
     <Compile Include="Game\CommandHandlers\ClearCommands.cs" />
     <Compile Include="Game\CommandHandlers\CommandCommands.cs" />
     <Compile Include="Game\CommandHandlers\DatabaseCommands.cs" />
     <Compile Include="Game\CommandHandlers\HelpCommands.cs" />
+    <Compile Include="Game\CommandHandlers\OpcodeCommands.cs" />
     <Compile Include="KahathFramework.cs" />
+    <Compile Include="Managers\Core\AssemblyManager.cs" />
     <Compile Include="Managers\Core\LogManager.cs" />
     <Compile Include="Constants\Misc\LogType.cs" />
     <Compile Include="Managers\Core\PacketLogManager.cs" />
@@ -110,7 +118,7 @@
     <Compile Include="Network\Socket\SocketExtended.cs" />
     <Compile Include="Network\Socket\Server.cs" />
     <Compile Include="Network\Socket\ServerInject.cs" />
-    <Compile Include="Configuration\SocketListenerSettings.cs" />
+    <Compile Include="Configuration\Helpers\SocketListenerSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Singleton\SingletonBase.cs" />
   </ItemGroup>

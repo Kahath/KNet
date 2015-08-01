@@ -31,7 +31,7 @@ namespace ServerFramework.Network.Packets.Handlers
 		#region Version 1
 
 		[Opcode(0x0000, "Kahath", 1, OpcodeType.Test)]
-		public static void ExamplePacketHandler(Client pClient, Packet packet)
+		private static void ExamplePacketHandler(Client pClient, Packet packet)
 		{
 			//Read if packet has data
 			string exampleName = packet.Read<string>();
@@ -57,7 +57,7 @@ namespace ServerFramework.Network.Packets.Handlers
 		#region Version 2
 
 		[Opcode(0x0000, "Kahath", 2, OpcodeType.Test)]
-		public static void ExamplePacketHandlerTwo(Client pClient, Packet packet)
+		private static void ExamplePacketHandlerTwo(Client pClient, Packet packet)
 		{
 			//Read if packet has data
 			string exampleName = packet.Read<string>();

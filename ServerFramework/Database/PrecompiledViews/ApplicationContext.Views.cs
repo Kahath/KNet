@@ -11,7 +11,7 @@ using System.Data.Entity.Infrastructure.MappingViews;
 
 [assembly: DbMappingViewCacheTypeAttribute(
 	typeof(ServerFramework.Database.Context.ApplicationContext),
-	typeof(ServerFramework.Database.PrecompiledViews.ViewsForBaseEntitySets0f9975b1040574423b88fc41a687babc54cc888c2af4bd8d1d0867dd3d901bd7))]
+	typeof(ServerFramework.Database.PrecompiledViews.ViewsForBaseEntitySetseb712a492457fdcd0f177d6b5c26840fad9c5d5b44c0d5e8637ab23e44cf5b0d))]
 
 namespace ServerFramework.Database.PrecompiledViews
 {
@@ -23,14 +23,14 @@ namespace ServerFramework.Database.PrecompiledViews
 	/// Implements a mapping view cache.
 	/// </summary>
 	[GeneratedCode("Entity Framework Power Tools", "0.9.0.0")]
-	internal sealed class ViewsForBaseEntitySets0f9975b1040574423b88fc41a687babc54cc888c2af4bd8d1d0867dd3d901bd7 : DbMappingViewCache
+	internal sealed class ViewsForBaseEntitySetseb712a492457fdcd0f177d6b5c26840fad9c5d5b44c0d5e8637ab23e44cf5b0d : DbMappingViewCache
 	{
 		/// <summary>
 		/// Gets a hash value computed over the mapping closure.
 		/// </summary>
 		public override string MappingHashValue
 		{
-			get { return "0f9975b1040574423b88fc41a687babc54cc888c2af4bd8d1d0867dd3d901bd7"; }
+			get { return "eb712a492457fdcd0f177d6b5c26840fad9c5d5b44c0d5e8637ab23e44cf5b0d"; }
 		}
 
 		/// <summary>
@@ -57,7 +57,7 @@ namespace ServerFramework.Database.PrecompiledViews
 				return GetView1();
 			}
 
-			if (extentName == "ApplicationContext.CommandLevel")
+			if (extentName == "ApplicationContext.CommandLevels")
 			{
 				return GetView2();
 			}
@@ -72,7 +72,7 @@ namespace ServerFramework.Database.PrecompiledViews
 				return GetView4();
 			}
 
-			if (extentName == "ApplicationContext.CommandLog")
+			if (extentName == "ApplicationContext.CommandLogs")
 			{
 				return GetView5();
 			}
@@ -87,34 +87,54 @@ namespace ServerFramework.Database.PrecompiledViews
 				return GetView7();
 			}
 
-			if (extentName == "ApplicationContext.Log")
+			if (extentName == "ApplicationContext.Logs")
 			{
 				return GetView8();
 			}
 
-			if (extentName == "ApplicationContext.LogType")
+			if (extentName == "ApplicationContext.LogTypes")
 			{
 				return GetView9();
 			}
 
-			if (extentName == "CodeFirstDatabase.PacketLogModel")
+			if (extentName == "CodeFirstDatabase.OpcodeModel")
 			{
 				return GetView10();
 			}
 
-			if (extentName == "CodeFirstDatabase.PacketLogTypeModel")
+			if (extentName == "CodeFirstDatabase.OpcodeTypeModel")
 			{
 				return GetView11();
 			}
 
-			if (extentName == "ApplicationContext.PacketLog")
+			if (extentName == "ApplicationContext.Opcodes")
 			{
 				return GetView12();
 			}
 
-			if (extentName == "ApplicationContext.PacketLogType")
+			if (extentName == "ApplicationContext.OpcodeTypes")
 			{
 				return GetView13();
+			}
+
+			if (extentName == "CodeFirstDatabase.PacketLogModel")
+			{
+				return GetView14();
+			}
+
+			if (extentName == "CodeFirstDatabase.PacketLogTypeModel")
+			{
+				return GetView15();
+			}
+
+			if (extentName == "ApplicationContext.PacketLogs")
+			{
+				return GetView16();
+			}
+
+			if (extentName == "ApplicationContext.PacketLogTypes")
+			{
+				return GetView17();
 			}
 
 			return null;
@@ -138,7 +158,7 @@ namespace ServerFramework.Database.PrecompiledViews
             T.DateModified AS CommandLevelModel_DateModified, 
             T.DateDeactivated AS CommandLevelModel_DateDeactivated, 
             True AS _from0
-        FROM ApplicationContext.CommandLevel AS T
+        FROM ApplicationContext.CommandLevels AS T
     ) AS T1");
 		}
 
@@ -150,10 +170,13 @@ namespace ServerFramework.Database.PrecompiledViews
 		{
 			return new DbMappingView(@"
     SELECT VALUE -- Constructing CommandModel
-        [CodeFirstDatabaseSchema.CommandModel](T1.CommandModel_ID, T1.CommandModel_Name, T1.CommandModel_Description, T1.CommandModel_CommandLevelID, T1.CommandModel_Active, T1.CommandModel_DateCreated, T1.CommandModel_DateModified, T1.CommandModel_DateDeactivated)
+        [CodeFirstDatabaseSchema.CommandModel](T1.CommandModel_ID, T1.CommandModel_AssemblyName, T1.CommandModel_TypeName, T1.CommandModel_MethodName, T1.CommandModel_Name, T1.CommandModel_Description, T1.CommandModel_CommandLevelID, T1.CommandModel_Active, T1.CommandModel_DateCreated, T1.CommandModel_DateModified, T1.CommandModel_DateDeactivated)
     FROM (
         SELECT 
             T.ID AS CommandModel_ID, 
+            T.AssemblyName AS CommandModel_AssemblyName, 
+            T.TypeName AS CommandModel_TypeName, 
+            T.MethodName AS CommandModel_MethodName, 
             T.Name AS CommandModel_Name, 
             T.Description AS CommandModel_Description, 
             T.CommandLevelID AS CommandModel_CommandLevelID, 
@@ -167,13 +190,13 @@ namespace ServerFramework.Database.PrecompiledViews
 		}
 
 		/// <summary>
-		/// Gets the view for ApplicationContext.CommandLevel.
+		/// Gets the view for ApplicationContext.CommandLevels.
 		/// </summary>
 		/// <returns>The mapping view.</returns>
 		private static DbMappingView GetView2()
 		{
 			return new DbMappingView(@"
-    SELECT VALUE -- Constructing CommandLevel
+    SELECT VALUE -- Constructing CommandLevels
         [ServerFramework.Database.Context.CommandLevelModel](T1.CommandLevelModel_ID, T1.CommandLevelModel_Name, T1.CommandLevelModel_Active, T1.CommandLevelModel_DateCreated, T1.CommandLevelModel_DateModified, T1.CommandLevelModel_DateDeactivated)
     FROM (
         SELECT 
@@ -196,10 +219,13 @@ namespace ServerFramework.Database.PrecompiledViews
 		{
 			return new DbMappingView(@"
     SELECT VALUE -- Constructing Commands
-        [ServerFramework.Database.Context.CommandModel](T1.CommandModel_ID, T1.CommandModel_Name, T1.CommandModel_Description, T1.CommandModel_CommandLevelID, T1.CommandModel_Active, T1.CommandModel_DateCreated, T1.CommandModel_DateModified, T1.CommandModel_DateDeactivated)
+        [ServerFramework.Database.Context.CommandModel](T1.CommandModel_ID, T1.CommandModel_AssemblyName, T1.CommandModel_TypeName, T1.CommandModel_MethodName, T1.CommandModel_Name, T1.CommandModel_Description, T1.CommandModel_CommandLevelID, T1.CommandModel_Active, T1.CommandModel_DateCreated, T1.CommandModel_DateModified, T1.CommandModel_DateDeactivated)
     FROM (
         SELECT 
             T.ID AS CommandModel_ID, 
+            T.AssemblyName AS CommandModel_AssemblyName, 
+            T.TypeName AS CommandModel_TypeName, 
+            T.MethodName AS CommandModel_MethodName, 
             T.Name AS CommandModel_Name, 
             T.Description AS CommandModel_Description, 
             T.CommandLevelID AS CommandModel_CommandLevelID, 
@@ -232,18 +258,18 @@ namespace ServerFramework.Database.PrecompiledViews
             T.DateModified AS CommandLogModel_DateModified, 
             T.DateDeactivated AS CommandLogModel_DateDeactivated, 
             True AS _from0
-        FROM ApplicationContext.CommandLog AS T
+        FROM ApplicationContext.CommandLogs AS T
     ) AS T1");
 		}
 
 		/// <summary>
-		/// Gets the view for ApplicationContext.CommandLog.
+		/// Gets the view for ApplicationContext.CommandLogs.
 		/// </summary>
 		/// <returns>The mapping view.</returns>
 		private static DbMappingView GetView5()
 		{
 			return new DbMappingView(@"
-    SELECT VALUE -- Constructing CommandLog
+    SELECT VALUE -- Constructing CommandLogs
         [ServerFramework.Database.Context.CommandLogModel](T1.CommandLogModel_ID, T1.CommandLogModel_UserID, T1.CommandLogModel_UserName, T1.CommandLogModel_Command, T1.CommandLogModel_Active, T1.CommandLogModel_DateCreated, T1.CommandLogModel_DateModified, T1.CommandLogModel_DateDeactivated)
     FROM (
         SELECT 
@@ -279,7 +305,7 @@ namespace ServerFramework.Database.PrecompiledViews
             T.DateModified AS LogModel_DateModified, 
             T.DateDeactivated AS LogModel_DateDeactivated, 
             True AS _from0
-        FROM ApplicationContext.Log AS T
+        FROM ApplicationContext.Logs AS T
     ) AS T1");
 		}
 
@@ -301,18 +327,18 @@ namespace ServerFramework.Database.PrecompiledViews
             T.DateModified AS LogTypeModel_DateModified, 
             T.DateDeactivated AS LogTypeModel_DateDeactivated, 
             True AS _from0
-        FROM ApplicationContext.LogType AS T
+        FROM ApplicationContext.LogTypes AS T
     ) AS T1");
 		}
 
 		/// <summary>
-		/// Gets the view for ApplicationContext.Log.
+		/// Gets the view for ApplicationContext.Logs.
 		/// </summary>
 		/// <returns>The mapping view.</returns>
 		private static DbMappingView GetView8()
 		{
 			return new DbMappingView(@"
-    SELECT VALUE -- Constructing Log
+    SELECT VALUE -- Constructing Logs
         [ServerFramework.Database.Context.LogModel](T1.LogModel_ID, T1.LogModel_Message, T1.LogModel_LogTypeID, T1.LogModel_Active, T1.LogModel_DateCreated, T1.LogModel_DateModified, T1.LogModel_DateDeactivated)
     FROM (
         SELECT 
@@ -329,13 +355,13 @@ namespace ServerFramework.Database.PrecompiledViews
 		}
 
 		/// <summary>
-		/// Gets the view for ApplicationContext.LogType.
+		/// Gets the view for ApplicationContext.LogTypes.
 		/// </summary>
 		/// <returns>The mapping view.</returns>
 		private static DbMappingView GetView9()
 		{
 			return new DbMappingView(@"
-    SELECT VALUE -- Constructing LogType
+    SELECT VALUE -- Constructing LogTypes
         [ServerFramework.Database.Context.LogTypeModel](T1.LogTypeModel_ID, T1.LogTypeModel_Name, T1.LogTypeModel_Active, T1.LogTypeModel_DateCreated, T1.LogTypeModel_DateModified, T1.LogTypeModel_DateDeactivated)
     FROM (
         SELECT 
@@ -351,10 +377,110 @@ namespace ServerFramework.Database.PrecompiledViews
 		}
 
 		/// <summary>
-		/// Gets the view for CodeFirstDatabase.PacketLogModel.
+		/// Gets the view for CodeFirstDatabase.OpcodeModel.
 		/// </summary>
 		/// <returns>The mapping view.</returns>
 		private static DbMappingView GetView10()
+		{
+			return new DbMappingView(@"
+    SELECT VALUE -- Constructing OpcodeModel
+        [CodeFirstDatabaseSchema.OpcodeModel](T1.OpcodeModel_ID, T1.OpcodeModel_Code, T1.OpcodeModel_TypeID, T1.OpcodeModel_Version, T1.OpcodeModel_Author, T1.OpcodeModel_AssemblyName, T1.OpcodeModel_TypeName, T1.OpcodeModel_MethodName, T1.OpcodeModel_Active, T1.OpcodeModel_DateCreated, T1.OpcodeModel_DateModified, T1.OpcodeModel_DateDeactivated)
+    FROM (
+        SELECT 
+            T.ID AS OpcodeModel_ID, 
+            T.Code AS OpcodeModel_Code, 
+            T.TypeID AS OpcodeModel_TypeID, 
+            T.Version AS OpcodeModel_Version, 
+            T.Author AS OpcodeModel_Author, 
+            T.AssemblyName AS OpcodeModel_AssemblyName, 
+            T.TypeName AS OpcodeModel_TypeName, 
+            T.MethodName AS OpcodeModel_MethodName, 
+            T.Active AS OpcodeModel_Active, 
+            T.DateCreated AS OpcodeModel_DateCreated, 
+            T.DateModified AS OpcodeModel_DateModified, 
+            T.DateDeactivated AS OpcodeModel_DateDeactivated, 
+            True AS _from0
+        FROM ApplicationContext.Opcodes AS T
+    ) AS T1");
+		}
+
+		/// <summary>
+		/// Gets the view for CodeFirstDatabase.OpcodeTypeModel.
+		/// </summary>
+		/// <returns>The mapping view.</returns>
+		private static DbMappingView GetView11()
+		{
+			return new DbMappingView(@"
+    SELECT VALUE -- Constructing OpcodeTypeModel
+        [CodeFirstDatabaseSchema.OpcodeTypeModel](T1.OpcodeTypeModel_ID, T1.OpcodeTypeModel_Name, T1.OpcodeTypeModel_Active, T1.OpcodeTypeModel_DateCreated, T1.OpcodeTypeModel_DateModified, T1.OpcodeTypeModel_DateDeactivated)
+    FROM (
+        SELECT 
+            T.ID AS OpcodeTypeModel_ID, 
+            T.Name AS OpcodeTypeModel_Name, 
+            T.Active AS OpcodeTypeModel_Active, 
+            T.DateCreated AS OpcodeTypeModel_DateCreated, 
+            T.DateModified AS OpcodeTypeModel_DateModified, 
+            T.DateDeactivated AS OpcodeTypeModel_DateDeactivated, 
+            True AS _from0
+        FROM ApplicationContext.OpcodeTypes AS T
+    ) AS T1");
+		}
+
+		/// <summary>
+		/// Gets the view for ApplicationContext.Opcodes.
+		/// </summary>
+		/// <returns>The mapping view.</returns>
+		private static DbMappingView GetView12()
+		{
+			return new DbMappingView(@"
+    SELECT VALUE -- Constructing Opcodes
+        [ServerFramework.Database.Context.OpcodeModel](T1.OpcodeModel_ID, T1.OpcodeModel_Code, T1.OpcodeModel_TypeID, T1.OpcodeModel_Version, T1.OpcodeModel_Author, T1.OpcodeModel_AssemblyName, T1.OpcodeModel_TypeName, T1.OpcodeModel_MethodName, T1.OpcodeModel_Active, T1.OpcodeModel_DateCreated, T1.OpcodeModel_DateModified, T1.OpcodeModel_DateDeactivated)
+    FROM (
+        SELECT 
+            T.ID AS OpcodeModel_ID, 
+            T.Code AS OpcodeModel_Code, 
+            T.TypeID AS OpcodeModel_TypeID, 
+            T.Version AS OpcodeModel_Version, 
+            T.Author AS OpcodeModel_Author, 
+            T.AssemblyName AS OpcodeModel_AssemblyName, 
+            T.TypeName AS OpcodeModel_TypeName, 
+            T.MethodName AS OpcodeModel_MethodName, 
+            T.Active AS OpcodeModel_Active, 
+            T.DateCreated AS OpcodeModel_DateCreated, 
+            T.DateModified AS OpcodeModel_DateModified, 
+            T.DateDeactivated AS OpcodeModel_DateDeactivated, 
+            True AS _from0
+        FROM CodeFirstDatabase.OpcodeModel AS T
+    ) AS T1");
+		}
+
+		/// <summary>
+		/// Gets the view for ApplicationContext.OpcodeTypes.
+		/// </summary>
+		/// <returns>The mapping view.</returns>
+		private static DbMappingView GetView13()
+		{
+			return new DbMappingView(@"
+    SELECT VALUE -- Constructing OpcodeTypes
+        [ServerFramework.Database.Context.OpcodeTypeModel](T1.OpcodeTypeModel_ID, T1.OpcodeTypeModel_Name, T1.OpcodeTypeModel_Active, T1.OpcodeTypeModel_DateCreated, T1.OpcodeTypeModel_DateModified, T1.OpcodeTypeModel_DateDeactivated)
+    FROM (
+        SELECT 
+            T.ID AS OpcodeTypeModel_ID, 
+            T.Name AS OpcodeTypeModel_Name, 
+            T.Active AS OpcodeTypeModel_Active, 
+            T.DateCreated AS OpcodeTypeModel_DateCreated, 
+            T.DateModified AS OpcodeTypeModel_DateModified, 
+            T.DateDeactivated AS OpcodeTypeModel_DateDeactivated, 
+            True AS _from0
+        FROM CodeFirstDatabase.OpcodeTypeModel AS T
+    ) AS T1");
+		}
+
+		/// <summary>
+		/// Gets the view for CodeFirstDatabase.PacketLogModel.
+		/// </summary>
+		/// <returns>The mapping view.</returns>
+		private static DbMappingView GetView14()
 		{
 			return new DbMappingView(@"
     SELECT VALUE -- Constructing PacketLogModel
@@ -373,7 +499,7 @@ namespace ServerFramework.Database.PrecompiledViews
             T.DateModified AS PacketLogModel_DateModified, 
             T.DateDeactivated AS PacketLogModel_DateDeactivated, 
             True AS _from0
-        FROM ApplicationContext.PacketLog AS T
+        FROM ApplicationContext.PacketLogs AS T
     ) AS T1");
 		}
 
@@ -381,7 +507,7 @@ namespace ServerFramework.Database.PrecompiledViews
 		/// Gets the view for CodeFirstDatabase.PacketLogTypeModel.
 		/// </summary>
 		/// <returns>The mapping view.</returns>
-		private static DbMappingView GetView11()
+		private static DbMappingView GetView15()
 		{
 			return new DbMappingView(@"
     SELECT VALUE -- Constructing PacketLogTypeModel
@@ -395,18 +521,18 @@ namespace ServerFramework.Database.PrecompiledViews
             T.DateModified AS PacketLogTypeModel_DateModified, 
             T.DateDeactivated AS PacketLogTypeModel_DateDeactivated, 
             True AS _from0
-        FROM ApplicationContext.PacketLogType AS T
+        FROM ApplicationContext.PacketLogTypes AS T
     ) AS T1");
 		}
 
 		/// <summary>
-		/// Gets the view for ApplicationContext.PacketLog.
+		/// Gets the view for ApplicationContext.PacketLogs.
 		/// </summary>
 		/// <returns>The mapping view.</returns>
-		private static DbMappingView GetView12()
+		private static DbMappingView GetView16()
 		{
 			return new DbMappingView(@"
-    SELECT VALUE -- Constructing PacketLog
+    SELECT VALUE -- Constructing PacketLogs
         [ServerFramework.Database.Context.PacketLogModel](T1.PacketLogModel_ID, T1.PacketLogModel_IP, T1.PacketLogModel_ClientID, T1.PacketLogModel_Size, T1.PacketLogModel_PacketLogTypeID, T1.PacketLogModel_Opcode, T1.PacketLogModel_Message, T1.PacketLogModel_Active, T1.PacketLogModel_DateCreated, T1.PacketLogModel_DateModified, T1.PacketLogModel_DateDeactivated)
     FROM (
         SELECT 
@@ -427,13 +553,13 @@ namespace ServerFramework.Database.PrecompiledViews
 		}
 
 		/// <summary>
-		/// Gets the view for ApplicationContext.PacketLogType.
+		/// Gets the view for ApplicationContext.PacketLogTypes.
 		/// </summary>
 		/// <returns>The mapping view.</returns>
-		private static DbMappingView GetView13()
+		private static DbMappingView GetView17()
 		{
 			return new DbMappingView(@"
-    SELECT VALUE -- Constructing PacketLogType
+    SELECT VALUE -- Constructing PacketLogTypes
         [ServerFramework.Database.Context.PacketLogTypeModel](T1.PacketLogTypeModel_ID, T1.PacketLogTypeModel_Name, T1.PacketLogTypeModel_Active, T1.PacketLogTypeModel_DateCreated, T1.PacketLogTypeModel_DateModified, T1.PacketLogTypeModel_DateDeactivated)
     FROM (
         SELECT 

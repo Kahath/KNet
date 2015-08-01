@@ -15,8 +15,9 @@
 
 using DILibrary.Constants;
 using DILibrary.DependencyInjection;
+using ServerFramework.Configuration.Base;
 
-namespace ServerFramework.Configuration
+namespace ServerFramework.Configuration.Core
 {
 	/// <summary>
 	/// Provides configuration dependency injection.

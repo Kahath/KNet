@@ -35,11 +35,11 @@
 
 				<!--Opcode settings-->
 <property name="opcodeallowlevel" value="0x1F"/>		<!--Opcode allow type mask
-															Test				= 0x01
-															Broken				= 0x02
-															Finished			= 0x04
-															NotUsed				= 0x08
-															InDevelopment		= 0x10
+															NotUsed				= 0x01
+															InDevelopment		= 0x02
+															Test				= 0x04
+															Stable				= 0x08
+															Release				= 0x10
 															All					= 0x1F-->
 
 				<!-- Socket settings-->

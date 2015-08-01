@@ -13,7 +13,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using ServerFramework.Configuration;
+using ServerFramework.Configuration.Helpers;
 using ServerFramework.Constants.Misc;
 using ServerFramework.Managers.Core;
 
@@ -29,6 +29,7 @@ namespace ServerFramework.Managers
 		private static BufferManager _bufferMgr;
 		private static PacketLogManager _packetLogMgr;
 		private static LogManager _logMgr;
+		private static AssemblyManager _assemblyMgr;
 
 		#endregion
 
@@ -68,8 +69,19 @@ namespace ServerFramework.Managers
 
 		public static LogManager LogMgr
 		{
-			get { return _logMgr; }
-			set { _logMgr = value; }
+			get 
+			{
+				if (_logMgr == null)
+					_logMgr = LogManager.GetInstance();
+
+				return _logMgr; 
+			}
+		}
+
+		public static AssemblyManager AssemblyMgr
+		{
+			get { return _assemblyMgr; }
+			set { _assemblyMgr = value; }
 		}
 
 		#endregion
@@ -78,7 +90,8 @@ namespace ServerFramework.Managers
 
 		internal static void Init()
 		{
-			LogMgr = LogManager.GetInstance();
+			LogMgr.Log(LogType.Init, "Initialising assembly manager");
+			AssemblyMgr = AssemblyManager.GetInstance();
 
 			LogMgr.Log(LogType.Init, "Initialising packet log manager");
 			PacketLogMgr = PacketLogManager.GetInstance();
