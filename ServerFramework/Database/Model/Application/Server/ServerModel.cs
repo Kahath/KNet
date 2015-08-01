@@ -13,19 +13,18 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using ServerFramework.Database.Base;
 using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ServerFramework.Database.Base
+namespace ServerFramework.Database.Model.Application.Server
 {
-	public interface IEntity
+	[Table("Server", Schema="Application")]
+	public class ServerModel : EntityBase
 	{
-		#region Properties
-
-		bool Active					{ get; set; }
-		DateTime DateCreated		{ get; set; }
-		DateTime? DateModified		{ get; set; }
-		DateTime? DateDeactivated	{ get; set; }
-
-		#endregion
+		[Key]
+		public int ID				{ get; set; }
+		public bool IsSuccessful	{ get; set; }
 	}
 }

@@ -35,7 +35,6 @@ namespace ServerFramework.Database.Model.Application.Opcode
 		public string TypeName			{ get; set; }
 		public string MethodName		{ get; set; }
 
-
 		[ForeignKey("TypeID")]
 		public OpcodeTypeModel Type		{ get; set; }
 

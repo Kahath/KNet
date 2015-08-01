@@ -55,6 +55,11 @@ namespace ServerFramework.Managers.Core
 			}
 		}
 
+		private LogType? LogLevel
+		{
+			get { return ServerConfig.LogLevel ?? (LogType)0xFF; }
+		}
+
 		#endregion
 
 		#region Constructors
@@ -149,7 +154,7 @@ namespace ServerFramework.Managers.Core
 					break;
 			}
 
-			if ((ServerConfig.LogLevel & type) == type)
+			if ((LogLevel & type) == type)
 			{
 				string msg = String.Empty;
 
@@ -180,10 +185,13 @@ namespace ServerFramework.Managers.Core
 						logModel.LogTypeID = (int)type;
 						logModel.Message = String.Format(message, args);
 
-						using (ApplicationContext context = new ApplicationContext())
+						if (ServerConfig.LogLevel != null)
 						{
-							context.Logs.Add(logModel);
-							context.SaveChanges();
+							using (ApplicationContext context = new ApplicationContext())
+							{
+								context.Logs.Add(logModel);
+								context.SaveChanges();
+							}
 						}
 					break;
 				}

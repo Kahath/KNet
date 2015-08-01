@@ -20,8 +20,11 @@ using ServerFramework.Constants.Misc;
 using ServerFramework.Database.Context;
 using ServerFramework.Database.Model.Application.Command;
 using ServerFramework.Database.Model.Application.Opcode;
+using ServerFramework.Database.Model.Application.Server;
 using ServerFramework.Managers.Base;
 using System;
+using System.Collections.Generic;
+using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -55,7 +58,17 @@ namespace ServerFramework.Managers.Core
 			foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies().
 				Where(x => x.CustomAttributes.Any(y => typeof(ICustomAttribute).IsAssignableFrom(y.AttributeType))))
 			{
-				HandleAssemblyTypes(a);
+				HandleCustomAssemblyTypes(a);
+			}
+
+			using(ApplicationContext context = new ApplicationContext())
+			{
+				ServerModel server = context.Servers.OrderByDescending(x => x.ID).First();
+
+				context.Opcodes.Where(x => x.DateModified.HasValue ? x.DateModified.Value < server.DateCreated : false).ToList().ForEach(x => x.Active = false);
+				context.Commands.Where(x => x.DateModified.HasValue ? x.DateModified.Value < server.DateCreated : false).ToList().ForEach(x => x.Active = false);
+
+				context.SaveChanges();
 			}
 		}
 
@@ -86,7 +99,7 @@ namespace ServerFramework.Managers.Core
 
 			if(assembly != null)
 			{
-				HandleAssemblyTypes(assembly);
+				HandleCustomAssemblyTypes(assembly);
 			}
 		}
 
@@ -94,31 +107,46 @@ namespace ServerFramework.Managers.Core
 
 		#region HandleAssemblyTypes
 
-		public void HandleAssemblyTypes(Assembly assembly)
+		public void HandleCustomAssemblyTypes(Assembly assembly)
 		{
 			using (ApplicationContext context = new ApplicationContext())
 			{
 				foreach (Type type in assembly.GetTypes())
 				{
-					OnAssemblyType(assembly, type, context);
+					OnCustomAssemblyType(assembly, type, context);
 
-					foreach (MethodInfo method in type.GetMethods())
+					foreach (MethodInfo method in GetMethods(type))
 					{
-						OnAssemblyMethod(assembly, type, method, context);
+						OnCustomAssemblyMethod(assembly, type, method, context);
 					}
 
-					if (context != null)
-						context.SaveChanges();
+					context.SaveChanges();
 				}
 			}
 		}
 
 		#endregion
 
+		#region GetMethods
+
+		public IList<MethodInfo> GetMethods(Type type)
+		{
+			List<MethodInfo> retVal = new List<MethodInfo>();
+
+			retVal.AddRange(type.GetMethods(BindingFlags.Public | BindingFlags.Static));
+			retVal.AddRange(type.GetMethods(BindingFlags.NonPublic | BindingFlags.Static));
+
+			retVal.AddRange(type.GetMethods(BindingFlags.Public | BindingFlags.Instance));
+			retVal.AddRange(type.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance));
+
+			return retVal;
+		}
+
+		#endregion
+
 		#region GetMethod
 
-		public MethodInfo GetMethod(string assemblyName, string typeName
-			, string methodName, BindingFlags bindingFlags = (BindingFlags.NonPublic | BindingFlags.Static))
+		public MethodInfo GetMethod(string assemblyName, string typeName, string methodName)
 		{
 			MethodInfo retVal = null;
 
@@ -129,9 +157,18 @@ namespace ServerFramework.Managers.Core
 				Type type = assembly.GetType(typeName);
 				if(type != null)
 				{
-					retVal = type.GetMethod(methodName, bindingFlags);
+					retVal = GetMethod(type, methodName);
 				}
 			}
+
+			return retVal;
+		}
+
+		public MethodInfo GetMethod(Type type, string name)
+		{
+			MethodInfo retVal;
+
+			retVal = GetMethods(type).FirstOrDefault(x => x.Name == name);
 
 			return retVal;
 		}
@@ -140,29 +177,39 @@ namespace ServerFramework.Managers.Core
 
 		#region OnAssemblyType
 
-		private void OnAssemblyType(Assembly assembly, Type type, ApplicationContext context)
+		private void OnCustomAssemblyType(Assembly assembly, Type type, ApplicationContext context)
 		{
 			foreach (CommandAttribute attr in type.GetCustomAttributes<CommandAttribute>())
 			{
 				if (attr != null)
 				{
-					MethodInfo method = type.GetMethod("GetCommand"
-						, BindingFlags.NonPublic | BindingFlags.Static);
+					MethodInfo method = GetMethod(type, "GetCommand");
 
 					if (method != null)
 					{
 						Command c = InvokeStaticMethod<Command>(method);
+						CommandModel existingCommand = context.Commands.FirstOrDefault(x => x.Name == c.Name && x.Active);
 
-						if (context != null && c != null
-							&& context.Commands.FirstOrDefault(x => x.Name == c.Name && x.Active) == null)
+						if(c != null)
 						{
-							CommandModel command = new CommandModel(c);
-							command.AssemblyName = assembly.FullName;
-							command.TypeName = type.FullName;
-							command.MethodName = method.Name;
+							if (existingCommand == null)
+							{
+								CommandModel command = new CommandModel(c);
+								command.AssemblyName = assembly.FullName;
+								command.TypeName = type.FullName;
+								command.MethodName = method.Name;
 
-							context.Commands.Add(command);
+								context.Commands.Add(command);
+							}
+							else
+							{
+								existingCommand.AssemblyName = assembly.FullName;
+								existingCommand.TypeName = type.FullName;
+								existingCommand.MethodName = method.Name;
+								context.Entry(existingCommand).State = EntityState.Modified;
+							}
 						}
+
 					}
 				}
 			}
@@ -175,19 +222,21 @@ namespace ServerFramework.Managers.Core
 
 		#region OnAssemblyMethod
 
-		private void OnAssemblyMethod(Assembly assembly, Type type, MethodInfo method, ApplicationContext context)
+		private void OnCustomAssemblyMethod(Assembly assembly, Type type, MethodInfo method, ApplicationContext context)
 		{
 			foreach (OpcodeAttribute attr in method.GetCustomAttributes<OpcodeAttribute>())
 			{
 				if (attr != null)
 				{
-					if (context.Opcodes.FirstOrDefault
+					OpcodeModel existingOpcode = context.Opcodes.FirstOrDefault
 						(x =>
 							x.Code == attr.Opcode
-							&& x.Version == attr.Version
 							&& x.TypeID == (int)attr.Type
+							&& x.Version == attr.Version
 							&& x.Active
-						) == null)
+						);
+
+					if (existingOpcode == null)
 					{
 						OpcodeModel model = new OpcodeModel(attr);
 						model.AssemblyName = assembly.FullName;
@@ -195,6 +244,13 @@ namespace ServerFramework.Managers.Core
 						model.MethodName = method.Name;
 
 						context.Opcodes.Add(model);
+					}
+					else
+					{
+						existingOpcode.AssemblyName = assembly.FullName;
+						existingOpcode.TypeName = type.FullName;
+						existingOpcode.MethodName = method.Name;
+						context.Entry(existingOpcode).State = EntityState.Modified;
 					}
 				}
 			}

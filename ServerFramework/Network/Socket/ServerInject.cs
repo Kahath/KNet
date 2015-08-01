@@ -115,7 +115,6 @@ namespace ServerFramework.Network.Socket
 
 		private void startAccept()
 		{
-			Manager.LogMgr.Log(LogType.Info, "Start Accepting connection");
 			SocketAsyncEventArgs acceptEventArgs;
 
 			if (this.AcceptPool.Count > 1)

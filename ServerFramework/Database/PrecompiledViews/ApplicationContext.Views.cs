@@ -11,7 +11,7 @@ using System.Data.Entity.Infrastructure.MappingViews;
 
 [assembly: DbMappingViewCacheTypeAttribute(
 	typeof(ServerFramework.Database.Context.ApplicationContext),
-	typeof(ServerFramework.Database.PrecompiledViews.ViewsForBaseEntitySetseb712a492457fdcd0f177d6b5c26840fad9c5d5b44c0d5e8637ab23e44cf5b0d))]
+	typeof(ServerFramework.Database.PrecompiledViews.ViewsForBaseEntitySetsb8346422d3e6666768510fd3846b05d5f24501469c67bc9c7731200c34e6af1e))]
 
 namespace ServerFramework.Database.PrecompiledViews
 {
@@ -23,14 +23,14 @@ namespace ServerFramework.Database.PrecompiledViews
 	/// Implements a mapping view cache.
 	/// </summary>
 	[GeneratedCode("Entity Framework Power Tools", "0.9.0.0")]
-	internal sealed class ViewsForBaseEntitySetseb712a492457fdcd0f177d6b5c26840fad9c5d5b44c0d5e8637ab23e44cf5b0d : DbMappingViewCache
+	internal sealed class ViewsForBaseEntitySetsb8346422d3e6666768510fd3846b05d5f24501469c67bc9c7731200c34e6af1e : DbMappingViewCache
 	{
 		/// <summary>
 		/// Gets a hash value computed over the mapping closure.
 		/// </summary>
 		public override string MappingHashValue
 		{
-			get { return "eb712a492457fdcd0f177d6b5c26840fad9c5d5b44c0d5e8637ab23e44cf5b0d"; }
+			get { return "b8346422d3e6666768510fd3846b05d5f24501469c67bc9c7731200c34e6af1e"; }
 		}
 
 		/// <summary>
@@ -135,6 +135,16 @@ namespace ServerFramework.Database.PrecompiledViews
 			if (extentName == "ApplicationContext.PacketLogTypes")
 			{
 				return GetView17();
+			}
+
+			if (extentName == "CodeFirstDatabase.ServerModel")
+			{
+				return GetView18();
+			}
+
+			if (extentName == "ApplicationContext.Servers")
+			{
+				return GetView19();
 			}
 
 			return null;
@@ -571,6 +581,50 @@ namespace ServerFramework.Database.PrecompiledViews
             T.DateDeactivated AS PacketLogTypeModel_DateDeactivated, 
             True AS _from0
         FROM CodeFirstDatabase.PacketLogTypeModel AS T
+    ) AS T1");
+		}
+
+		/// <summary>
+		/// Gets the view for CodeFirstDatabase.ServerModel.
+		/// </summary>
+		/// <returns>The mapping view.</returns>
+		private static DbMappingView GetView18()
+		{
+			return new DbMappingView(@"
+    SELECT VALUE -- Constructing ServerModel
+        [CodeFirstDatabaseSchema.ServerModel](T1.ServerModel_ID, T1.ServerModel_IsSuccessful, T1.ServerModel_Active, T1.ServerModel_DateCreated, T1.ServerModel_DateModified, T1.ServerModel_DateDeactivated)
+    FROM (
+        SELECT 
+            T.ID AS ServerModel_ID, 
+            T.IsSuccessful AS ServerModel_IsSuccessful, 
+            T.Active AS ServerModel_Active, 
+            T.DateCreated AS ServerModel_DateCreated, 
+            T.DateModified AS ServerModel_DateModified, 
+            T.DateDeactivated AS ServerModel_DateDeactivated, 
+            True AS _from0
+        FROM ApplicationContext.Servers AS T
+    ) AS T1");
+		}
+
+		/// <summary>
+		/// Gets the view for ApplicationContext.Servers.
+		/// </summary>
+		/// <returns>The mapping view.</returns>
+		private static DbMappingView GetView19()
+		{
+			return new DbMappingView(@"
+    SELECT VALUE -- Constructing Servers
+        [ServerFramework.Database.Context.ServerModel](T1.ServerModel_ID, T1.ServerModel_IsSuccessful, T1.ServerModel_Active, T1.ServerModel_DateCreated, T1.ServerModel_DateModified, T1.ServerModel_DateDeactivated)
+    FROM (
+        SELECT 
+            T.ID AS ServerModel_ID, 
+            T.IsSuccessful AS ServerModel_IsSuccessful, 
+            T.Active AS ServerModel_Active, 
+            T.DateCreated AS ServerModel_DateCreated, 
+            T.DateModified AS ServerModel_DateModified, 
+            T.DateDeactivated AS ServerModel_DateDeactivated, 
+            True AS _from0
+        FROM CodeFirstDatabase.ServerModel AS T
     ) AS T1");
 		}
 	}

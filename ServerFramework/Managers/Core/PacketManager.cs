@@ -82,17 +82,22 @@ namespace ServerFramework.Managers.Core
 			{
 				IEnumerable<OpcodeModel> opcodes = context.Opcodes
 					.Where(x => x.Active)
-					.GroupBy(x => x.Code)
-					.OrderByDescending(x => x.Max(y => y.TypeID))
-					.ThenByDescending(x => x.Max(y => y.Version))
-					.Select(x => x.FirstOrDefault());
+					.GroupBy(x => x.Code, (key, y) => 
+						y.OrderByDescending(x => x.TypeID)
+						.ThenByDescending(x => x.Version)
+						.FirstOrDefault());
 
 				foreach (OpcodeModel opcode in opcodes)
 				{
 					PacketHandlers[(ushort)opcode.Code] = Delegate.CreateDelegate
 					(
 						typeof(OpcodeHandler)
-					,	Manager.AssemblyMgr.GetMethod(opcode.AssemblyName, opcode.TypeName, opcode.MethodName)
+					,	Manager.AssemblyMgr.GetMethod
+						(
+							opcode.AssemblyName
+						,	opcode.TypeName
+						,	opcode.MethodName
+						)
 					) as OpcodeHandler;
 				}
 			}

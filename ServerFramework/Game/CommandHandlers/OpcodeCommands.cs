@@ -69,12 +69,13 @@ namespace ServerFramework.Game.CommandHandlers
 				{
 					if(Manager.PacketMgr.PacketHandlers.ContainsKey((ushort)opcode.Code))
 					{
-						Assembly assembly = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(x => x.FullName == opcode.AssemblyName);
-						Type type = assembly.GetType(opcode.TypeName);
-						MethodInfo method = type.GetMethod(opcode.MethodName);
+						MethodInfo method = Manager.AssemblyMgr.GetMethod(opcode.AssemblyName, opcode.TypeName, opcode.MethodName);
 
-						Manager.PacketMgr.PacketHandlers[(ushort)opcode.Code]
-							= Delegate.CreateDelegate(typeof(OpcodeHandler), method) as OpcodeHandler;
+						if (method != null)
+						{
+							Manager.PacketMgr.PacketHandlers[(ushort)opcode.Code]
+								= Delegate.CreateDelegate(typeof(OpcodeHandler), method) as OpcodeHandler;
+						}
 					}
 				}
 			}
@@ -102,12 +103,13 @@ namespace ServerFramework.Game.CommandHandlers
 				{
 					if (Manager.PacketMgr.PacketHandlers.ContainsKey((ushort)opcode.Code))
 					{
-						Assembly assembly = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(x => x.FullName == opcode.AssemblyName);
-						Type type = assembly.GetType(opcode.TypeName);
-						MethodInfo method = type.GetMethod(opcode.MethodName);
+						MethodInfo method = Manager.AssemblyMgr.GetMethod(opcode.AssemblyName, opcode.TypeName, opcode.MethodName);
 
-						Manager.PacketMgr.PacketHandlers[(ushort)opcode.Code]
-							= Delegate.CreateDelegate(typeof(OpcodeHandler), method) as OpcodeHandler;
+						if (method != null)
+						{
+							Manager.PacketMgr.PacketHandlers[(ushort)opcode.Code]
+								= Delegate.CreateDelegate(typeof(OpcodeHandler), method) as OpcodeHandler;
+						}
 					}
 				}
 			}
@@ -134,12 +136,13 @@ namespace ServerFramework.Game.CommandHandlers
 				{
 					if (Manager.PacketMgr.PacketHandlers.ContainsKey((ushort)opcode.Code))
 					{
-						Assembly assembly = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(x => x.FullName == opcode.AssemblyName);
-						Type type = assembly.GetType(opcode.TypeName);
-						MethodInfo method = type.GetMethod(opcode.MethodName);
+						MethodInfo method = Manager.AssemblyMgr.GetMethod(opcode.AssemblyName, opcode.TypeName, opcode.MethodName);
 
-						Manager.PacketMgr.PacketHandlers[(ushort)opcode.Code]
+						if (method != null)
+						{
+							Manager.PacketMgr.PacketHandlers[(ushort)opcode.Code]
 							= Delegate.CreateDelegate(typeof(OpcodeHandler), method) as OpcodeHandler;
+						}
 					}
 				}
 			}

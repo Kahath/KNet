@@ -19,6 +19,7 @@ using ServerFramework.Database.Model.Application.Command;
 using ServerFramework.Database.Model.Application.Log;
 using ServerFramework.Database.Model.Application.Opcode;
 using ServerFramework.Database.Model.Application.PacketLog;
+using ServerFramework.Database.Model.Application.Server;
 using System.Data.Entity;
 
 namespace ServerFramework.Database.Context
@@ -36,6 +37,7 @@ namespace ServerFramework.Database.Context
 		public DbSet<LogTypeModel> LogTypes				{ get; set; }
 		public DbSet<OpcodeModel> Opcodes				{ get; set; }
 		public DbSet<OpcodeTypeModel> OpcodeTypes		{ get; set; }
+		public DbSet<ServerModel> Servers				{ get; set; }
 
 		#endregion
 

@@ -13,10 +13,10 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using CCommand = ServerFramework.Constants.Entities.Console.Command;
 using ServerFramework.Database.Base;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using CCommand = ServerFramework.Constants.Entities.Console.Command;
 
 namespace ServerFramework.Database.Model.Application.Command
 {

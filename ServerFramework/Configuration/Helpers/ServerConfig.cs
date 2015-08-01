@@ -28,7 +28,7 @@ namespace ServerFramework.Configuration.Helpers
 		private static string _bindIp;
 		private static int _bindPort;
 
-		private static LogType _logLevel;
+		private static LogType? _logLevel;
 		private static PacketLogType _packetLogLevel;
 		private static OpcodeType _opcodeAllowLevel;
 		private static byte _packetLogSize;
@@ -70,7 +70,7 @@ namespace ServerFramework.Configuration.Helpers
 			set { _bindPort = value; }
 		}
 
-		internal static LogType LogLevel
+		internal static LogType? LogLevel
 		{
 			get { return _logLevel; }
 			set { _logLevel = value; }
@@ -208,7 +208,7 @@ namespace ServerFramework.Configuration.Helpers
 			BindIP = Config.Read<string>(ConfigurationHelper.BindIPKey);
 			BindPort = Config.Read<int>(ConfigurationHelper.BindPortKey);
 
-			LogLevel = (LogType)Config.Read<byte>(ConfigurationHelper.LogLevelKey, true);
+			LogLevel = (LogType?)Config.Read<byte>(ConfigurationHelper.LogLevelKey, true) ?? LogType.None;
 			PacketLogLevel = (PacketLogType)Config.Read<byte>(ConfigurationHelper.PacketLogLevelKey, true);
 			OpcodeAllowLevel = (OpcodeType)Config.Read<byte>(ConfigurationHelper.OpcodeAllowLevelKey, true);
 			PacketLogSize = Config.Read<byte>(ConfigurationHelper.PacketLogSizeKey);

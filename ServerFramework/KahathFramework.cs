@@ -21,13 +21,14 @@ using ServerFramework.Constants.Entities.Session;
 using ServerFramework.Constants.Events;
 using ServerFramework.Constants.Misc;
 using ServerFramework.Database.Context;
+using ServerFramework.Database.Model.Application.Server;
 using ServerFramework.Managers;
-using ServerFramework.Managers.Core;
 using ServerFramework.Network.Packets;
 using ServerFramework.Network.Socket;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Data.Entity.Validation;
 using System.Linq;
 using System.Net;
@@ -160,6 +161,12 @@ namespace ServerFramework
 
 					Environment.Exit(0);
 				}
+
+				ServerModel server = new ServerModel();
+				server.IsSuccessful = false;
+
+				context.Servers.Add(server);
+				context.SaveChanges();
 			}
 
 			Manager.LogMgr.Log(LogType.Init, "Successfully tested database connection.");
@@ -175,6 +182,18 @@ namespace ServerFramework
 		public void Start()
 		{
 			Server.Init();
+
+			Manager.LogMgr.Log(LogType.Init, "Server successfully initialised");
+
+			using(ApplicationContext context = new ApplicationContext())
+			{
+				ServerModel server = context.Servers.OrderByDescending(x => x.ID).First();
+				
+				server.IsSuccessful = true;
+				context.Entry(server).State = EntityState.Modified;
+				
+				context.SaveChanges();
+			}
 
 			while (true)
 			{

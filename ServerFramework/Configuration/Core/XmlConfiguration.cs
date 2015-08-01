@@ -15,6 +15,8 @@
 
 using ServerFramework.Configuration.Base;
 using ServerFramework.Configuration.Helpers;
+using ServerFramework.Constants.Misc;
+using ServerFramework.Managers;
 using System;
 using System.IO;
 using System.Xml;
@@ -99,31 +101,27 @@ namespace ServerFramework.Configuration.Core
 			}
 			catch (IndexOutOfRangeException)
 			{
-				Console.ForegroundColor = ConsoleColor.Red;
-				Console.WriteLine("Error while reading '{0}' config. Missing argument in line", config);
+				Manager.LogMgr.Log(LogType.Error, "Error while reading '{0}' config. Missing argument in line", config);
 				Console.ReadLine();
 				Environment.Exit(0);
 
 			}
 			catch (NullReferenceException)
 			{
-				Console.ForegroundColor = ConsoleColor.Red;
-				Console.WriteLine("Error while reading '{0}' config. Argument is null", config);
+				Manager.LogMgr.Log(LogType.Error, "Error while reading '{0}' config. Argument is null", config);
 				Console.ReadLine();
 				Environment.Exit(0);
 			}
 			catch (FormatException)
 			{
-				Console.ForegroundColor = ConsoleColor.Red;
-				Console.WriteLine("Error while reading '{0}' config. Cannot convert '{1}' into type '{2}'"
+				Manager.LogMgr.Log(LogType.Error, "Error while reading '{0}' config. Cannot convert '{1}' into type '{2}'"
 					, config, nameValue, typeof(T));
 				Console.ReadLine();
 				Environment.Exit(0);
 			}
 			catch (Exception)
 			{
-				Console.ForegroundColor = ConsoleColor.Red;
-				Console.WriteLine("Error while reading '{0}' config", config);
+				Manager.LogMgr.Log(LogType.Error, "Error while reading '{0}' config", config);
 				Console.ReadLine();
 				Environment.Exit(0);
 			}
