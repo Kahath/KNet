@@ -182,26 +182,13 @@ namespace ServerFramework.Configuration.Helpers
 			set { _dbName = value; }
 		}
 
-		//internal static string ConnectionString
-		//{
-		//	get
-		//	{
-		//		string retVal = String.Empty;
-
-		//		retVal = String.Format("Data Source={0},{1};Network Library=DBMSSOCN;Initial Catalog={2};User ID={3};Password={4};"
-		//			, DBHost, DBPort, DBName, DBUser, DBPass);
-
-		//		return retVal;
-		//	}
-		//}
-
 		internal static string ConnectionString
 		{
 			get
 			{
 				string retVal = String.Empty;
 
-				retVal = String.Format("Data Source=127.0.0.1,1433;Network Library=DBMSSOCN;Initial Catalog=Zavrsni;User ID=Kahath;Password=Diablo91;"
+				retVal = String.Format("Data Source={0},{1};Network Library=DBMSSOCN;Initial Catalog={2};User ID={3};Password={4};"
 					, DBHost, DBPort, DBName, DBUser, DBPass);
 
 				return retVal;
