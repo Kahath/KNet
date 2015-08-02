@@ -1,4 +1,4 @@
-﻿using ServerFramework.Constants.Attributes;
+﻿using ServerFramework.Constants.Attributes.Core;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;

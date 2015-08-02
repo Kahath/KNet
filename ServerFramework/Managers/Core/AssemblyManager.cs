@@ -13,7 +13,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using ServerFramework.Constants.Attributes;
+using ServerFramework.Constants.Attributes.Base;
+using ServerFramework.Constants.Attributes.Core;
 using ServerFramework.Constants.Entities.Console;
 using ServerFramework.Constants.Events;
 using ServerFramework.Constants.Misc;
@@ -21,9 +22,9 @@ using ServerFramework.Database.Context;
 using ServerFramework.Database.Model.Application.Command;
 using ServerFramework.Database.Model.Application.Opcode;
 using ServerFramework.Database.Model.Application.Server;
+using ServerFramework.Extensions;
 using ServerFramework.Managers.Base;
 using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
@@ -65,8 +66,8 @@ namespace ServerFramework.Managers.Core
 			{
 				ServerModel server = context.Servers.OrderByDescending(x => x.ID).First();
 
-				context.Opcodes.Where(x => x.DateModified.HasValue ? x.DateModified.Value < server.DateCreated : false).ToList().ForEach(x => x.Active = false);
-				context.Commands.Where(x => x.DateModified.HasValue ? x.DateModified.Value < server.DateCreated : false).ToList().ForEach(x => x.Active = false);
+				context.Opcodes.RemoveRange(context.Opcodes.Where(x => x.DateModified.HasValue ? x.DateModified.Value < server.DateCreated : false).ToList());
+				context.Commands.RemoveRange(context.Commands.Where(x => x.DateModified.HasValue ? x.DateModified.Value < server.DateCreated : false).ToList());
 
 				context.SaveChanges();
 			}
@@ -115,7 +116,7 @@ namespace ServerFramework.Managers.Core
 				{
 					OnCustomAssemblyType(assembly, type, context);
 
-					foreach (MethodInfo method in GetMethods(type))
+					foreach (MethodInfo method in type.GetAllMethods())
 					{
 						OnCustomAssemblyMethod(assembly, type, method, context);
 					}
@@ -123,23 +124,6 @@ namespace ServerFramework.Managers.Core
 					context.SaveChanges();
 				}
 			}
-		}
-
-		#endregion
-
-		#region GetMethods
-
-		public IList<MethodInfo> GetMethods(Type type)
-		{
-			List<MethodInfo> retVal = new List<MethodInfo>();
-
-			retVal.AddRange(type.GetMethods(BindingFlags.Public | BindingFlags.Static));
-			retVal.AddRange(type.GetMethods(BindingFlags.NonPublic | BindingFlags.Static));
-
-			retVal.AddRange(type.GetMethods(BindingFlags.Public | BindingFlags.Instance));
-			retVal.AddRange(type.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance));
-
-			return retVal;
 		}
 
 		#endregion
@@ -155,20 +139,12 @@ namespace ServerFramework.Managers.Core
 			if (assembly != null)
 			{
 				Type type = assembly.GetType(typeName);
+
 				if(type != null)
 				{
-					retVal = GetMethod(type, methodName);
+					retVal = type.GetMethodByName(methodName);
 				}
 			}
-
-			return retVal;
-		}
-
-		public MethodInfo GetMethod(Type type, string name)
-		{
-			MethodInfo retVal;
-
-			retVal = GetMethods(type).FirstOrDefault(x => x.Name == name);
 
 			return retVal;
 		}
@@ -183,7 +159,7 @@ namespace ServerFramework.Managers.Core
 			{
 				if (attr != null)
 				{
-					MethodInfo method = GetMethod(type, "GetCommand");
+					MethodInfo method = type.GetMethodByName("GetCommand");
 
 					if (method != null)
 					{
@@ -209,7 +185,6 @@ namespace ServerFramework.Managers.Core
 								context.Entry(existingCommand).State = EntityState.Modified;
 							}
 						}
-
 					}
 				}
 			}

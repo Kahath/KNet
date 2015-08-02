@@ -41,7 +41,6 @@ namespace ServerFramework
 	public delegate bool CommandHandler(Client user, params string[] args);
 	public delegate void OpcodeHandler(Client pClient, Packet packet);
 	public delegate void ServerEventHandler(object sender, SocketAsyncEventArgs e);
-	public delegate void PacketEventHandler(object sender, EventArgs e);
 	public delegate void AssemblyEventHandler(object sender, AssemblyEventArgs e);
 
 	#endregion
@@ -106,14 +105,14 @@ namespace ServerFramework
 
 		#region Init
 
-		public void Init()
+		private void Init()
 		{
+			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledExceptionHandler);
+
 			DependencyManager.Map<IConfig, XmlConfiguration>();
 			DependencyManager.Map<IServer, ServerInject>();
 
 			ServerConfig.Init();
-
-			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledExceptionHandler);
 
 			_socketSettings = new SocketListenerSettings
 				(

@@ -19,6 +19,8 @@ using System.Data.Entity;
 using System.Data.Entity.Core.Objects;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace ServerFramework.Database.Base
 {
@@ -63,6 +65,35 @@ namespace ServerFramework.Database.Base
 		/// </returns>
 		public override int SaveChanges()
 		{
+			UpdateBeforeSave();
+
+			return base.SaveChanges();
+		}
+
+		#endregion
+
+		#region SaveChangesAsync
+
+		public override Task<int> SaveChangesAsync()
+		{
+			UpdateBeforeSave();
+
+			return base.SaveChangesAsync();
+		}
+
+		public override Task<int> SaveChangesAsync(CancellationToken cancellationToken)
+		{
+			UpdateBeforeSave();
+
+			return base.SaveChangesAsync(cancellationToken);
+		}
+
+		#endregion
+
+		#region UpdateBeforeSave
+
+		private void UpdateBeforeSave()
+		{
 			ObjectContext context = ((IObjectContextAdapter)this).ObjectContext;
 
 			IEnumerable<ObjectStateEntry> objectStateEntries =
@@ -98,8 +129,6 @@ namespace ServerFramework.Database.Base
 					}
 				}
 			}
-
-			return base.SaveChanges();
 		}
 
 		#endregion

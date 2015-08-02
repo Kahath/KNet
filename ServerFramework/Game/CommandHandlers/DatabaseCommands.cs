@@ -13,7 +13,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using ServerFramework.Constants.Attributes;
+using ServerFramework.Constants.Attributes.Core;
 using ServerFramework.Constants.Entities.Console;
 using ServerFramework.Constants.Misc;
 using ServerFramework.Database;

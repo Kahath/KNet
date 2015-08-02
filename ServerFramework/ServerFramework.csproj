@@ -62,8 +62,8 @@
     <Compile Include="Configuration\Core\XmlConfiguration.cs" />
     <Compile Include="Configuration\Base\IConfig.cs" />
     <Compile Include="Configuration\Helpers\ServerConfig.cs" />
-    <Compile Include="Constants\Attributes\CommandAttribute.cs" />
-    <Compile Include="Constants\Attributes\ICustomAttribute.cs" />
+    <Compile Include="Constants\Attributes\Core\CommandAttribute.cs" />
+    <Compile Include="Constants\Attributes\Base\ICustomAttribute.cs" />
     <Compile Include="Constants\Entities\Session\ConsoleClient.cs" />
     <Compile Include="Constants\Entities\Session\IClient.cs" />
     <Compile Include="Constants\Events\AssemblyEventArgs.cs" />
@@ -91,6 +91,7 @@
     <Compile Include="Database\Model\Application\PacketLog\PacketLogTypeModel.cs" />
     <Compile Include="Extensions\NetworkExtensions.cs" />
     <Compile Include="Extensions\PacketStreamExtensions.cs" />
+    <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="Game\CommandHandlers\AssemblyCommands.cs" />
     <Compile Include="Game\CommandHandlers\ClearCommands.cs" />
     <Compile Include="Game\CommandHandlers\CommandCommands.cs" />
@@ -112,7 +113,7 @@
     <Compile Include="Network\Packets\Packet.cs" />
     <Compile Include="Network\Packets\PacketStream.cs" />
     <Compile Include="Network\Packets\SocketData.cs" />
-    <Compile Include="Constants\Attributes\OpcodeAttribute.cs" />
+    <Compile Include="Constants\Attributes\Core\OpcodeAttribute.cs" />
     <Compile Include="Network\Packets\PacketHeader.cs" />
     <Compile Include="Constants\Entities\Misc\ObjectPool.cs" />
     <Compile Include="Network\Socket\IServer.cs" />

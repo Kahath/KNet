@@ -181,12 +181,12 @@ namespace ServerFramework.Managers.Core
 
 						ConsoleLogQueue.Add(Tuple.Create<ConsoleColor, string>(color, msg));
 
-						LogModel logModel = new LogModel();
-						logModel.LogTypeID = (int)type;
-						logModel.Message = String.Format(message, args);
-
 						if (ServerConfig.LogLevel != null)
 						{
+							LogModel logModel = new LogModel();
+							logModel.LogTypeID = (int)type;
+							logModel.Message = String.Format(message, args);
+
 							using (ApplicationContext context = new ApplicationContext())
 							{
 								context.Logs.Add(logModel);

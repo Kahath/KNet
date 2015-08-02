@@ -30,13 +30,47 @@ namespace ServerFramework.Network.Socket
 	{
 		#region Fields
 
-		System.Net.Sockets.Socket listenSocket;
+		private System.Net.Sockets.Socket _listenSocket;
 
-		Semaphore maxConnectionsEnforcer;
-		SocketListenerSettings socketSettings;
+		private Semaphore _maxConnections;
+		private SocketListenerSettings _socketSettings;
 
-		ObjectPool<SocketAsyncEventArgs> AcceptPool;
-		ObjectPool<SocketExtended> SendReceivePool;
+		private ObjectPool<SocketAsyncEventArgs> _acceptPool;
+		private ObjectPool<SocketExtended> _sendReceivePool;
+
+		#endregion
+
+		#region Properties
+
+		public System.Net.Sockets.Socket ListenSocket
+		{
+			get { return _listenSocket; }
+			set { _listenSocket = value; }
+		}
+
+		private Semaphore MaxConnections
+		{
+			get { return _maxConnections; }
+			set { _maxConnections = value; }
+		}
+
+		private SocketListenerSettings SocketSettings
+		{
+			get { return _socketSettings; }
+			set { _socketSettings = value; }
+		}
+
+		private ObjectPool<SocketAsyncEventArgs> AcceptPool
+		{
+			get { return _acceptPool; }
+			set { _acceptPool = value; }
+		}
+
+		private ObjectPool<SocketExtended> SendReceivePool
+		{
+			get { return _sendReceivePool; }
+			set { _sendReceivePool = value; }
+		}
 
 		#endregion
 
@@ -51,16 +85,15 @@ namespace ServerFramework.Network.Socket
 
 		ServerInject(SocketListenerSettings socketSettings)
 		{
-			this.socketSettings = socketSettings;
+			SocketSettings = socketSettings;
 
-			this.AcceptPool = new
-				ObjectPool<SocketAsyncEventArgs>(this.socketSettings.MaxAcceptOps);
-			this.SendReceivePool = new
-				ObjectPool<SocketExtended>(this.socketSettings.NumberOfSaeaForRecSend);
+			AcceptPool = new
+				ObjectPool<SocketAsyncEventArgs>(SocketSettings.MaxAcceptOps);
+			SendReceivePool = new
+				ObjectPool<SocketExtended>(SocketSettings.NumberOfSaeaForRecSend);
 
-			this.maxConnectionsEnforcer = new Semaphore(
-				this.socketSettings.MaxConnections,
-				this.socketSettings.MaxConnections);
+			MaxConnections = new Semaphore(SocketSettings.MaxConnections,
+				SocketSettings.MaxConnections);
 		}
 
 		#endregion
@@ -71,11 +104,11 @@ namespace ServerFramework.Network.Socket
 
 		public void Init()
 		{
-			for (int i = 0; i < socketSettings.MaxAcceptOps; i++)
-				this.AcceptPool.Push(CreateNewSaeaForAccept());
+			for (int i = 0; i < SocketSettings.MaxAcceptOps; i++)
+				AcceptPool.Push(CreateNewSaeaForAccept());
 
-			for (int i = 0; i < socketSettings.NumberOfSaeaForRecSend; i++)
-				this.SendReceivePool.Push(CreateNewSendRecPoolItem());
+			for (int i = 0; i < SocketSettings.NumberOfSaeaForRecSend; i++)
+				SendReceivePool.Push(CreateNewSendRecPoolItem());
 
 			startListen();
 		}
@@ -86,14 +119,14 @@ namespace ServerFramework.Network.Socket
 
 		private void startListen()
 		{
-			listenSocket = new System.Net.Sockets.Socket(this.socketSettings.LocalEndPoint.AddressFamily,
+			ListenSocket = new System.Net.Sockets.Socket(SocketSettings.LocalEndPoint.AddressFamily,
 				SocketType.Stream, ProtocolType.Tcp);
 
 			try
 			{
-				listenSocket.Bind(this.socketSettings.LocalEndPoint);
+				ListenSocket.Bind(SocketSettings.LocalEndPoint);
 
-				listenSocket.Listen(this.socketSettings.Backlog);
+				ListenSocket.Listen(SocketSettings.Backlog);
 			}
 			catch (SocketException e)
 			{
@@ -103,8 +136,8 @@ namespace ServerFramework.Network.Socket
 			}
 
 			Manager.LogMgr.Log(LogType.Normal, "Starting listening on {0}:{1}",
-				this.socketSettings.LocalEndPoint.Address,
-				this.socketSettings.LocalEndPoint.Port);
+				SocketSettings.LocalEndPoint.Address,
+				SocketSettings.LocalEndPoint.Port);
 
 			startAccept();
 		}
@@ -117,11 +150,11 @@ namespace ServerFramework.Network.Socket
 		{
 			SocketAsyncEventArgs acceptEventArgs;
 
-			if (this.AcceptPool.Count > 1)
+			if (AcceptPool.Count > 1)
 			{
 				try
 				{
-					acceptEventArgs = this.AcceptPool.Pop();
+					acceptEventArgs = AcceptPool.Pop();
 				}
 				catch
 				{
@@ -133,9 +166,9 @@ namespace ServerFramework.Network.Socket
 				acceptEventArgs = CreateNewSaeaForAccept();
 			}
 
-			this.maxConnectionsEnforcer.WaitOne();
+			MaxConnections.WaitOne();
 
-			if (!listenSocket.AcceptAsync(acceptEventArgs))
+			if (!ListenSocket.AcceptAsync(acceptEventArgs))
 				processAccept(acceptEventArgs);
 		}
 
@@ -148,7 +181,7 @@ namespace ServerFramework.Network.Socket
 			try
 			{
 				SocketData data = (SocketData)e.UserToken;
-				e.SetBuffer(data.BufferOffset, this.socketSettings.BufferSize);
+				e.SetBuffer(data.BufferOffset, SocketSettings.BufferSize);
 
 				if (!e.AcceptSocket.ReceiveAsync(e))
 					processReceive(e);
@@ -168,12 +201,12 @@ namespace ServerFramework.Network.Socket
 			{
 				SocketData data = (SocketData)e.UserToken;
 
-				if (data.MessageBytesRemainingCount > this.socketSettings.BufferSize)
+				if (data.MessageBytesRemainingCount > SocketSettings.BufferSize)
 				{
-					e.SetBuffer(data.BufferOffset, this.socketSettings.BufferSize);
+					e.SetBuffer(data.BufferOffset, SocketSettings.BufferSize);
 
 					Buffer.BlockCopy(data.Packet.Message, data.MessageBytesDoneCount,
-						e.Buffer, data.BufferOffset, this.socketSettings.BufferSize);
+						e.Buffer, data.BufferOffset, SocketSettings.BufferSize);
 				}
 				else
 				{
@@ -231,7 +264,7 @@ namespace ServerFramework.Network.Socket
 				}
 
 				e.AcceptSocket = null;
-				this.AcceptPool.Push(e);
+				AcceptPool.Push(e);
 
 				if (Connect != null)
 					Connect(c, e);
@@ -246,52 +279,51 @@ namespace ServerFramework.Network.Socket
 
 		private void processReceive(SocketAsyncEventArgs e)
 		{
-			if (e.SocketError != SocketError.Success || e.BytesTransferred == 0)
+			if(e.SocketError == SocketError.Success && e.BytesTransferred > 0)
 			{
-				closeClientSocket(e);
-				return;
-			}
+				SocketData data = (SocketData)e.UserToken;
+				int remainingBytes = e.BytesTransferred;
 
-			SocketData data = (SocketData)e.UserToken;
-			int remainingBytes = e.BytesTransferred;
-
-			while (remainingBytes > 0)
-			{
-				if (!data.IsHeaderReady)
+				while (remainingBytes > 0)
 				{
-					remainingBytes = data.HandleHeader(e, remainingBytes);
-
-					if (data.IsHeaderReady)
-						remainingBytes = data.HandleMessage(e, remainingBytes);
-				}
-				else
-				{
-					remainingBytes = data.HandleMessage(e, remainingBytes);
-				}
-
-				if (data.IsPacketReady)
-				{
-					Manager.PacketLogMgr.Log(data.Packet);
-					Manager.PacketMgr.InvokeHandler(data.Packet);
-
-					if (remainingBytes > 0)
-						data.Reset(data.MessageOffset + data.MessageBytesDoneThisOp);
-					else
-						data.Reset(data.BufferOffset);
-				}
-				else
-				{
-					if (data.IsHeaderReady)
+					if (!data.IsHeaderReady)
 					{
-						data.MessageOffset = data.BufferOffset;
+						remainingBytes = data.HandleHeader(e, remainingBytes);
+
+						if (data.IsHeaderReady)
+							remainingBytes = data.HandleMessage(e, remainingBytes);
 					}
+					else
+					{
+						remainingBytes = data.HandleMessage(e, remainingBytes);
+					}
+
+					if (data.IsPacketReady)
+					{
+						Manager.PacketLogMgr.Log(data.Packet);
+						Manager.PacketMgr.InvokeHandler(data.Packet);
+
+						if (remainingBytes > 0)
+							data.Reset(data.MessageOffset + data.MessageBytesDoneThisOp);
+						else
+							data.Reset(data.BufferOffset);
+					}
+					else
+					{
+						if (data.IsHeaderReady)
+						{
+							data.MessageOffset = data.BufferOffset;
+						}
+					}
+
+					data.HeaderBytesDoneThisOp = 0;
+					data.MessageBytesDoneThisOp = 0;
 				}
 
-				data.HeaderBytesDoneThisOp = 0;
-				data.MessageBytesDoneThisOp = 0;
+				startReceive(e);
 			}
-
-			startReceive(e);
+			else
+				closeClientSocket(e);
 		}
 
 		#endregion
@@ -300,33 +332,32 @@ namespace ServerFramework.Network.Socket
 
 		private void processSend(SocketAsyncEventArgs e)
 		{
-			if (e.SocketError != SocketError.Success)
+			if (e.SocketError == SocketError.Success)
 			{
-				closeClientSocket(e);
-				return;
-			}
+				SocketData data = (SocketData)e.UserToken;
 
-			SocketData data = (SocketData)e.UserToken;
+				data.MessageBytesRemainingCount -= e.BytesTransferred;
 
-			data.MessageBytesRemainingCount -= e.BytesTransferred;
+				if (data.MessageBytesRemainingCount == 0)
+				{
+					Client c = Manager.SessionMgr.GetClientBySession(data.SessionId);
 
-			if (data.MessageBytesRemainingCount == 0)
-			{
-				Client c = Manager.SessionMgr.GetClientBySession(data.SessionId);
+					if (c != null)
+					{
+						Manager.PacketLogMgr.Log(data.Packet);
+						data.Reset(data.BufferOffset);
 
-				if (c == null)
-					return;
-
-				Manager.PacketLogMgr.Log(data.Packet);
-				data.Reset(data.BufferOffset);
-
-				c.SocketExtended.SendResetEvent.Set();
+						c.SocketExtended.SendResetEvent.Set();
+					}
+				}
+				else
+				{
+					data.MessageBytesDoneCount += e.BytesTransferred;
+					StartSend(e);
+				}
 			}
 			else
-			{
-				data.MessageBytesDoneCount += e.BytesTransferred;
-				StartSend(e);
-			}
+				closeClientSocket(e);
 		}
 
 		#endregion
@@ -364,16 +395,16 @@ namespace ServerFramework.Network.Socket
 			Manager.BufferMgr.SetBuffer(retVal.Receiver);
 			Manager.BufferMgr.SetBuffer(retVal.Sender);
 
-			data = new SocketData(socketSettings.BufferSize,
+			data = new SocketData(SocketSettings.BufferSize,
 				retVal.Receiver.Offset,
-				socketSettings.HeaderLength);
+				SocketSettings.HeaderLength);
 
 			retVal.Receiver.UserToken = data;
 			retVal.Receiver.Completed +=
 				new EventHandler<SocketAsyncEventArgs>(receive_completed);
 
-			data = new SocketData(socketSettings.BufferSize, retVal.Sender.Offset,
-				socketSettings.HeaderLength);
+			data = new SocketData(SocketSettings.BufferSize, retVal.Sender.Offset,
+				SocketSettings.HeaderLength);
 
 			retVal.Sender.UserToken = data;
 			retVal.Sender.Completed +=
@@ -411,10 +442,10 @@ namespace ServerFramework.Network.Socket
 
 				c.SocketExtended.Disconnect(SocketShutdown.Both);
 
-				this.SendReceivePool.Push(c.SocketExtended);
+				SendReceivePool.Push(c.SocketExtended);
 				c = null;
 
-				this.maxConnectionsEnforcer.Release();
+				MaxConnections.Release();
 			}
 		}
 
@@ -441,8 +472,8 @@ namespace ServerFramework.Network.Socket
 		{
 			if(isDisposing)
 			{
-				listenSocket.Dispose();
-				maxConnectionsEnforcer.Dispose();
+				ListenSocket.Dispose();
+				MaxConnections.Dispose();
 			}
 		}
 

@@ -13,11 +13,13 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using ServerFramework.Constants.Attributes.Base;
 using System;
 
-namespace ServerFramework.Constants.Attributes
+namespace ServerFramework.Constants.Attributes.Core
 {
-	public interface ICustomAttribute
+	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Assembly)]
+	public sealed class CommandAttribute : Attribute, ICustomAttribute
 	{
 	}
 }
