@@ -13,15 +13,15 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using ServerFramework.Constants.Attributes.Base;
-using ServerFramework.Constants.Attributes.Core;
-using ServerFramework.Constants.Entities.Console;
-using ServerFramework.Constants.Events;
-using ServerFramework.Constants.Misc;
+using ServerFramework.Attributes.Base;
+using ServerFramework.Attributes.Core;
+using ServerFramework.Commands.Base;
 using ServerFramework.Database.Context;
 using ServerFramework.Database.Model.Application.Command;
 using ServerFramework.Database.Model.Application.Opcode;
 using ServerFramework.Database.Model.Application.Server;
+using ServerFramework.Enums;
+using ServerFramework.Events;
 using ServerFramework.Extensions;
 using ServerFramework.Managers.Base;
 using System;
@@ -56,8 +56,9 @@ namespace ServerFramework.Managers.Core
 
 		internal override void Init()
 		{
-			foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies().
-				Where(x => x.CustomAttributes.Any(y => typeof(ICustomAttribute).IsAssignableFrom(y.AttributeType))))
+			foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies()
+				.Where(x => x.CustomAttributes
+					.Any(y => typeof(ICustomAttribute).IsAssignableFrom(y.AttributeType))))
 			{
 				HandleCustomAssemblyTypes(a);
 			}
@@ -66,8 +67,19 @@ namespace ServerFramework.Managers.Core
 			{
 				ServerModel server = context.Servers.OrderByDescending(x => x.ID).First();
 
-				context.Opcodes.RemoveRange(context.Opcodes.Where(x => x.DateModified.HasValue ? x.DateModified.Value < server.DateCreated : false).ToList());
-				context.Commands.RemoveRange(context.Commands.Where(x => x.DateModified.HasValue ? x.DateModified.Value < server.DateCreated : false).ToList());
+				context.Opcodes.RemoveRange(
+					context.Opcodes.Where
+					(x => 
+						x.Active
+						&& x.DateModified.HasValue ? x.DateModified.Value < server.DateCreated : false
+					).ToList());
+
+				context.Commands.RemoveRange(
+					context.Commands.Where
+					(x => 
+						x.Active
+						&& x.DateModified.HasValue ? x.DateModified.Value < server.DateCreated : false
+					).ToList());
 
 				context.SaveChanges();
 			}
@@ -120,9 +132,9 @@ namespace ServerFramework.Managers.Core
 					{
 						OnCustomAssemblyMethod(assembly, type, method, context);
 					}
-
-					context.SaveChanges();
 				}
+
+				context.SaveChanges();
 			}
 		}
 
@@ -130,11 +142,13 @@ namespace ServerFramework.Managers.Core
 
 		#region GetMethod
 
-		public MethodInfo GetMethod(string assemblyName, string typeName, string methodName)
+		public MethodInfo GetMethod(string assemblyName, string typeName
+			, string methodName, params Type[] parameters)
 		{
 			MethodInfo retVal = null;
 
-			Assembly assembly = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(x => x.FullName == assemblyName);
+			Assembly assembly = AppDomain.CurrentDomain.GetAssemblies()
+				.FirstOrDefault(x => x.FullName == assemblyName);
 
 			if (assembly != null)
 			{
@@ -142,7 +156,7 @@ namespace ServerFramework.Managers.Core
 
 				if(type != null)
 				{
-					retVal = type.GetMethodByName(methodName);
+					retVal = type.GetMethodByName(methodName, parameters);
 				}
 			}
 
@@ -163,8 +177,10 @@ namespace ServerFramework.Managers.Core
 
 					if (method != null)
 					{
-						Command c = InvokeStaticMethod<Command>(method);
-						CommandModel existingCommand = context.Commands.FirstOrDefault(x => x.Name == c.Name && x.Active);
+						Command c = InvokeMethod<Command>(null, method);
+
+						CommandModel existingCommand = context.Commands
+							.FirstOrDefault(x => x.Name == c.Name && x.Active);
 
 						if(c != null)
 						{
@@ -238,24 +254,13 @@ namespace ServerFramework.Managers.Core
 
 		#region InvokeStaticMethod
 
-		public T InvokeStaticMethod<T>(string assemblyName, string typeName, string methodName, params object[] args)
-		{
-			T retVal = default(T);
-
-			MethodInfo method = GetMethod(assemblyName, typeName, methodName);
-
-			retVal = InvokeStaticMethod<T>(method, args);
-
-			return retVal;
-		}
-
-		public T InvokeStaticMethod<T>(MethodInfo method, params object[] args)
+		public T InvokeMethod<T>(object obj, MethodInfo method, params object[] args)
 		{
 			T retVal = default(T);
 
 			try
 			{
-				retVal = (T)method.Invoke(null, args);
+				retVal = (T)method.Invoke(obj, args);
 			}
 			catch (TargetInvocationException)
 			{

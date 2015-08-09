@@ -17,7 +17,7 @@ using System;
 using System.Collections.Generic;
 
 
-namespace ServerFramework.Constants.Entities.Console.Misc
+namespace ServerFramework.Helpers
 {
 	public class ObjectPool<T>
 	{

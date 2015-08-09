@@ -15,14 +15,13 @@
 
 using System;
 
-namespace ServerFramework.Constants.Misc
+namespace ServerFramework.Enums
 {
 	[Flags]
-	public enum PacketFlag : byte
+	enum PacketLogType : byte
 	{
-		None = 0x00,
-		Log = 0x20,
-		Unicode = 0x40,
-		BigPacket = 0x80
+		None	= 0x00,
+		CMSG	= 0x01,
+		SMSG	= 0x02,
 	};
 }

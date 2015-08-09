@@ -13,22 +13,27 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using System;
+using ServerFramework.Attributes.Core;
+using ServerFramework.Commands.Base;
+using ServerFramework.Enums;
 
-namespace ServerFramework.Constants.Misc
+namespace ServerFramework.Game.Handlers
 {
-	public enum CommandLevel : byte
+	[Command]
+	public static class DatabaseCommands
 	{
-		Zero	= 0,
-		One		= 1,
-		Two		= 2,
-		Three	= 3,
-		Four	= 4,
-		Five	= 5,
-		Six		= 6,
-		Seven	= 7,
-		Eight	= 8,
-		Nine	= 9,
-		Ten		= 10,
-	};
+		#region Methods
+
+		#region GetCommand
+
+		private static Command GetCommand()
+		{
+			return new Command("database", CommandLevel.Ten, null, null, "");
+		}
+
+		#endregion
+
+		#endregion
+
+	}
 }

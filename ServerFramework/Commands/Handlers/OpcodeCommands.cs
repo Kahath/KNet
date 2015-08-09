@@ -13,18 +13,19 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using ServerFramework.Constants.Attributes.Core;
-using ServerFramework.Constants.Entities.Console;
-using ServerFramework.Constants.Entities.Session;
-using ServerFramework.Constants.Misc;
+using ServerFramework.Attributes.Core;
+using ServerFramework.Commands.Base;
 using ServerFramework.Database.Context;
 using ServerFramework.Database.Model.Application.Opcode;
+using ServerFramework.Enums;
 using ServerFramework.Managers;
+using ServerFramework.Network.Packets;
+using ServerFramework.Network.Session;
 using System;
 using System.Linq;
 using System.Reflection;
 
-namespace ServerFramework.Game.CommandHandlers
+namespace ServerFramework.Commands.Handlers
 {
 	[Command]
 	public static class OpcodeCommands
@@ -69,7 +70,14 @@ namespace ServerFramework.Game.CommandHandlers
 				{
 					if(Manager.PacketMgr.PacketHandlers.ContainsKey((ushort)opcode.Code))
 					{
-						MethodInfo method = Manager.AssemblyMgr.GetMethod(opcode.AssemblyName, opcode.TypeName, opcode.MethodName);
+						MethodInfo method = Manager.AssemblyMgr.GetMethod
+							(
+								opcode.AssemblyName
+							,	opcode.TypeName
+							,	opcode.MethodName
+							,	typeof(Client)
+							,	typeof(Packet)
+							);
 
 						if (method != null)
 						{
@@ -103,7 +111,14 @@ namespace ServerFramework.Game.CommandHandlers
 				{
 					if (Manager.PacketMgr.PacketHandlers.ContainsKey((ushort)opcode.Code))
 					{
-						MethodInfo method = Manager.AssemblyMgr.GetMethod(opcode.AssemblyName, opcode.TypeName, opcode.MethodName);
+						MethodInfo method = Manager.AssemblyMgr.GetMethod
+							(
+								opcode.AssemblyName
+							,	opcode.TypeName
+							,	opcode.MethodName
+							,	typeof(Client)
+							,	typeof(Packet)
+							);
 
 						if (method != null)
 						{
@@ -136,7 +151,14 @@ namespace ServerFramework.Game.CommandHandlers
 				{
 					if (Manager.PacketMgr.PacketHandlers.ContainsKey((ushort)opcode.Code))
 					{
-						MethodInfo method = Manager.AssemblyMgr.GetMethod(opcode.AssemblyName, opcode.TypeName, opcode.MethodName);
+						MethodInfo method = Manager.AssemblyMgr.GetMethod
+							(
+								opcode.AssemblyName
+							,	opcode.TypeName
+							,	opcode.MethodName
+							,	typeof(Client)
+							,	typeof(Packet)
+							);
 
 						if (method != null)
 						{

@@ -35,11 +35,18 @@ namespace ServerFramework.Extensions
 			return retVal;
 		}
 
-		public static MethodInfo GetMethodByName(this Type type, string name)
+		public static MethodInfo GetMethodByName(this Type type, string name, params Type[] parameters)
 		{
 			MethodInfo retVal;
 
-			retVal = type.GetAllMethods().FirstOrDefault(x => x.Name == name);
+			retVal = type.GetAllMethods()
+				.FirstOrDefault
+				(x => 
+					x.Name == name 
+					&& x.GetParameters()
+						.Select(y => y.ParameterType)
+						.SequenceEqual(parameters)
+				);
 
 			return retVal;
 		}

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ServerFramework.Constants.Entities.Session
+namespace ServerFramework.Network.Session
 {
 	internal sealed class ConsoleClient : IClient
 	{

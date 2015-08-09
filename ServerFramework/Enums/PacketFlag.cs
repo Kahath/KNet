@@ -13,42 +13,16 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using ServerFramework.Constants.Attributes.Core;
-using ServerFramework.Constants.Entities.Console;
-using ServerFramework.Constants.Entities.Session;
-using ServerFramework.Constants.Misc;
 using System;
 
-namespace ServerFramework.Game.CommandHandlers
+namespace ServerFramework.Enums
 {
-	[Command]
-	public static class ClearCommands
+	[Flags]
+	public enum PacketFlag : byte
 	{
-		#region Methods
-
-		#region GetCommand
-
-		private static Command GetCommand()
-		{
-			return new Command("cls", CommandLevel.Ten, null, Cls, "");
-		}
-
-		#endregion
-
-		#endregion
-
-		#region Handlers
-
-		#region ClsHandler
-
-		private static bool Cls(Client user, params string[] args)
-		{
-			Console.Clear();
-			return true;
-		}
-
-		#endregion
-
-		#endregion
-	}
+		None		= 0x00,
+		Log			= 0x20,
+		Unicode		= 0x40,
+		BigPacket	= 0x80,
+	};
 }

@@ -16,7 +16,7 @@
 using ServerFramework.Database.Base;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using CCommand = ServerFramework.Constants.Entities.Console.Command;
+using CCommand = ServerFramework.Commands.Base.Command;
 
 namespace ServerFramework.Database.Model.Application.Command
 {

@@ -27,7 +27,7 @@ namespace ServerFramework.Configuration.Helpers
 		public const string PacketLogLevelKey = "packetloglevel";
 		public const string OpcodeAllowLevelKey = "opcodeallowlevel";
 		public const string PacketLogSizeKey = "packetlogsize";
-		public const string BufferSIzeKey = "buffersize";
+		public const string BufferSizeKey = "buffersize";
 		public const string MaxConnectionsKey = "maxconnections";
 		public const string MaxSimultaneousAcceptOpsKey = "maxsimultaneousacceptops";
 		public const string BacklogKey = "backlog";

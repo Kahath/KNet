@@ -14,7 +14,7 @@
  */
 
 using ServerFramework.Configuration.Core;
-using ServerFramework.Constants.Misc;
+using ServerFramework.Enums;
 using System;
 
 namespace ServerFramework.Configuration.Helpers
@@ -213,7 +213,7 @@ namespace ServerFramework.Configuration.Helpers
 			OpcodeAllowLevel = (OpcodeType)Config.Read<byte>(ConfigurationHelper.OpcodeAllowLevelKey, true);
 			PacketLogSize = Config.Read<byte>(ConfigurationHelper.PacketLogSizeKey);
 
-			BufferSize = Config.Read<int>(ConfigurationHelper.BufferSIzeKey);
+			BufferSize = Config.Read<int>(ConfigurationHelper.BufferSizeKey);
 			MaxConnections = Config.Read<int>(ConfigurationHelper.MaxConnectionsKey);
 			MaxSimultaneousAcceptOps = Config.Read<int>(ConfigurationHelper.MaxSimultaneousAcceptOpsKey);
 			Backlog = Config.Read<int>(ConfigurationHelper.BacklogKey);

@@ -13,21 +13,42 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using ServerFramework.Attributes.Core;
+using ServerFramework.Commands.Base;
+using ServerFramework.Enums;
+using ServerFramework.Network.Session;
 using System;
 
-namespace ServerFramework.Constants.Misc
+namespace ServerFramework.Commands.Handlers
 {
-	[Flags]
-	public enum LogType : byte
+	[Command]
+	public static class ClearCommands
 	{
-		None		= 0x00,
-		Normal		= 0x01,
-		Init		= 0x02,
-		Command		= 0x04,
-		DB			= 0x08,
-		Info		= 0x10,
-		Warning		= 0x20,
-		Error		= 0x40,
-		Critical	= 0x80,
-	};
+		#region Methods
+
+		#region GetCommand
+
+		private static Command GetCommand()
+		{
+			return new Command("cls", CommandLevel.Ten, null, Cls, "");
+		}
+
+		#endregion
+
+		#endregion
+
+		#region Handlers
+
+		#region ClsHandler
+
+		private static bool Cls(Client user, params string[] args)
+		{
+			Console.Clear();
+			return true;
+		}
+
+		#endregion
+
+		#endregion
+	}
 }

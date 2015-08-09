@@ -13,9 +13,9 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using ServerFramework.Constants.Entities.Session;
-using ServerFramework.Constants.Misc;
+using ServerFramework.Enums;
 using ServerFramework.Managers.Base;
+using ServerFramework.Network.Session;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;

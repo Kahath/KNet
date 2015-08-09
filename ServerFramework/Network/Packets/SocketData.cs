@@ -13,6 +13,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using ServerFramework.Configuration.Helpers;
 using System.Text;
 
 namespace ServerFramework.Network.Packets
@@ -174,10 +175,11 @@ namespace ServerFramework.Network.Packets
 		/// <param name="headerLength">Length of message header.</param>
 		internal SocketData(int bufferSize, int bufferOffset, int headerLength)
 		{
-			this._bufferSize = bufferSize;
-			this._bufferOffset = bufferOffset;
-			this.HeaderLength = headerLength;
-			this.HeaderOffset = bufferOffset;
+			_bufferSize = bufferSize;
+			_bufferOffset = bufferOffset;
+			HeaderLength = headerLength;
+			HeaderOffset = bufferOffset;
+			Header = new byte[ServerConfig.BigHeaderLength];
 		}
 
 		#endregion
@@ -205,7 +207,6 @@ namespace ServerFramework.Network.Packets
 		internal void Reset(int headerOffset)
 		{
 			Packet = null;
-			Header = null;
 			IsHeaderReady = false;
 			IsPacketReady = false;
 			IsBigPacket = false;

@@ -13,7 +13,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using ServerFramework.Constants.Misc;
+using ServerFramework.Enums;
 using ServerFramework.Managers;
 using System;
 using System.Globalization;

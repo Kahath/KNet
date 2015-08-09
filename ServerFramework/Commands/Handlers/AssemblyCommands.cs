@@ -13,13 +13,13 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using ServerFramework.Constants.Attributes.Core;
-using ServerFramework.Constants.Entities.Console;
-using ServerFramework.Constants.Entities.Session;
-using ServerFramework.Constants.Misc;
+using ServerFramework.Attributes.Core;
+using ServerFramework.Commands.Base;
+using ServerFramework.Enums;
 using ServerFramework.Managers;
+using ServerFramework.Network.Session;
 
-namespace ServerFramework.Game.CommandHandlers
+namespace ServerFramework.Commands.Handlers
 {
 	[Command]
 	public class AssemblyCommands

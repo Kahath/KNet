@@ -13,28 +13,18 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using ServerFramework.Constants.Attributes.Core;
-using ServerFramework.Constants.Entities.Console;
-using ServerFramework.Constants.Misc;
-using ServerFramework.Database;
+using System;
 
-namespace ServerFramework.Game.CommandHandlers
+namespace ServerFramework.Enums
 {
-	[Command]
-	public static class DatabaseCommands
+	[Flags]
+	public enum OpcodeType : byte
 	{
-		#region Methods
-
-		#region GetCommand
-
-		private static Command GetCommand()
-		{
-			return new Command("database", CommandLevel.Ten, null, null, "");
-		}
-
-		#endregion
-
-		#endregion
-
-	}
+		None			= 0x00,
+		NotUsed			= 0x01,
+		InDevelopment	= 0x02,
+		Test			= 0x04,
+		Stable			= 0x08,
+		Release			= 0x10,
+	};
 }

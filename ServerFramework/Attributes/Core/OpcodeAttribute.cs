@@ -13,11 +13,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using ServerFramework.Constants.Attributes.Base;
-using ServerFramework.Constants.Misc;
+using ServerFramework.Attributes.Base;
+using ServerFramework.Enums;
 using System;
 
-namespace ServerFramework.Constants.Attributes.Core
+namespace ServerFramework.Attributes.Core
 {
 	[AttributeUsage(AttributeTargets.Method | AttributeTargets.Assembly, AllowMultiple = true)]
 	public sealed class OpcodeAttribute : Attribute, ICustomAttribute

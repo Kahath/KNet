@@ -13,15 +13,13 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using ServerFramework.Attributes.Base;
 using System;
 
-namespace ServerFramework.Constants.Misc
+namespace ServerFramework.Attributes.Core
 {
-	[Flags]
-	enum PacketLogType : byte
+	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Assembly)]
+	public sealed class CommandAttribute : Attribute, ICustomAttribute
 	{
-		None	= 0x00,
-		CMSG	= 0x01,
-		SMSG	= 0x02,
-	};
+	}
 }

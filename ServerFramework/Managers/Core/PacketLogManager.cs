@@ -14,12 +14,12 @@
  */
 
 using ServerFramework.Configuration.Helpers;
-using ServerFramework.Constants.Entities.Session;
-using ServerFramework.Constants.Misc;
 using ServerFramework.Database.Context;
 using ServerFramework.Database.Model.Application.PacketLog;
+using ServerFramework.Enums;
 using ServerFramework.Managers.Base;
 using ServerFramework.Network.Packets;
+using ServerFramework.Network.Session;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -117,7 +117,7 @@ namespace ServerFramework.Managers.Core
 			PacketLogType logtype = packet.Stream.Reader != null ? PacketLogType.CMSG : PacketLogType.SMSG;
 
 			Client pClient = Manager.SessionMgr.GetClientBySession(packet.SessionId);
-
+			
 			PacketLogModel packetLog = new PacketLogModel();
 
 			if (pClient != null)

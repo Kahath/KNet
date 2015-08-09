@@ -14,7 +14,7 @@
  */
 
 using ServerFramework.Configuration.Helpers;
-using ServerFramework.Constants.Misc;
+using ServerFramework.Enums;
 using ServerFramework.Network.Packets;
 using System;
 using System.Net.Sockets;
@@ -36,7 +36,7 @@ namespace ServerFramework.Extensions
 		internal static int HandleHeader(this SocketData data
 			, SocketAsyncEventArgs e, int remainingBytesToProcess)
 		{
-			if (data.Header == null)
+			if (data.HeaderBytesDoneCount == 0)
 			{
 				byte flags = e.Buffer[data.HeaderOffset];
 
@@ -47,7 +47,6 @@ namespace ServerFramework.Extensions
 					? ServerConfig.BigHeaderLength 
 					: ServerConfig.HeaderLength;
 
-				data.Header = new byte[data.HeaderLength];
 				data.MessageOffset = data.HeaderOffset + data.HeaderLength;
 			}
 

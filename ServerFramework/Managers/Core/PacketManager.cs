@@ -13,14 +13,15 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using ServerFramework.Constants.Attributes.Core;
-using ServerFramework.Constants.Entities.Session;
-using ServerFramework.Constants.Misc;
+using ServerFramework.Attributes.Core;
 using ServerFramework.Database.Context;
 using ServerFramework.Database.Model.Application.Opcode;
+using ServerFramework.Enums;
 using ServerFramework.Managers.Base;
 using ServerFramework.Network.Packets;
+using ServerFramework.Network.Session;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -31,14 +32,14 @@ namespace ServerFramework.Managers.Core
 	{
 		#region Fields
 
-		private Dictionary<ushort, OpcodeHandler> _packetHandlers
-			= new Dictionary<ushort, OpcodeHandler>();
+		private ConcurrentDictionary<ushort, OpcodeHandler> _packetHandlers
+			= new ConcurrentDictionary<ushort, OpcodeHandler>();
 
 		#endregion
 
 		#region Properties
 
-		internal Dictionary<ushort, OpcodeHandler> PacketHandlers
+		internal ConcurrentDictionary<ushort, OpcodeHandler> PacketHandlers
 		{
 			get { return _packetHandlers; }
 			set { _packetHandlers = value; }
@@ -97,6 +98,8 @@ namespace ServerFramework.Managers.Core
 							opcode.AssemblyName
 						,	opcode.TypeName
 						,	opcode.MethodName
+						,	typeof(Client)
+						,	typeof(Packet)
 						)
 					) as OpcodeHandler;
 				}
@@ -126,7 +129,7 @@ namespace ServerFramework.Managers.Core
 						Client pClient = Manager.SessionMgr.GetClientBySession(packet.SessionId);
 
 						if (pClient != null)
-							PacketHandlers[packet.Header.Opcode].Invoke(pClient, packet);
+							PacketHandlers[packet.Header.Opcode](pClient, packet);
 					}
 				}
 				catch (Exception e)

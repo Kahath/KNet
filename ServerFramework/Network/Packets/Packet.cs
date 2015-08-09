@@ -104,7 +104,7 @@ namespace ServerFramework.Network.Packets
 		/// </summary>
 		internal void PrepareRead()
 		{
-			_stream = new PacketStream(Encoding, this.Message);
+			_stream = new PacketStream(Encoding, Message);
 		}
 
 		#endregion

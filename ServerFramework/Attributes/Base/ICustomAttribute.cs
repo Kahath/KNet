@@ -15,7 +15,7 @@
 
 using System;
 
-namespace ServerFramework.Constants.Attributes.Base
+namespace ServerFramework.Attributes.Base
 {
 	public interface ICustomAttribute
 	{

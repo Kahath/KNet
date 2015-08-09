@@ -13,18 +13,30 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using System;
-
-namespace ServerFramework.Constants.Misc
+namespace ServerFramework.Network.Session
 {
-	[Flags]
-	public enum OpcodeType : byte
+	public interface IClient
 	{
-		None			= 0x00,
-		NotUsed			= 0x01,
-		InDevelopment	= 0x02,
-		Test			= 0x04,
-		Stable			= 0x08,
-		Release			= 0x10,
-	};
+		#region Properties
+
+		int SessionId
+		{
+			get;
+			set;
+		}
+
+		int ID
+		{
+			get;
+			set;
+		}
+
+		string Name
+		{
+			get;
+			set;
+		}
+
+		#endregion
+	}
 }

@@ -14,7 +14,7 @@
  */
 
 using ServerFramework.Configuration.Helpers;
-using ServerFramework.Constants.Misc;
+using ServerFramework.Enums;
 using ServerFramework.Managers.Core;
 
 namespace ServerFramework.Managers

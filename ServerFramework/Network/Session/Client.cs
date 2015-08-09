@@ -13,13 +13,13 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using ServerFramework.Constants.Misc;
+using ServerFramework.Enums;
 using ServerFramework.Network.Packets;
 using ServerFramework.Network.Socket;
 using System;
 using System.Net;
 
-namespace ServerFramework.Constants.Entities.Session
+namespace ServerFramework.Network.Session
 {
 	public sealed class Client
 	{

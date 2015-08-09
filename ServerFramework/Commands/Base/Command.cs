@@ -13,13 +13,13 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using ServerFramework.Constants.Entities.Session;
-using ServerFramework.Constants.Misc;
+using ServerFramework.Enums;
+using ServerFramework.Network.Session;
 using System;
-using System.Text;
 using System.Linq;
+using System.Text;
 
-namespace ServerFramework.Constants.Entities.Console
+namespace ServerFramework.Commands.Base
 {
 	public sealed class Command
 	{

@@ -13,31 +13,21 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using ServerFramework.Constants.Misc;
-namespace ServerFramework.Constants.Entities.Session
+using System;
+
+namespace ServerFramework.Enums
 {
-	public interface IClient
+	[Flags]
+	public enum LogType : byte
 	{
-		#region Properties
-
-		int SessionId
-		{
-			get;
-			set;
-		}
-
-		int ID
-		{
-			get;
-			set;
-		}
-
-		string Name
-		{
-			get;
-			set;
-		}
-
-		#endregion
-	}
+		None		= 0x00,
+		Normal		= 0x01,
+		Init		= 0x02,
+		Command		= 0x04,
+		DB			= 0x08,
+		Info		= 0x10,
+		Warning		= 0x20,
+		Error		= 0x40,
+		Critical	= 0x80,
+	};
 }

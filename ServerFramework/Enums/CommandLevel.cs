@@ -13,13 +13,22 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using ServerFramework.Constants.Attributes.Base;
 using System;
 
-namespace ServerFramework.Constants.Attributes.Core
+namespace ServerFramework.Enums
 {
-	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Assembly)]
-	public sealed class CommandAttribute : Attribute, ICustomAttribute
+	public enum CommandLevel : byte
 	{
-	}
+		Zero	= 0,
+		One		= 1,
+		Two		= 2,
+		Three	= 3,
+		Four	= 4,
+		Five	= 5,
+		Six		= 6,
+		Seven	= 7,
+		Eight	= 8,
+		Nine	= 9,
+		Ten		= 10,
+	};
 }
