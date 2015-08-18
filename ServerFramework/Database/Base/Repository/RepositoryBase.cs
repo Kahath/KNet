@@ -52,6 +52,8 @@ namespace ServerFramework.Database.Base.Repository
 
 		#region Methods
 
+		#region Dispose
+
 		/// <summary>
 		/// Disposes object.
 		/// </summary>
@@ -67,11 +69,13 @@ namespace ServerFramework.Database.Base.Repository
 		/// <param name="disposing">disposing</param>
 		private void Dispose(bool disposing)
 		{
-			if(disposing)
+			if (disposing)
 			{
 				Context.Dispose();
 			}
 		}
+
+		#endregion
 
 		#endregion
 	}

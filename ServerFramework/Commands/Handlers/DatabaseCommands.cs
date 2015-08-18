@@ -38,6 +38,5 @@ namespace ServerFramework.Game.Handlers
 		#endregion
 
 		#endregion
-
 	}
 }

@@ -183,45 +183,48 @@ namespace ServerFramework.Managers.Core
 
 		private void OnCustomAssemblyType(Assembly assembly, Type type, ApplicationContext context)
 		{
-			CommandRepository CRepo = new CommandRepository(context);
-
-			foreach (CommandAttribute attr in type.GetCustomAttributes<CommandAttribute>())
+			if (type.GetCustomAttributes<CommandAttribute>().Any())
 			{
-				if (attr != null)
+				CommandRepository CRepo = new CommandRepository(context);
+
+				foreach (CommandAttribute attr in type.GetCustomAttributes<CommandAttribute>())
 				{
-					MethodInfo method = type.GetMethodByName("GetCommand");
-
-					if (method != null)
+					if (attr != null)
 					{
-						CommandHandlerBase commandBase = InvokeConstructor(type) as CommandHandlerBase;
+						MethodInfo method = type.GetMethodByName("GetCommand");
 
-						if (commandBase != null)
+						if (method != null)
 						{
-							CommandModel existingCommand = context.Commands
-								.FirstOrDefault(x => x.Name == commandBase.Name && x.Active);
+							CommandHandlerBase commandBase = InvokeConstructor(type) as CommandHandlerBase;
 
-							if (existingCommand == null)
+							if (commandBase != null)
 							{
-								existingCommand = new CommandModel(commandBase);
+								CommandModel existingCommand = context.Commands
+									.FirstOrDefault(x => x.Name == commandBase.Name && x.Active);
 
-								existingCommand.AssemblyName = assembly.FullName;
-								existingCommand.TypeName = type.FullName;
-								existingCommand.MethodName = method.Name;
+								if (existingCommand == null)
+								{
+									existingCommand = new CommandModel(commandBase);
 
-								context.Commands.Add(existingCommand);
+									existingCommand.AssemblyName = assembly.FullName;
+									existingCommand.TypeName = type.FullName;
+									existingCommand.MethodName = method.Name;
+
+									context.Commands.Add(existingCommand);
+								}
+								else
+								{
+									existingCommand.AssemblyName = assembly.FullName;
+									existingCommand.TypeName = type.FullName;
+									existingCommand.MethodName = method.Name;
+									context.Entry(existingCommand).State = EntityState.Modified;
+								}
+
+								Command cmd = InvokeMethod<Command>(commandBase, method);
+
+								if (cmd != null)
+									CRepo.UpdateSubCommands(cmd, existingCommand);
 							}
-							else
-							{
-								existingCommand.AssemblyName = assembly.FullName;
-								existingCommand.TypeName = type.FullName;
-								existingCommand.MethodName = method.Name;
-								context.Entry(existingCommand).State = EntityState.Modified;
-							}
-
-							Command cmd = InvokeMethod<Command>(commandBase, method);
-
-							if (cmd != null)
-								CRepo.UpdateSubCommands(cmd, existingCommand);
 						}
 					}
 				}

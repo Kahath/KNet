@@ -139,9 +139,12 @@
     <Content Include="Sql\Application.Command.Table.sql" />
     <Content Include="Sql\Application.Log.Table.sql" />
     <Content Include="Sql\Application.Log.Type.Table.sql" />
+    <Content Include="Sql\Application.Opcode.Table.sql" />
+    <Content Include="Sql\Application.Opcode.Type.Table.sql" />
     <Content Include="Sql\Application.Packet.Log.Table.sql" />
     <Content Include="Sql\Application.Packet.Log.Type.Table.sql" />
     <Content Include="Sql\Application.Schema.sql" />
+    <Content Include="Sql\Application.Server.Table.sql" />
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>

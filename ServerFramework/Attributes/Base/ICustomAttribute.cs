@@ -13,8 +13,6 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using System;
-
 namespace ServerFramework.Attributes.Base
 {
 	public interface ICustomAttribute

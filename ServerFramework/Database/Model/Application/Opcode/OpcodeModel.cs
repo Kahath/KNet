@@ -53,6 +53,5 @@ namespace ServerFramework.Database.Model.Application.Opcode
 		}
 
 		#endregion
-
 	}
 }

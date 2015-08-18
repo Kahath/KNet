@@ -25,6 +25,8 @@ namespace ServerFramework.Extensions
 	{
 		#region Methods
 
+		#region HandleHeader
+
 		/// <summary>
 		/// Handles message header. If received bytes length is lesser than 
 		/// header length, multiple method calls are required.
@@ -42,9 +44,9 @@ namespace ServerFramework.Extensions
 
 				data.IsBigPacket = Convert.ToBoolean(flags & (byte)PacketFlag.BigPacket);
 				data.IsUnicode = Convert.ToBoolean(flags & (byte)PacketFlag.Unicode);
-				
-				data.HeaderLength = data.IsBigPacket 
-					? ServerConfig.BigHeaderLength 
+
+				data.HeaderLength = data.IsBigPacket
+					? ServerConfig.BigHeaderLength
 					: ServerConfig.HeaderLength;
 
 				data.MessageOffset = data.HeaderOffset + data.HeaderLength;
@@ -99,6 +101,10 @@ namespace ServerFramework.Extensions
 
 			return remainingBytesToProcess;
 		}
+
+		#endregion
+
+		#region HandleMessage
 
 		/// <summary>
 		/// Handles message.  If received bytes length is lesser than 
@@ -164,6 +170,8 @@ namespace ServerFramework.Extensions
 			return remainingBytesToProcess;
 		}
 
+		#endregion
+		
 		#endregion
 	}
 }

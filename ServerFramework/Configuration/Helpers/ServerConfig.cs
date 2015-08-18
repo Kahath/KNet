@@ -41,6 +41,7 @@ namespace ServerFramework.Configuration.Helpers
 		private static int _opcodeLength;
 		private static int _messageSizeLength;
 		private static int _bigMessageSizeLength;
+		private static int _numSocketPerSession;
 
 		private static string _dbHost;
 		private static int _dbPort;
@@ -142,6 +143,12 @@ namespace ServerFramework.Configuration.Helpers
 			set { _bigMessageSizeLength = value; }
 		}
 
+		internal static int NumSocketPerSession
+		{
+			get { return _numSocketPerSession; }
+			set { _numSocketPerSession = value; }
+		}
+
 		internal static int HeaderLength
 		{
 			get { return PacketFlagsLength + OpcodeLength + MessageSizeLength; }
@@ -228,6 +235,7 @@ namespace ServerFramework.Configuration.Helpers
 			OpcodeLength = sizeof(ushort);
 			MessageSizeLength = sizeof(ushort);
 			BigMessageSizeLength = sizeof(int);
+			NumSocketPerSession = 2;
 		}
 
 		#endregion

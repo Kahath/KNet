@@ -22,6 +22,10 @@ namespace ServerFramework.Extensions
 {
 	public static class TypeExtensions
 	{
+		#region Methods
+
+		#region GetAllMethods
+
 		public static IList<MethodInfo> GetAllMethods(this Type type)
 		{
 			List<MethodInfo> retVal = new List<MethodInfo>();
@@ -35,14 +39,18 @@ namespace ServerFramework.Extensions
 			return retVal;
 		}
 
+		#endregion
+
+		#region GetMethodByName
+
 		public static MethodInfo GetMethodByName(this Type type, string name, params Type[] parameters)
 		{
 			MethodInfo retVal;
 
 			retVal = type.GetAllMethods()
 				.FirstOrDefault
-				(x => 
-					x.Name == name 
+				(x =>
+					x.Name == name
 					&& x.GetParameters()
 						.Select(y => y.ParameterType)
 						.SequenceEqual(parameters)
@@ -50,5 +58,9 @@ namespace ServerFramework.Extensions
 
 			return retVal;
 		}
+
+		#endregion
+
+		#endregion
 	}
 }

@@ -108,7 +108,7 @@ namespace ServerFramework.Managers
 			LogMgr.Log(LogType.Init, "Initialising buffer manager");
 			BufferMgr = BufferManager.GetInstance
 				(
-					ServerConfig.BufferSize * ServerConfig.MaxConnections * 2
+					ServerConfig.BufferSize * ServerConfig.MaxConnections * ServerConfig.NumSocketPerSession
 				,	ServerConfig.BufferSize
 				);
 		}

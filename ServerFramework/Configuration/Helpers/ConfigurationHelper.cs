@@ -17,6 +17,8 @@ namespace ServerFramework.Configuration.Helpers
 {
 	public class ConfigurationHelper
 	{
+		#region Constants
+
 		public const string Key = "name";
 		public const string Value = "value";
 
@@ -36,5 +38,7 @@ namespace ServerFramework.Configuration.Helpers
 		public const string DBUserKey = "dbuser";
 		public const string DBPassKey = "dbpass";
 		public const string DBNameKey = "dbname";
+
+		#endregion
 	}
 }

@@ -14,7 +14,6 @@
  */
 
 using ServerFramework.Configuration.Helpers;
-using System.Text;
 
 namespace ServerFramework.Network.Packets
 {

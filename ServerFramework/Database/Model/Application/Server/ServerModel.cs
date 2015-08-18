@@ -22,8 +22,12 @@ namespace ServerFramework.Database.Model.Application.Server
 	[Table("Server", Schema="Application")]
 	public class ServerModel : EntityBase
 	{
+		#region Properties
+
 		[Key]
-		public int ID				{ get; set; }
-		public bool IsSuccessful	{ get; set; }
+		public int ID { get; set; }
+		public bool IsSuccessful { get; set; }
+
+		#endregion
 	}
 }
