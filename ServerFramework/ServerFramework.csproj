@@ -57,6 +57,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\Base\CommandHandlerBase.cs" />
     <Compile Include="Configuration\Core\Config.cs" />
     <Compile Include="Configuration\Helpers\ConfigurationHelper.cs" />
     <Compile Include="Configuration\Core\XmlConfiguration.cs" />
@@ -64,6 +65,9 @@
     <Compile Include="Configuration\Helpers\ServerConfig.cs" />
     <Compile Include="Attributes\Core\CommandAttribute.cs" />
     <Compile Include="Attributes\Base\ICustomAttribute.cs" />
+    <Compile Include="Database\Base\Entity\AssemblyEntityBase.cs" />
+    <Compile Include="Database\Repository\CommandRepository.cs" />
+    <Compile Include="Enums\CommandValidation.cs" />
     <Compile Include="Network\Session\ConsoleClient.cs" />
     <Compile Include="Network\Session\IClient.cs" />
     <Compile Include="Events\AssemblyEventArgs.cs" />
@@ -73,10 +77,10 @@
     <Compile Include="Enums\PacketFlag.cs" />
     <Compile Include="Enums\PacketLogType.cs" />
     <Compile Include="Network\Session\Client.cs" />
-    <Compile Include="Database\Base\DBContextBase.cs" />
-    <Compile Include="Database\Base\EntityBase.cs" />
-    <Compile Include="Database\Base\IEntity.cs" />
-    <Compile Include="Database\Base\RepositoryBase.cs" />
+    <Compile Include="Database\Base\Context\DBContextBase.cs" />
+    <Compile Include="Database\Base\Entity\EntityBase.cs" />
+    <Compile Include="Database\Base\Entity\IEntity.cs" />
+    <Compile Include="Database\Base\Repository\RepositoryBase.cs" />
     <Compile Include="Database\Context\ApplicationContext.cs" />
     <Compile Include="Database\Model\Application\Command\CommandLevelModel.cs" />
     <Compile Include="Database\Model\Application\Command\CommandLogModel.cs" />

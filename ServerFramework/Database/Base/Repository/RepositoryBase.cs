@@ -13,11 +13,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using ServerFramework.Database.Base.Context;
+using ServerFramework.Database.Base.Entity;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace ServerFramework.Database.Base
+namespace ServerFramework.Database.Base.Repository
 {
 	public abstract class RepositoryBase<T> : IDisposable where T : IEntity
 	{

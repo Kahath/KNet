@@ -13,31 +13,32 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using ServerFramework.Database.Base;
+using ServerFramework.Commands.Base;
+using ServerFramework.Database.Base.Entity;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using CCommand = ServerFramework.Commands.Base.Command;
 
 namespace ServerFramework.Database.Model.Application.Command
 {
 	[Table("Command", Schema = "Application")]
-	public class CommandModel : EntityBase
+	public class CommandModel : AssemblyEntityBase
 	{
 		#region Properties
 
 		[Key]
 		public int ID							{ get; set; }
-		public string AssemblyName				{ get; set; }
-		public string TypeName					{ get; set; }
-		public string MethodName				{ get; set; }
 
 		[StringLength(50)]
 		public string Name						{ get; set; }
 		public string Description				{ get; set; }
 		public int? CommandLevelID				{ get; set; }
+		public int? ParentID					{ get; set; }
 
 		[ForeignKey("CommandLevelID")]
 		public CommandLevelModel CommandLevel	{ get; set; }
+
+		[ForeignKey("ParentID")]
+		public CommandModel Parent				{ get; set; }
 
 		#endregion
 
@@ -48,11 +49,11 @@ namespace ServerFramework.Database.Model.Application.Command
 
 		}
 
-		public CommandModel(CCommand command)
+		public CommandModel(CommandHandlerBase command)
 		{
 			Name = command.Name;
 			Description = command.Description;
-			CommandLevelID = (int)command.CommandLevel;
+			CommandLevelID = (int)command.Level;
 		}
 
 		#endregion

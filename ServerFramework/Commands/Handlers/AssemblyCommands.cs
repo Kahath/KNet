@@ -21,21 +21,25 @@ using ServerFramework.Network.Session;
 
 namespace ServerFramework.Commands.Handlers
 {
-	[Command]
-	public class AssemblyCommands
+	[Command("assembly", CommandLevel.Ten, "")]
+	public class AssemblyCommands : CommandHandlerBase
 	{
 		#region Methods
 
 		#region GetCommand
 
-		private static Command GetCommand()
+		protected override Command GetCommand()
 		{
+			Command retVal = null;
+
 			Command[] AssemblyCommands =
 			{
 				new Command("load", CommandLevel.Ten, null, AssemblyLoadHandler, ""),
 			};
 
-			return new Command("assembly", CommandLevel.Ten, AssemblyCommands, null, "");
+			retVal = new Command(Name, Level, AssemblyCommands, null, Description);
+				
+			return retVal;
 		}
 
 		#endregion
@@ -58,6 +62,5 @@ namespace ServerFramework.Commands.Handlers
 		#endregion
 
 		#endregion
-
 	}
 }

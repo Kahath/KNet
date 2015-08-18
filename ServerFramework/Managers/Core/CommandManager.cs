@@ -16,7 +16,9 @@
 using ServerFramework.Commands.Base;
 using ServerFramework.Database.Context;
 using ServerFramework.Database.Model.Application.Command;
+using ServerFramework.Database.Repository;
 using ServerFramework.Enums;
+using ServerFramework.Extensions;
 using ServerFramework.Managers.Base;
 using ServerFramework.Network.Session;
 using System;
@@ -69,20 +71,31 @@ namespace ServerFramework.Managers.Core
 		/// </summary>
 		internal override void Init()
 		{
-			using(ApplicationContext context = new ApplicationContext())
+			using(CommandRepository cRepo = new CommandRepository(new ApplicationContext()))
 			{
-				IEnumerable<CommandModel> commands = context.Commands.Where(x => x.Active);
+				IEnumerable<CommandModel> commands = cRepo.Context.Commands.Where(x => x.Active && x.ParentID == null).ToList();
 
 				foreach(CommandModel command in commands)
 				{
-					MethodInfo method = Manager.AssemblyMgr.GetMethod(command.AssemblyName, command.TypeName, command.MethodName);
+					Command c = null;
+					Type type = Manager.AssemblyMgr.GetType(command.AssemblyName, command.TypeName);
+					MethodInfo method = type.GetMethodByName(command.MethodName);
 
 					if(method != null)
 					{
-						Command c = Manager.AssemblyMgr.InvokeMethod<Command>(null, method);
+						object obj = Manager.AssemblyMgr.InvokeConstructor(type);
+
+						if(obj != null && command != null)
+							c = Manager.AssemblyMgr.InvokeMethod<Command>(obj, method);
 
 						if (c != null)
+						{
+							cRepo.UpdateCommandInfo(c, command);
+
+							UpdateBase(c);
+
 							CommandTable.Add(c);
+						}
 					}
 				}
 			}
@@ -159,7 +172,11 @@ namespace ServerFramework.Managers.Core
 				return false;
 
 			Command c = commandTable
-				.Where(x => user.UserLevel >= x.CommandLevel)
+				.Where
+				(x => 
+					user.UserLevel >= x.CommandLevel 
+					&& x.IsValid
+				)
 				.FirstOrDefault(x => x.Name.StartsWith(path[0].Trim()));
 
 			if (c != null)
@@ -171,6 +188,7 @@ namespace ServerFramework.Managers.Core
 					if (c.SubCommands != null)
 					{
 						path.RemoveAt(0);
+
 						if (path.Count > 0)
 						{
 							return InvokeCommandHandler(user, c.SubCommands, path, command);
@@ -234,6 +252,54 @@ namespace ServerFramework.Managers.Core
 		public void Dispose()
 		{
 			_commandTable.Dispose();
+		}
+
+		#endregion
+
+		#region UpdateBase
+
+		internal void UpdateBase(Command command)
+		{
+			command.Validation = ValidateCommand(command);
+
+			if (!command.IsValid)
+			{
+				Manager.LogMgr.Log
+				(
+					LogType.Warning
+				,	"Command '{0}' failed '{1}' validation"
+				,	command.FullName
+				,	command.Validation
+				);
+			}
+
+			if (command.SubCommands != null)
+			{
+				foreach (Command c in command.SubCommands)
+				{
+					c.BaseCommand = command;
+
+					UpdateBase(c);
+				}
+			}
+		}
+
+		#endregion
+
+		#region ValidateCommand
+
+		public CommandValidation ValidateCommand(Command command)
+		{
+			CommandValidation retVal = CommandValidation.Successful;
+
+			if (command.BaseCommand != null && command.CommandLevel < command.BaseCommand.CommandLevel)
+				retVal = CommandValidation.WrongLevel;
+			else if (command.SubCommands == null && command.Script == null)
+				retVal = CommandValidation.NoSubCommandsAndScript;
+			else if (command.SubCommands != null && command.Script != null)
+				retVal = CommandValidation.HasSubCommandsAndScrpit;
+
+			return retVal;
 		}
 
 		#endregion

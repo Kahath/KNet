@@ -24,22 +24,25 @@ using System.Text;
 
 namespace ServerFramework.Commands.Handlers
 {
-	[Command]
-	internal static class CommandCommands
+	[Command("command", CommandLevel.Ten, "")]
+	internal class CommandCommands : CommandHandlerBase
 	{
 		#region Methods
 
 		#region GetCommand
 
-		private static Command GetCommand()
+		protected override Command GetCommand()
 		{
+			Command retVal = null;
+
 			Command[] CommandCommandTable = 
 			{
-				new Command("list", CommandLevel.Nine, null, CommandListHandler, "")
+				new Command("list", CommandLevel.Ten, null, CommandListHandler, "")
 			};
 
-			return new Command("command", CommandLevel.Nine,
-				CommandCommandTable, null, "");
+			retVal = new Command(Name, Level, CommandCommandTable, null, Description);
+
+			return retVal;
 		}
 
 		#endregion
@@ -56,7 +59,11 @@ namespace ServerFramework.Commands.Handlers
 			Manager.LogMgr.Log(LogType.Command, "List of all commands:");
 
 			sb.AppendLine(String.Join("\n", Manager.CommandMgr.CommandTable
-				.Where(x => user.UserLevel >= x.CommandLevel)
+				.Where
+				(x => 
+					user.UserLevel >= x.CommandLevel
+					&& x.IsValid
+				)
 				.Select(x => x.SubCommands != null ? String.Format("{0}..", x.Name) : x.Name)));
 
 			Manager.LogMgr.Log(LogType.Command, "{0}", sb.ToString());

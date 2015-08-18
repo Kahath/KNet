@@ -14,6 +14,7 @@
  */
 
 using ServerFramework.Enums;
+using ServerFramework.Managers;
 using ServerFramework.Network.Session;
 using System;
 using System.Linq;
@@ -27,9 +28,11 @@ namespace ServerFramework.Commands.Base
 
 		private string				_name;
 		private CommandLevel		_commandLevel;
+		private Command				_baseCommand;
 		private Command[]			_subCommands;
 		private CommandHandler		_script;
 		private string				_description;
+		private CommandValidation	_validation;
 
 		#endregion
 
@@ -45,6 +48,12 @@ namespace ServerFramework.Commands.Base
 		{
 			get { return _script; }
 			set { _script = value; }
+		}
+
+		internal Command BaseCommand
+		{
+			get { return _baseCommand; }
+			set { _baseCommand = value; }
 		}
 
 		internal Command[] SubCommands
@@ -63,6 +72,32 @@ namespace ServerFramework.Commands.Base
 		{
 			get { return _name; }
 			set { _name = value; }
+		}
+
+		internal string FullName
+		{
+			get
+			{
+				string retVal = String.Empty;
+
+				if (BaseCommand != null)
+					retVal = BaseCommand.FullName + " " + Name;
+				else
+					retVal = Name;
+
+				return retVal;
+			}
+		}
+
+		internal CommandValidation Validation
+		{
+			get { return _validation; }
+			set { _validation = value; }
+		}
+
+		internal bool IsValid
+		{
+			get { return Validation == CommandValidation.Successful; }
 		}
 
 		#endregion
@@ -101,7 +136,7 @@ namespace ServerFramework.Commands.Base
 		/// <returns></returns>
 		public bool Invoke(Client user, params string[] args)
 		{
-			return Script.Invoke(user, args);
+			return Script(user, args);
 		}
 
 		#endregion
@@ -118,7 +153,11 @@ namespace ServerFramework.Commands.Base
 			StringBuilder retVal = new StringBuilder();
 
 			retVal.AppendLine(String.Join("\n", SubCommands
-				.Where(x => userLevel >= x.CommandLevel)
+				.Where
+				(x => 
+					userLevel >= x.CommandLevel
+					&& x.IsValid
+				)
 				.Select(x => x.SubCommands != null ? String.Format("{0}..", x.Name) : x.Name)));
 
 			return retVal.ToString();

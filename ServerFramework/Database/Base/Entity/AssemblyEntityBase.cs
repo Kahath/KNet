@@ -15,16 +15,28 @@
 
 using System;
 
-namespace ServerFramework.Database.Base
+namespace ServerFramework.Database.Base.Entity
 {
-	public interface IEntity
+	public abstract class AssemblyEntityBase : IEntity
 	{
 		#region Properties
 
-		bool Active					{ get; set; }
-		DateTime DateCreated		{ get; set; }
-		DateTime? DateModified		{ get; set; }
-		DateTime? DateDeactivated	{ get; set; }
+		public bool Active					{ get; set; }
+		public DateTime DateCreated			{ get; set; }
+		public DateTime? DateModified		{ get; set; }
+		public DateTime? DateDeactivated	{ get; set; }
+		public string AssemblyName			{ get; set; }
+		public string TypeName				{ get; set; }
+		public string MethodName			{ get; set; }
+
+		#endregion
+
+		#region Constructors
+
+		public AssemblyEntityBase()
+		{
+			Active = true;
+		}
 
 		#endregion
 	}

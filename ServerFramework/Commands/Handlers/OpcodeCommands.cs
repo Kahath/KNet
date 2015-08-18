@@ -27,15 +27,17 @@ using System.Reflection;
 
 namespace ServerFramework.Commands.Handlers
 {
-	[Command]
-	public static class OpcodeCommands
+	[Command("opcode", CommandLevel.Ten, "")]
+	public class OpcodeCommands : CommandHandlerBase
 	{
 		#region Methods
 
 		#region GetCommand
 
-		private static Command GetCommand()
+		protected override Command GetCommand()
 		{
+			Command retVal = null;
+
 			Command[] ForceSubCommands =
 			{
 				new Command("both", CommandLevel.Ten, null, ForceTypeVersionHandler, ""),
@@ -48,7 +50,9 @@ namespace ServerFramework.Commands.Handlers
 				new Command("force", CommandLevel.Ten, ForceSubCommands, null, "")
 			};
 
-			return new Command("opcode", CommandLevel.Ten, OpcodeSubCommands, null, "");
+			retVal = new Command(Name, Level, OpcodeSubCommands, null, Description);
+
+			return retVal;
 		}
 
 		#endregion

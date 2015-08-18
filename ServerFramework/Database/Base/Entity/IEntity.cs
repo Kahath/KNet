@@ -13,20 +13,18 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using ServerFramework.Database.Base.Entity;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using System;
 
-namespace ServerFramework.Database.Model.Application.PacketLog
+namespace ServerFramework.Database.Base.Entity
 {
-	[Table("Packet.Log.Type", Schema = "Application")]
-	public class PacketLogTypeModel : EntityBase
+	public interface IEntity
 	{
 		#region Properties
 
-		[Key]
-		public int ID		{ get; set; }
-		public string Name	{ get; set; }
+		bool Active					{ get; set; }
+		DateTime DateCreated		{ get; set; }
+		DateTime? DateModified		{ get; set; }
+		DateTime? DateDeactivated	{ get; set; }
 
 		#endregion
 	}

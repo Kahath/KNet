@@ -13,19 +13,13 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using System;
-
-namespace ServerFramework.Database.Base
+namespace ServerFramework.Enums
 {
-	public abstract class EntityBase : IEntity
+	public enum CommandValidation
 	{
-		#region Properties
-
-		public bool Active					{ get; set; }
-		public DateTime DateCreated			{ get; set; }
-		public DateTime? DateModified		{ get; set; }
-		public DateTime? DateDeactivated	{ get; set; }
-
-		#endregion
-	}
+		Successful					= 1
+	,	WrongLevel					= 2
+	,	NoSubCommandsAndScript		= 3
+	,	HasSubCommandsAndScrpit		= 4
+	};
 }

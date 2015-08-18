@@ -20,6 +20,7 @@ using ServerFramework.Database.Context;
 using ServerFramework.Database.Model.Application.Command;
 using ServerFramework.Database.Model.Application.Opcode;
 using ServerFramework.Database.Model.Application.Server;
+using ServerFramework.Database.Repository;
 using ServerFramework.Enums;
 using ServerFramework.Events;
 using ServerFramework.Extensions;
@@ -71,14 +72,14 @@ namespace ServerFramework.Managers.Core
 					context.Opcodes.Where
 					(x => 
 						x.Active
-						&& x.DateModified.HasValue ? x.DateModified.Value < server.DateCreated : false
+						&& x.DateModified.HasValue ? x.DateModified.Value < server.DateCreated : x.DateCreated < server.DateCreated
 					).ToList());
 
 				context.Commands.RemoveRange(
 					context.Commands.Where
 					(x => 
 						x.Active
-						&& x.DateModified.HasValue ? x.DateModified.Value < server.DateCreated : false
+						&& x.DateModified.HasValue ? x.DateModified.Value < server.DateCreated : x.DateCreated < server.DateCreated
 					).ToList());
 
 				context.SaveChanges();
@@ -140,6 +141,25 @@ namespace ServerFramework.Managers.Core
 
 		#endregion
 
+		#region GetType
+
+		public Type GetType(string assemblyName, string typeName)
+		{
+			Type retVal = null;
+
+			Assembly assembly = AppDomain.CurrentDomain.GetAssemblies()
+				.FirstOrDefault(x => x.FullName == assemblyName);
+
+			if (assembly != null)
+			{
+				retVal = assembly.GetType(typeName);
+			}
+
+			return retVal;
+		}
+
+		#endregion
+
 		#region GetMethod
 
 		public MethodInfo GetMethod(string assemblyName, string typeName
@@ -147,17 +167,11 @@ namespace ServerFramework.Managers.Core
 		{
 			MethodInfo retVal = null;
 
-			Assembly assembly = AppDomain.CurrentDomain.GetAssemblies()
-				.FirstOrDefault(x => x.FullName == assemblyName);
+			Type type = GetType(assemblyName, typeName);
 
-			if (assembly != null)
+			if(type != null)
 			{
-				Type type = assembly.GetType(typeName);
-
-				if(type != null)
-				{
-					retVal = type.GetMethodByName(methodName, parameters);
-				}
+				retVal = type.GetMethodByName(methodName, parameters);
 			}
 
 			return retVal;
@@ -169,6 +183,8 @@ namespace ServerFramework.Managers.Core
 
 		private void OnCustomAssemblyType(Assembly assembly, Type type, ApplicationContext context)
 		{
+			CommandRepository CRepo = new CommandRepository(context);
+
 			foreach (CommandAttribute attr in type.GetCustomAttributes<CommandAttribute>())
 			{
 				if (attr != null)
@@ -177,21 +193,22 @@ namespace ServerFramework.Managers.Core
 
 					if (method != null)
 					{
-						Command c = InvokeMethod<Command>(null, method);
+						CommandHandlerBase commandBase = InvokeConstructor(type) as CommandHandlerBase;
 
-						CommandModel existingCommand = context.Commands
-							.FirstOrDefault(x => x.Name == c.Name && x.Active);
-
-						if(c != null)
+						if (commandBase != null)
 						{
+							CommandModel existingCommand = context.Commands
+								.FirstOrDefault(x => x.Name == commandBase.Name && x.Active);
+
 							if (existingCommand == null)
 							{
-								CommandModel command = new CommandModel(c);
-								command.AssemblyName = assembly.FullName;
-								command.TypeName = type.FullName;
-								command.MethodName = method.Name;
+								existingCommand = new CommandModel(commandBase);
 
-								context.Commands.Add(command);
+								existingCommand.AssemblyName = assembly.FullName;
+								existingCommand.TypeName = type.FullName;
+								existingCommand.MethodName = method.Name;
+
+								context.Commands.Add(existingCommand);
 							}
 							else
 							{
@@ -200,6 +217,11 @@ namespace ServerFramework.Managers.Core
 								existingCommand.MethodName = method.Name;
 								context.Entry(existingCommand).State = EntityState.Modified;
 							}
+
+							Command cmd = InvokeMethod<Command>(commandBase, method);
+
+							if (cmd != null)
+								CRepo.UpdateSubCommands(cmd, existingCommand);
 						}
 					}
 				}
@@ -252,7 +274,7 @@ namespace ServerFramework.Managers.Core
 
 		#endregion
 
-		#region InvokeStaticMethod
+		#region InvokeMethod
 
 		public T InvokeMethod<T>(object obj, MethodInfo method, params object[] args)
 		{
@@ -272,6 +294,24 @@ namespace ServerFramework.Managers.Core
 					,	typeof(T).FullName
 					);
 			}
+
+			return retVal;
+		}
+
+		#endregion
+
+		#region InvokeConstructor
+
+		public object InvokeConstructor(Type type, params object[] args)
+		{
+			object retVal = null;
+
+			Type[] types = args.Select(x => x.GetType()).ToArray();
+
+			ConstructorInfo constructor = type.GetConstructor(types);
+
+			if (constructor != null)
+				retVal = constructor.Invoke(args);
 
 			return retVal;
 		}

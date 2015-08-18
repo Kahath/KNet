@@ -14,14 +14,14 @@
  */
 
 using ServerFramework.Attributes.Core;
-using ServerFramework.Database.Base;
+using ServerFramework.Database.Base.Entity;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ServerFramework.Database.Model.Application.Opcode
 {
 	[Table("Opcode", Schema="Application")]
-	public class OpcodeModel : EntityBase
+	public class OpcodeModel : AssemblyEntityBase
 	{
 		#region Properties
 
@@ -31,9 +31,6 @@ namespace ServerFramework.Database.Model.Application.Opcode
 		public int TypeID				{ get; set; }
 		public int Version				{ get; set; }
 		public string Author			{ get; set; }
-		public string AssemblyName		{ get; set; }
-		public string TypeName			{ get; set; }
-		public string MethodName		{ get; set; }
 
 		[ForeignKey("TypeID")]
 		public OpcodeTypeModel Type		{ get; set; }

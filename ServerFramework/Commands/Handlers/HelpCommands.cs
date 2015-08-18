@@ -24,17 +24,20 @@ using System.Linq;
 
 namespace ServerFramework.Commands.Handlers
 {
-	[Command]
-	internal static class HelpCommands
+	[Command("help", CommandLevel.Ten, "")]
+	internal class HelpCommands : CommandHandlerBase
 	{
 		#region Methods
 
 		#region GetCommand
 
-		private static Command GetCommand()
+		protected override Command GetCommand()
 		{
-			return new Command("help", CommandLevel.Ten, null, HelpCommandHandler
-				, "");
+			Command retVal = null;
+
+			retVal = new Command(Name, Level, null, HelpCommandHandler, Description);
+			
+			return retVal;
 		}
 
 		#endregion
@@ -51,7 +54,7 @@ namespace ServerFramework.Commands.Handlers
 				path.Add("help");
 
 			Command c = commandTable
-				.Where(x => userLevel >= x.CommandLevel)
+				.Where(x => userLevel >= x.CommandLevel && x.IsValid)
 				.FirstOrDefault(x => x.Name.StartsWith(path[0].Trim()));
 
 			if (c != null)
@@ -73,6 +76,7 @@ namespace ServerFramework.Commands.Handlers
 						,	command
 						,	c.AvailableSubCommands(userLevel)
 						);
+
 					return true;
 				}
 				else
@@ -93,6 +97,7 @@ namespace ServerFramework.Commands.Handlers
 			command += path[0];
 
 			Manager.LogMgr.Log(LogType.Command, "Command '{0}' not found", command);
+
 			return false;
 		}
 

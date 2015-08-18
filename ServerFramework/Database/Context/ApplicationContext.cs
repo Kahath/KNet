@@ -14,7 +14,7 @@
  */
 
 using ServerFramework.Configuration.Helpers;
-using ServerFramework.Database.Base;
+using ServerFramework.Database.Base.Context;
 using ServerFramework.Database.Model.Application.Command;
 using ServerFramework.Database.Model.Application.Log;
 using ServerFramework.Database.Model.Application.Opcode;

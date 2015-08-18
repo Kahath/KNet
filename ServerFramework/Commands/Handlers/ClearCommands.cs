@@ -21,16 +21,20 @@ using System;
 
 namespace ServerFramework.Commands.Handlers
 {
-	[Command]
-	public static class ClearCommands
+	[Command("cls", CommandLevel.Ten, "")]
+	public class ClearCommands : CommandHandlerBase
 	{
 		#region Methods
 
 		#region GetCommand
 
-		private static Command GetCommand()
+		protected override Command GetCommand()
 		{
-			return new Command("cls", CommandLevel.Ten, null, Cls, "");
+			Command retVal = null;
+
+			retVal = new Command(Name, Level, null, Cls, Description);
+
+			return retVal;
 		}
 
 		#endregion

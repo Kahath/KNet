@@ -19,16 +19,20 @@ using ServerFramework.Enums;
 
 namespace ServerFramework.Game.Handlers
 {
-	[Command]
-	public static class DatabaseCommands
+	[Command("database", CommandLevel.Ten, "")]
+	public class DatabaseCommands : CommandHandlerBase
 	{
 		#region Methods
 
 		#region GetCommand
 
-		private static Command GetCommand()
+		protected override Command GetCommand()
 		{
-			return new Command("database", CommandLevel.Ten, null, null, "");
+			Command retVal = null;
+
+			retVal = new Command(Name, Level, null, null, Description);
+
+			return retVal;
 		}
 
 		#endregion
