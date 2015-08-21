@@ -19,7 +19,6 @@ using ServerFramework.Enums;
 using ServerFramework.Managers;
 using ServerFramework.Network.Session;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace ServerFramework.Commands.Handlers
@@ -42,67 +41,6 @@ namespace ServerFramework.Commands.Handlers
 
 		#endregion
 
-		#region GetHelpCommand
-
-		private static bool ShowCommandDescription(CommandLevel userLevel
-			, Command[] commandTable, IList<string> path, string command)
-		{
-			if (commandTable == null || path == null)
-				return false;
-
-			if (path.Count == 0)
-				path.Add("help");
-
-			Command c = commandTable
-				.Where(x => userLevel >= x.CommandLevel && x.IsValid)
-				.FirstOrDefault(x => x.Name.StartsWith(path[0].Trim()));
-
-			if (c != null)
-			{
-				command += c.Name + " ";
-				path.RemoveAt(0);
-
-				if (path.Count > 0)
-				{
-					return ShowCommandDescription(userLevel, c.SubCommands, path, command);
-				}
-
-				if (c.SubCommands != null)
-				{
-					Manager.LogMgr.Log
-						(
-							LogType.Command
-						,	"Available sub commands for '{0}' command:\n{1}"
-						,	command
-						,	c.AvailableSubCommands(userLevel)
-						);
-
-					return true;
-				}
-				else
-				{
-					if (c.Description != null && c.Description != "")
-					{
-						Manager.LogMgr.Log(LogType.Command, "{0}", c.Description);
-						return true;
-					}
-					else
-					{
-						Manager.LogMgr.Log(LogType.Command, "Command '{0}' is missing description", command);
-						return true;
-					}
-				}
-			}
-
-			command += path[0];
-
-			Manager.LogMgr.Log(LogType.Command, "Command '{0}' not found", command);
-
-			return false;
-		}
-
-		#endregion
-
 		#endregion
 
 		#region Handlers
@@ -111,13 +49,47 @@ namespace ServerFramework.Commands.Handlers
 
 		public static bool HelpCommandHandler(Client user, params string[] args)
 		{
-			return ShowCommandDescription
-				(
-					user.UserLevel
-				,	Manager.CommandMgr.CommandTable.ToArray()
-				,	args.ToList()
-				,	String.Empty
-				);
+			bool retVal = default(bool);
+
+			if (args != null && args.Any())
+			{
+				Command command = Manager.CommandMgr.GetCommand(user, args.ToList());
+
+				if (command != null)
+				{
+					if (command.SubCommands != null)
+					{
+						Manager.LogMgr.Log
+						(
+							LogType.Command
+						,	"Available sub commands for '{0}'\n{1}"
+						,	command.FullName
+						,	Manager.CommandMgr.AvailableSubCommands(command, user.UserLevel)
+						);
+					}
+					else if (!String.IsNullOrEmpty(command.Description))
+					{
+						Manager.LogMgr.Log(LogType.Command, "{0}", command.Description);
+					}
+					else
+					{
+						Manager.LogMgr.Log(LogType.Command, "Command '{0}' is missing description", command.FullName);
+					}
+				}
+				else
+				{
+					Manager.LogMgr.Log
+					(
+						LogType.Command
+					,	"Command '{0}' doesn't exist"
+					,	args[0]
+					);
+				}
+
+				retVal = true;
+			}
+
+			return retVal;
 		}
 
 		#endregion

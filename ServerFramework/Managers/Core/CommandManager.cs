@@ -26,7 +26,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace ServerFramework.Managers.Core
@@ -90,9 +89,9 @@ namespace ServerFramework.Managers.Core
 
 						if (c != null)
 						{
-							cRepo.UpdateCommandInfo(c, command);
-
 							UpdateBase(c);
+
+							cRepo.UpdateCommandInfo(c, command);
 
 							CommandTable.Add(c);
 						}
@@ -115,38 +114,73 @@ namespace ServerFramework.Managers.Core
 		/// <returns></returns>
 		public bool InvokeCommand(Client user, string command)
 		{
-			StringBuilder sb = new StringBuilder();
 			bool retVal = default(bool);
+			Command result = null;
 
-			sb.Append("Command: ");
 			string com = Regex.Replace(command, @"\s+", " ").Trim();
-			List<string> commandPath = com.Split(' ').ToList();
+			IList<string> commandPath = com.Split(' ').ToList();
 
-			if (!String.IsNullOrEmpty(com))
+			if (commandPath != null && commandPath.Any())
 			{
-				retVal = InvokeCommandHandler
+				result = GetCommand
 					(
 						user
-					,	CommandTable.ToArray()
 					,	commandPath
-					,	sb
 					);
 
-				if(retVal)
+				if (result != null)
 				{
-					if(commandPath.Any())
-						sb.AppendFormat("\nParameters: {0}", String.Join(", ", commandPath));
-
-					CommandLogModel commandLog = new CommandLogModel();
-					commandLog.UserID = user.Token.ID;
-					commandLog.UserName = user.Token.Name;
-					commandLog.Command = sb.ToString();
-
-					using(ApplicationContext context = new ApplicationContext())
+					if (result.Script != null)
 					{
-						context.CommandLogs.Add(commandLog);
-						context.SaveChanges();
+						try
+						{
+							retVal = result.Invoke(user);
+						}
+						catch (IndexOutOfRangeException)
+						{
+							Manager.LogMgr.Log(LogType.Error, "Error with '{0}' command. wrong arguments"
+								, result.FullName);
+						}
+						catch (Exception)
+						{
+							Manager.LogMgr.Log(LogType.Error, "Error with '{0}' command. Failed to execute handler"
+								, result.FullName);
+						}
+
+						if (retVal)
+						{
+							CommandLogModel commandLog = new CommandLogModel();
+							commandLog.UserID = user.Token.ID;
+							commandLog.UserName = user.Token.Name;
+							commandLog.CommandName = result.FullName + " " + result.Arguments;
+							commandLog.CommandID = result.Model.ID;
+
+							using (ApplicationContext context = new ApplicationContext())
+							{
+								context.CommandLogs.Add(commandLog);
+								context.SaveChanges();
+							}
+						}
 					}
+					else
+					{
+						Manager.LogMgr.Log
+						(
+							LogType.Command
+						,	"Available sub commands for '{0}'\n{1}"
+						,	result.FullName
+						,	AvailableSubCommands(result, user.UserLevel)
+						);
+					}
+				}
+				else
+				{
+					Manager.LogMgr.Log
+					(
+						LogType.Command
+					,	"Command '{0}' doesn't exist"
+					,	commandPath[0]
+					);
 				}
 			}
 
@@ -165,93 +199,46 @@ namespace ServerFramework.Managers.Core
 		/// <param name="path">Command name as string list.</param>
 		/// <param name="command">Clean command.</param>
 		/// <returns>True if executed.</returns>
-		private bool InvokeCommandHandler(Client user
-			, Command[] commandTable, IList<string> path, StringBuilder command)
+		internal Command GetCommand(Client user, IList<string> path
+			, Command baseCommand = null, IEnumerable<Command> commandTable = null)
 		{
-			if (commandTable == null || path == null)
-				return false;
+			Command retVal = null;
 
-			Command c = commandTable
-				.Where
-				(x => 
-					user.UserLevel >= x.CommandLevel 
-					&& x.IsValid
-				)
-				.FirstOrDefault(x => x.Name.StartsWith(path[0].Trim()));
+			if(commandTable == null)
+				commandTable = CommandTable;
 
-			if (c != null)
+			if (path != null && path.Any())
 			{
-				command.AppendFormat("{0} ", c.Name);
+				Command command = commandTable
+					.Where
+					(x =>
+						user.UserLevel >= x.CommandLevel
+						&& x.IsValid
+					)
+					.FirstOrDefault(x => x.Name.StartsWith(path.First().Trim()));
 
-				if (c.Script == null)
-				{
-					if (c.SubCommands != null)
-					{
-						path.RemoveAt(0);
-
-						if (path.Count > 0)
-						{
-							return InvokeCommandHandler(user, c.SubCommands, path, command);
-						}
-						else
-						{
-							Manager.LogMgr.Log
-								(
-									LogType.Command
-								,	"Error with '{0}' command. Available sub commands:\n{1}"
-								,	command
-								,	c.AvailableSubCommands(user.UserLevel)
-								);
-
-							return false;
-						}
-					}
-					else
-					{
-						Manager.LogMgr.Log(LogType.Command, "Error with '{0}' command."
-							+ " Missing script or subcommands", command);
-
-						return false;
-					}
-				}
-				else
+				if (command != null)
 				{
 					path.RemoveAt(0);
 
-					try
+					if (command.Script != null)
 					{
-						return c.Invoke(user, path.ToArray());
+						command.Arguments = String.Join(" ", path);
+						retVal = command;
 					}
-					catch (IndexOutOfRangeException)
+					else if (command.SubCommands != null)
 					{
-						Manager.LogMgr.Log(LogType.Error, "Error with '{0}' command. wrong arguments"
-							, command);
-						return false;
-					}
-					catch (Exception)
-					{
-						Manager.LogMgr.Log(LogType.Error, "Error with '{0}' command. Failed to execute handler"
-							, command);
-						return false;
+						if (path.Count > 0)
+							retVal = GetCommand(user, path, command, command.SubCommands);
+						else
+							retVal = command;
 					}
 				}
+				else
+					retVal = baseCommand;
 			}
 
-			command.Append(path[0]);
-			Manager.LogMgr.Log(LogType.Command, "Command '{0}' not found", command);
-			return false;
-		}
-
-		#endregion
-
-		#region Dispose
-
-		/// <summary>
-		/// Disposes object.
-		/// </summary>
-		public void Dispose()
-		{
-			_commandTable.Dispose();
+			return retVal;
 		}
 
 		#endregion
@@ -267,9 +254,9 @@ namespace ServerFramework.Managers.Core
 				Manager.LogMgr.Log
 				(
 					LogType.Warning
-				,	"Command '{0}' failed '{1}' validation"
-				,	command.FullName
-				,	command.Validation
+				, "Command '{0}' failed '{1}' validation"
+				, command.FullName
+				, command.Validation
 				);
 			}
 
@@ -300,6 +287,43 @@ namespace ServerFramework.Managers.Core
 				retVal = CommandValidation.HasSubCommandsAndScrpit;
 
 			return retVal;
+		}
+
+		#endregion
+
+		#region AvailableSubCommands
+
+		/// <summary>
+		/// Gets available sub commands
+		/// </summary>
+		/// <param name="command">Instance of <see cref="ServerFramework.Commands.Base.Command"/> type.</param>
+		/// <param name="userLevel">User level.</param>
+		/// <returns>String formated available commands based on user level.</returns>
+		public string AvailableSubCommands(Command command, CommandLevel userLevel = CommandLevel.Zero)
+		{
+			string retVal = String.Empty;
+
+			retVal = String.Join("\n", command.SubCommands
+					.Where
+					(x =>
+						userLevel >= x.CommandLevel
+						&& x.IsValid
+					)
+					.Select(x => x.SubCommands != null ? String.Format("{0}..", x.Name) : x.Name));
+
+			return retVal;
+		}
+
+		#endregion
+
+		#region Dispose
+
+		/// <summary>
+		/// Disposes object.
+		/// </summary>
+		public void Dispose()
+		{
+			_commandTable.Dispose();
 		}
 
 		#endregion

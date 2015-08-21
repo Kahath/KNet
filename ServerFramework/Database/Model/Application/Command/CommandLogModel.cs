@@ -25,10 +25,14 @@ namespace ServerFramework.Database.Model.Application.Command
 		#region Properties
 
 		[Key]
-		public int ID			{ get; set; }
-		public int UserID		{ get; set; }
-		public string UserName	{ get; set; }
-		public string Command	{ get; set; }
+		public int ID				{ get; set; }
+		public int UserID			{ get; set; }
+		public string UserName		{ get; set; }
+		public string CommandName	{ get; set; }
+		public int CommandID		{ get; set; }
+
+		[ForeignKey("CommandID")]
+		public CommandModel Command { get; set; }
 
 		#endregion
 	}

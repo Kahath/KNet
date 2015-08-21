@@ -53,7 +53,8 @@ namespace ServerFramework.Database.Repository
 		{
 			if (parent != null)
 			{
-				IEnumerable<CommandModel> subCommands = Context.Commands.Where(x => x.Parent.ID == parent.ID && x.Active);
+				IEnumerable<CommandModel> subCommands = Context.Commands
+					.Where(x => x.Parent.ID == parent.ID && x.Active);
 
 				if (command.SubCommands != null && command.SubCommands.Any())
 				{
@@ -63,10 +64,7 @@ namespace ServerFramework.Database.Repository
 
 						if (!subCommands.Any(x => x.Name == c.Name))
 						{
-							commandModel = new CommandModel();
-							commandModel.Name = c.Name;
-							commandModel.CommandLevelID = (int)c.CommandLevel;
-							commandModel.Description = c.Description;
+							commandModel = new CommandModel(c);
 							commandModel.Parent = parent;
 
 							Context.Commands.Add(commandModel);
@@ -89,7 +87,15 @@ namespace ServerFramework.Database.Repository
 		
 		public void UpdateCommandInfo(Command command, CommandModel commandModel)
 		{
-			IEnumerable<CommandModel> subCommands = Context.Commands.Where(x => x.ParentID == commandModel.ID && x.Active).ToList();
+			if(command != null && commandModel != null)
+			{
+				command.Model = commandModel;
+				command.CommandLevel = (CommandLevel)commandModel.CommandLevelID;
+				command.Description = commandModel.Description;
+			}
+
+			IEnumerable<CommandModel> subCommands = Context.Commands
+				.Where(x => x.ParentID == commandModel.ID && x.Active).ToList();
 
 			if(command.SubCommands != null && command.SubCommands.Any())
 			{
@@ -100,9 +106,6 @@ namespace ServerFramework.Database.Repository
 					if (c != null)
 					{
 						UpdateCommandInfo(c, cm);
-
-						c.CommandLevel = (CommandLevel)cm.CommandLevelID;
-						c.Description = cm.Description;
 					}
 				}
 			}

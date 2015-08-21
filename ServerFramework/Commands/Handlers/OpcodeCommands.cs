@@ -63,12 +63,13 @@ namespace ServerFramework.Commands.Handlers
 
 		private static bool ForceVersionHandler(Client client, params string[] args)
 		{
-			int code = int.Parse(args[0]);
-			int version = int.Parse(args[1]);
+			int code = Int32.Parse(args[0]);
+			int version = Int32.Parse(args[1]);
 
 			using(ApplicationContext context = new ApplicationContext())
 			{
-				OpcodeModel opcode = context.Opcodes.FirstOrDefault(x => x.Code == code && x.Version == version && x.Active);
+				OpcodeModel opcode = context.Opcodes.FirstOrDefault(x => x.Code == code 
+					&& x.Version == version && x.Active);
 
 				if(opcode != null)
 				{
@@ -101,7 +102,7 @@ namespace ServerFramework.Commands.Handlers
 
 		private static bool ForceTypeHandler(Client client, params string[] args)
 		{
-			int code = int.Parse(args[0]);
+			int code = Int32.Parse(args[0]);
 			int opcodeType = (int)Enum.Parse(typeof(OpcodeType), args[1]);
 
 			using (ApplicationContext context = new ApplicationContext())
@@ -143,13 +144,15 @@ namespace ServerFramework.Commands.Handlers
 
 		private static bool ForceTypeVersionHandler(Client c, params string[] args)
 		{
-			int code = int.Parse(args[0]);
-			int version = int.Parse(args[1]);
-			int opcodeType = (int)Enum.Parse(typeof(OpcodeType), args[1]);
+			int code = Int32.Parse(args[0]);
+			int version = Int32.Parse(args[1]);
+			int opcodeType = (int)Enum.Parse(typeof(OpcodeType), args[2]);
 
 			using(ApplicationContext context = new ApplicationContext())
 			{
-				OpcodeModel opcode = context.Opcodes.FirstOrDefault(x => x.Code == code && x.Version == version && x.TypeID == opcodeType);
+				OpcodeModel opcode = context.Opcodes
+					.FirstOrDefault(x => x.Code == code && x.Version == version 
+						&& x.TypeID == opcodeType && x.Active);
 
 				if(opcode != null)
 				{

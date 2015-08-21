@@ -49,11 +49,18 @@ namespace ServerFramework.Database.Model.Application.Command
 
 		}
 
-		public CommandModel(CommandHandlerBase command)
+		public CommandModel(CommandHandlerBase commandHandler)
+		{
+			Name = commandHandler.Name;
+			Description = commandHandler.Description;
+			CommandLevelID = (int)commandHandler.Level;
+		}
+
+		public CommandModel(ServerFramework.Commands.Base.Command command)
 		{
 			Name = command.Name;
 			Description = command.Description;
-			CommandLevelID = (int)command.Level;
+			CommandLevelID = (int)command.CommandLevel;
 		}
 
 		#endregion

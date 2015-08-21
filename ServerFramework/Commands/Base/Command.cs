@@ -13,12 +13,10 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using ServerFramework.Database.Model.Application.Command;
 using ServerFramework.Enums;
-using ServerFramework.Managers;
 using ServerFramework.Network.Session;
 using System;
-using System.Linq;
-using System.Text;
 
 namespace ServerFramework.Commands.Base
 {
@@ -29,9 +27,11 @@ namespace ServerFramework.Commands.Base
 		private string				_name;
 		private CommandLevel		_commandLevel;
 		private Command				_baseCommand;
+		private CommandModel		_model;
 		private Command[]			_subCommands;
 		private CommandHandler		_script;
 		private string				_description;
+		private string				_arguments;
 		private CommandValidation	_validation;
 
 		#endregion
@@ -44,6 +44,12 @@ namespace ServerFramework.Commands.Base
 			set { _description = value; }
 		}
 
+		internal string Arguments
+		{
+			get { return _arguments; }
+			set { _arguments = value; }
+		}
+
 		internal CommandHandler Script
 		{
 			get { return _script; }
@@ -54,6 +60,12 @@ namespace ServerFramework.Commands.Base
 		{
 			get { return _baseCommand; }
 			set { _baseCommand = value; }
+		}
+
+		internal CommandModel Model
+		{
+			get { return _model; }
+			set { _model = value; }
 		}
 
 		internal Command[] SubCommands
@@ -134,33 +146,9 @@ namespace ServerFramework.Commands.Base
 		/// <param name="user">Client who executes script.</param>
 		/// <param name="args">Command arguments.</param>
 		/// <returns></returns>
-		public bool Invoke(Client user, params string[] args)
+		public bool Invoke(Client user)
 		{
-			return Script(user, args);
-		}
-
-		#endregion
-
-		#region AvailableSubCommands
-
-		/// <summary>
-		/// Gets available sub commands.
-		/// </summary>
-		/// <param name="userLevel">User level.</param>
-		/// <returns>String formated available commands based on user level.</returns>
-		public string AvailableSubCommands(CommandLevel userLevel = CommandLevel.Zero)
-		{
-			StringBuilder retVal = new StringBuilder();
-
-			retVal.AppendLine(String.Join("\n", SubCommands
-				.Where
-				(x => 
-					userLevel >= x.CommandLevel
-					&& x.IsValid
-				)
-				.Select(x => x.SubCommands != null ? String.Format("{0}..", x.Name) : x.Name)));
-
-			return retVal.ToString();
+			return Script(user, Arguments.Split(' '));
 		}
 
 		#endregion

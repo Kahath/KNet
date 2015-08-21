@@ -48,6 +48,7 @@ namespace ServerFramework.Commands.Handlers
 		private static bool Cls(Client user, params string[] args)
 		{
 			Console.Clear();
+
 			return true;
 		}
 

@@ -11,7 +11,7 @@ using System.Data.Entity.Infrastructure.MappingViews;
 
 [assembly: DbMappingViewCacheTypeAttribute(
 	typeof(ServerFramework.Database.Context.ApplicationContext),
-	typeof(ServerFramework.Database.PrecompiledViews.ViewsForBaseEntitySets5c1201b70f268ecbd9bb141aa15d90cf9f5b6999f735f7ac28caf3c6a61e8663))]
+	typeof(ServerFramework.Database.PrecompiledViews.ViewsForBaseEntitySets72c6e61585f2204cd0624ecf96e97f2c30881e7b710d76239778ed0cb85c3247))]
 
 namespace ServerFramework.Database.PrecompiledViews
 {
@@ -23,14 +23,14 @@ namespace ServerFramework.Database.PrecompiledViews
 	/// Implements a mapping view cache.
 	/// </summary>
 	[GeneratedCode("Entity Framework Power Tools", "0.9.0.0")]
-	internal sealed class ViewsForBaseEntitySets5c1201b70f268ecbd9bb141aa15d90cf9f5b6999f735f7ac28caf3c6a61e8663 : DbMappingViewCache
+	internal sealed class ViewsForBaseEntitySets72c6e61585f2204cd0624ecf96e97f2c30881e7b710d76239778ed0cb85c3247 : DbMappingViewCache
 	{
 		/// <summary>
 		/// Gets a hash value computed over the mapping closure.
 		/// </summary>
 		public override string MappingHashValue
 		{
-			get { return "5c1201b70f268ecbd9bb141aa15d90cf9f5b6999f735f7ac28caf3c6a61e8663"; }
+			get { return "72c6e61585f2204cd0624ecf96e97f2c30881e7b710d76239778ed0cb85c3247"; }
 		}
 
 		/// <summary>
@@ -52,27 +52,27 @@ namespace ServerFramework.Database.PrecompiledViews
 				return GetView0();
 			}
 
-			if (extentName == "CodeFirstDatabase.CommandModel")
+			if (extentName == "CodeFirstDatabase.CommandLogModel")
 			{
 				return GetView1();
 			}
 
-			if (extentName == "ApplicationContext.CommandLevels")
+			if (extentName == "CodeFirstDatabase.CommandModel")
 			{
 				return GetView2();
 			}
 
-			if (extentName == "ApplicationContext.Commands")
+			if (extentName == "ApplicationContext.CommandLevels")
 			{
 				return GetView3();
 			}
 
-			if (extentName == "CodeFirstDatabase.CommandLogModel")
+			if (extentName == "ApplicationContext.CommandLogs")
 			{
 				return GetView4();
 			}
 
-			if (extentName == "ApplicationContext.CommandLogs")
+			if (extentName == "ApplicationContext.Commands")
 			{
 				return GetView5();
 			}
@@ -173,10 +173,35 @@ namespace ServerFramework.Database.PrecompiledViews
 		}
 
 		/// <summary>
-		/// Gets the view for CodeFirstDatabase.CommandModel.
+		/// Gets the view for CodeFirstDatabase.CommandLogModel.
 		/// </summary>
 		/// <returns>The mapping view.</returns>
 		private static DbMappingView GetView1()
+		{
+			return new DbMappingView(@"
+    SELECT VALUE -- Constructing CommandLogModel
+        [CodeFirstDatabaseSchema.CommandLogModel](T1.CommandLogModel_ID, T1.CommandLogModel_UserID, T1.CommandLogModel_UserName, T1.CommandLogModel_CommandName, T1.CommandLogModel_CommandID, T1.CommandLogModel_Active, T1.CommandLogModel_DateCreated, T1.CommandLogModel_DateModified, T1.CommandLogModel_DateDeactivated)
+    FROM (
+        SELECT 
+            T.ID AS CommandLogModel_ID, 
+            T.UserID AS CommandLogModel_UserID, 
+            T.UserName AS CommandLogModel_UserName, 
+            T.CommandName AS CommandLogModel_CommandName, 
+            T.CommandID AS CommandLogModel_CommandID, 
+            T.Active AS CommandLogModel_Active, 
+            T.DateCreated AS CommandLogModel_DateCreated, 
+            T.DateModified AS CommandLogModel_DateModified, 
+            T.DateDeactivated AS CommandLogModel_DateDeactivated, 
+            True AS _from0
+        FROM ApplicationContext.CommandLogs AS T
+    ) AS T1");
+		}
+
+		/// <summary>
+		/// Gets the view for CodeFirstDatabase.CommandModel.
+		/// </summary>
+		/// <returns>The mapping view.</returns>
+		private static DbMappingView GetView2()
 		{
 			return new DbMappingView(@"
     SELECT VALUE -- Constructing CommandModel
@@ -204,7 +229,7 @@ namespace ServerFramework.Database.PrecompiledViews
 		/// Gets the view for ApplicationContext.CommandLevels.
 		/// </summary>
 		/// <returns>The mapping view.</returns>
-		private static DbMappingView GetView2()
+		private static DbMappingView GetView3()
 		{
 			return new DbMappingView(@"
     SELECT VALUE -- Constructing CommandLevels
@@ -223,10 +248,35 @@ namespace ServerFramework.Database.PrecompiledViews
 		}
 
 		/// <summary>
+		/// Gets the view for ApplicationContext.CommandLogs.
+		/// </summary>
+		/// <returns>The mapping view.</returns>
+		private static DbMappingView GetView4()
+		{
+			return new DbMappingView(@"
+    SELECT VALUE -- Constructing CommandLogs
+        [ServerFramework.Database.Context.CommandLogModel](T1.CommandLogModel_ID, T1.CommandLogModel_UserID, T1.CommandLogModel_UserName, T1.CommandLogModel_CommandName, T1.CommandLogModel_CommandID, T1.CommandLogModel_Active, T1.CommandLogModel_DateCreated, T1.CommandLogModel_DateModified, T1.CommandLogModel_DateDeactivated)
+    FROM (
+        SELECT 
+            T.ID AS CommandLogModel_ID, 
+            T.UserID AS CommandLogModel_UserID, 
+            T.UserName AS CommandLogModel_UserName, 
+            T.CommandName AS CommandLogModel_CommandName, 
+            T.CommandID AS CommandLogModel_CommandID, 
+            T.Active AS CommandLogModel_Active, 
+            T.DateCreated AS CommandLogModel_DateCreated, 
+            T.DateModified AS CommandLogModel_DateModified, 
+            T.DateDeactivated AS CommandLogModel_DateDeactivated, 
+            True AS _from0
+        FROM CodeFirstDatabase.CommandLogModel AS T
+    ) AS T1");
+		}
+
+		/// <summary>
 		/// Gets the view for ApplicationContext.Commands.
 		/// </summary>
 		/// <returns>The mapping view.</returns>
-		private static DbMappingView GetView3()
+		private static DbMappingView GetView5()
 		{
 			return new DbMappingView(@"
     SELECT VALUE -- Constructing Commands
@@ -247,54 +297,6 @@ namespace ServerFramework.Database.PrecompiledViews
             T.MethodName AS CommandModel_MethodName, 
             True AS _from0
         FROM CodeFirstDatabase.CommandModel AS T
-    ) AS T1");
-		}
-
-		/// <summary>
-		/// Gets the view for CodeFirstDatabase.CommandLogModel.
-		/// </summary>
-		/// <returns>The mapping view.</returns>
-		private static DbMappingView GetView4()
-		{
-			return new DbMappingView(@"
-    SELECT VALUE -- Constructing CommandLogModel
-        [CodeFirstDatabaseSchema.CommandLogModel](T1.CommandLogModel_ID, T1.CommandLogModel_UserID, T1.CommandLogModel_UserName, T1.CommandLogModel_Command, T1.CommandLogModel_Active, T1.CommandLogModel_DateCreated, T1.CommandLogModel_DateModified, T1.CommandLogModel_DateDeactivated)
-    FROM (
-        SELECT 
-            T.ID AS CommandLogModel_ID, 
-            T.UserID AS CommandLogModel_UserID, 
-            T.UserName AS CommandLogModel_UserName, 
-            T.Command AS CommandLogModel_Command, 
-            T.Active AS CommandLogModel_Active, 
-            T.DateCreated AS CommandLogModel_DateCreated, 
-            T.DateModified AS CommandLogModel_DateModified, 
-            T.DateDeactivated AS CommandLogModel_DateDeactivated, 
-            True AS _from0
-        FROM ApplicationContext.CommandLogs AS T
-    ) AS T1");
-		}
-
-		/// <summary>
-		/// Gets the view for ApplicationContext.CommandLogs.
-		/// </summary>
-		/// <returns>The mapping view.</returns>
-		private static DbMappingView GetView5()
-		{
-			return new DbMappingView(@"
-    SELECT VALUE -- Constructing CommandLogs
-        [ServerFramework.Database.Context.CommandLogModel](T1.CommandLogModel_ID, T1.CommandLogModel_UserID, T1.CommandLogModel_UserName, T1.CommandLogModel_Command, T1.CommandLogModel_Active, T1.CommandLogModel_DateCreated, T1.CommandLogModel_DateModified, T1.CommandLogModel_DateDeactivated)
-    FROM (
-        SELECT 
-            T.ID AS CommandLogModel_ID, 
-            T.UserID AS CommandLogModel_UserID, 
-            T.UserName AS CommandLogModel_UserName, 
-            T.Command AS CommandLogModel_Command, 
-            T.Active AS CommandLogModel_Active, 
-            T.DateCreated AS CommandLogModel_DateCreated, 
-            T.DateModified AS CommandLogModel_DateModified, 
-            T.DateDeactivated AS CommandLogModel_DateDeactivated, 
-            True AS _from0
-        FROM CodeFirstDatabase.CommandLogModel AS T
     ) AS T1");
 		}
 

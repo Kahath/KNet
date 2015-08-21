@@ -67,6 +67,7 @@ namespace ServerFramework.Commands.Handlers
 				.Select(x => x.SubCommands != null ? String.Format("{0}..", x.Name) : x.Name)));
 
 			Manager.LogMgr.Log(LogType.Command, "{0}", sb.ToString());
+
 			return true;
 		}
 
