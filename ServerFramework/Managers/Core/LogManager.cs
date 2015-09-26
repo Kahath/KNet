@@ -81,7 +81,7 @@ namespace ServerFramework.Managers.Core
 		/// <summary>
 		/// Initialises LogManager.
 		/// </summary>
-		internal override void Init()
+		protected override void Init()
 		{
 			Console.InputEncoding = Encoding.UTF8;
 			Console.OutputEncoding = Encoding.UTF8;

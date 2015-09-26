@@ -77,7 +77,7 @@ namespace ServerFramework.Managers.Core
 		/// <summary>
 		/// Initialises PacketManager.
 		/// </summary>
-		internal override void Init()
+		protected override void Init()
 		{
 			using (ApplicationContext context = new ApplicationContext())
 			{
@@ -148,7 +148,7 @@ namespace ServerFramework.Managers.Core
 									+ "authored by '{1}' using version '{2}' and type '{3}'\n"
 									+ "Packet size: {4}\nPacket opcode: 0x{5:X}\nPacket content: {6}"
 							,	attr.Opcode, attr.Author, attr.Version, attr.Type
-							,	packet.Header.Size, packet.Header.Opcode
+							,	packet.Header.Length, packet.Header.Opcode
 							,	BitConverter.ToString(packet.Message)
 							);
 					}

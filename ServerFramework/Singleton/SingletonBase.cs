@@ -16,6 +16,7 @@
 using ServerFramework.Enums;
 using ServerFramework.Managers;
 using System;
+using System.Linq;
 using System.Globalization;
 using System.Reflection;
 
@@ -41,7 +42,8 @@ namespace ServerFramework.Singleton
 		/// <returns>New instance or already initialized instance.</returns>
 		public static T GetInstance(params object[] args)
 		{
-			object ctor = null;
+			ConstructorInfo ctor;
+			object obj = null;
 
 			if (_instance == null)
 			{
@@ -51,20 +53,36 @@ namespace ServerFramework.Singleton
 					{
 						try
 						{
-							ctor = Activator.CreateInstance(typeof(T), BindingFlags.Instance | BindingFlags.NonPublic
-							, null, args, CultureInfo.CurrentCulture);
+							Type[] types = Type.EmptyTypes;
+
+							if(args != null && args.Any())
+								types = args.Select(x => x.GetType()).ToArray();
+
+							ctor = typeof(T).GetConstructor
+							(
+								BindingFlags.Instance | BindingFlags.NonPublic
+							,	null
+							,	types
+							,	null
+							);
+
+							obj = ctor.Invoke(args);
 						}
 						catch (Exception e)
 						{
-							Manager.LogMgr.Log(LogType.Error, "Error with creating instance of {0} type", typeof(T));
-							Manager.LogMgr.Log(LogType.Error, "{0}", e.InnerException.ToString());
+							Manager.LogMgr.Log
+							(
+								LogType.Error
+							,	"Error with creating instance of {0} type\n{1}"
+							,	typeof(T)
+							,	e.ToString()
+							);
+
 							Console.ReadLine();
 							Environment.Exit(0);
 						}
 
-						_instance = ctor as T;
-
-						return _instance;
+						_instance = obj as T;
 					}
 				}
 			}

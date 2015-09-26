@@ -68,7 +68,7 @@ namespace ServerFramework.Managers.Core
 		/// <summary>
 		/// Initialises CommandManager.
 		/// </summary>
-		internal override void Init()
+		protected override void Init()
 		{
 			using(CommandRepository cRepo = new CommandRepository(new ApplicationContext()))
 			{
@@ -189,7 +189,7 @@ namespace ServerFramework.Managers.Core
 
 		#endregion
 
-		#region InvokeCommandHandler
+		#region GetCommand
 
 		/// <summary>
 		/// Invokes Command script
@@ -254,9 +254,9 @@ namespace ServerFramework.Managers.Core
 				Manager.LogMgr.Log
 				(
 					LogType.Warning
-				, "Command '{0}' failed '{1}' validation"
-				, command.FullName
-				, command.Validation
+				,	"Command '{0}' failed '{1}' validation"
+				,	command.FullName
+				,	command.Validation
 				);
 			}
 
@@ -303,16 +303,25 @@ namespace ServerFramework.Managers.Core
 		{
 			string retVal = String.Empty;
 
-			retVal = String.Join("\n", command.SubCommands
-					.Where
-					(x =>
-						userLevel >= x.CommandLevel
-						&& x.IsValid
-					)
+			retVal = String.Join("\n", GetSubCommands(command, userLevel)
 					.Select(x => x.SubCommands != null ? String.Format("{0}..", x.Name) : x.Name));
 
 			return retVal;
 		}
+
+		#region GetSubCommands
+
+		internal IEnumerable<Command> GetSubCommands(Command command, CommandLevel userLevel = CommandLevel.Zero)
+		{
+			IEnumerable<Command> retVal = null;
+
+			if (command.SubCommands != null && command.SubCommands.Any())
+				retVal = command.SubCommands.Where(x => x.CommandLevel == userLevel && x.IsValid);
+
+			return retVal;
+		}
+
+		#endregion
 
 		#endregion
 

@@ -265,41 +265,43 @@ namespace ServerFramework.Network.Packets
 		internal int End(out byte[] message, out byte[] header)
 		{
 			Flush();
+
+			Writer.BaseStream.Seek(0, SeekOrigin.Begin);
+			byte flags = Convert.ToByte(Writer.BaseStream.ReadByte());
+			
 			Writer.BaseStream.Seek(0, SeekOrigin.Begin);
 
 			int length = (int)Writer.BaseStream.Length;
-			int size = length - ServerConfig.BigHeaderLength;
+			int messageLength = length - ServerConfig.BigHeaderLength;
 
-			bool isBigHeader = size > UInt16.MaxValue;
+			bool isBigHeader = messageLength > UInt16.MaxValue;
 			bool isUnicode = Encoder == Encoding.Unicode;
 			
-			int headerSize = isBigHeader
+			int headerLength = isBigHeader
 				? ServerConfig.BigHeaderLength
 				: ServerConfig.HeaderLength;
 
-			message = new byte[size + headerSize];
+			message = new byte[messageLength + headerLength];
 
-			Writer.BaseStream.Skip(ServerConfig.BigHeaderLength - headerSize);
-			Writer.BaseStream.Read(message, 0, size + headerSize);
-
-			byte flags = message[0];
+			Writer.BaseStream.Skip(ServerConfig.BigHeaderLength - headerLength);
+			Writer.BaseStream.Read(message, 0, messageLength + headerLength);
 
 			flags = SetupFlag(flags, PacketFlag.BigPacket, isBigHeader);
 			flags = SetupFlag(flags, PacketFlag.Unicode, isUnicode);
 
 			message.SetValue(flags, 0);
-			message.SetValue((byte)(size & Byte.MaxValue), 1);
-			message.SetValue((byte)((size >> 8) & Byte.MaxValue), 2);
+			message.SetValue((byte)(messageLength & Byte.MaxValue), 1);
+			message.SetValue((byte)((messageLength >> 8) & Byte.MaxValue), 2);
 
 			if (isBigHeader)
 			{				
-				message.SetValue((byte)((size >> 16) & Byte.MaxValue), 3);
-				message.SetValue((byte)((size >> 24) & Byte.MaxValue), 4);
+				message.SetValue((byte)((messageLength >> 16) & Byte.MaxValue), 3);
+				message.SetValue((byte)((messageLength >> 24) & Byte.MaxValue), 4);
 			}
 
-			header = new byte[headerSize];
+			header = new byte[headerLength];
 
-			Array.Copy(message, header, headerSize);
+			Array.Copy(message, header, headerLength);
 
 			return message.Length;
 		}

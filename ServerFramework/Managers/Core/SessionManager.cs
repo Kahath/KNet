@@ -75,7 +75,7 @@ namespace ServerFramework.Managers.Core
 		/// <summary>
 		/// Initialises SessionManager.
 		/// </summary>
-		internal override void Init()
+		protected override void Init()
 		{
 			Clients = new ConcurrentDictionary<int, Client>();
 			FreeSessionIDPool = new Stack<int>();

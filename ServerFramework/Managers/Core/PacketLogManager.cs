@@ -85,7 +85,7 @@ namespace ServerFramework.Managers.Core
 		/// <summary>
 		/// Initialises PacketLogManager.
 		/// </summary>
-		internal override void Init()
+		protected override void Init()
 		{
 			Thread logThread = new Thread(() =>
 			{
@@ -130,7 +130,7 @@ namespace ServerFramework.Managers.Core
 				}
 			}
 
-			packetLog.Size = packet.Header.Size;
+			packetLog.Size = packet.Header.Length;
 			packetLog.Opcode = packet.Header.Opcode;
 
 			using (ApplicationContext context = new ApplicationContext())
@@ -140,12 +140,12 @@ namespace ServerFramework.Managers.Core
 					context.PacketLogTypes.First(x => x.ID == (int)PacketLogType.SMSG && x.Active).ID;
 			}
 
-			if (packet.Header.Size > 0)
+			if (packet.Header.Length > 0)
 			{
 				packetLog.Message = logtype == PacketLogType.CMSG ?
 					BitConverter.ToString(packet.Message) :
 					BitConverter.ToString(packet.Message
-					, packet.Header.Size > Int16.MaxValue ? ServerConfig.BigHeaderLength : ServerConfig.HeaderLength);
+					, packet.Header.Length > Int16.MaxValue ? ServerConfig.BigHeaderLength : ServerConfig.HeaderLength);
 			}
 
 			PacketLog.Add(packetLog);

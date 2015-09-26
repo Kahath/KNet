@@ -92,7 +92,7 @@ namespace ServerFramework.Managers.Core
 		/// <summary>
 		/// Initialises BufferManager.
 		/// </summary>
-		internal override void Init()
+		protected override void Init()
 		{
 			BufferBlock = new byte[TotalBytesInBufferBlock];
 			Manager.LogMgr.Log(LogType.Normal, "Buffer allocated size: {0}KB", TotalBytesInBufferBlock / 1024);

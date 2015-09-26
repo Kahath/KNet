@@ -73,7 +73,7 @@ namespace ServerFramework.Extensions
 				data.HeaderBytesDoneCount = data.HeaderLength;
 
 				data.Packet = new Packet(data.Header);
-				data.MessageLength = data.Packet.Header.Size;
+				data.MessageLength = data.Packet.Header.Length;
 
 				data.IsHeaderReady = true;
 			}

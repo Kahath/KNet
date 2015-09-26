@@ -23,7 +23,7 @@ namespace ServerFramework.Managers.Base
 
 		#region Init
 
-		internal abstract void Init();
+		protected abstract void Init();
 
 		#endregion
 

@@ -16,6 +16,7 @@
 using ServerFramework.Attributes.Base;
 using ServerFramework.Attributes.Core;
 using ServerFramework.Commands.Base;
+using ServerFramework.Configuration.Helpers;
 using ServerFramework.Database.Context;
 using ServerFramework.Database.Model.Application.Command;
 using ServerFramework.Database.Model.Application.Opcode;
@@ -55,8 +56,19 @@ namespace ServerFramework.Managers.Core
 
 		#region Init
 
-		internal override void Init()
+		protected override void Init()
 		{
+			string path = Path.Combine
+				(
+					Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
+				,	ServerConfig.AssemblyPath
+				);
+
+			foreach (string dll in Directory.GetFiles(path, "*.dll"))
+			{
+				Load(dll);
+			}
+
 			foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies()
 				.Where(x => x.CustomAttributes
 					.Any(y => typeof(ICustomAttribute).IsAssignableFrom(y.AttributeType))))

@@ -31,7 +31,7 @@ namespace ServerFramework.Configuration.Helpers
 		private static LogType? _logLevel;
 		private static PacketLogType _packetLogLevel;
 		private static OpcodeType _opcodeAllowLevel;
-		private static byte _packetLogSize;
+		private static int _packetLogSize;
 
 		private static int _bufferSize;
 		private static int _maxConnections;
@@ -42,6 +42,7 @@ namespace ServerFramework.Configuration.Helpers
 		private static int _messageSizeLength;
 		private static int _bigMessageSizeLength;
 		private static int _numSocketPerSession;
+		private static string _assemblyPath;
 
 		private static string _dbHost;
 		private static int _dbPort;
@@ -89,7 +90,7 @@ namespace ServerFramework.Configuration.Helpers
 			set { _opcodeAllowLevel = value; }
 		}
 
-		internal static byte PacketLogSize
+		internal static int PacketLogSize
 		{
 			get { return _packetLogSize; }
 			set { _packetLogSize = value; }
@@ -147,6 +148,12 @@ namespace ServerFramework.Configuration.Helpers
 		{
 			get { return _numSocketPerSession; }
 			set { _numSocketPerSession = value; }
+		}
+
+		internal static string AssemblyPath
+		{
+			get { return _assemblyPath; }
+			set { _assemblyPath = value; }
 		}
 
 		internal static int HeaderLength
@@ -218,12 +225,13 @@ namespace ServerFramework.Configuration.Helpers
 			LogLevel = (LogType?)Config.Read<byte>(ConfigurationHelper.LogLevelKey, true) ?? LogType.None;
 			PacketLogLevel = (PacketLogType)Config.Read<byte>(ConfigurationHelper.PacketLogLevelKey, true);
 			OpcodeAllowLevel = (OpcodeType)Config.Read<byte>(ConfigurationHelper.OpcodeAllowLevelKey, true);
-			PacketLogSize = Config.Read<byte>(ConfigurationHelper.PacketLogSizeKey);
+			PacketLogSize = Config.Read<int>(ConfigurationHelper.PacketLogSizeKey);
 
 			BufferSize = Config.Read<int>(ConfigurationHelper.BufferSizeKey);
 			MaxConnections = Config.Read<int>(ConfigurationHelper.MaxConnectionsKey);
 			MaxSimultaneousAcceptOps = Config.Read<int>(ConfigurationHelper.MaxSimultaneousAcceptOpsKey);
 			Backlog = Config.Read<int>(ConfigurationHelper.BacklogKey);
+			AssemblyPath = Config.Read<string>(ConfigurationHelper.AssemblyPath);
 
 			DBHost = Config.Read<string>(ConfigurationHelper.DBHostKey);
 			DBPort = Config.Read<int>(ConfigurationHelper.DBPortKey);

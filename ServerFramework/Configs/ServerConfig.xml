@@ -47,4 +47,5 @@
 <property name="buffersize" value="4096" />
 <property name="maxsimultaneousacceptops" value="10" />
 <property name="backlog" value="100" />
+<property name="assemblypath" value="Assemblies" />
 </ServerSettings>

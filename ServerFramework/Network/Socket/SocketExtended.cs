@@ -111,7 +111,6 @@ namespace ServerFramework.Network.Socket
 		private void Close()
 		{
 			this.Sender.AcceptSocket.Close();
-			this.Receiver.AcceptSocket.Close();
 		}
 
 		#endregion
@@ -127,7 +126,6 @@ namespace ServerFramework.Network.Socket
 			try
 			{
 				this.Sender.AcceptSocket.Shutdown(how);
-				this.Receiver.AcceptSocket.Shutdown(how);
 				this.SendResetEvent.Set();
 				this.Close();
 			}

@@ -23,7 +23,7 @@ namespace ServerFramework.Network.Packets
 	{
 		#region Fields
 
-		private int _size;
+		private int _length;
 		private ushort _opcode;
 		private byte _flags;
 
@@ -31,10 +31,10 @@ namespace ServerFramework.Network.Packets
 
 		#region Properties
 
-		public int Size
+		public int Length
 		{
-			get { return _size; }
-			set { _size = value; }
+			get { return _length; }
+			set { _length = value; }
 		}
 
 		public ushort Opcode
@@ -85,7 +85,7 @@ namespace ServerFramework.Network.Packets
 		{
 			Flags = header[0];
 
-			Size = IsBigHeader
+			Length = IsBigHeader
 				? BitConverter.ToInt32(header, ServerConfig.PacketFlagsLength)
 				: BitConverter.ToUInt16(header, ServerConfig.PacketFlagsLength);
 			Opcode = IsBigHeader

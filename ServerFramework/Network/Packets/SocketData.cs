@@ -192,7 +192,7 @@ namespace ServerFramework.Network.Packets
 		/// </summary>
 		internal void Finish()
 		{
-			this.MessageBytesRemainingCount = Packet.End();
+			MessageBytesRemainingCount = Packet.End();
 		}
 
 		#endregion
