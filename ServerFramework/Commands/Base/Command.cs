@@ -93,7 +93,7 @@ namespace ServerFramework.Commands.Base
 				string retVal = String.Empty;
 
 				if (BaseCommand != null)
-					retVal = String.Format("{0} {1}", BaseCommand.FullName, Name);
+					retVal = String.Format($"{BaseCommand.FullName} {Name}");
 				else
 					retVal = Name;
 

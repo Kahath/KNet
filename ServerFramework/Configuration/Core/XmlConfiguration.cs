@@ -101,27 +101,26 @@ namespace ServerFramework.Configuration.Core
 			}
 			catch (IndexOutOfRangeException)
 			{
-				Manager.LogMgr.Log(LogType.Error, "Error while reading '{0}' config. Missing argument in line", config);
+				Manager.LogMgr.Log(LogType.Error, $"Error while reading '{config}' config. Missing argument in line");
 				Console.ReadLine();
 				Environment.Exit(0);
 
 			}
 			catch (NullReferenceException)
 			{
-				Manager.LogMgr.Log(LogType.Error, "Error while reading '{0}' config. Argument is null", config);
+				Manager.LogMgr.Log(LogType.Error, $"Error while reading '{config}' config. Argument is null");
 				Console.ReadLine();
 				Environment.Exit(0);
 			}
 			catch (FormatException)
 			{
-				Manager.LogMgr.Log(LogType.Error, "Error while reading '{0}' config. Cannot convert '{1}' into type '{2}'"
-					, config, nameValue, typeof(T));
+				Manager.LogMgr.Log(LogType.Error, $"Error while reading '{config}' config. Cannot convert '{nameValue}' into type '{typeof(T)}'");
 				Console.ReadLine();
 				Environment.Exit(0);
 			}
 			catch (Exception)
 			{
-				Manager.LogMgr.Log(LogType.Error, "Error while reading '{0}' config", config);
+				Manager.LogMgr.Log(LogType.Error, $"Error while reading '{config}' config");
 				Console.ReadLine();
 				Environment.Exit(0);
 			}

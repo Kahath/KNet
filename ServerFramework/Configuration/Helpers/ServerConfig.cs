@@ -202,8 +202,7 @@ namespace ServerFramework.Configuration.Helpers
 			{
 				string retVal = String.Empty;
 
-				retVal = String.Format("Data Source={0},{1};Network Library=DBMSSOCN;Initial Catalog={2};User ID={3};Password={4};"
-					, DBHost, DBPort, DBName, DBUser, DBPass);
+				retVal = String.Format($"Data Source={DBHost},{DBPort};Network Library=DBMSSOCN;Initial Catalog={DBName};User ID={DBUser};Password={DBPass};");
 
 				return retVal;
 			}

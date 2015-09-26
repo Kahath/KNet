@@ -112,15 +112,15 @@ namespace ServerFramework.Managers.Core
 			}
 			catch(FileNotFoundException e)
 			{
-				Manager.LogMgr.Log(LogType.Error, "{0}", e.ToString());
+				Manager.LogMgr.Log(LogType.Error, $"{e.ToString()}");
 			}
 			catch(FileLoadException e)
 			{
-				Manager.LogMgr.Log(LogType.Error, "{0}", e.ToString());
+				Manager.LogMgr.Log(LogType.Error, $"{e.ToString()}");
 			}
 			catch (ArgumentNullException e)
 			{
-				Manager.LogMgr.Log(LogType.Error, "{0}", e.ToString());
+				Manager.LogMgr.Log(LogType.Error, $"{e.ToString()}");
 			}
 
 			if(assembly != null)
@@ -304,9 +304,7 @@ namespace ServerFramework.Managers.Core
 				Manager.LogMgr.Log
 					(
 						LogType.Error
-					,	"Error invoking method {0} of type {1}"
-					,	method.Name
-					,	typeof(T).FullName
+					,	$"Error invoking method {method.Name} of type {typeof(T).FullName}"
 					);
 			}
 

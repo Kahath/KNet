@@ -105,7 +105,7 @@ namespace ServerFramework.Managers.Core
 				}
 			}
 
-			Manager.LogMgr.Log(LogType.Normal, "{0} packet handlers loaded", PacketHandlersCount);
+			Manager.LogMgr.Log(LogType.Normal, $"{PacketHandlersCount} packet handlers loaded");
 		}
 
 		#endregion
@@ -144,21 +144,19 @@ namespace ServerFramework.Managers.Core
 						Manager.LogMgr.Log
 							(
 								LogType.Warning
-							,	"Error with '0x{0:X}' opcode "
-									+ "authored by '{1}' using version '{2}' and type '{3}'\n"
-									+ "Packet size: {4}\nPacket opcode: 0x{5:X}\nPacket content: {6}"
-							,	attr.Opcode, attr.Author, attr.Version, attr.Type
-							,	packet.Header.Length, packet.Header.Opcode
-							,	BitConverter.ToString(packet.Message)
+							,	$"Error with '0x{attr.Opcode:X}' opcode "
+									+ $"authored by '{attr.Author}' using version '{attr.Version}' and type '{attr.Type}'\n"
+									+ $"Packet size: {packet.Header.Length}\nPacket opcode: 0x{packet.Header.Opcode:X}"
+									+ $"\nPacket content: {BitConverter.ToString(packet.Message)}"
 							);
 					}
 
-					Manager.LogMgr.Log(LogType.Error, "{0}", e.ToString());
+					Manager.LogMgr.Log(LogType.Error, $"{e.ToString()}");
 				}
 			}
 			else
 			{
-				Manager.LogMgr.Log(LogType.Warning, "Opcode 0x{0:X} doesn't have handler", packet.Header.Opcode);
+				Manager.LogMgr.Log(LogType.Warning, $"Opcode 0x{packet.Header.Opcode:X} doesn't have handler");
 			}
 		}
 

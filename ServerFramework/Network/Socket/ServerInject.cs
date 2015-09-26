@@ -130,14 +130,13 @@ namespace ServerFramework.Network.Socket
 			}
 			catch (SocketException e)
 			{
-				Manager.LogMgr.Log(LogType.Error, "{0}", e.Message);
+				Manager.LogMgr.Log(LogType.Error, $"{e.Message}", e.Message);
 				Console.ReadLine();
 				Environment.Exit(0);
 			}
 
-			Manager.LogMgr.Log(LogType.Normal, "Starting listening on {0}:{1}",
-				SocketSettings.LocalEndPoint.Address,
-				SocketSettings.LocalEndPoint.Port);
+			Manager.LogMgr.Log(LogType.Normal, "Starting listening on "
+				+ $"{SocketSettings.LocalEndPoint.Address}:{SocketSettings.LocalEndPoint.Port}");
 
 			startAccept();
 		}
@@ -253,9 +252,8 @@ namespace ServerFramework.Network.Socket
 					Manager.LogMgr.Log
 						(
 							LogType.Normal
-						,	"Session {0} ({1}) connected"
-						,	socketExtended.ReceiverData.SessionId
-						,	socketExtended.Receiver.AcceptSocket.RemoteEndPoint
+						,	$"Session {socketExtended.ReceiverData.SessionId} " 
+						+	$"({socketExtended.Receiver.AcceptSocket.RemoteEndPoint}) connected"
 						);
 				}
 				catch (ObjectDisposedException)
@@ -438,7 +436,7 @@ namespace ServerFramework.Network.Socket
 				if (CloseClientSocket != null)
 					CloseClientSocket(c, e);
 
-				Manager.LogMgr.Log(LogType.Normal, "Session {0} quit", ((SocketData)e.UserToken).SessionId);
+				Manager.LogMgr.Log(LogType.Normal, $"Session {((SocketData)e.UserToken).SessionId} quit");
 
 				c.SocketExtended.Disconnect(SocketShutdown.Both);
 

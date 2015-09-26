@@ -174,9 +174,7 @@ namespace ServerFramework.Managers.Core
 					default:
 						msg = String.Format
 						(
-							"[{0}] {1}"
-						,	DateTime.Now.ToString("HH:mm:ss.fff")
-						,	String.Format(message, args)
+							$"[{DateTime.Now.ToString("HH:mm:ss.fff")}] {String.Format(message, args)}"
 						);
 
 						ConsoleLogQueue.Add(Tuple.Create<ConsoleColor, string>(color, msg));

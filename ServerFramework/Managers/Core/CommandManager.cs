@@ -99,7 +99,7 @@ namespace ServerFramework.Managers.Core
 				}
 			}
 
-			Manager.LogMgr.Log(LogType.Normal, "{0} Commands loaded", CommandTable.Count);
+			Manager.LogMgr.Log(LogType.Normal, $"{CommandTable.Count} Commands loaded");
 		}
 
 		#endregion
@@ -138,13 +138,11 @@ namespace ServerFramework.Managers.Core
 						}
 						catch (IndexOutOfRangeException)
 						{
-							Manager.LogMgr.Log(LogType.Error, "Error with '{0}' command. wrong arguments"
-								, result.FullName);
+							Manager.LogMgr.Log(LogType.Error, $"Error with '{result.FullName}' command. wrong arguments");
 						}
 						catch (Exception)
 						{
-							Manager.LogMgr.Log(LogType.Error, "Error with '{0}' command. Failed to execute handler"
-								, result.FullName);
+							Manager.LogMgr.Log(LogType.Error, $"Error with '{result.FullName}' command. Failed to execute handler");
 						}
 
 						if (retVal)
@@ -152,7 +150,7 @@ namespace ServerFramework.Managers.Core
 							CommandLogModel commandLog = new CommandLogModel();
 							commandLog.UserID = user.Token.ID;
 							commandLog.UserName = user.Token.Name;
-							commandLog.CommandName = result.FullName + " " + result.Arguments;
+							commandLog.CommandName = String.Format($"{result.FullName} {result.Arguments}");
 							commandLog.CommandID = result.Model.ID;
 
 							using (ApplicationContext context = new ApplicationContext())
@@ -167,9 +165,7 @@ namespace ServerFramework.Managers.Core
 						Manager.LogMgr.Log
 						(
 							LogType.Command
-						,	"Available sub commands for '{0}'\n{1}"
-						,	result.FullName
-						,	AvailableSubCommands(result, user.UserLevel)
+						,	$"Available sub commands for '{result.FullName}'\n{AvailableSubCommands(result, user.UserLevel)}"
 						);
 					}
 				}
@@ -178,8 +174,7 @@ namespace ServerFramework.Managers.Core
 					Manager.LogMgr.Log
 					(
 						LogType.Command
-					,	"Command '{0}' doesn't exist"
-					,	commandPath[0]
+					,	$"Command '{commandPath[0]}' doesn't exist"
 					);
 				}
 			}
@@ -254,9 +249,7 @@ namespace ServerFramework.Managers.Core
 				Manager.LogMgr.Log
 				(
 					LogType.Warning
-				,	"Command '{0}' failed '{1}' validation"
-				,	command.FullName
-				,	command.Validation
+				,	$"Command '{command.FullName}' failed '{command.Validation}' validation"
 				);
 			}
 
@@ -304,7 +297,7 @@ namespace ServerFramework.Managers.Core
 			string retVal = String.Empty;
 
 			retVal = String.Join("\n", GetSubCommands(command, userLevel)
-					.Select(x => x.SubCommands != null ? String.Format("{0}..", x.Name) : x.Name));
+					.Select(x => x.SubCommands != null ? String.Format($"{x.Name}..", x.Name) : x.Name));
 
 			return retVal;
 		}

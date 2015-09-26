@@ -62,18 +62,16 @@ namespace ServerFramework.Commands.Handlers
 						Manager.LogMgr.Log
 						(
 							LogType.Command
-						,	"Available sub commands for '{0}'\n{1}"
-						,	command.FullName
-						,	Manager.CommandMgr.AvailableSubCommands(command, user.UserLevel)
+						,	$"Available sub commands for '{command.FullName}'{Environment.NewLine}{Manager.CommandMgr.AvailableSubCommands(command, user.UserLevel)}"
 						);
 					}
 					else if (!String.IsNullOrEmpty(command.Description))
 					{
-						Manager.LogMgr.Log(LogType.Command, "{0}", command.Description);
+						Manager.LogMgr.Log(LogType.Command, $"{command.Description}");
 					}
 					else
 					{
-						Manager.LogMgr.Log(LogType.Command, "Command '{0}' is missing description", command.FullName);
+						Manager.LogMgr.Log(LogType.Command, $"Command '{command.FullName}' is missing description");
 					}
 				}
 				else
@@ -81,8 +79,7 @@ namespace ServerFramework.Commands.Handlers
 					Manager.LogMgr.Log
 					(
 						LogType.Command
-					,	"Command '{0}' doesn't exist"
-					,	args[0]
+					,	$"Command '{args[0]}' doesn't exist"
 					);
 				}
 

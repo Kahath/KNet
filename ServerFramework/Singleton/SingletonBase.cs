@@ -73,9 +73,7 @@ namespace ServerFramework.Singleton
 							Manager.LogMgr.Log
 							(
 								LogType.Error
-							,	"Error with creating instance of {0} type\n{1}"
-							,	typeof(T)
-							,	e.ToString()
+							,	$"Error with creating instance of {typeof(T)} type\n{e.ToString()}"
 							);
 
 							Console.ReadLine();

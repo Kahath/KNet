@@ -95,7 +95,7 @@ namespace ServerFramework.Managers.Core
 		protected override void Init()
 		{
 			BufferBlock = new byte[TotalBytesInBufferBlock];
-			Manager.LogMgr.Log(LogType.Normal, "Buffer allocated size: {0}KB", TotalBytesInBufferBlock / 1024);
+			Manager.LogMgr.Log(LogType.Normal, $"Buffer allocated size: {TotalBytesInBufferBlock / 1024}KB");
 		}
 
 		#endregion
