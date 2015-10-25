@@ -55,6 +55,7 @@ namespace ServerFramework.Network.Packets
 		/// <param name="header">Header byte array.</param>
 		internal Packet(PacketLogType logType)
 		{
+			Header = new PacketHeader(0, 0, 0);
 			_stream = new PacketStream(0);
 			_logType = logType;
 		}
@@ -208,9 +209,9 @@ namespace ServerFramework.Network.Packets
 		{
 			int retVal;
 
-			Header = Stream.End(flags, opcode);
+			Stream.End(Header, flags, opcode);
 			retVal = Header.Length + (Header.IsBigHeader ? ServerConfig.BigHeaderLength : ServerConfig.HeaderLength);
-            
+
 			return retVal;
 		}
 
@@ -232,6 +233,7 @@ namespace ServerFramework.Network.Packets
 		{
 			Stream.Free();
 			Stream.ResetPosition();
+			Header.Reset();
 		}
 
 		#endregion

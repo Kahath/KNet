@@ -138,15 +138,17 @@ namespace ServerFramework.Network.Session
 
 		#region Methods
 
+
 		#region Send
 
 		/// <summary>
 		/// Sends packet to client.
 		/// </summary>
 		/// <param name="packet">Instance of <see cref="ServerFramework.Network.Packets.Packet"/> type.</param>
-		public void Send(ushort opcode, byte flags, int maxLength, Action<Packet> action)
+		public async void Send(ushort opcode, byte flags, int maxLength, Action<Packet> action)
 		{
-			SocketExtended.SendResetEvent.WaitOne();
+			await SocketExtended.Signaler.WaitAsync();
+
 			SocketData data = SocketExtended.SenderData;
 			data.Packet.Alloc(maxLength);
 			data.Packet.Stream.Seek(ServerConfig.BigHeaderLength);

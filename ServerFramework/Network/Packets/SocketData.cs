@@ -222,11 +222,10 @@ namespace ServerFramework.Network.Packets
 				HeaderBytesDoneThisOp = HeaderLength - HeaderBytesDoneCount;
 				HeaderBytesDoneCount = HeaderLength;
 
-				byte flags = Packet.Read<byte>();
-				int length = IsBigPacket ? Packet.Read<int>() : Packet.Read<ushort>();
-				ushort opcode = Packet.Read<ushort>();
-
-				Packet.Header = new PacketHeader(flags, length, opcode);
+				Packet.Header.Flags = Packet.Read<byte>();
+				Packet.Header.Length = IsBigPacket ? Packet.Read<int>() : Packet.Read<ushort>();
+				Packet.Header.Opcode = Packet.Read<ushort>();
+		
 				MessageLength = Packet.Header.Length;
 
 				if(MessageLength > 0)

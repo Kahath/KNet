@@ -158,12 +158,8 @@ namespace ServerFramework.Managers.Core
 			id = FreeSessionIDPool.Count > 0 ? FreeSessionIDPool.Pop() 
 				: Interlocked.Increment(ref _sessionId);
 
-			if (Clients.TryAdd(id, c))
-			{
-				Manager.LogMgr.Log(LogType.Info, "New session");
-			}
-			else
-			{
+			if (!Clients.TryAdd(id, c))
+			{ 
 				if (id > 0)
 					FreeSessionIDPool.Push(id);
 

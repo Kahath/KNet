@@ -169,9 +169,8 @@ namespace ServerFramework.Network.Packets
 
 		#region End
 
-		internal PacketHeader End(byte flags, ushort opcode)
+		internal void End(PacketHeader header, byte flags, ushort opcode)
 		{
-			PacketHeader retVal  = null;
 			Flush();
 
 			int messageLength = Position - ServerConfig.BigHeaderLength;
@@ -198,9 +197,9 @@ namespace ServerFramework.Network.Packets
 
 			Adjust(packetPosition);
 
-			retVal = new PacketHeader(flags, messageLength, opcode);		
-
-			return retVal;
+			header.Flags = flags;
+			header.Length = messageLength;
+			header.Opcode = opcode;
 		}
 
 		#endregion

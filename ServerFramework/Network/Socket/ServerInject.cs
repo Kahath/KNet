@@ -239,7 +239,7 @@ namespace ServerFramework.Network.Socket
 					Manager.LogMgr.Log
 						(
 							LogType.Normal
-						,	$"Session {socketExtended.ReceiverData.SessionId} " 
+						,	$"Session {socketExtended.ReceiverData.SessionId} "
 						+	$"({socketExtended.Receiver.AcceptSocket.RemoteEndPoint}) connected"
 						);
 				}
@@ -332,7 +332,7 @@ namespace ServerFramework.Network.Socket
 						Manager.PacketLogMgr.Log(data.Packet);
 						data.Reset(data.BufferOffset);
 
-						c.SocketExtended.SendResetEvent.Set();
+						c.SocketExtended.Signaler.SetAsync();
 					}
 				}
 				else

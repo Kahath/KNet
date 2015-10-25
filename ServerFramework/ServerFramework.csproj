@@ -124,6 +124,7 @@
     <Compile Include="Attributes\Core\OpcodeAttribute.cs" />
     <Compile Include="Network\Packets\PacketHeader.cs" />
     <Compile Include="Helpers\ObjectPool.cs" />
+    <Compile Include="Network\Signalers\Signaler.cs" />
     <Compile Include="Network\Socket\IServer.cs" />
     <Compile Include="Network\Socket\SocketExtended.cs" />
     <Compile Include="Network\Socket\Server.cs" />

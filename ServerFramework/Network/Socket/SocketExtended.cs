@@ -4,20 +4,19 @@
  */
 
 using ServerFramework.Network.Packets;
-using System;
+using ServerFramework.Network.Signalers;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading;
 
 namespace ServerFramework.Network.Socket
 {
-	internal sealed class SocketExtended : IDisposable
+	internal sealed class SocketExtended
 	{
 		#region Fields
 
 		private SocketAsyncEventArgs _sender;
 		private SocketAsyncEventArgs _receiver;
-		private AutoResetEvent _sendResetEvent;
+		private Signaler _signaler;
 
 		#endregion
 
@@ -31,12 +30,17 @@ namespace ServerFramework.Network.Socket
 		{
 			Sender = new SocketAsyncEventArgs();
 			Receiver = new SocketAsyncEventArgs();
-			_sendResetEvent = new AutoResetEvent(true);
+			_signaler = new Signaler();
 		}
 
 		#endregion
 
 		#region Properties
+
+		internal Signaler Signaler
+		{
+			get { return _signaler; }
+		}
 
 		internal SocketAsyncEventArgs Sender
 		{
@@ -58,12 +62,6 @@ namespace ServerFramework.Network.Socket
 		internal SocketData SenderData
 		{
 			get { return ((SocketData)Sender.UserToken); }
-		}
-
-		internal AutoResetEvent SendResetEvent
-		{
-			get { return _sendResetEvent; }
-			set { _sendResetEvent = value; }
 		}
 
 		internal System.Net.Sockets.Socket AcceptSocket
@@ -100,7 +98,7 @@ namespace ServerFramework.Network.Socket
 		/// </summary>
 		private void Close()
 		{
-			this.Sender.AcceptSocket.Close();
+			Sender.AcceptSocket.Close();
 		}
 
 		#endregion
@@ -115,20 +113,11 @@ namespace ServerFramework.Network.Socket
 		{
 			try
 			{
-				this.Sender.AcceptSocket.Shutdown(how);
-				this.SendResetEvent.Set();
-				this.Close();
+				Sender.AcceptSocket.Shutdown(how);
+				Signaler.SetAsync();
+				Close();
 			}
 			catch (SocketException) { }
-		}
-
-		#endregion
-
-		#region Dispose
-
-		public void Dispose()
-		{
-			_sendResetEvent.Dispose();
 		}
 
 		#endregion

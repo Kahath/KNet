@@ -71,5 +71,20 @@ namespace ServerFramework.Network.Packets
 		}
 
 		#endregion
+
+		#region Methods
+
+		#region Reset
+
+		internal void Reset()
+		{
+			_flags = 0;
+			_length = 0;
+			_opcode = 0;
+		}
+
+		#endregion
+
+		#endregion
 	}
 }
