@@ -1,16 +1,6 @@
 ﻿/*
- * This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (c) 2015. Kahath.
+ * Licensed under MIT license.
  */
 
 using ServerFramework.Configuration.Helpers;
@@ -112,10 +102,6 @@ namespace ServerFramework.Managers.Core
 		/// <param name="packet">Instance of <see cref="ServerFramework.Network.Packets.Packet"/> type.</param>
 		private void LogPacket(PacketLogItem logItem)
 		{
-			//PacketLogType logtype = packet.Stream.Reader != null ? PacketLogType.CMSG : PacketLogType.SMSG;
-
-			// pClient = Manager.SessionMgr.GetClientBySession(packet.SessionId);
-
 			PacketLogModel packetLog = new PacketLogModel();
 
 			if (logItem.Client != null)
@@ -164,9 +150,7 @@ namespace ServerFramework.Managers.Core
 		{
 			if ((ServerConfig.PacketLogLevel & packet.LogType) == packet.LogType && packet.Header.IsForLog)
 			{
-				byte[] message = new byte[packet.Header.Length];
-				packet.CopyTo(0, message, 0, (uint)message.Length);
-
+				byte[] message = packet.ToArray();
 				Client pClient = Manager.SessionMgr.GetClientBySession(packet.SessionId);
 
 				if (pClient != null)

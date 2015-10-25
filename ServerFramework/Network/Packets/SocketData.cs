@@ -1,21 +1,10 @@
 ﻿/*
- * This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (c) 2015. Kahath.
+ * Licensed under MIT license.
  */
 
 using ServerFramework.Configuration.Helpers;
 using ServerFramework.Enums;
-using ServerFramework.Helpers;
 using System;
 using System.Net.Sockets;
 
@@ -30,8 +19,6 @@ namespace ServerFramework.Network.Packets
 		private readonly int _bufferOffset;
 		private readonly int _bufferSize;
 		private int _sessionId;
-
-		private byte[] _header;
 
 		private int _messageLength;
 		private int _messageOffset;
@@ -53,11 +40,6 @@ namespace ServerFramework.Network.Packets
 		#endregion
 
 		#region Properties
-
-		internal int BytesDoneCount
-		{
-			get { return HeaderBytesDoneCount + MessageBytesDoneCount; }
-		}
 
 		internal int MessageLength
 		{
@@ -81,6 +63,11 @@ namespace ServerFramework.Network.Packets
 		{
 			get { return _headerLength; }
 			set { _headerLength = value; }
+		}
+
+		internal int BytesDoneCount
+		{
+			get { return HeaderBytesDoneCount + MessageBytesDoneCount; }
 		}
 
 		internal int HeaderBytesDoneCount
@@ -165,12 +152,6 @@ namespace ServerFramework.Network.Packets
 			internal set { _sessionId = value; }
 		}
 
-		internal byte[] Header
-		{
-			get { return _header; }
-			set { _header = value; }
-		}
-
 		#endregion
 
 		#region Constructors
@@ -188,7 +169,6 @@ namespace ServerFramework.Network.Packets
 			HeaderLength = headerLength;
 			HeaderOffset = bufferOffset;
 			Packet = new Packet(logType);
-			Header = new byte[ServerConfig.BigHeaderLength];
 		}
 
 		#endregion
@@ -237,19 +217,9 @@ namespace ServerFramework.Network.Packets
 			if (remainingBytesToProcess >= HeaderLength - HeaderBytesDoneCount)
 			{
 				Packet.CopyFrom(e.Buffer, HeaderOffset + HeaderBytesDoneCount, HeaderBytesDoneCount, (uint)(HeaderLength - HeaderBytesDoneCount));
-				//Buffer.BlockCopy
-				//	(
-				//		e.Buffer
-				//	,	HeaderOffset + HeaderBytesDoneCount
-				//	,	Header
-				//	,	HeaderBytesDoneCount
-				//	,	HeaderLength - HeaderBytesDoneCount
-				//	);
-
 				remainingBytesToProcess = (remainingBytesToProcess - HeaderLength) + HeaderBytesDoneCount;
 
 				HeaderBytesDoneThisOp = HeaderLength - HeaderBytesDoneCount;
-
 				HeaderBytesDoneCount = HeaderLength;
 
 				byte flags = Packet.Read<byte>();
@@ -267,14 +237,6 @@ namespace ServerFramework.Network.Packets
 			else
 			{
 				Packet.CopyFrom(e.Buffer, HeaderOffset + HeaderBytesDoneCount, HeaderBytesDoneCount, (uint)remainingBytesToProcess);
-				//Buffer.BlockCopy
-				//	(
-				//		e.Buffer
-				//	,	HeaderOffset + HeaderBytesDoneCount
-				//	,	Header
-				//	,	HeaderBytesDoneCount
-				//	,	remainingBytesToProcess
-				//	);
 
 				HeaderBytesDoneThisOp = remainingBytesToProcess;
 				HeaderBytesDoneCount += remainingBytesToProcess;
@@ -307,20 +269,16 @@ namespace ServerFramework.Network.Packets
 			if (MessageLength == 0)
 			{
 				Packet.SessionId = SessionId;
-
 				IsPacketReady = true;
 			}
 			else if ((remainingBytesToProcess + MessageBytesDoneCount) >= MessageLength)
 			{
 				Packet.CopyFrom(e.Buffer, MessageOffset, BytesDoneCount, (uint)(MessageLength - MessageBytesDoneCount));
 
-				remainingBytesToProcess = (remainingBytesToProcess - MessageLength)
-					+ MessageBytesDoneCount;
-
+				remainingBytesToProcess = (remainingBytesToProcess - MessageLength) + MessageBytesDoneCount;
 				MessageBytesDoneThisOp = MessageLength - MessageBytesDoneCount;
 
 				Packet.SessionId = SessionId;
-
 				IsPacketReady = true;
 			}
 			else
@@ -337,7 +295,6 @@ namespace ServerFramework.Network.Packets
 		}
 
 		#endregion
-
 
 		#region Reset
 
