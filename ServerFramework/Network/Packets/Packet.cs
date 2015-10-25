@@ -5,6 +5,7 @@
 
 using ServerFramework.Configuration.Helpers;
 using ServerFramework.Enums;
+using ServerFramework.Managers;
 using System;
 
 namespace ServerFramework.Network.Packets
@@ -72,7 +73,18 @@ namespace ServerFramework.Network.Packets
 		/// <returns>Value of generic type.</returns>
 		public T Read<T>(int count = 0)
 		{
-			return Stream.Read<T>();
+			T retVal = default(T);
+			try
+			{
+				retVal = Stream.Read<T>();
+			}
+			catch(IndexOutOfRangeException e)
+			{
+				Manager.LogMgr.Log(Enums.LogType.Critical, e.ToString());
+				Environment.Exit(-1);
+			}
+
+			return retVal;
 		}
 
 		#endregion
@@ -86,7 +98,15 @@ namespace ServerFramework.Network.Packets
 		/// <param name="value">value to write</param>
 		public void Write<T>(T value)
 		{
-			Stream.Write<T>(value);
+			try
+			{
+				Stream.Write<T>(value);
+			}
+			catch (IndexOutOfRangeException e)
+			{
+				Manager.LogMgr.Log(Enums.LogType.Critical, e.ToString());
+				Environment.Exit(-1);
+			}
 		}
 
 		#endregion
@@ -220,12 +240,28 @@ namespace ServerFramework.Network.Packets
 
 		internal void CopyFrom(byte[] from, int fromOffset, int toOffset, uint length)
 		{
-			Stream.CopyFrom(from, fromOffset, fromOffset, length);
+			try
+			{
+				Stream.CopyFrom(from, fromOffset, toOffset, length);
+			}
+			catch(IndexOutOfRangeException e)
+			{
+				Manager.LogMgr.Log(Enums.LogType.Critical, e.ToString());
+				Environment.Exit(-1);
+			}
 		}
 
 		internal void CopyTo(int srcOffset, byte[] to, int toOffset, uint length)
 		{
-			Stream.CopyTo(srcOffset, to, toOffset, length);
+			try
+			{
+				Stream.CopyTo(srcOffset, to, toOffset, length);
+			}
+			catch(IndexOutOfRangeException e)
+			{
+				Manager.LogMgr.Log(Enums.LogType.Critical, e.ToString());
+				Environment.Exit(-1);
+			}
 		}
 
 		#endregion
@@ -236,7 +272,15 @@ namespace ServerFramework.Network.Packets
 		{
 			byte[] retVal = new byte[Header.Length];
 
-			CopyTo(0, retVal, 0, (uint)Header.Length);
+			try
+			{
+				CopyTo(0, retVal, 0, (uint)Header.Length);
+			}
+			catch(IndexOutOfRangeException e)
+			{
+				Manager.LogMgr.Log(Enums.LogType.Critical, e.ToString());
+				Environment.Exit(-1);
+			}
 
 			return retVal;
 		}
