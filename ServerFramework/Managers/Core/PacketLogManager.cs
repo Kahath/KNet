@@ -16,14 +16,12 @@
 using ServerFramework.Configuration.Helpers;
 using ServerFramework.Database.Context;
 using ServerFramework.Database.Model.Application.PacketLog;
-using ServerFramework.Enums;
 using ServerFramework.Managers.Base;
 using ServerFramework.Network.Packets;
 using ServerFramework.Network.Session;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 
 namespace ServerFramework.Managers.Core
@@ -34,8 +32,8 @@ namespace ServerFramework.Managers.Core
 
 		private string _path;
 		private List<PacketLogModel> _packetLog;
-		private BlockingCollection<Packet> _packetLogQueue
-			= new BlockingCollection<Packet>();
+		private BlockingCollection<PacketLogItem> _packetLogQueue
+			= new BlockingCollection<PacketLogItem>();
 
 		#endregion
 
@@ -47,7 +45,7 @@ namespace ServerFramework.Managers.Core
 			set { _path = value; }
 		}
 
-		private BlockingCollection<Packet> PacketLogQueue
+		private BlockingCollection<PacketLogItem> PacketLogQueue
 		{
 			get { return _packetLogQueue; }
 			set { _packetLogQueue = value; }
@@ -112,40 +110,32 @@ namespace ServerFramework.Managers.Core
 		/// Logs packet.
 		/// </summary>
 		/// <param name="packet">Instance of <see cref="ServerFramework.Network.Packets.Packet"/> type.</param>
-		private void LogPacket(Packet packet)
+		private void LogPacket(PacketLogItem logItem)
 		{
-			PacketLogType logtype = packet.Stream.Reader != null ? PacketLogType.CMSG : PacketLogType.SMSG;
+			//PacketLogType logtype = packet.Stream.Reader != null ? PacketLogType.CMSG : PacketLogType.SMSG;
 
-			Client pClient = Manager.SessionMgr.GetClientBySession(packet.SessionId);
-			
+			// pClient = Manager.SessionMgr.GetClientBySession(packet.SessionId);
+
 			PacketLogModel packetLog = new PacketLogModel();
 
-			if (pClient != null)
+			if (logItem.Client != null)
 			{
-				packetLog.IP = pClient.IP;
+				packetLog.IP = logItem.Client.IP;
 
-				if (pClient.Token != null)
+				if (logItem.Client.Token != null)
 				{
-					packetLog.ClientID = pClient.Token.ID;
+					packetLog.ClientID = logItem.Client.Token.ID;
 				}
 			}
 
-			packetLog.Size = packet.Header.Length;
-			packetLog.Opcode = packet.Header.Opcode;
+			packetLog.Size = logItem.PacketHeader.Length;
+			packetLog.Opcode = logItem.PacketHeader.Opcode;
+			packetLog.PacketLogTypeID = (int)logItem.PacketLogType;
 
-			using (ApplicationContext context = new ApplicationContext())
+			if (logItem.PacketHeader.Length > 0)
 			{
-				packetLog.PacketLogTypeID = logtype == PacketLogType.CMSG ?
-					context.PacketLogTypes.First(x => x.ID == (int)PacketLogType.CMSG && x.Active).ID :
-					context.PacketLogTypes.First(x => x.ID == (int)PacketLogType.SMSG && x.Active).ID;
-			}
-
-			if (packet.Header.Length > 0)
-			{
-				packetLog.Message = logtype == PacketLogType.CMSG ?
-					BitConverter.ToString(packet.Message) :
-					BitConverter.ToString(packet.Message
-					, packet.Header.Length > Int16.MaxValue ? ServerConfig.BigHeaderLength : ServerConfig.HeaderLength);
+				packetLog.Message =	BitConverter.ToString(logItem.PacketMessage
+					, logItem.PacketHeader.Length > Int16.MaxValue ? ServerConfig.BigHeaderLength : ServerConfig.HeaderLength);
 			}
 
 			PacketLog.Add(packetLog);
@@ -172,10 +162,19 @@ namespace ServerFramework.Managers.Core
 		/// <param name="packet">Instance of <see cref="ServerFramework.Network.Packets.Packet"/> type.</param>
 		internal void Log(Packet packet)
 		{
-			PacketLogType logtype = packet.Stream.Reader != null ? PacketLogType.CMSG : PacketLogType.SMSG;
-			
-			if ((ServerConfig.PacketLogLevel & logtype) == logtype && packet.Header.IsForLog)
-				PacketLogQueue.Add(packet);
+			if ((ServerConfig.PacketLogLevel & packet.LogType) == packet.LogType && packet.Header.IsForLog)
+			{
+				byte[] message = new byte[packet.Header.Length];
+				packet.CopyTo(0, message, 0, (uint)message.Length);
+
+				Client pClient = Manager.SessionMgr.GetClientBySession(packet.SessionId);
+
+				if (pClient != null)
+				{
+					PacketLogItem packetLog = new PacketLogItem(pClient, packet.Header, message, packet.LogType);
+					PacketLogQueue.Add(packetLog);
+				}
+			}
 		}
 
 		#endregion

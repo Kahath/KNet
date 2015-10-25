@@ -71,26 +71,7 @@ namespace ServerFramework.Commands.Handlers
 				OpcodeModel opcode = context.Opcodes.FirstOrDefault(x => x.Code == code 
 					&& x.Version == version && x.Active);
 
-				if(opcode != null)
-				{
-					if(Manager.PacketMgr.PacketHandlers.ContainsKey((ushort)opcode.Code))
-					{
-						MethodInfo method = Manager.AssemblyMgr.GetMethod
-							(
-								opcode.AssemblyName
-							,	opcode.TypeName
-							,	opcode.MethodName
-							,	typeof(Client)
-							,	typeof(Packet)
-							);
-
-						if (method != null)
-						{
-							Manager.PacketMgr.PacketHandlers[(ushort)opcode.Code]
-								= Delegate.CreateDelegate(typeof(OpcodeHandler), method) as OpcodeHandler;
-						}
-					}
-				}
+				ChangeOpcode(opcode);
 			}
 
 			return true;
@@ -112,26 +93,7 @@ namespace ServerFramework.Commands.Handlers
 					.OrderByDescending(x => x.Version)
 					.FirstOrDefault();
 
-				if (opcode != null)
-				{
-					if (Manager.PacketMgr.PacketHandlers.ContainsKey((ushort)opcode.Code))
-					{
-						MethodInfo method = Manager.AssemblyMgr.GetMethod
-							(
-								opcode.AssemblyName
-							,	opcode.TypeName
-							,	opcode.MethodName
-							,	typeof(Client)
-							,	typeof(Packet)
-							);
-
-						if (method != null)
-						{
-							Manager.PacketMgr.PacketHandlers[(ushort)opcode.Code]
-								= Delegate.CreateDelegate(typeof(OpcodeHandler), method) as OpcodeHandler;
-						}
-					}
-				}
+				ChangeOpcode(opcode);
 			}
 
 
@@ -154,30 +116,43 @@ namespace ServerFramework.Commands.Handlers
 					.FirstOrDefault(x => x.Code == code && x.Version == version 
 						&& x.TypeID == opcodeType && x.Active);
 
-				if(opcode != null)
-				{
-					if (Manager.PacketMgr.PacketHandlers.ContainsKey((ushort)opcode.Code))
-					{
-						MethodInfo method = Manager.AssemblyMgr.GetMethod
-							(
-								opcode.AssemblyName
-							,	opcode.TypeName
-							,	opcode.MethodName
-							,	typeof(Client)
-							,	typeof(Packet)
-							);
-
-						if (method != null)
-						{
-							Manager.PacketMgr.PacketHandlers[(ushort)opcode.Code]
-							= Delegate.CreateDelegate(typeof(OpcodeHandler), method) as OpcodeHandler;
-						}
-					}
-				}
-			}
+				ChangeOpcode(opcode);
+            }
 
 			return true;
 		}
+
+		#endregion
+
+		#endregion
+
+		#region Methods
+
+		#region ChangeOpcode
+
+		private static void ChangeOpcode(OpcodeModel opcode)
+		{
+			if (opcode != null)
+			{
+				if (Manager.PacketMgr.PacketHandlers.ContainsKey((ushort)opcode.Code))
+				{
+					MethodInfo method = Manager.AssemblyMgr.GetMethod
+						(
+							opcode.AssemblyName
+						,	opcode.TypeName
+						,	opcode.MethodName
+						,	typeof(Client)
+						,	typeof(Packet)
+						);
+
+					if (method != null)
+					{
+						Manager.PacketMgr.PacketHandlers[(ushort)opcode.Code]
+						= Delegate.CreateDelegate(typeof(OpcodeHandler), method) as OpcodeHandler;
+					}
+				}
+			}
+        }
 
 		#endregion
 

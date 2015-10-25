@@ -18,7 +18,7 @@ using System;
 namespace ServerFramework.Enums
 {
 	[Flags]
-	enum PacketLogType : byte
+	public enum PacketLogType : byte
 	{
 		None	= 0x00,
 		CMSG	= 0x01,

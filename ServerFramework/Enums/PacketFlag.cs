@@ -22,7 +22,6 @@ namespace ServerFramework.Enums
 	{
 		None		= 0x00,
 		Log			= 0x20,
-		Unicode		= 0x40,
-		BigPacket	= 0x80,
+		BigPacket	= 0x40,
 	};
 }

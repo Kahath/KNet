@@ -124,13 +124,10 @@ namespace ServerFramework.Managers.Core
 			{
 				try
 				{
-					using (packet)
-					{
-						Client pClient = Manager.SessionMgr.GetClientBySession(packet.SessionId);
+					Client pClient = Manager.SessionMgr.GetClientBySession(packet.SessionId);
 
-						if (pClient != null)
-							PacketHandlers[packet.Header.Opcode](pClient, packet);
-					}
+					if (pClient != null)
+						PacketHandlers[packet.Header.Opcode](pClient, packet);
 				}
 				catch (Exception e)
 				{
@@ -145,9 +142,9 @@ namespace ServerFramework.Managers.Core
 							(
 								LogType.Warning
 							,	$"Error with '0x{attr.Opcode:X}' opcode "
-									+ $"authored by '{attr.Author}' using version '{attr.Version}' and type '{attr.Type}'\n"
-									+ $"Packet size: {packet.Header.Length}\nPacket opcode: 0x{packet.Header.Opcode:X}"
-									+ $"\nPacket content: {BitConverter.ToString(packet.Message)}"
+							+	$"authored by '{attr.Author}' using version '{attr.Version}' and type '{attr.Type}'\n"
+							+	$"Packet size: {packet.Header.Length}\nPacket opcode: 0x{packet.Header.Opcode:X}"
+							+	$"\nPacket content: {BitConverter.ToString(packet.ToArray(packet.Header.Length))}"
 							);
 					}
 

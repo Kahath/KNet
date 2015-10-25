@@ -62,7 +62,8 @@ namespace ServerFramework.Commands.Handlers
 						Manager.LogMgr.Log
 						(
 							LogType.Command
-						,	$"Available sub commands for '{command.FullName}'{Environment.NewLine}{Manager.CommandMgr.AvailableSubCommands(command, user.UserLevel)}"
+						,	$"Available sub commands for '{command.FullName}'"
+						+	$"{Environment.NewLine}{Manager.CommandMgr.AvailableSubCommands(command, user.UserLevel)}"
 						);
 					}
 					else if (!String.IsNullOrEmpty(command.Description))

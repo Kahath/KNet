@@ -73,7 +73,7 @@ namespace ServerFramework.Managers.Core
 				.Where(x => x.CustomAttributes
 					.Any(y => typeof(ICustomAttribute).IsAssignableFrom(y.AttributeType))))
 			{
-				HandleCustomAssemblyTypes(a);
+				ProcessCustomAssembly(a);
 			}
 
 			using(ApplicationContext context = new ApplicationContext())
@@ -125,15 +125,15 @@ namespace ServerFramework.Managers.Core
 
 			if(assembly != null)
 			{
-				HandleCustomAssemblyTypes(assembly);
+				ProcessCustomAssembly(assembly);
 			}
 		}
 
 		#endregion
 
-		#region HandleAssemblyTypes
+		#region ProcessCustomAssembly
 
-		public void HandleCustomAssemblyTypes(Assembly assembly)
+		public void ProcessCustomAssembly(Assembly assembly)
 		{
 			using (ApplicationContext context = new ApplicationContext())
 			{
@@ -191,7 +191,7 @@ namespace ServerFramework.Managers.Core
 
 		#endregion
 
-		#region OnAssemblyType
+		#region OnCustomAssemblyType
 
 		private void OnCustomAssemblyType(Assembly assembly, Type type, ApplicationContext context)
 		{
@@ -248,7 +248,7 @@ namespace ServerFramework.Managers.Core
 
 		#endregion
 
-		#region OnAssemblyMethod
+		#region OnCustomAssemblyMethod
 
 		private void OnCustomAssemblyMethod(Assembly assembly, Type type, MethodInfo method, ApplicationContext context)
 		{

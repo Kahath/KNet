@@ -15,7 +15,6 @@
 
 using ServerFramework.Configuration.Helpers;
 using ServerFramework.Enums;
-using ServerFramework.Extensions;
 using ServerFramework.Helpers;
 using ServerFramework.Managers;
 using ServerFramework.Network.Packets;
@@ -204,15 +203,13 @@ namespace ServerFramework.Network.Socket
 				{
 					e.SetBuffer(data.BufferOffset, SocketSettings.BufferSize);
 
-					Buffer.BlockCopy(data.Packet.Message, data.MessageBytesDoneCount,
-						e.Buffer, data.BufferOffset, SocketSettings.BufferSize);
+					data.Packet.CopyTo(data.MessageBytesDoneCount, e.Buffer, data.BufferOffset, (uint)SocketSettings.BufferSize);
 				}
 				else
 				{
 					e.SetBuffer(data.BufferOffset, data.MessageBytesRemainingCount);
 
-					Buffer.BlockCopy(data.Packet.Message, data.MessageBytesDoneCount,
-						e.Buffer, data.BufferOffset, data.MessageBytesRemainingCount);
+					data.Packet.CopyTo(data.MessageBytesDoneCount, e.Buffer, data.BufferOffset, (uint)data.MessageBytesRemainingCount);
 				}
 
 				if (!e.AcceptSocket.SendAsync(e))
@@ -393,16 +390,15 @@ namespace ServerFramework.Network.Socket
 			Manager.BufferMgr.SetBuffer(retVal.Receiver);
 			Manager.BufferMgr.SetBuffer(retVal.Sender);
 
-			data = new SocketData(SocketSettings.BufferSize,
-				retVal.Receiver.Offset,
-				SocketSettings.HeaderLength);
+			data = new SocketData(SocketSettings.BufferSize, retVal.Receiver.Offset,
+				SocketSettings.HeaderLength, PacketLogType.CMSG);
 
 			retVal.Receiver.UserToken = data;
 			retVal.Receiver.Completed +=
 				new EventHandler<SocketAsyncEventArgs>(receive_completed);
 
 			data = new SocketData(SocketSettings.BufferSize, retVal.Sender.Offset,
-				SocketSettings.HeaderLength);
+				SocketSettings.HeaderLength, PacketLogType.SMSG);
 
 			retVal.Sender.UserToken = data;
 			retVal.Sender.Completed +=

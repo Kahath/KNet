@@ -58,14 +58,6 @@ namespace ServerFramework.Network.Packets
 		}
 
 		/// <summary>
-		/// Is packet encoding unicode
-		/// </summary>
-		public bool IsUnicode
-		{
-			get { return Convert.ToBoolean(Flags & (byte)PacketFlag.Unicode); }
-		}
-
-		/// <summary>
 		/// Is packet loged in database
 		/// </summary>
 		public bool IsForLog
@@ -78,23 +70,14 @@ namespace ServerFramework.Network.Packets
 		#region Constructors
 
 		/// <summary>
-		/// Creates instance of <see cref="ServerFramework.Network.Packets.PacketHeader"/> type.
+		/// Creates instance of <see cref="PacketHeader"/> type.
 		/// </summary>
 		/// <param name="header">Header byte array.</param>
-		public PacketHeader(byte[] header)
+		public PacketHeader(byte flags, int length, ushort opcode)
 		{
-			Flags = header[0];
-
-			Length = IsBigHeader
-				? BitConverter.ToInt32(header, ServerConfig.PacketFlagsLength)
-				: BitConverter.ToUInt16(header, ServerConfig.PacketFlagsLength);
-			Opcode = IsBigHeader
-				? BitConverter.ToUInt16(header
-				,	ServerConfig.BigHeaderLength 
-					- ServerConfig.OpcodeLength)
-				: BitConverter.ToUInt16(header
-				,	ServerConfig.HeaderLength 
-					- ServerConfig.OpcodeLength);
+			Flags = flags;
+			Length = length;
+			Opcode = opcode;
 		}
 
 		#endregion

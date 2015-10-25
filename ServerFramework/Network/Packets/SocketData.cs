@@ -14,6 +14,10 @@
  */
 
 using ServerFramework.Configuration.Helpers;
+using ServerFramework.Enums;
+using ServerFramework.Helpers;
+using System;
+using System.Net.Sockets;
 
 namespace ServerFramework.Network.Packets
 {
@@ -49,6 +53,11 @@ namespace ServerFramework.Network.Packets
 		#endregion
 
 		#region Properties
+
+		internal int BytesDoneCount
+		{
+			get { return HeaderBytesDoneCount + MessageBytesDoneCount; }
+		}
 
 		internal int MessageLength
 		{
@@ -172,12 +181,13 @@ namespace ServerFramework.Network.Packets
 		/// <param name="bufferSize">Buffer size for client.</param>
 		/// <param name="bufferOffset">Buffer offset in large alocated buffer.</param>
 		/// <param name="headerLength">Length of message header.</param>
-		internal SocketData(int bufferSize, int bufferOffset, int headerLength)
+		internal SocketData(int bufferSize, int bufferOffset, int headerLength, PacketLogType logType)
 		{
 			_bufferSize = bufferSize;
 			_bufferOffset = bufferOffset;
 			HeaderLength = headerLength;
 			HeaderOffset = bufferOffset;
+			Packet = new Packet(logType);
 			Header = new byte[ServerConfig.BigHeaderLength];
 		}
 
@@ -190,12 +200,144 @@ namespace ServerFramework.Network.Packets
 		/// <summary>
 		/// Finishes writing data to packet.
 		/// </summary>
-		internal void Finish()
+		internal void Finish(byte flags, ushort opcode)
 		{
-			MessageBytesRemainingCount = Packet.End();
+			MessageBytesRemainingCount = Packet.End(flags, opcode);
 		}
 
 		#endregion
+
+		#region HandleHeader
+
+		/// <summary>
+		/// Handles message header. If received bytes length is lesser than 
+		/// header length, multiple method calls are required.
+		/// </summary>
+		/// <param name="e">SocketAsyncEventArgs object</param>
+		/// <param name="data">SocketAsyncEventArgs user token</param>
+		/// <param name="remainingBytesToProcess">bytes transfered in receiveCallback</param>
+		/// <returns></returns>
+		internal int HandleHeader(SocketAsyncEventArgs e, int remainingBytesToProcess)
+		{
+			if (HeaderBytesDoneCount == 0)
+			{
+				byte flags = e.Buffer[HeaderOffset];
+
+				IsBigPacket = Convert.ToBoolean(flags & (byte)PacketFlag.BigPacket);
+
+				HeaderLength = IsBigPacket
+					? ServerConfig.BigHeaderLength
+					: ServerConfig.HeaderLength;
+
+				MessageOffset = HeaderOffset + HeaderLength;
+
+				Packet.Alloc(HeaderLength);
+			}
+
+			if (remainingBytesToProcess >= HeaderLength - HeaderBytesDoneCount)
+			{
+				Packet.CopyFrom(e.Buffer, HeaderOffset + HeaderBytesDoneCount, HeaderBytesDoneCount, (uint)(HeaderLength - HeaderBytesDoneCount));
+				//Buffer.BlockCopy
+				//	(
+				//		e.Buffer
+				//	,	HeaderOffset + HeaderBytesDoneCount
+				//	,	Header
+				//	,	HeaderBytesDoneCount
+				//	,	HeaderLength - HeaderBytesDoneCount
+				//	);
+
+				remainingBytesToProcess = (remainingBytesToProcess - HeaderLength) + HeaderBytesDoneCount;
+
+				HeaderBytesDoneThisOp = HeaderLength - HeaderBytesDoneCount;
+
+				HeaderBytesDoneCount = HeaderLength;
+
+				byte flags = Packet.Read<byte>();
+				int length = IsBigPacket ? Packet.Read<int>() : Packet.Read<ushort>();
+				ushort opcode = Packet.Read<ushort>();
+
+				Packet.Header = new PacketHeader(flags, length, opcode);
+				MessageLength = Packet.Header.Length;
+
+				if(MessageLength > 0)
+					Packet.Realloc(HeaderLength + MessageLength);
+
+				IsHeaderReady = true;
+			}
+			else
+			{
+				Packet.CopyFrom(e.Buffer, HeaderOffset + HeaderBytesDoneCount, HeaderBytesDoneCount, (uint)remainingBytesToProcess);
+				//Buffer.BlockCopy
+				//	(
+				//		e.Buffer
+				//	,	HeaderOffset + HeaderBytesDoneCount
+				//	,	Header
+				//	,	HeaderBytesDoneCount
+				//	,	remainingBytesToProcess
+				//	);
+
+				HeaderBytesDoneThisOp = remainingBytesToProcess;
+				HeaderBytesDoneCount += remainingBytesToProcess;
+				remainingBytesToProcess = 0;
+			}
+
+			if (remainingBytesToProcess == 0)
+			{
+				MessageOffset -= HeaderBytesDoneThisOp;
+				HeaderBytesDoneThisOp = 0;
+			}
+
+			return remainingBytesToProcess;
+		}
+
+		#endregion
+
+		#region HandleMessage
+
+		/// <summary>
+		/// Handles message.  If received bytes length is lesser than 
+		/// message length, multiple method calls are required. 
+		/// </summary>
+		/// <param name="e">SocketAsyncEventArgs object</param>
+		/// <param name="data">SocketAsyncEventArgs UserToken</param>
+		/// <param name="remainingBytesToProcess">bytes transfered in receive callback</param>
+		/// <returns></returns>
+		internal int HandleMessage(SocketAsyncEventArgs e, int remainingBytesToProcess)
+		{
+			if (MessageLength == 0)
+			{
+				Packet.SessionId = SessionId;
+
+				IsPacketReady = true;
+			}
+			else if ((remainingBytesToProcess + MessageBytesDoneCount) >= MessageLength)
+			{
+				Packet.CopyFrom(e.Buffer, MessageOffset, BytesDoneCount, (uint)(MessageLength - MessageBytesDoneCount));
+
+				remainingBytesToProcess = (remainingBytesToProcess - MessageLength)
+					+ MessageBytesDoneCount;
+
+				MessageBytesDoneThisOp = MessageLength - MessageBytesDoneCount;
+
+				Packet.SessionId = SessionId;
+
+				IsPacketReady = true;
+			}
+			else
+			{
+				Packet.CopyFrom(e.Buffer, MessageOffset, BytesDoneCount, (uint)remainingBytesToProcess);
+
+				MessageOffset -= HeaderBytesDoneThisOp;
+				MessageBytesDoneCount += remainingBytesToProcess;
+
+				remainingBytesToProcess = 0;
+			}
+
+			return remainingBytesToProcess;
+		}
+
+		#endregion
+
 
 		#region Reset
 
@@ -205,7 +347,7 @@ namespace ServerFramework.Network.Packets
 		/// <param name="headerOffset">Header offset</param>
 		internal void Reset(int headerOffset)
 		{
-			Packet = null;
+			Packet.Free();
 			IsHeaderReady = false;
 			IsPacketReady = false;
 			IsBigPacket = false;

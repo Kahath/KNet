@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ServerFramework</RootNamespace>
     <AssemblyName>ServerFramework</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -22,6 +22,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -55,6 +56,10 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="UMemory, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Libs\UMemory.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\Base\CommandHandlerBase.cs" />
@@ -68,6 +73,8 @@
     <Compile Include="Database\Base\Entity\AssemblyEntityBase.cs" />
     <Compile Include="Database\Repository\CommandRepository.cs" />
     <Compile Include="Enums\CommandValidation.cs" />
+    <Compile Include="Network\Packets\PacketLogItem.cs" />
+    <Compile Include="Network\Packets\PacketStream.cs" />
     <Compile Include="Network\Session\ConsoleClient.cs" />
     <Compile Include="Network\Session\IClient.cs" />
     <Compile Include="Events\AssemblyEventArgs.cs" />
@@ -93,8 +100,6 @@
     <Compile Include="Database\Model\Application\Log\LogTypeModel.cs" />
     <Compile Include="Database\Model\Application\PacketLog\PacketLogModel.cs" />
     <Compile Include="Database\Model\Application\PacketLog\PacketLogTypeModel.cs" />
-    <Compile Include="Extensions\NetworkExtensions.cs" />
-    <Compile Include="Extensions\PacketStreamExtensions.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="Commands\Handlers\AssemblyCommands.cs" />
     <Compile Include="Commands\Handlers\ClearCommands.cs" />
@@ -115,7 +120,6 @@
     <Compile Include="Managers\Core\SessionManager.cs" />
     <Compile Include="Network\Packets\Handlers\ExampleHandler.cs" />
     <Compile Include="Network\Packets\Packet.cs" />
-    <Compile Include="Network\Packets\PacketStream.cs" />
     <Compile Include="Network\Packets\SocketData.cs" />
     <Compile Include="Attributes\Core\OpcodeAttribute.cs" />
     <Compile Include="Network\Packets\PacketHeader.cs" />
@@ -134,10 +138,13 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Libs\DILibrary.dll" />
+    <Content Include="Libs\UMemory.dll" />
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

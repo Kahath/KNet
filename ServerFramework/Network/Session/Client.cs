@@ -13,6 +13,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using ServerFramework.Configuration.Helpers;
 using ServerFramework.Enums;
 using ServerFramework.Network.Packets;
 using ServerFramework.Network.Socket;
@@ -153,16 +154,20 @@ namespace ServerFramework.Network.Session
 		/// Sends packet to client.
 		/// </summary>
 		/// <param name="packet">Instance of <see cref="ServerFramework.Network.Packets.Packet"/> type.</param>
-		public void Send(Packet packet)
+		public void Send(ushort opcode, byte flags, int maxLength, Action<Packet> action)
 		{
-			if (BeforePacketSend != null)
-				BeforePacketSend(packet, new EventArgs());
-
 			SocketExtended.SendResetEvent.WaitOne();
 			SocketData data = SocketExtended.SenderData;
-			data.Packet = packet;
-			data.Finish();
+			data.Packet.Alloc(maxLength);
+			data.Packet.Stream.Seek(ServerConfig.BigHeaderLength);
+
+			action(data.Packet);
+
+			data.Finish(flags, opcode);
 			data.Packet.SessionId = data.SessionId;
+
+			if (BeforePacketSend != null)
+				BeforePacketSend(data.Packet, new EventArgs());
 
 			Server.Send(SocketExtended.Sender);
 		}

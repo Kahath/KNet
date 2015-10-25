@@ -70,21 +70,21 @@ namespace ServerFramework.Managers.Core
 		/// </summary>
 		protected override void Init()
 		{
-			using(CommandRepository cRepo = new CommandRepository(new ApplicationContext()))
+			using (CommandRepository cRepo = new CommandRepository(new ApplicationContext()))
 			{
 				IEnumerable<CommandModel> commands = cRepo.Context.Commands.Where(x => x.Active && x.ParentID == null).ToList();
 
-				foreach(CommandModel command in commands)
+				foreach (CommandModel command in commands)
 				{
 					Command c = null;
 					Type type = Manager.AssemblyMgr.GetType(command.AssemblyName, command.TypeName);
 					MethodInfo method = type.GetMethodByName(command.MethodName);
 
-					if(method != null)
+					if (method != null)
 					{
 						object obj = Manager.AssemblyMgr.InvokeConstructor(type);
 
-						if(obj != null && command != null)
+						if (obj != null && command != null)
 							c = Manager.AssemblyMgr.InvokeMethod<Command>(obj, method);
 
 						if (c != null)

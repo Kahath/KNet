@@ -15,50 +15,26 @@
 
 using ServerFramework.Configuration.Helpers;
 using ServerFramework.Enums;
-using ServerFramework.Extensions;
 using System;
-using System.IO;
-using System.Text;
+using UMemory.Unmanaged.Stream.Core;
 
 namespace ServerFramework.Network.Packets
 {
-	internal class PacketStream : IDisposable
+	internal class PacketStream : UMemoryStream 
 	{
 		#region Fields
 
-		private BinaryReader _reader;
-		private BinaryWriter _writer;
-		private Encoding _encoder;
-
-		private byte _position = 0;
+		private byte _bitPosition = 0;
 		private byte _value;
 
 		#endregion
 
 		#region Properties
 
-		internal BinaryReader Reader
+		private byte BitPosition
 		{
-			get { return _reader; }
-			set { _reader = value; }
-		}
-
-		internal BinaryWriter Writer
-		{
-			get { return _writer; }
-			set { _writer = value; }
-		}
-
-		internal Encoding Encoder
-		{
-			get { return _encoder; }
-			set { _encoder = value; }
-		}
-
-		private byte Position
-		{
-			get { return _position; }
-			set { _position = value; }
+			get { return _bitPosition; }
+			set { _bitPosition = value; }
 		}
 
 		private byte Value
@@ -71,68 +47,15 @@ namespace ServerFramework.Network.Packets
 
 		#region Constructors
 
-		/// <summary>
-		/// Creates new instance of <see cref="ServerFramework.Network.Packets.PacketStream"/> type.
-		/// </summary>
-		/// <param name="encoding">Encoding used in underlying stream.</param>
-		/// <param name="data">Data to read if stream should instance as reader.</param>
-		public PacketStream(Encoding encoding, byte[] data = null)
+		public PacketStream(int maxLength)
+			: base(maxLength)
 		{
-			Encoder = encoding;
-
-			if (data != null)
-				Reader = new BinaryReader(new MemoryStream(data, false), encoding);
-			else
-				Writer = new BinaryWriter(new MemoryStream(), encoding);
+			
 		}
 
 		#endregion
 
 		#region Methods
-
-		#region Read
-
-		/// <summary>
-		/// Reads generic value from underlying stream.
-		/// </summary>
-		/// <typeparam name="T">Type of return value.</typeparam>
-		/// <param name="count">Length to read if T is array.</param>
-		/// <returns>Value of generic type</returns>
-		internal T Read<T>(int count = 0)
-		{
-			T retVal = default(T);
-
-			if (Reader != null)
-				retVal = Reader.Read<T>(count);
-			else
-				throw new NullReferenceException("Reader cannot be null");
-
-			return retVal;
-		}
-
-		#endregion
-
-		#region Write
-
-		/// <summary>
-		/// Writes generic value to underlying stream.
-		/// </summary>
-		/// <typeparam name="T">Type of value.</typeparam>
-		/// <param name="value">Value.</param>
-		internal void Write<T>(T value)
-		{
-			if (Writer != null)
-			{
-				T trueValue = (T)Convert.ChangeType(value, typeof(T));
-				Writer.Write<T>(trueValue);
-			}
-			else
-			{
-				throw new NullReferenceException("Writer cannot be null");
-			}
-		}
-
-		#endregion
 
 		#region BitPack
 
@@ -144,15 +67,15 @@ namespace ServerFramework.Network.Packets
 		/// <returns>Bit as boolean.</returns>
 		private bool ReadBit()
 		{
-			if (Position == 0)
+			if (BitPosition == 0)
 			{
 				Value = Read<byte>();
-				Position = 8;
+				BitPosition = 8;
 			}
 
 			bool retVal = Convert.ToBoolean(Value >> 7);
 
-			--Position;
+			--BitPosition;
 			Value <<= 1;
 
 			return retVal;
@@ -188,15 +111,15 @@ namespace ServerFramework.Network.Packets
 		/// <param name="value">Value.</param>
 		private void WriteBit(bool value)
 		{
-			++Position;
+			++BitPosition;
 
 			if (value)
-				Value |= (byte)(1 << (8 - Position));
+				Value |= (byte)(1 << (8 - BitPosition));
 
-			if (Position == 8)
+			if (BitPosition == 8)
 			{
 				Write<byte>(Value);
-				Position = 0;
+				BitPosition = 0;
 				Value = 0;
 			}
 		}
@@ -241,11 +164,11 @@ namespace ServerFramework.Network.Packets
 		/// </summary>
 		internal void Flush()
 		{
-			if (Position != 0)
+			if (BitPosition != 0)
 			{
 				Write<byte>(Value);
 
-				Position = 0;
+				BitPosition = 0;
 				Value = 0;
 			}
 		}
@@ -256,54 +179,47 @@ namespace ServerFramework.Network.Packets
 
 		#region End
 
-		/// <summary>
-		/// Finishes writing data to underlying stream.
-		/// </summary>
-		/// <param name="message">Packet message.</param>
-		/// <param name="header">Packet header.</param>
-		/// <returns>message + header array length.</returns>
-		internal int End(out byte[] message, out byte[] header)
+		internal PacketHeader End(byte flags, ushort opcode)
 		{
+			PacketHeader retVal  = null;
 			Flush();
 
-			Writer.BaseStream.Seek(0, SeekOrigin.Begin);
-			byte flags = Convert.ToByte(Writer.BaseStream.ReadByte());
-			
-			Writer.BaseStream.Seek(0, SeekOrigin.Begin);
-
-			int length = (int)Writer.BaseStream.Length;
-			int messageLength = length - ServerConfig.BigHeaderLength;
-
+			int messageLength = Position - ServerConfig.BigHeaderLength;
 			bool isBigHeader = messageLength > UInt16.MaxValue;
-			bool isUnicode = Encoder == Encoding.Unicode;
-			
+
+			flags = SetupFlag(flags, PacketFlag.BigPacket, isBigHeader);
+
 			int headerLength = isBigHeader
 				? ServerConfig.BigHeaderLength
 				: ServerConfig.HeaderLength;
 
-			message = new byte[messageLength + headerLength];
+			int packetPosition = ServerConfig.BigHeaderLength - headerLength;
 
-			Writer.BaseStream.Skip(ServerConfig.BigHeaderLength - headerLength);
-			Writer.BaseStream.Read(message, 0, messageLength + headerLength);
+			Seek(packetPosition);
 
-			flags = SetupFlag(flags, PacketFlag.BigPacket, isBigHeader);
-			flags = SetupFlag(flags, PacketFlag.Unicode, isUnicode);
+			Write<byte>(flags);
 
-			message.SetValue(flags, 0);
-			message.SetValue((byte)(messageLength & Byte.MaxValue), 1);
-			message.SetValue((byte)((messageLength >> 8) & Byte.MaxValue), 2);
+			if (!isBigHeader)
+				Write<ushort>((ushort)messageLength);
+			else
+				Write<int>(messageLength);
 
-			if (isBigHeader)
-			{				
-				message.SetValue((byte)((messageLength >> 16) & Byte.MaxValue), 3);
-				message.SetValue((byte)((messageLength >> 24) & Byte.MaxValue), 4);
-			}
+			Write<ushort>(opcode);
 
-			header = new byte[headerLength];
+			Adjust(packetPosition);
 
-			Array.Copy(message, header, headerLength);
+			retVal = new PacketHeader(flags, messageLength, opcode);		
 
-			return message.Length;
+			return retVal;
+		}
+
+		#endregion
+
+		#region ResetPosition
+
+		internal void ResetPosition()
+		{
+			Seek(0);
 		}
 
 		#endregion
@@ -325,22 +241,6 @@ namespace ServerFramework.Network.Packets
 				flags &= (byte)~flag;
 
 			return flags;
-		}
-
-		#endregion
-
-		#region Dispose
-
-		/// <summary>
-		/// Disposes object rsources.
-		/// </summary>
-		public void Dispose()
-		{
-			if (Reader != null)
-				Reader.Close();
-
-			if (Writer != null)
-				Writer.Close();
 		}
 
 		#endregion

@@ -14,21 +14,19 @@
  */
 
 using ServerFramework.Configuration.Helpers;
+using ServerFramework.Enums;
 using System;
-using System.IO;
-using System.Text;
 
 namespace ServerFramework.Network.Packets
 {
-	public class Packet : IDisposable
+	public class Packet
 	{
 		#region Fields
 
 		private PacketHeader _header;
 		private PacketStream _stream;
-		private Encoding _encoder;
-		private byte[] _message;
 		private int _sessionId;
+		private PacketLogType _logType;
 
 		#endregion
 
@@ -38,12 +36,6 @@ namespace ServerFramework.Network.Packets
 		{
 			get { return _header; }
 			internal set { _header = value; }
-		}
-
-		public byte[] Message
-		{
-			get { return _message; }
-			internal set { _message = value; }
 		}
 
 		public int SessionId
@@ -57,10 +49,9 @@ namespace ServerFramework.Network.Packets
 			get { return _stream; }
 		}
 
-		private Encoding Encoding
+		internal PacketLogType LogType
 		{
-			get { return _encoder; }
-			set { _encoder = value; }
+			get { return _logType; }
 		}
 
 		#endregion
@@ -71,43 +62,15 @@ namespace ServerFramework.Network.Packets
 		/// Creates instance of <see cref="ServerFramework.Network.Packets.Packet"/> type used for reading data.
 		/// </summary>
 		/// <param name="header">Header byte array.</param>
-		internal Packet(byte[] header)
+		internal Packet(PacketLogType logType)
 		{
-			Header = new PacketHeader(header);
-			Encoding = Header.IsUnicode ? Encoding.Unicode : Encoding.UTF8;
-		}
-
-		/// <summary>
-		/// Creates instance of <see cref="ServerFramework.Network.Packets.Packet"/> type used for writing data.
-		/// </summary>
-		/// <param name="opcode">Operational code.</param>
-		/// <param name="encoding">Encoding used in packet.</param>
-		/// <param name="flags">Flags <see cref="ServerFramework.Constants.Misc.PacketFlag"/>.</param>
-		public Packet(ushort opcode, Encoding encoding, byte flags = 0)
-		{
-			Encoding = encoding ?? Encoding.UTF8;
-			_stream = new PacketStream(Encoding);
-
-			Write<byte>(flags);
-			Write<int>(ServerConfig.BigHeaderLength);
-			Write<ushort>(opcode);
+			_stream = new PacketStream(0);
+			_logType = logType;
 		}
 
 		#endregion
 
 		#region Methods
-
-		#region PrepareRead
-
-		/// <summary>
-		/// Prepares packet stream for reading data.
-		/// </summary>
-		internal void PrepareRead()
-		{
-			_stream = new PacketStream(Encoding, Message);
-		}
-
-		#endregion
 
 		#region Read
 
@@ -119,7 +82,7 @@ namespace ServerFramework.Network.Packets
 		/// <returns>Value of generic type.</returns>
 		public T Read<T>(int count = 0)
 		{
-			return Stream.Read<T>(count);
+			return Stream.Read<T>();
 		}
 
 		#endregion
@@ -231,40 +194,61 @@ namespace ServerFramework.Network.Packets
 		/// Finishes writing data to packet stream.
 		/// </summary>
 		/// <returns>Length of message array for sending.</returns>
-		public int End()
+		public int End(byte flags, ushort opcode)
 		{
-			byte[] header;
+			int retVal;
 
-			int retVal = Stream.End(out _message, out header);
-
-			Header = new PacketHeader(header);
-
+			Header = Stream.End(flags, opcode);
+			retVal = Header.Length + (Header.IsBigHeader ? ServerConfig.BigHeaderLength : ServerConfig.HeaderLength);
+            
 			return retVal;
 		}
 
 		#endregion
 
-		#region Dispose
+		#region Alloc
 
-		/// <summary>
-		/// Disposes object.
-		/// </summary>
-		public void Dispose()
+		internal void Alloc(int maxLength)
 		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
+			Stream.Alloc(maxLength);
 		}
 
-		/// <summary>
-		/// Disposes object clearing managed resources.
-		/// </summary>
-		/// <param name="isDisposing">Clear managed resources.</param>
-		private void Dispose(bool isDisposing)
+		internal void Realloc(int length)
 		{
-			if(isDisposing)
-			{
-				_stream.Dispose();
-			}
+			Stream.Realloc(length);
+		}
+
+		internal void Free()
+		{
+			Stream.Free();
+			Stream.ResetPosition();
+		}
+
+		#endregion
+
+		#region Copy
+
+		internal void CopyFrom(byte[] from, int fromOffset, int toOffset, uint length)
+		{
+			Stream.CopyFrom(from, fromOffset, fromOffset, length);
+		}
+
+		internal void CopyTo(int srcOffset, byte[] to, int toOffset, uint length)
+		{
+			Stream.CopyTo(srcOffset, to, toOffset, length);
+		}
+
+		#endregion
+
+		#region ToArray
+
+		public byte[] ToArray(int length)
+		{
+			byte[] retVal = new byte[length];
+
+			CopyTo(0, retVal, 0, (uint)length);
+
+			return retVal;
 		}
 
 		#endregion

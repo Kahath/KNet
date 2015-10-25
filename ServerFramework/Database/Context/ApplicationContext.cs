@@ -49,7 +49,6 @@ namespace ServerFramework.Database.Context
 		public ApplicationContext()
 			: base(ServerConfig.ConnectionString)
 		{
-
 		}
 
 		#endregion

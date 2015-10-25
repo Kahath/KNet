@@ -26,7 +26,6 @@ using ServerFramework.Network.Packets;
 using ServerFramework.Network.Session;
 using ServerFramework.Network.Socket;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Validation;

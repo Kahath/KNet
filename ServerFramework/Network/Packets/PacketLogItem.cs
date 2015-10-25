@@ -13,50 +13,54 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using System;
-using System.Reflection;
+using ServerFramework.Enums;
+using ServerFramework.Network.Session;
 
-namespace ServerFramework.Events
+namespace ServerFramework.Network.Packets
 {
-	public class AssemblyEventArgs : EventArgs
+	internal class PacketLogItem
 	{
 		#region Fields
 
-		Assembly _assembly;
-		Type _type;
-		MethodInfo _method;
+		private Client _client;
+		private PacketHeader _packetHeader;
+		private byte[] _packetMessage;
+		private PacketLogType _packetLogType;
 
 		#endregion
 
 		#region Properties
 
-		public Assembly Assembly
+		internal Client Client
 		{
-			get { return _assembly; }
-			set { _assembly = value; }
+			get { return _client; }
 		}
 
-		public Type Type
+		internal PacketHeader PacketHeader
 		{
-			get { return _type; }
-			set { _type = value; }
+			get { return _packetHeader; }
 		}
 
-		public MethodInfo Method
+		internal byte[] PacketMessage
 		{
-			get { return _method; }
-			set { _method = value; }
+			get { return _packetMessage; }
+		}
+
+		internal PacketLogType PacketLogType
+		{
+			get { return _packetLogType; }
 		}
 
 		#endregion
 
 		#region Constructors
 
-		public AssemblyEventArgs(Assembly assembly, Type type, MethodInfo method)
+		public PacketLogItem(Client client, PacketHeader header, byte[] message, PacketLogType logtype)
 		{
-			Assembly = assembly;
-			Type = type;
-			Method = method;
+			_client = client;
+			_packetHeader = header;
+			_packetMessage = message;
+			_packetLogType = logtype;
 		}
 
 		#endregion

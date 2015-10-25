@@ -35,7 +35,7 @@ namespace ServerFramework.Commands.Base
 			get
 			{
 				if(_attribute == null)
-					_attribute = this.GetType().GetCustomAttributes(typeof(CommandAttribute), true).FirstOrDefault() as CommandAttribute;
+					_attribute = GetType().GetCustomAttributes(typeof(CommandAttribute), true).FirstOrDefault() as CommandAttribute;
 
 				return _attribute;
 			}

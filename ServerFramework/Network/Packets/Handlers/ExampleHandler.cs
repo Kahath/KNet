@@ -29,7 +29,7 @@ namespace ServerFramework.Network.Packets.Handlers
 
 		#region Version 1
 
-		[Opcode(0x0000, "Kahath", 1, OpcodeType.Test)]
+		[Opcode(0x0000, "Kahath", 1, OpcodeType.NotUsed)]
 		private static void ExamplePacketHandler(Client pClient, Packet packet)
 		{
 			//Read if packet has data
@@ -40,22 +40,21 @@ namespace ServerFramework.Network.Packets.Handlers
 			Console.WriteLine(exampleName);
 
 			//Send back if need
-			//Create new packet for send
-			using (packet = new Packet(0x0001, Encoding.UTF8, (byte)PacketFlag.Log))
+			//Write data
+			Action<Packet> packetAction = (pck) =>
 			{
-				//Write data
-				packet.Write<string>("Example string data");
+				pck.Write("Example string data");
+			};
 
-				//Send data
-				pClient.Send(packet);
-			}
+			//Send data
+			pClient.Send(0x0001, 0, 100, packetAction);
 		}
 
 		#endregion
 
 		#region Version 2
 
-		[Opcode(0x0000, "Kahath", 2, OpcodeType.Test)]
+		[Opcode(0x0000, "Kahath", 2, OpcodeType.NotUsed)]
 		private static void ExamplePacketHandlerTwo(Client pClient, Packet packet)
 		{
 			//Read if packet has data
@@ -66,21 +65,18 @@ namespace ServerFramework.Network.Packets.Handlers
 			Console.WriteLine(exampleName);
 
 			//Send back if need
-			//Create new packet for send
-			using (packet = new Packet(0x0001, Encoding.UTF8))
+			//Write data
+			Action<Packet> packetAction = (pck) =>
 			{
-				//Write data
-				packet.Write<string>("Example string data");
+				pck.Write("Example string data");
+				pck.WriteBits(0x123, 8);
 
-				//Write bits
-				packet.WriteBits<int>(0x123, 8);
+				pck.WriteBit(true);
+				pck.WriteBit(false);
+			};
 
-				packet.WriteBit(true);
-				packet.WriteBit(false);
-
-				//Send data
-				pClient.Send(packet);
-			}
+			//Send data
+			pClient.Send(0x0001, 0, 100, packetAction);
 		}
 
 		#endregion
