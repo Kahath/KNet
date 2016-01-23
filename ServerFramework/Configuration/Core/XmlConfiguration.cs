@@ -8,7 +8,9 @@ using ServerFramework.Configuration.Helpers;
 using ServerFramework.Enums;
 using ServerFramework.Managers;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml;
 
 namespace ServerFramework.Configuration.Core
@@ -20,13 +22,13 @@ namespace ServerFramework.Configuration.Core
 	{
 		#region Fields
 
-		private XmlNodeList _nodes;
+		private IEnumerable<XmlNode> _nodes;
 
 		#endregion
 
 		#region Properties
 
-		private XmlNodeList Nodes
+		private IEnumerable<XmlNode> Nodes
 		{
 			get { return _nodes; }
 			set { _nodes = value; }
@@ -42,14 +44,16 @@ namespace ServerFramework.Configuration.Core
 		/// <param name="path">Path to configuration file</param>
 		XmlConfiguration(string path)
 		{
-			if (!File.Exists(path))
+			if (File.Exists(path))
+			{
+				XmlDocument doc = new XmlDocument();
+				doc.Load(path);
+				Nodes = doc.DocumentElement.ChildNodes.Cast<XmlNode>();
+			}
+			else
 			{
 				Environment.Exit(0);
 			}
-
-			XmlDocument doc = new XmlDocument();
-			doc.Load(path);
-			Nodes = doc.DocumentElement.ChildNodes;
 		}
 
 		#endregion
@@ -72,47 +76,36 @@ namespace ServerFramework.Configuration.Core
 
 			try
 			{
-				foreach (XmlNode node in Nodes)
-				{
-					if (node.NodeType == XmlNodeType.Element)
-					{
-						if (node.Attributes[ConfigurationHelper.Key].Value == config)
-						{
-							nameValue = node.Attributes[ConfigurationHelper.Value].Value;
-							break;
-						}
-					}
-				}
+				XmlNode node = Nodes.FirstOrDefault(x => x.NodeType == XmlNodeType.Element
+					&& x.Attributes[ConfigurationHelper.Key].Value == config);
+
+				if (node != null)
+					nameValue = node.Attributes[ConfigurationHelper.Value].Value;
 
 				if (hex)
+				{
 					trueValue = (T)Convert.ChangeType(Convert.ToInt32(nameValue, 16), typeof(T));
+				}
 				else
+				{
 					trueValue = (T)Convert.ChangeType(nameValue, typeof(T));
+				}
 			}
 			catch (IndexOutOfRangeException)
 			{
-				Manager.LogMgr.Log(LogType.Error, $"Error while reading '{config}' config. Missing argument in line");
-				Console.ReadLine();
-				Environment.Exit(0);
-
+				Manager.LogMgr.Log(LogType.Critical, $"Error while reading '{config}' config. Missing argument in line");
 			}
 			catch (NullReferenceException)
 			{
-				Manager.LogMgr.Log(LogType.Error, $"Error while reading '{config}' config. Argument is null");
-				Console.ReadLine();
-				Environment.Exit(0);
+				Manager.LogMgr.Log(LogType.Critical, $"Error while reading '{config}' config. Argument is null");
 			}
 			catch (FormatException)
 			{
-				Manager.LogMgr.Log(LogType.Error, $"Error while reading '{config}' config. Cannot convert '{nameValue}' into type '{typeof(T)}'");
-				Console.ReadLine();
-				Environment.Exit(0);
+				Manager.LogMgr.Log(LogType.Critical, $"Error while reading '{config}' config. Cannot convert '{nameValue}' into type '{typeof(T)}'");
 			}
 			catch (Exception)
 			{
-				Manager.LogMgr.Log(LogType.Error, $"Error while reading '{config}' config");
-				Console.ReadLine();
-				Environment.Exit(0);
+				Manager.LogMgr.Log(LogType.Critical, $"Error while reading '{config}' config");
 			}
 
 			return trueValue;

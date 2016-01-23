@@ -4,6 +4,7 @@
  */
 
 using ServerFramework.Database.Base.Entity;
+using ServerFramework.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -18,11 +19,13 @@ namespace ServerFramework.Database.Base.Context
 	public abstract class DBContextBase : DbContext
 	{
 		#region Properties
-		
+
 		public string ConnectionString
 		{
 			get { return Database.Connection.ConnectionString; }
 		}
+
+		public abstract Dictionary<Type, DbSet> DbSetMap { get; }
 
 		#endregion
 
@@ -41,6 +44,156 @@ namespace ServerFramework.Database.Base.Context
 
 		#region Methods
 
+		#region Add
+
+		internal void Add<T>(T entity) where T : class, IEntity
+		{
+			if (entity.DateCreated != null && entity.DateCreated != DateTime.MinValue)
+			{
+				DbEntityEntry<T> entry = Entry(entity);
+				entry.State = EntityState.Modified;
+			}
+			else
+			{
+				Type types = typeof(T);
+				DbSet<T> set = GetEntitySet<T>(entity.GetType());
+				set.Add(entity);
+			}
+		}
+
+		internal void Add<T>(T[] entities)
+			where T : class, IEntity
+		{
+			if (entities.Any())
+			{
+				if (entities.Count() > 1)
+				{
+					AddRange(entities);
+				}
+				else
+				{
+					Add(entities.First());
+				}
+			}
+		}
+
+		private void AddRange<T>(IEnumerable<T> entities) where T : class, IEntity
+		{
+			ValidateEntities(entities);
+
+			DbSet<T> set = GetEntitySet<T>(entities.First().GetType());
+			set.AddRange(entities);
+		}
+
+		#endregion
+
+		#region Remove
+
+		private void Remove<T>(T entity) where T : class, IEntity
+		{
+			DbSet<T> set = GetEntitySet<T>(entity.GetType());
+			set.Remove(entity);
+		}
+
+		internal void Remove<T>(Func<DbSet<T>, IEnumerable<T>> func)
+			where T : class, IEntity
+		{
+			DbSet<T> set = GetEntitySet<T>(typeof(T));
+			RemoveRange(func(set));
+		}
+
+		internal void Remove<T>(Func<DbSet<T>, T> func)
+			where T : class, IEntity
+		{
+			DbSet<T> set = GetEntitySet<T>(typeof(T));
+			Remove(func(set));
+		}
+
+		private void RemoveRange<T>(IEnumerable<T> entities) where T : class, IEntity
+		{
+			if (entities.Any())
+			{
+				ValidateEntities(entities);
+
+				DbSet<T> set = GetEntitySet<T>(entities.First().GetType());
+				set.RemoveRange(entities);
+			}
+		}
+
+		#endregion
+
+		#region Get
+
+		internal T Get<T>(Func<DbSet<T>, T> func)
+			where T : class, IEntity
+		{
+			T retVal = default(T);
+
+			DbSet<T> set = GetEntitySet<T>(typeof(T));
+			retVal = func(set);
+
+			return retVal;
+		}
+
+		internal IEnumerable<T> Get<T>(Func<DbSet<T>, IEnumerable<T>> func, bool asNoTracking = false)
+			where T : class, IEntity
+		{
+			IEnumerable<T> retVal = Enumerable.Empty<T>();
+
+			DbSet<T> set = GetEntitySet<T>(typeof(T));
+			retVal = func(set);
+
+			return retVal;
+		}
+
+		#endregion
+
+		#region ValidateEntity
+
+		private void ValidateEntities<T>(IEnumerable<T> entities)
+		{
+			bool isValid = entities.Select(x => x.GetType()).Distinct().Skip(1).Any();
+
+			if (!isValid)
+				throw new DatabaseException("Entities are not valid for range remove");
+		}
+
+		#endregion
+
+		#region ValidateEntitySet
+
+		private void ValidateEntitySet(Type type, DbSet set)
+		{
+			if (set == null)
+				throw new DatabaseException($"Given entity Set '{type}' is not present in DbSetMap");
+		}
+
+		#endregion
+
+		#region GetEntitySet
+
+		private DbSet<T> GetEntitySet<T>(T entity)
+			where T : class, IEntity
+		{
+			DbSet<T> set = GetEntitySet<T>(entity.GetType());
+
+			return set;
+		}
+
+		private DbSet<T> GetEntitySet<T>(Type type)
+			where T : class, IEntity
+		{
+			DbSet set = null;
+			Type types = typeof(T);
+			DbSetMap.TryGetValue(type, out set);
+
+			ValidateEntitySet(type, set);
+
+			return set.Cast<T>();
+		}
+
+		#endregion
+
 		#region SaveChanges
 
 		/// <summary>
@@ -56,7 +209,7 @@ namespace ServerFramework.Database.Base.Context
 		/// </returns>
 		public override int SaveChanges()
 		{
-			UpdateBeforeSave();
+			PreSave();
 
 			return base.SaveChanges();
 		}
@@ -67,23 +220,23 @@ namespace ServerFramework.Database.Base.Context
 
 		public override Task<int> SaveChangesAsync()
 		{
-			UpdateBeforeSave();
+			PreSave();
 
 			return base.SaveChangesAsync();
 		}
 
 		public override Task<int> SaveChangesAsync(CancellationToken cancellationToken)
 		{
-			UpdateBeforeSave();
+			PreSave();
 
 			return base.SaveChangesAsync(cancellationToken);
 		}
 
 		#endregion
 
-		#region UpdateBeforeSave
+		#region PreSave
 
-		private void UpdateBeforeSave()
+		private void PreSave()
 		{
 			ObjectContext context = ((IObjectContextAdapter)this).ObjectContext;
 

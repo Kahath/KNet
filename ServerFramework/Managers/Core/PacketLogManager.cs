@@ -82,9 +82,7 @@ namespace ServerFramework.Managers.Core
 					var item = PacketLogQueue.Take();
 
 					if (item != null)
-					{
 						LogPacket(item);
-					}
 				}
 			});
 
@@ -109,9 +107,7 @@ namespace ServerFramework.Managers.Core
 				packetLog.IP = logItem.Client.IP;
 
 				if (logItem.Client.Token != null)
-				{
 					packetLog.ClientID = logItem.Client.Token.ID;
-				}
 			}
 
 			packetLog.Size = logItem.PacketHeader.Length;
@@ -129,10 +125,7 @@ namespace ServerFramework.Managers.Core
 			if (PacketLog.Count > ServerConfig.PacketLogSize)
 			{
 				using (ApplicationContext context = new ApplicationContext())
-				{
-					context.PacketLogs.AddRange(PacketLog);
-					context.SaveChanges();
-				}
+					Manager.DatabaseMgr.AddOrUpdate(context, true, PacketLog.ToArray());
 
 				PacketLog.Clear();
 			}

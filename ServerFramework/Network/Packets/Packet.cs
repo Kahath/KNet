@@ -75,6 +75,7 @@ namespace ServerFramework.Network.Packets
 		public T Read<T>(int count = 0)
 		{
 			T retVal = default(T);
+
 			try
 			{
 				retVal = Stream.Read<T>();
@@ -82,7 +83,6 @@ namespace ServerFramework.Network.Packets
 			catch(IndexOutOfRangeException e)
 			{
 				Manager.LogMgr.Log(Enums.LogType.Critical, e.ToString());
-				Environment.Exit(-1);
 			}
 
 			return retVal;
@@ -106,7 +106,6 @@ namespace ServerFramework.Network.Packets
 			catch (IndexOutOfRangeException e)
 			{
 				Manager.LogMgr.Log(Enums.LogType.Critical, e.ToString());
-				Environment.Exit(-1);
 			}
 		}
 
@@ -207,12 +206,7 @@ namespace ServerFramework.Network.Packets
 		/// <returns>Length of message array for sending.</returns>
 		public int End(byte flags, ushort opcode)
 		{
-			int retVal;
-
-			Stream.End(Header, flags, opcode);
-			retVal = Header.Length + (Header.IsBigHeader ? ServerConfig.BigHeaderLength : ServerConfig.HeaderLength);
-
-			return retVal;
+			return Stream.End(Header, flags, opcode);
 		}
 
 		#endregion
@@ -249,7 +243,6 @@ namespace ServerFramework.Network.Packets
 			catch(IndexOutOfRangeException e)
 			{
 				Manager.LogMgr.Log(Enums.LogType.Critical, e.ToString());
-				Environment.Exit(-1);
 			}
 		}
 
@@ -262,7 +255,6 @@ namespace ServerFramework.Network.Packets
 			catch(IndexOutOfRangeException e)
 			{
 				Manager.LogMgr.Log(Enums.LogType.Critical, e.ToString());
-				Environment.Exit(-1);
 			}
 		}
 
@@ -281,7 +273,6 @@ namespace ServerFramework.Network.Packets
 			catch(IndexOutOfRangeException e)
 			{
 				Manager.LogMgr.Log(Enums.LogType.Critical, e.ToString());
-				Environment.Exit(-1);
 			}
 
 			return retVal;

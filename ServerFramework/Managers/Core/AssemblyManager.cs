@@ -17,7 +17,6 @@ using ServerFramework.Events;
 using ServerFramework.Extensions;
 using ServerFramework.Managers.Base;
 using System;
-using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -54,11 +53,6 @@ namespace ServerFramework.Managers.Core
 				,	ServerConfig.AssemblyPath
 				);
 
-			foreach (string dll in Directory.GetFiles(path, "*.dll"))
-			{
-				Load(dll);
-			}
-
 			foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies()
 				.Where(x => x.CustomAttributes
 					.Any(y => typeof(ICustomAttribute).IsAssignableFrom(y.AttributeType))))
@@ -66,22 +60,22 @@ namespace ServerFramework.Managers.Core
 				ProcessCustomAssembly(a);
 			}
 
-			using(ApplicationContext context = new ApplicationContext())
-			{
-				ServerModel server = context.Servers.OrderByDescending(x => x.ID).First();
+			foreach (string dll in Directory.GetFiles(path, "*.dll"))
+				Load(dll);
 
-				context.Opcodes.RemoveRange(
-					context.Opcodes.Where
-					(x => 
-						x.Active
-						&& x.DateModified.HasValue ? x.DateModified.Value < server.DateCreated : x.DateCreated < server.DateCreated
+			using (ApplicationContext context = new ApplicationContext())
+			{
+				ServerModel server = Manager.DatabaseMgr
+					.Get<ServerModel>(context, x => x.AsNoTracking().OrderByDescending(y => y.ID).First());
+
+				Manager.DatabaseMgr.Remove<OpcodeModel>(context, false, x => x.Where(y =>
+						y.Active
+						&& (y.DateModified.HasValue ? y.DateModified.Value < server.DateCreated : y.DateCreated < server.DateCreated)
 					).ToList());
 
-				context.Commands.RemoveRange(
-					context.Commands.Where
-					(x => 
-						x.Active
-						&& x.DateModified.HasValue ? x.DateModified.Value < server.DateCreated : x.DateCreated < server.DateCreated
+				Manager.DatabaseMgr.Remove<CommandModel>(context, false, x => x.Where(y =>
+						y.Active
+						&& (y.DateModified.HasValue ? y.DateModified.Value < server.DateCreated : y.DateCreated < server.DateCreated)
 					).ToList());
 
 				context.SaveChanges();
@@ -114,9 +108,7 @@ namespace ServerFramework.Managers.Core
 			}
 
 			if(assembly != null)
-			{
 				ProcessCustomAssembly(assembly);
-			}
 		}
 
 		#endregion
@@ -172,9 +164,7 @@ namespace ServerFramework.Managers.Core
 			Type type = GetType(assemblyName, typeName);
 
 			if(type != null)
-			{
 				retVal = type.GetMethodByName(methodName, parameters);
-			}
 
 			return retVal;
 		}
@@ -201,26 +191,15 @@ namespace ServerFramework.Managers.Core
 
 							if (commandBase != null)
 							{
-								CommandModel existingCommand = context.Commands
-									.FirstOrDefault(x => x.Name == commandBase.Name && x.Active);
+								CommandModel existingCommand = Manager.DatabaseMgr.Get<CommandModel>(context, x =>
+									x.FirstOrDefault(y => y.Name == commandBase.Name && y.Active));
 
-								if (existingCommand == null)
-								{
-									existingCommand = new CommandModel(commandBase);
+								existingCommand = existingCommand ?? new CommandModel(commandBase);
+								existingCommand.AssemblyName = assembly.FullName;
+								existingCommand.TypeName = type.FullName;
+								existingCommand.MethodName = method.Name;
 
-									existingCommand.AssemblyName = assembly.FullName;
-									existingCommand.TypeName = type.FullName;
-									existingCommand.MethodName = method.Name;
-
-									context.Commands.Add(existingCommand);
-								}
-								else
-								{
-									existingCommand.AssemblyName = assembly.FullName;
-									existingCommand.TypeName = type.FullName;
-									existingCommand.MethodName = method.Name;
-									context.Entry(existingCommand).State = EntityState.Modified;
-								}
+								Manager.DatabaseMgr.AddOrUpdate(context, false, existingCommand);
 
 								Command cmd = InvokeMethod<Command>(commandBase, method);
 
@@ -246,30 +225,15 @@ namespace ServerFramework.Managers.Core
 			{
 				if (attr != null)
 				{
-					OpcodeModel existingOpcode = context.Opcodes.FirstOrDefault
-						(x =>
-							x.Code == attr.Opcode
-							&& x.TypeID == (int)attr.Type
-							&& x.Version == attr.Version
-							&& x.Active
-						);
+					OpcodeModel existingOpcode = Manager.DatabaseMgr.Get<OpcodeModel>(context, x => x.FirstOrDefault(y =>
+						y.Code == attr.Opcode && y.TypeID == (int)attr.Type && y.Version == attr.Version && y.Active));
 
-					if (existingOpcode == null)
-					{
-						OpcodeModel model = new OpcodeModel(attr);
-						model.AssemblyName = assembly.FullName;
-						model.TypeName = method.DeclaringType.FullName;
-						model.MethodName = method.Name;
+					existingOpcode = existingOpcode ?? new OpcodeModel(attr);
+					existingOpcode.AssemblyName = assembly.FullName;
+					existingOpcode.TypeName = type.FullName;
+					existingOpcode.MethodName = method.Name;
 
-						context.Opcodes.Add(model);
-					}
-					else
-					{
-						existingOpcode.AssemblyName = assembly.FullName;
-						existingOpcode.TypeName = type.FullName;
-						existingOpcode.MethodName = method.Name;
-						context.Entry(existingOpcode).State = EntityState.Modified;
-					}
+					Manager.DatabaseMgr.AddOrUpdate(context, false, existingOpcode);
 				}
 			}
 

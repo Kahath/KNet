@@ -20,6 +20,7 @@ namespace ServerFramework.Managers
 		private static PacketLogManager _packetLogMgr;
 		private static LogManager _logMgr;
 		private static AssemblyManager _assemblyMgr;
+		private static DatabaseManager _databaseMgr;
 
 		#endregion
 
@@ -72,6 +73,17 @@ namespace ServerFramework.Managers
 		{
 			get { return _assemblyMgr; }
 			set { _assemblyMgr = value; }
+		}
+
+		public static DatabaseManager DatabaseMgr
+		{
+			get
+			{
+				if (_databaseMgr == null)
+					_databaseMgr = DatabaseManager.GetInstance();
+
+				return _databaseMgr;
+			}
 		}
 
 		#endregion

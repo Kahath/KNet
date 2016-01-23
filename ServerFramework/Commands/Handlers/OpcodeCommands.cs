@@ -35,7 +35,7 @@ namespace ServerFramework.Commands.Handlers
 				new Command("version", CommandLevel.Ten, null, ForceVersionHandler, ""),
 			};
 
-			Command[] OpcodeSubCommands = 
+			Command[] OpcodeSubCommands =
 			{
 				new Command("force", CommandLevel.Ten, ForceSubCommands, null, "")
 			};
@@ -56,10 +56,10 @@ namespace ServerFramework.Commands.Handlers
 			int code = Int32.Parse(args[0]);
 			int version = Int32.Parse(args[1]);
 
-			using(ApplicationContext context = new ApplicationContext())
+			using (ApplicationContext context = new ApplicationContext())
 			{
-				OpcodeModel opcode = context.Opcodes.FirstOrDefault(x => x.Code == code 
-					&& x.Version == version && x.Active);
+				OpcodeModel opcode = Manager.DatabaseMgr.Get<OpcodeModel>(context, x =>
+					x.FirstOrDefault(y => y.Code == code && y.Version == version && y.Active));
 
 				ChangeOpcode(opcode);
 			}
@@ -74,14 +74,14 @@ namespace ServerFramework.Commands.Handlers
 		private static bool ForceTypeHandler(Client client, params string[] args)
 		{
 			int code = Int32.Parse(args[0]);
-			int opcodeType = (int)Enum.Parse(typeof(OpcodeType), args[1]);
+			int opcodeType = int.Parse(args[1]);
 
 			using (ApplicationContext context = new ApplicationContext())
 			{
-				OpcodeModel opcode = context.Opcodes
-					.Where(x => x.Code == code && x.TypeID == opcodeType && x.Active)
-					.OrderByDescending(x => x.Version)
-					.FirstOrDefault();
+				OpcodeModel opcode = Manager.DatabaseMgr.Get<OpcodeModel>(context, x => 
+					x.Where(y => y.Code == code && y.TypeID == opcodeType && y.Active)
+					.OrderByDescending(y => y.Version)
+					.FirstOrDefault());
 
 				ChangeOpcode(opcode);
 			}
@@ -98,16 +98,16 @@ namespace ServerFramework.Commands.Handlers
 		{
 			int code = Int32.Parse(args[0]);
 			int version = Int32.Parse(args[1]);
-			int opcodeType = (int)Enum.Parse(typeof(OpcodeType), args[2]);
+			int opcodeType = int.Parse(args[2]);
 
-			using(ApplicationContext context = new ApplicationContext())
+			using (ApplicationContext context = new ApplicationContext())
 			{
-				OpcodeModel opcode = context.Opcodes
-					.FirstOrDefault(x => x.Code == code && x.Version == version 
-						&& x.TypeID == opcodeType && x.Active);
+				OpcodeModel opcode = Manager.DatabaseMgr.Get<OpcodeModel>(context, x =>
+					x.FirstOrDefault(y => y.Code == code && y.Version == version
+						&& y.TypeID == opcodeType && y.Active));
 
 				ChangeOpcode(opcode);
-            }
+			}
 
 			return true;
 		}
@@ -115,8 +115,6 @@ namespace ServerFramework.Commands.Handlers
 		#endregion
 
 		#endregion
-
-		#region Methods
 
 		#region ChangeOpcode
 
@@ -142,9 +140,7 @@ namespace ServerFramework.Commands.Handlers
 					}
 				}
 			}
-        }
-
-		#endregion
+		}
 
 		#endregion
 

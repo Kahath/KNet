@@ -18,7 +18,6 @@ namespace ServerFramework.Network.Packets
 
 		private readonly int _bufferOffset;
 		private readonly int _bufferSize;
-		private int _sessionId;
 
 		private int _messageLength;
 		private int _messageOffset;
@@ -35,7 +34,6 @@ namespace ServerFramework.Network.Packets
 		private bool _isHeaderReady = false;
 		private bool _isPacketReady = false;
 		private bool _isBigPacket = false;
-		private bool _isUnicode = false;
 
 		#endregion
 
@@ -124,12 +122,6 @@ namespace ServerFramework.Network.Packets
 			set { _isBigPacket = value; }
 		}
 
-		internal bool IsUnicode
-		{
-			get { return _isUnicode; }
-			set { _isUnicode = value; }
-		}
-
 		internal int BufferSize
 		{
 			get { return _bufferSize; }
@@ -148,8 +140,8 @@ namespace ServerFramework.Network.Packets
 
 		public int SessionId
 		{
-			get { return _sessionId; }
-			internal set { _sessionId = value; }
+			get { return Packet.SessionId; }
+			internal set { Packet.SessionId = value; }
 		}
 
 		#endregion
@@ -225,10 +217,10 @@ namespace ServerFramework.Network.Packets
 				Packet.Header.Flags = Packet.Read<byte>();
 				Packet.Header.Length = IsBigPacket ? Packet.Read<int>() : Packet.Read<ushort>();
 				Packet.Header.Opcode = Packet.Read<ushort>();
-		
+
 				MessageLength = Packet.Header.Length;
 
-				if(MessageLength > 0)
+				if (MessageLength > 0)
 					Packet.Realloc(HeaderLength + MessageLength);
 
 				IsHeaderReady = true;
@@ -307,7 +299,6 @@ namespace ServerFramework.Network.Packets
 			IsHeaderReady = false;
 			IsPacketReady = false;
 			IsBigPacket = false;
-			IsUnicode = false;
 			HeaderBytesDoneCount = 0;
 			HeaderBytesRemainingCount = 0;
 			HeaderBytesDoneThisOp = 0;

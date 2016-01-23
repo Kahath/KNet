@@ -71,12 +71,12 @@ namespace ServerFramework.Managers.Core
 		{
 			using (ApplicationContext context = new ApplicationContext())
 			{
-				IEnumerable<OpcodeModel> opcodes = context.Opcodes
-					.Where(x => x.Active)
-					.GroupBy(x => x.Code, (key, y) => 
-						y.OrderByDescending(x => x.TypeID)
-						.ThenByDescending(x => x.Version)
-						.FirstOrDefault());
+				IEnumerable<OpcodeModel> opcodes = Manager.DatabaseMgr.Get<OpcodeModel>(context, x =>
+					x.Where(y => y.Active)
+					.GroupBy(y => y.Code, (key, y) =>
+						y.OrderByDescending(z => z.TypeID)
+						.ThenByDescending(z => z.Version)
+						.FirstOrDefault()));
 
 				foreach (OpcodeModel opcode in opcodes)
 				{

@@ -7,7 +7,6 @@ using ServerFramework.Attributes.Core;
 using ServerFramework.Enums;
 using ServerFramework.Network.Session;
 using System;
-using System.Text;
 
 namespace ServerFramework.Network.Packets.Handlers
 {
@@ -66,7 +65,7 @@ namespace ServerFramework.Network.Packets.Handlers
 			};
 
 			//Send data
-			pClient.Send(0x0001, 0, 100, packetAction);
+			pClient.Send(0x0001, 100, packetAction);
 		}
 
 		#endregion

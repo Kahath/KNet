@@ -38,6 +38,12 @@ namespace ServerFramework.Managers.Core
 
 		#endregion
 
+		#region Events
+
+		public event CommandEventHandler BeforeCommandInvoke;
+
+		#endregion
+
 		#region Constructor
 
 		/// <summary>
@@ -62,7 +68,8 @@ namespace ServerFramework.Managers.Core
 		{
 			using (CommandRepository cRepo = new CommandRepository(new ApplicationContext()))
 			{
-				IEnumerable<CommandModel> commands = cRepo.Context.Commands.Where(x => x.Active && x.ParentID == null).ToList();
+				IEnumerable<CommandModel> commands = Manager.DatabaseMgr.Get<CommandModel>(cRepo.Context, x =>
+					x.Where(y => y.Active && y.ParentID == null).ToList());
 
 				foreach (CommandModel command in commands)
 				{
@@ -112,11 +119,7 @@ namespace ServerFramework.Managers.Core
 
 			if (commandPath != null && commandPath.Any())
 			{
-				result = GetCommand
-					(
-						user
-					,	commandPath
-					);
+				result = GetCommand(user, commandPath);
 
 				if (result != null)
 				{
@@ -124,6 +127,9 @@ namespace ServerFramework.Managers.Core
 					{
 						try
 						{
+							if (BeforeCommandInvoke != null)
+								BeforeCommandInvoke(result, new EventArgs());
+
 							retVal = result.Invoke(user);
 						}
 						catch (IndexOutOfRangeException)
@@ -144,10 +150,7 @@ namespace ServerFramework.Managers.Core
 							commandLog.CommandID = result.Model.ID;
 
 							using (ApplicationContext context = new ApplicationContext())
-							{
-								context.CommandLogs.Add(commandLog);
-								context.SaveChanges();
-							}
+								Manager.DatabaseMgr.AddOrUpdate(context, true, commandLog);
 						}
 					}
 					else
@@ -195,11 +198,7 @@ namespace ServerFramework.Managers.Core
 			if (path != null && path.Any())
 			{
 				Command command = commandTable
-					.Where
-					(x =>
-						user.UserLevel >= x.CommandLevel
-						&& x.IsValid
-					)
+					.Where(x => user.UserLevel >= x.CommandLevel && x.IsValid)
 					.FirstOrDefault(x => x.Name.StartsWith(path.First().Trim()));
 
 				if (command != null)
@@ -213,14 +212,13 @@ namespace ServerFramework.Managers.Core
 					}
 					else if (command.SubCommands != null)
 					{
-						if (path.Count > 0)
-							retVal = GetCommand(user, path, command, command.SubCommands);
-						else
-							retVal = command;
+						retVal = path.Count > 0 ? GetCommand(user, path, command, command.SubCommands) : command;
 					}
 				}
 				else
+				{
 					retVal = baseCommand;
+				}
 			}
 
 			return retVal;
@@ -230,7 +228,7 @@ namespace ServerFramework.Managers.Core
 
 		#region UpdateBase
 
-		internal void UpdateBase(Command command)
+		private void UpdateBase(Command command)
 		{
 			command.Validation = ValidateCommand(command);
 
@@ -294,7 +292,7 @@ namespace ServerFramework.Managers.Core
 
 		#region GetSubCommands
 
-		internal IEnumerable<Command> GetSubCommands(Command command, CommandLevel userLevel = CommandLevel.Zero)
+		public IEnumerable<Command> GetSubCommands(Command command, CommandLevel userLevel = CommandLevel.Zero)
 		{
 			IEnumerable<Command> retVal = null;
 

@@ -3,8 +3,8 @@
  * Licensed under MIT license.
  */
 
+using ServerFramework.Async.Semaphore;
 using ServerFramework.Network.Packets;
-using ServerFramework.Network.Signalers;
 using System.Net;
 using System.Net.Sockets;
 
@@ -114,7 +114,7 @@ namespace ServerFramework.Network.Socket
 			try
 			{
 				Sender.AcceptSocket.Shutdown(how);
-				Signaler.SetAsync();
+				Signaler.SetGreen();
 				Close();
 			}
 			catch (SocketException) { }

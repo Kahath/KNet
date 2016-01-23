@@ -4,26 +4,27 @@
  */
 
 using System.Collections.Concurrent;
+using System.Linq;
 using System.Threading.Tasks;
 
-namespace ServerFramework.Network.Signalers
+namespace ServerFramework.Async.Semaphore
 {
-	internal class Signaler
+	public class Signaler
 	{
 		#region Fields
 
-		private readonly static Task _completedTask = Task.FromResult(true);
+		private readonly Task _green = Task.FromResult(true);
 		private readonly object _lock = new object();
 		private ConcurrentQueue<TaskCompletionSource<bool>> _waitingQueue;
-		private bool _isSignal;
+		private bool _isGreen;
 
 		#endregion
 
 		#region Properties
 
-		private Task CompletedTask
+		private Task Green
 		{
-			get { return _completedTask; }
+			get { return _green; }
 		}
 
 		private object Lock
@@ -36,10 +37,10 @@ namespace ServerFramework.Network.Signalers
 			get { return _waitingQueue; }
 		}
 
-		private bool IsSignal
+		private bool IsGreen
 		{
-			get { return _isSignal; }
-			set { _isSignal = value; }
+			get { return _isGreen; }
+			set { _isGreen = value; }
 		}
 
 		#endregion
@@ -49,51 +50,55 @@ namespace ServerFramework.Network.Signalers
 		public Signaler()
 		{
 			_waitingQueue = new ConcurrentQueue<TaskCompletionSource<bool>>();
-			IsSignal = true;
+			IsGreen = true;
 		}
 
 		#endregion
 
 		#region Methods
 
-		#region WaitAsync
+		#region WaitGreen
 
-		internal Task WaitAsync()
+		public Task WaitGreen()
 		{
+			Task retVal;
+
 			lock(Lock)
 			{
-				if (IsSignal)
+				if (IsGreen)
 				{
-					IsSignal = false;
-					return CompletedTask;
+					retVal = Green;
+					IsGreen = false;
 				}
 				else
 				{
-					TaskCompletionSource<bool> retVal = new TaskCompletionSource<bool>();
-					WaitingQueue.Enqueue(retVal);
-					return retVal.Task;
+					TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
+					WaitingQueue.Enqueue(tcs);
+					retVal = tcs.Task;
 				}
 			}
+
+			return retVal;
 		}
 
 		#endregion
 
-		#region SetAsync
+		#region SetGreen
 
-		internal void SetAsync()
+		public void SetGreen()
 		{
-			TaskCompletionSource<bool> toRelease = null;
+			TaskCompletionSource<bool> red = null;
 
 			lock (Lock)
 			{
 				if (WaitingQueue.Count > 0)
-					WaitingQueue.TryDequeue(out toRelease);
-				else if (!IsSignal)
-					IsSignal = true;
+					WaitingQueue.TryDequeue(out red);
+				else if (!IsGreen)
+					IsGreen = true;
 			}
 
-			if (toRelease != null)
-				toRelease.SetResult(true);
+			if (red != null)
+				red.SetResult(true);
 		}
 
 		#endregion

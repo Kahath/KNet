@@ -138,8 +138,12 @@ namespace ServerFramework.Network.Session
 
 		#region Methods
 
-
 		#region Send
+
+		public void Send(ushort opcode, int maxLength, Action<Packet> action)
+		{
+			Send(opcode, 0, maxLength, action);
+		}
 
 		/// <summary>
 		/// Sends packet to client.
@@ -147,7 +151,7 @@ namespace ServerFramework.Network.Session
 		/// <param name="packet">Instance of <see cref="ServerFramework.Network.Packets.Packet"/> type.</param>
 		public async void Send(ushort opcode, byte flags, int maxLength, Action<Packet> action)
 		{
-			await SocketExtended.Signaler.WaitAsync();
+			await SocketExtended.Signaler.WaitGreen();
 
 			SocketData data = SocketExtended.SenderData;
 			data.Packet.Alloc(maxLength);
@@ -156,7 +160,6 @@ namespace ServerFramework.Network.Session
 			action(data.Packet);
 
 			data.Finish(flags, opcode);
-			data.Packet.SessionId = data.SessionId;
 
 			if (BeforePacketSend != null)
 				BeforePacketSend(data.Packet, new EventArgs());

@@ -154,7 +154,7 @@ namespace ServerFramework.Managers.Core
 					case LogType.Info:
 					case LogType.Command:
 						msg = String.Format(message, args);
-						ConsoleLogQueue.Add(Tuple.Create<ConsoleColor, string>(color, msg));
+						ConsoleLogQueue.Add(Tuple.Create(color, msg));
 					break;
 					case LogType.Init:
 					case LogType.DB:
@@ -167,7 +167,7 @@ namespace ServerFramework.Managers.Core
 							$"[{DateTime.Now.ToString("HH:mm:ss.fff")}] {String.Format(message, args)}"
 						);
 
-						ConsoleLogQueue.Add(Tuple.Create<ConsoleColor, string>(color, msg));
+						ConsoleLogQueue.Add(Tuple.Create(color, msg));
 
 						if (ServerConfig.LogLevel != null)
 						{
@@ -176,13 +176,13 @@ namespace ServerFramework.Managers.Core
 							logModel.Message = String.Format(message, args);
 
 							using (ApplicationContext context = new ApplicationContext())
-							{
-								context.Logs.Add(logModel);
-								context.SaveChanges();
-							}
+								Manager.DatabaseMgr.AddOrUpdate(context, true, logModel);
 						}
 					break;
 				}
+
+				if (type == LogType.Critical)
+					Environment.Exit(-1);
 			}
 
 		}

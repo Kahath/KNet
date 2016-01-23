@@ -73,6 +73,8 @@
     <Compile Include="Database\Base\Entity\AssemblyEntityBase.cs" />
     <Compile Include="Database\Repository\CommandRepository.cs" />
     <Compile Include="Enums\CommandValidation.cs" />
+    <Compile Include="Exceptions\DatabaseException.cs" />
+    <Compile Include="Managers\Core\DatabaseManager.cs" />
     <Compile Include="Network\Packets\PacketLogItem.cs" />
     <Compile Include="Network\Packets\PacketStream.cs" />
     <Compile Include="Network\Session\ConsoleClient.cs" />
@@ -124,7 +126,7 @@
     <Compile Include="Attributes\Core\OpcodeAttribute.cs" />
     <Compile Include="Network\Packets\PacketHeader.cs" />
     <Compile Include="Helpers\ObjectPool.cs" />
-    <Compile Include="Network\Signalers\Signaler.cs" />
+    <Compile Include="Async\Semaphore\Signaler.cs" />
     <Compile Include="Network\Socket\IServer.cs" />
     <Compile Include="Network\Socket\SocketExtended.cs" />
     <Compile Include="Network\Socket\Server.cs" />

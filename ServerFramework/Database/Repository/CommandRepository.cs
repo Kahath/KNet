@@ -8,8 +8,8 @@ using ServerFramework.Database.Base.Repository;
 using ServerFramework.Database.Context;
 using ServerFramework.Database.Model.Application.Command;
 using ServerFramework.Enums;
+using ServerFramework.Managers;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 
 namespace ServerFramework.Database.Repository
@@ -43,8 +43,8 @@ namespace ServerFramework.Database.Repository
 		{
 			if (parent != null)
 			{
-				IEnumerable<CommandModel> subCommands = Context.Commands
-					.Where(x => x.Parent.ID == parent.ID && x.Active);
+				IEnumerable<CommandModel> subCommands = Manager.DatabaseMgr.Get<CommandModel>(Context, x =>
+					x.Where(y => y.Parent.ID == parent.ID && y.Active));
 
 				if (command.SubCommands != null && command.SubCommands.Any())
 				{
@@ -56,15 +56,13 @@ namespace ServerFramework.Database.Repository
 						{
 							commandModel = new CommandModel(c);
 							commandModel.Parent = parent;
-
-							Context.Commands.Add(commandModel);
 						}
 						else
 						{
 							commandModel = subCommands.FirstOrDefault(x => x.Name == c.Name);
-							Context.Entry(commandModel).State = EntityState.Modified;
 						}
 
+						Manager.DatabaseMgr.AddOrUpdate(Context, false, commandModel);
 						UpdateSubCommands(c, commandModel);
 					}
 				}
@@ -84,19 +82,17 @@ namespace ServerFramework.Database.Repository
 				command.Description = commandModel.Description;
 			}
 
-			IEnumerable<CommandModel> subCommands = Context.Commands
-				.Where(x => x.ParentID == commandModel.ID && x.Active).ToList();
+			IEnumerable<CommandModel> subCommands = Manager.DatabaseMgr.Get<CommandModel>(Context, x =>
+				x.Where(y => y.ParentID == commandModel.ID && y.Active).ToList());
 
-			if(command.SubCommands != null && command.SubCommands.Any())
+			if (command.SubCommands != null && command.SubCommands.Any())
 			{
-				foreach(CommandModel cm in subCommands)
+				foreach(CommandModel sc in subCommands)
 				{
-					Command c = command.SubCommands.FirstOrDefault(x => x.Name == cm.Name);
+					Command c = command.SubCommands.FirstOrDefault(x => x.Name == sc.Name);
 
 					if (c != null)
-					{
-						UpdateCommandInfo(c, cm);
-					}
+						UpdateCommandInfo(c, sc);
 				}
 			}
 		}

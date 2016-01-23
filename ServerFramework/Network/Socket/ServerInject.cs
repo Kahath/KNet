@@ -332,7 +332,7 @@ namespace ServerFramework.Network.Socket
 						Manager.PacketLogMgr.Log(data.Packet);
 						data.Reset(data.BufferOffset);
 
-						c.SocketExtended.Signaler.SetAsync();
+						c.SocketExtended.Signaler.SetGreen();
 					}
 				}
 				else

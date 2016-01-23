@@ -60,10 +60,10 @@ namespace ServerFramework.Attributes.Core
 		/// <param name="type">Opcode type</param>
 		public OpcodeAttribute(ushort opcode, string author, int version, OpcodeType type)
 		{
-			this.Opcode = opcode;
-			this.Author = author;
-			this.Version = version;
-			this.Type = type;
+			Opcode = opcode;
+			Author = author;
+			Version = version;
+			Type = type;
 		}
 
 		public OpcodeAttribute()

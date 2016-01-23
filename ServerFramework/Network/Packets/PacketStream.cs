@@ -10,7 +10,7 @@ using UMemory.Unmanaged.Stream.Core;
 
 namespace ServerFramework.Network.Packets
 {
-	internal class PacketStream : UMemoryStream 
+	internal class PacketStream : UMemoryStream
 	{
 		#region Fields
 
@@ -40,7 +40,6 @@ namespace ServerFramework.Network.Packets
 		public PacketStream(int maxLength)
 			: base(maxLength)
 		{
-			
 		}
 
 		#endregion
@@ -169,7 +168,7 @@ namespace ServerFramework.Network.Packets
 
 		#region End
 
-		internal void End(PacketHeader header, byte flags, ushort opcode)
+		internal int End(PacketHeader header, byte flags, ushort opcode)
 		{
 			Flush();
 
@@ -178,10 +177,7 @@ namespace ServerFramework.Network.Packets
 
 			flags = SetupFlag(flags, PacketFlag.BigPacket, isBigHeader);
 
-			int headerLength = isBigHeader
-				? ServerConfig.BigHeaderLength
-				: ServerConfig.HeaderLength;
-
+			int headerLength = isBigHeader ? ServerConfig.BigHeaderLength : ServerConfig.HeaderLength;
 			int packetPosition = ServerConfig.BigHeaderLength - headerLength;
 
 			Seek(packetPosition);
@@ -189,9 +185,13 @@ namespace ServerFramework.Network.Packets
 			Write<byte>(flags);
 
 			if (!isBigHeader)
+			{
 				Write<ushort>((ushort)messageLength);
+			}
 			else
+			{
 				Write<int>(messageLength);
+			}
 
 			Write<ushort>(opcode);
 
@@ -200,6 +200,8 @@ namespace ServerFramework.Network.Packets
 			header.Flags = flags;
 			header.Length = messageLength;
 			header.Opcode = opcode;
+
+			return messageLength + headerLength;
 		}
 
 		#endregion
@@ -225,9 +227,13 @@ namespace ServerFramework.Network.Packets
 		public byte SetupFlag(byte flags, PacketFlag flag, bool isSet)
 		{
 			if (isSet)
+			{
 				flags |= (byte)flag;
+			}
 			else
+			{
 				flags &= (byte)~flag;
+			}
 
 			return flags;
 		}

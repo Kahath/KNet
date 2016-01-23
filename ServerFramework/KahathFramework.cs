@@ -4,6 +4,7 @@
  */
 
 using DILibrary.DependencyInjection;
+using ServerFramework.Commands.Base;
 using ServerFramework.Configuration.Base;
 using ServerFramework.Configuration.Core;
 using ServerFramework.Configuration.Helpers;
@@ -11,13 +12,13 @@ using ServerFramework.Database.Context;
 using ServerFramework.Database.Model.Application.Server;
 using ServerFramework.Enums;
 using ServerFramework.Events;
+using ServerFramework.Exceptions;
 using ServerFramework.Managers;
 using ServerFramework.Network.Packets;
 using ServerFramework.Network.Session;
 using ServerFramework.Network.Socket;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Data.Entity.Validation;
 using System.Linq;
 using System.Net;
@@ -29,6 +30,7 @@ namespace ServerFramework
 
 	public delegate bool CommandHandler(Client user, params string[] args);
 	public delegate void OpcodeHandler(Client pClient, Packet packet);
+	public delegate void CommandEventHandler(Command command, EventArgs e);
 	public delegate void ServerEventHandler(object sender, SocketAsyncEventArgs e);
 	public delegate void AssemblyEventHandler(object sender, AssemblyEventArgs e);
 
@@ -36,6 +38,12 @@ namespace ServerFramework
 
 	public sealed class KahathFramework
 	{
+		#region Constants
+
+		private const string ConsoleName = "Console";
+
+		#endregion
+
 		#region Fields
 
 		private Client _consoleClient;
@@ -70,8 +78,8 @@ namespace ServerFramework
 						{
 							SessionId = 0
 						,	ID = 0
-						,	Name = "Console"
-						}
+						,	Name = ConsoleName
+					}
 					};
 				}
 
@@ -147,14 +155,13 @@ namespace ServerFramework
 					foreach (DbEntityValidationResult result in errors)
 						Manager.LogMgr.Log(LogType.DB, $"{result.ToString()}");
 
-					Environment.Exit(0);
+					Manager.LogMgr.Log(LogType.Critical, "Database error!");
 				}
 
 				ServerModel server = new ServerModel();
 				server.IsSuccessful = false;
 
-				context.Servers.Add(server);
-				context.SaveChanges();
+				Manager.DatabaseMgr.AddOrUpdate(context, true, server);
 			}
 
 			Manager.LogMgr.Log(LogType.Init, "Successfully tested database connection.");
@@ -175,12 +182,10 @@ namespace ServerFramework
 
 			using(ApplicationContext context = new ApplicationContext())
 			{
-				ServerModel server = context.Servers.OrderByDescending(x => x.ID).First();
+				ServerModel server = Manager.DatabaseMgr.Get<ServerModel>(context, x => x.OrderByDescending(y => y.ID).First());
 				
 				server.IsSuccessful = true;
-				context.Entry(server).State = EntityState.Modified;
-				
-				context.SaveChanges();
+				Manager.DatabaseMgr.AddOrUpdate(context, true, server);
 			}
 
 			while (true)
@@ -200,7 +205,14 @@ namespace ServerFramework
 
 		private void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs e) 
 		{
-			Manager.LogMgr.Log(LogType.Error, $"{e.ExceptionObject.ToString()}");
+			if (e.ExceptionObject is DatabaseException)
+			{
+				Manager.LogMgr.Log(LogType.DB, $"{e.ExceptionObject.ToString()}");
+			}
+			else
+			{
+				Manager.LogMgr.Log(LogType.Error, $"{e.ExceptionObject.ToString()}");
+			}
 		}
 
 		#endregion

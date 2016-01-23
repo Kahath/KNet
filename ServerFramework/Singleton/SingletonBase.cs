@@ -61,12 +61,11 @@ namespace ServerFramework.Singleton
 						{
 							Manager.LogMgr.Log
 							(
-								LogType.Error
+								LogType.Critical
 							,	$"Error with creating instance of {typeof(T)} type\n{e.ToString()}"
 							);
 
 							Console.ReadLine();
-							Environment.Exit(0);
 						}
 
 						_instance = obj as T;

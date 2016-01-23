@@ -28,16 +28,16 @@ namespace ServerFramework.Commands.Base
 
 		#region Properties
 
-		internal string Description
+		public string Description
 		{
 			get { return _description; }
-			set { _description = value; }
+			internal set { _description = value; }
 		}
 
-		internal string Arguments
+		public string Arguments
 		{
 			get { return _arguments; }
-			set { _arguments = value; }
+			internal set { _arguments = value; }
 		}
 
 		internal CommandHandler Script
@@ -64,28 +64,25 @@ namespace ServerFramework.Commands.Base
 			set { _subCommands = value; }
 		}
 
-		internal CommandLevel CommandLevel
+		public CommandLevel CommandLevel
 		{
 			get { return _commandLevel; }
-			set { _commandLevel = value; }
+			internal set { _commandLevel = value; }
 		}
 
-		internal string Name
+		public string Name
 		{
 			get { return _name; }
-			set { _name = value; }
+			internal set { _name = value; }
 		}
 
-		internal string FullName
+		public string FullName
 		{
 			get
 			{
 				string retVal = String.Empty;
 
-				if (BaseCommand != null)
-					retVal = String.Format($"{BaseCommand.FullName} {Name}");
-				else
-					retVal = Name;
+				retVal = BaseCommand != null ? String.Format($"{BaseCommand.FullName} {Name}") : Name;
 
 				return retVal;
 			}
@@ -97,7 +94,7 @@ namespace ServerFramework.Commands.Base
 			set { _validation = value; }
 		}
 
-		internal bool IsValid
+		public bool IsValid
 		{
 			get { return Validation == CommandValidation.Successful; }
 		}
