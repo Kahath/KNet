@@ -4,7 +4,6 @@
  */
 
 using DILibrary.DependencyInjection;
-using ServerFramework.Commands.Base;
 using ServerFramework.Configuration.Base;
 using ServerFramework.Configuration.Core;
 using ServerFramework.Configuration.Helpers;
@@ -30,7 +29,7 @@ namespace ServerFramework
 
 	public delegate bool CommandHandler(Client user, params string[] args);
 	public delegate void OpcodeHandler(Client pClient, Packet packet);
-	public delegate void CommandEventHandler(Command command, EventArgs e);
+	public delegate void CommandEventHandler(object sender, EventArgs e);
 	public delegate void ServerEventHandler(object sender, SocketAsyncEventArgs e);
 	public delegate void AssemblyEventHandler(object sender, AssemblyEventArgs e);
 
@@ -182,10 +181,9 @@ namespace ServerFramework
 
 			using(ApplicationContext context = new ApplicationContext())
 			{
-				ServerModel server = Manager.DatabaseMgr.Get<ServerModel>(context, x => x.OrderByDescending(y => y.ID).First());
-				
-				server.IsSuccessful = true;
-				Manager.DatabaseMgr.AddOrUpdate(context, true, server);
+				Manager.DatabaseMgr.Update<ServerModel>(context, true
+					, x => x.OrderByDescending(y => y.ID).First()
+					, x => x.IsSuccessful = true);
 			}
 
 			while (true)
@@ -207,11 +205,11 @@ namespace ServerFramework
 		{
 			if (e.ExceptionObject is DatabaseException)
 			{
-				Manager.LogMgr.Log(LogType.DB, $"{e.ExceptionObject.ToString()}");
+				Manager.LogMgr.Log(LogType.DB, (DatabaseException)e.ExceptionObject);
 			}
 			else
 			{
-				Manager.LogMgr.Log(LogType.Error, $"{e.ExceptionObject.ToString()}");
+				Manager.LogMgr.Log(LogType.Error, (Exception)e.ExceptionObject);
 			}
 		}
 

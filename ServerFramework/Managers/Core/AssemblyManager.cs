@@ -96,15 +96,15 @@ namespace ServerFramework.Managers.Core
 			}
 			catch(FileNotFoundException e)
 			{
-				Manager.LogMgr.Log(LogType.Error, $"{e.ToString()}");
+				Manager.LogMgr.Log(LogType.Error, e);
 			}
 			catch(FileLoadException e)
 			{
-				Manager.LogMgr.Log(LogType.Error, $"{e.ToString()}");
+				Manager.LogMgr.Log(LogType.Error, e);
 			}
 			catch (ArgumentNullException e)
 			{
-				Manager.LogMgr.Log(LogType.Error, $"{e.ToString()}");
+				Manager.LogMgr.Log(LogType.Error, e);
 			}
 
 			if(assembly != null)

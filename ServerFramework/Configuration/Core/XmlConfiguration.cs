@@ -91,21 +91,21 @@ namespace ServerFramework.Configuration.Core
 					trueValue = (T)Convert.ChangeType(nameValue, typeof(T));
 				}
 			}
-			catch (IndexOutOfRangeException)
+			catch (IndexOutOfRangeException e)
 			{
-				Manager.LogMgr.Log(LogType.Critical, $"Error while reading '{config}' config. Missing argument in line");
+				Manager.LogMgr.Log(LogType.Critical, $"Error while reading '{config}' config. Missing argument in line", e);
 			}
-			catch (NullReferenceException)
+			catch (NullReferenceException e)
 			{
-				Manager.LogMgr.Log(LogType.Critical, $"Error while reading '{config}' config. Argument is null");
+				Manager.LogMgr.Log(LogType.Critical, $"Error while reading '{config}' config. Argument is null", e);
 			}
-			catch (FormatException)
+			catch (FormatException e)
 			{
-				Manager.LogMgr.Log(LogType.Critical, $"Error while reading '{config}' config. Cannot convert '{nameValue}' into type '{typeof(T)}'");
+				Manager.LogMgr.Log(LogType.Critical, $"Error while reading '{config}' config. Cannot convert '{nameValue}' into type '{typeof(T)}'", e);
 			}
-			catch (Exception)
+			catch (Exception e)
 			{
-				Manager.LogMgr.Log(LogType.Critical, $"Error while reading '{config}' config");
+				Manager.LogMgr.Log(LogType.Critical, $"Error while reading '{config}' config", e);
 			}
 
 			return trueValue;

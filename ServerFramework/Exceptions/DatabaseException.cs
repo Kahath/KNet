@@ -2,6 +2,7 @@
 
 namespace ServerFramework.Exceptions
 {
+	[Serializable]
 	public class DatabaseException : Exception
 	{
 		#region Constructors

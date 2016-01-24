@@ -4,7 +4,6 @@
  */
 
 using System.Collections.Concurrent;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ServerFramework.Async.Semaphore
@@ -92,9 +91,13 @@ namespace ServerFramework.Async.Semaphore
 			lock (Lock)
 			{
 				if (WaitingQueue.Count > 0)
+				{
 					WaitingQueue.TryDequeue(out red);
+				}
 				else if (!IsGreen)
+				{
 					IsGreen = true;
+				}
 			}
 
 			if (red != null)

@@ -41,19 +41,19 @@ namespace ServerFramework.Database.Context
 		{
 			get
 			{
-				if(_dbSetMap == null)
+				if (_dbSetMap == null)
 				{
 					_dbSetMap = new Dictionary<Type, DbSet>()
 					{
-						{ typeof(CommandModel), Set(typeof(CommandModel)) }
-					,   { typeof(CommandLevelModel), Set(typeof(CommandLevelModel)) }
-					,   { typeof(CommandLogModel), Set(typeof(CommandLogModel)) }
-					,   { typeof(PacketLogModel), Set(typeof(PacketLogModel)) }
-					,   { typeof(PacketLogTypeModel), Set(typeof(PacketLogTypeModel)) }
-					,   { typeof(LogModel), Set(typeof(LogModel)) }
-					,   { typeof(OpcodeModel), Set(typeof(OpcodeModel)) }
-					,   { typeof(OpcodeTypeModel), Set(typeof(OpcodeTypeModel)) }
-					,   { typeof(ServerModel), Set(typeof(ServerModel)) }
+						{ typeof(CommandModel),         Set(typeof(CommandModel))       }
+					,   { typeof(CommandLevelModel),    Set(typeof(CommandLevelModel))  }
+					,   { typeof(CommandLogModel),      Set(typeof(CommandLogModel))    }
+					,   { typeof(PacketLogModel),       Set(typeof(PacketLogModel))     }
+					,   { typeof(PacketLogTypeModel),   Set(typeof(PacketLogTypeModel)) }
+					,   { typeof(LogModel),             Set(typeof(LogModel))           }
+					,   { typeof(OpcodeModel),          Set(typeof(OpcodeModel))        }
+					,   { typeof(OpcodeTypeModel),      Set(typeof(OpcodeTypeModel))    }
+					,   { typeof(ServerModel),          Set(typeof(ServerModel))        }
 					};
 				}
 

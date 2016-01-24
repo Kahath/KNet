@@ -109,7 +109,7 @@ namespace ServerFramework.Managers.Core
 		/// <param name="type"><see cref="ServerFramework.Constants.Misc.LogType"/> enum type.</param>
 		/// <param name="message">Message.</param>
 		/// <param name="args">Message arguments.</param>
-		private void Message(LogType type, string message, params object[] args)
+		private void Message(LogType type, string message, Exception exception)
 		{
 			ConsoleColor color;
 
@@ -153,8 +153,7 @@ namespace ServerFramework.Managers.Core
 					case LogType.Normal:
 					case LogType.Info:
 					case LogType.Command:
-						msg = String.Format(message, args);
-						ConsoleLogQueue.Add(Tuple.Create(color, msg));
+						msg = message;
 					break;
 					case LogType.Init:
 					case LogType.DB:
@@ -162,24 +161,22 @@ namespace ServerFramework.Managers.Core
 					case LogType.Error:
 					case LogType.Critical:
 					default:
-						msg = String.Format
-						(
-							$"[{DateTime.Now.ToString("HH:mm:ss.fff")}] {String.Format(message, args)}"
-						);
-
-						ConsoleLogQueue.Add(Tuple.Create(color, msg));
+						msg = String.Format($"[{DateTime.Now.ToString("HH:mm:ss.fff")}] {message}");
 
 						if (ServerConfig.LogLevel != null)
 						{
 							LogModel logModel = new LogModel();
 							logModel.LogTypeID = (int)type;
-							logModel.Message = String.Format(message, args);
+							logModel.Message = message;
+							logModel.Description = exception != null ? exception.ToString() : null;
 
 							using (ApplicationContext context = new ApplicationContext())
 								Manager.DatabaseMgr.AddOrUpdate(context, true, logModel);
 						}
 					break;
 				}
+
+				ConsoleLogQueue.Add(Tuple.Create(color, msg));
 
 				if (type == LogType.Critical)
 					Environment.Exit(-1);
@@ -192,28 +189,38 @@ namespace ServerFramework.Managers.Core
 		#region Log
 
 		/// <summary>
-		/// Adds message to queue.
+		/// Adds exception message to queue.
 		/// </summary>
 		/// <param name="type"><see cref="ServerFramework.Constants.Misc.LogType"/> enum type.</param>
 		/// <param name="message">Message.</param>
-		/// <param name="args">Message arguments.</param>
-		public void Log(LogType type, string message, params object[] args)
+		/// <param name="exception">Exception</param>
+		public void Log(LogType type, string message, Exception exception)
 		{
-			Message(type, message, args);
+			Message(type, message, exception);
+		}
+
+		/// <summary>
+		/// Adds exception message to queue.
+		/// </summary>
+		/// <param name="type"><see cref="ServerFramework.Constants.Misc.LogType"/> enum type.</param>
+		/// <param name="exception">Exception</param>
+		public void Log(LogType type, Exception exception)
+		{
+			Log(type, exception.Message, exception);
+		}
+
+		/// <summary>
+		/// Adds message to queue
+		/// </summary>
+		/// <param name="type"></param>
+		/// <param name="message"></param>
+		public void Log(LogType type, string message)
+		{
+			Message(type, message, null);
 		}
 
 		/// <summary>
 		/// Adds message to queue with Normal LogType.
-		/// </summary>
-		/// <param name="message">Message.</param>
-		/// <param name="args">Message arguments</param>
-		public void Log(string message, params object[] args)
-		{
-			Log(LogType.Normal, message, args);
-		}
-
-		/// <summary>
-		/// Adds Message to queue with Normal LogType.
 		/// </summary>
 		/// <param name="message">Message.</param>
 		public void Log(string message)

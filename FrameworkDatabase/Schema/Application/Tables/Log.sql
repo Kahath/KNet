@@ -6,7 +6,10 @@
     [DateDeactivated] DATETIME      NULL,
     [LogTypeID]       INT           NOT NULL,
     [Message]         VARCHAR (MAX) NULL,
+    [Description]     VARCHAR (MAX) NULL,
     CONSTRAINT [PK_Application.Log] PRIMARY KEY CLUSTERED ([ID] ASC),
     CONSTRAINT [FK_Packet.Log_Log.Type] FOREIGN KEY ([LogTypeID]) REFERENCES [Application].[Log.Type] ([ID])
 );
+
+
 

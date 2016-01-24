@@ -1,4 +1,9 @@
-﻿using ServerFramework.Database.Base.Context;
+﻿/*
+ * Copyright (c) 2016. Kahath.
+ * Licensed under MIT license.
+ */
+
+using ServerFramework.Database.Base.Context;
 using ServerFramework.Database.Base.Entity;
 using ServerFramework.Managers.Base;
 using System;
@@ -75,6 +80,28 @@ namespace ServerFramework.Managers.Core
 			where T : class, IEntity
 		{
 			return context.Get(func);
+		}
+
+		#endregion
+
+		#region Update
+
+		public void Update<T>(DBContextBase context, bool saveChanges, Func<DbSet<T>, T> func, Action<T> action)
+			where T : class, IEntity
+		{
+			context.Update(func, action);
+
+			if (saveChanges)
+				context.SaveChanges();
+		}
+
+		public void Update<T>(DBContextBase context, bool saveChanges, Func<DbSet<T>, IEnumerable<T>> func, Action<T> action)
+			where T : class, IEntity
+		{
+			context.Update(func, action);
+
+			if (saveChanges)
+				context.SaveChanges();
 		}
 
 		#endregion

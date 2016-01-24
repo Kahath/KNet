@@ -119,7 +119,7 @@ namespace ServerFramework.Network.Socket
 			}
 			catch (SocketException e)
 			{
-				Manager.LogMgr.Log(LogType.Error, $"{e.Message}", e.Message);
+				Manager.LogMgr.Log(LogType.Error, e);
 				Console.ReadLine();
 				Environment.Exit(0);
 			}
@@ -236,12 +236,9 @@ namespace ServerFramework.Network.Socket
 
 				try
 				{
-					Manager.LogMgr.Log
-						(
-							LogType.Normal
+					Manager.LogMgr.Log(LogType.Normal
 						,	$"Session {socketExtended.ReceiverData.SessionId} "
-						+	$"({socketExtended.Receiver.AcceptSocket.RemoteEndPoint}) connected"
-						);
+						+	$"({socketExtended.Receiver.AcceptSocket.RemoteEndPoint}) connected");
 				}
 				catch (ObjectDisposedException)
 				{

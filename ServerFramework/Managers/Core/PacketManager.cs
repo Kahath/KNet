@@ -138,7 +138,7 @@ namespace ServerFramework.Managers.Core
 							);
 					}
 
-					Manager.LogMgr.Log(LogType.Error, $"{e.ToString()}");
+					Manager.LogMgr.Log(LogType.Error, e);
 				}
 			}
 			else

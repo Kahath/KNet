@@ -59,12 +59,7 @@ namespace ServerFramework.Singleton
 						}
 						catch (Exception e)
 						{
-							Manager.LogMgr.Log
-							(
-								LogType.Critical
-							,	$"Error with creating instance of {typeof(T)} type\n{e.ToString()}"
-							);
-
+							Manager.LogMgr.Log(LogType.Critical, $"Error with creating instance of {typeof(T)} type", e);
 							Console.ReadLine();
 						}
 

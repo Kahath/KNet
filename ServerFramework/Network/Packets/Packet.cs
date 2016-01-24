@@ -3,7 +3,6 @@
  * Licensed under MIT license.
  */
 
-using ServerFramework.Configuration.Helpers;
 using ServerFramework.Enums;
 using ServerFramework.Managers;
 using System;
@@ -82,7 +81,7 @@ namespace ServerFramework.Network.Packets
 			}
 			catch(IndexOutOfRangeException e)
 			{
-				Manager.LogMgr.Log(Enums.LogType.Critical, e.ToString());
+				Manager.LogMgr.Log(Enums.LogType.Critical, e);
 			}
 
 			return retVal;
@@ -105,7 +104,7 @@ namespace ServerFramework.Network.Packets
 			}
 			catch (IndexOutOfRangeException e)
 			{
-				Manager.LogMgr.Log(Enums.LogType.Critical, e.ToString());
+				Manager.LogMgr.Log(Enums.LogType.Critical, e);
 			}
 		}
 
@@ -242,7 +241,7 @@ namespace ServerFramework.Network.Packets
 			}
 			catch(IndexOutOfRangeException e)
 			{
-				Manager.LogMgr.Log(Enums.LogType.Critical, e.ToString());
+				Manager.LogMgr.Log(Enums.LogType.Critical, e);
 			}
 		}
 
@@ -254,7 +253,7 @@ namespace ServerFramework.Network.Packets
 			}
 			catch(IndexOutOfRangeException e)
 			{
-				Manager.LogMgr.Log(Enums.LogType.Critical, e.ToString());
+				Manager.LogMgr.Log(Enums.LogType.Critical, e);
 			}
 		}
 
@@ -272,7 +271,7 @@ namespace ServerFramework.Network.Packets
 			}
 			catch(IndexOutOfRangeException e)
 			{
-				Manager.LogMgr.Log(Enums.LogType.Critical, e.ToString());
+				Manager.LogMgr.Log(Enums.LogType.Critical, e);
 			}
 
 			return retVal;

@@ -59,7 +59,7 @@ namespace ServerFramework.Commands.Handlers
 			using (ApplicationContext context = new ApplicationContext())
 			{
 				OpcodeModel opcode = Manager.DatabaseMgr.Get<OpcodeModel>(context, x =>
-					x.FirstOrDefault(y => y.Code == code && y.Version == version && y.Active));
+					x.AsNoTracking().FirstOrDefault(y => y.Code == code && y.Version == version && y.Active));
 
 				ChangeOpcode(opcode);
 			}
@@ -79,7 +79,7 @@ namespace ServerFramework.Commands.Handlers
 			using (ApplicationContext context = new ApplicationContext())
 			{
 				OpcodeModel opcode = Manager.DatabaseMgr.Get<OpcodeModel>(context, x => 
-					x.Where(y => y.Code == code && y.TypeID == opcodeType && y.Active)
+					x.AsNoTracking().Where(y => y.Code == code && y.TypeID == opcodeType && y.Active)
 					.OrderByDescending(y => y.Version)
 					.FirstOrDefault());
 
@@ -103,7 +103,7 @@ namespace ServerFramework.Commands.Handlers
 			using (ApplicationContext context = new ApplicationContext())
 			{
 				OpcodeModel opcode = Manager.DatabaseMgr.Get<OpcodeModel>(context, x =>
-					x.FirstOrDefault(y => y.Code == code && y.Version == version
+					x.AsNoTracking().FirstOrDefault(y => y.Code == code && y.Version == version
 						&& y.TypeID == opcodeType && y.Active));
 
 				ChangeOpcode(opcode);

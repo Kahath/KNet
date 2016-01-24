@@ -11,7 +11,7 @@ using System.Data.Entity.Infrastructure.MappingViews;
 
 [assembly: DbMappingViewCacheTypeAttribute(
 	typeof(ServerFramework.Database.Context.ApplicationContext),
-	typeof(ServerFramework.Database.PrecompiledViews.ViewsForBaseEntitySets72c6e61585f2204cd0624ecf96e97f2c30881e7b710d76239778ed0cb85c3247))]
+	typeof(ServerFramework.Database.PrecompiledViews.ViewsForBaseEntitySets2082b5aee1df925f41f20f1d91b32829a6f6597cb741491c362edd95343e922c))]
 
 namespace ServerFramework.Database.PrecompiledViews
 {
@@ -23,14 +23,14 @@ namespace ServerFramework.Database.PrecompiledViews
 	/// Implements a mapping view cache.
 	/// </summary>
 	[GeneratedCode("Entity Framework Power Tools", "0.9.0.0")]
-	internal sealed class ViewsForBaseEntitySets72c6e61585f2204cd0624ecf96e97f2c30881e7b710d76239778ed0cb85c3247 : DbMappingViewCache
+	internal sealed class ViewsForBaseEntitySets2082b5aee1df925f41f20f1d91b32829a6f6597cb741491c362edd95343e922c : DbMappingViewCache
 	{
 		/// <summary>
 		/// Gets a hash value computed over the mapping closure.
 		/// </summary>
 		public override string MappingHashValue
 		{
-			get { return "72c6e61585f2204cd0624ecf96e97f2c30881e7b710d76239778ed0cb85c3247"; }
+			get { return "2082b5aee1df925f41f20f1d91b32829a6f6597cb741491c362edd95343e922c"; }
 		}
 
 		/// <summary>
@@ -205,7 +205,7 @@ namespace ServerFramework.Database.PrecompiledViews
 		{
 			return new DbMappingView(@"
     SELECT VALUE -- Constructing CommandModel
-        [CodeFirstDatabaseSchema.CommandModel](T1.CommandModel_ID, T1.CommandModel_Name, T1.CommandModel_Description, T1.CommandModel_CommandLevelID, T1.CommandModel_ParentID, T1.CommandModel_Active, T1.CommandModel_DateCreated, T1.CommandModel_DateModified, T1.CommandModel_DateDeactivated, T1.CommandModel_AssemblyName, T1.CommandModel_TypeName, T1.CommandModel_MethodName)
+        [CodeFirstDatabaseSchema.CommandModel](T1.CommandModel_ID, T1.CommandModel_Name, T1.CommandModel_Description, T1.CommandModel_CommandLevelID, T1.CommandModel_ParentID, T1.CommandModel_AssemblyName, T1.CommandModel_TypeName, T1.CommandModel_MethodName, T1.CommandModel_Active, T1.CommandModel_DateCreated, T1.CommandModel_DateModified, T1.CommandModel_DateDeactivated)
     FROM (
         SELECT 
             T.ID AS CommandModel_ID, 
@@ -213,13 +213,13 @@ namespace ServerFramework.Database.PrecompiledViews
             T.Description AS CommandModel_Description, 
             T.CommandLevelID AS CommandModel_CommandLevelID, 
             T.ParentID AS CommandModel_ParentID, 
+            T.AssemblyName AS CommandModel_AssemblyName, 
+            T.TypeName AS CommandModel_TypeName, 
+            T.MethodName AS CommandModel_MethodName, 
             T.Active AS CommandModel_Active, 
             T.DateCreated AS CommandModel_DateCreated, 
             T.DateModified AS CommandModel_DateModified, 
             T.DateDeactivated AS CommandModel_DateDeactivated, 
-            T.AssemblyName AS CommandModel_AssemblyName, 
-            T.TypeName AS CommandModel_TypeName, 
-            T.MethodName AS CommandModel_MethodName, 
             True AS _from0
         FROM ApplicationContext.Commands AS T
     ) AS T1");
@@ -280,7 +280,7 @@ namespace ServerFramework.Database.PrecompiledViews
 		{
 			return new DbMappingView(@"
     SELECT VALUE -- Constructing Commands
-        [ServerFramework.Database.Context.CommandModel](T1.CommandModel_ID, T1.CommandModel_Name, T1.CommandModel_Description, T1.CommandModel_CommandLevelID, T1.CommandModel_ParentID, T1.CommandModel_Active, T1.CommandModel_DateCreated, T1.CommandModel_DateModified, T1.CommandModel_DateDeactivated, T1.CommandModel_AssemblyName, T1.CommandModel_TypeName, T1.CommandModel_MethodName)
+        [ServerFramework.Database.Context.CommandModel](T1.CommandModel_ID, T1.CommandModel_Name, T1.CommandModel_Description, T1.CommandModel_CommandLevelID, T1.CommandModel_ParentID, T1.CommandModel_AssemblyName, T1.CommandModel_TypeName, T1.CommandModel_MethodName, T1.CommandModel_Active, T1.CommandModel_DateCreated, T1.CommandModel_DateModified, T1.CommandModel_DateDeactivated)
     FROM (
         SELECT 
             T.ID AS CommandModel_ID, 
@@ -288,13 +288,13 @@ namespace ServerFramework.Database.PrecompiledViews
             T.Description AS CommandModel_Description, 
             T.CommandLevelID AS CommandModel_CommandLevelID, 
             T.ParentID AS CommandModel_ParentID, 
+            T.AssemblyName AS CommandModel_AssemblyName, 
+            T.TypeName AS CommandModel_TypeName, 
+            T.MethodName AS CommandModel_MethodName, 
             T.Active AS CommandModel_Active, 
             T.DateCreated AS CommandModel_DateCreated, 
             T.DateModified AS CommandModel_DateModified, 
             T.DateDeactivated AS CommandModel_DateDeactivated, 
-            T.AssemblyName AS CommandModel_AssemblyName, 
-            T.TypeName AS CommandModel_TypeName, 
-            T.MethodName AS CommandModel_MethodName, 
             True AS _from0
         FROM CodeFirstDatabase.CommandModel AS T
     ) AS T1");
@@ -308,11 +308,12 @@ namespace ServerFramework.Database.PrecompiledViews
 		{
 			return new DbMappingView(@"
     SELECT VALUE -- Constructing LogModel
-        [CodeFirstDatabaseSchema.LogModel](T1.LogModel_ID, T1.LogModel_Message, T1.LogModel_LogTypeID, T1.LogModel_Active, T1.LogModel_DateCreated, T1.LogModel_DateModified, T1.LogModel_DateDeactivated)
+        [CodeFirstDatabaseSchema.LogModel](T1.LogModel_ID, T1.LogModel_Message, T1.LogModel_Description, T1.LogModel_LogTypeID, T1.LogModel_Active, T1.LogModel_DateCreated, T1.LogModel_DateModified, T1.LogModel_DateDeactivated)
     FROM (
         SELECT 
             T.ID AS LogModel_ID, 
             T.Message AS LogModel_Message, 
+            T.Description AS LogModel_Description, 
             T.LogTypeID AS LogModel_LogTypeID, 
             T.Active AS LogModel_Active, 
             T.DateCreated AS LogModel_DateCreated, 
@@ -353,11 +354,12 @@ namespace ServerFramework.Database.PrecompiledViews
 		{
 			return new DbMappingView(@"
     SELECT VALUE -- Constructing Logs
-        [ServerFramework.Database.Context.LogModel](T1.LogModel_ID, T1.LogModel_Message, T1.LogModel_LogTypeID, T1.LogModel_Active, T1.LogModel_DateCreated, T1.LogModel_DateModified, T1.LogModel_DateDeactivated)
+        [ServerFramework.Database.Context.LogModel](T1.LogModel_ID, T1.LogModel_Message, T1.LogModel_Description, T1.LogModel_LogTypeID, T1.LogModel_Active, T1.LogModel_DateCreated, T1.LogModel_DateModified, T1.LogModel_DateDeactivated)
     FROM (
         SELECT 
             T.ID AS LogModel_ID, 
             T.Message AS LogModel_Message, 
+            T.Description AS LogModel_Description, 
             T.LogTypeID AS LogModel_LogTypeID, 
             T.Active AS LogModel_Active, 
             T.DateCreated AS LogModel_DateCreated, 
@@ -398,7 +400,7 @@ namespace ServerFramework.Database.PrecompiledViews
 		{
 			return new DbMappingView(@"
     SELECT VALUE -- Constructing OpcodeModel
-        [CodeFirstDatabaseSchema.OpcodeModel](T1.OpcodeModel_ID, T1.OpcodeModel_Code, T1.OpcodeModel_TypeID, T1.OpcodeModel_Version, T1.OpcodeModel_Author, T1.OpcodeModel_Active, T1.OpcodeModel_DateCreated, T1.OpcodeModel_DateModified, T1.OpcodeModel_DateDeactivated, T1.OpcodeModel_AssemblyName, T1.OpcodeModel_TypeName, T1.OpcodeModel_MethodName)
+        [CodeFirstDatabaseSchema.OpcodeModel](T1.OpcodeModel_ID, T1.OpcodeModel_Code, T1.OpcodeModel_TypeID, T1.OpcodeModel_Version, T1.OpcodeModel_Author, T1.OpcodeModel_AssemblyName, T1.OpcodeModel_TypeName, T1.OpcodeModel_MethodName, T1.OpcodeModel_Active, T1.OpcodeModel_DateCreated, T1.OpcodeModel_DateModified, T1.OpcodeModel_DateDeactivated)
     FROM (
         SELECT 
             T.ID AS OpcodeModel_ID, 
@@ -406,13 +408,13 @@ namespace ServerFramework.Database.PrecompiledViews
             T.TypeID AS OpcodeModel_TypeID, 
             T.Version AS OpcodeModel_Version, 
             T.Author AS OpcodeModel_Author, 
+            T.AssemblyName AS OpcodeModel_AssemblyName, 
+            T.TypeName AS OpcodeModel_TypeName, 
+            T.MethodName AS OpcodeModel_MethodName, 
             T.Active AS OpcodeModel_Active, 
             T.DateCreated AS OpcodeModel_DateCreated, 
             T.DateModified AS OpcodeModel_DateModified, 
             T.DateDeactivated AS OpcodeModel_DateDeactivated, 
-            T.AssemblyName AS OpcodeModel_AssemblyName, 
-            T.TypeName AS OpcodeModel_TypeName, 
-            T.MethodName AS OpcodeModel_MethodName, 
             True AS _from0
         FROM ApplicationContext.Opcodes AS T
     ) AS T1");
@@ -448,7 +450,7 @@ namespace ServerFramework.Database.PrecompiledViews
 		{
 			return new DbMappingView(@"
     SELECT VALUE -- Constructing Opcodes
-        [ServerFramework.Database.Context.OpcodeModel](T1.OpcodeModel_ID, T1.OpcodeModel_Code, T1.OpcodeModel_TypeID, T1.OpcodeModel_Version, T1.OpcodeModel_Author, T1.OpcodeModel_Active, T1.OpcodeModel_DateCreated, T1.OpcodeModel_DateModified, T1.OpcodeModel_DateDeactivated, T1.OpcodeModel_AssemblyName, T1.OpcodeModel_TypeName, T1.OpcodeModel_MethodName)
+        [ServerFramework.Database.Context.OpcodeModel](T1.OpcodeModel_ID, T1.OpcodeModel_Code, T1.OpcodeModel_TypeID, T1.OpcodeModel_Version, T1.OpcodeModel_Author, T1.OpcodeModel_AssemblyName, T1.OpcodeModel_TypeName, T1.OpcodeModel_MethodName, T1.OpcodeModel_Active, T1.OpcodeModel_DateCreated, T1.OpcodeModel_DateModified, T1.OpcodeModel_DateDeactivated)
     FROM (
         SELECT 
             T.ID AS OpcodeModel_ID, 
@@ -456,13 +458,13 @@ namespace ServerFramework.Database.PrecompiledViews
             T.TypeID AS OpcodeModel_TypeID, 
             T.Version AS OpcodeModel_Version, 
             T.Author AS OpcodeModel_Author, 
+            T.AssemblyName AS OpcodeModel_AssemblyName, 
+            T.TypeName AS OpcodeModel_TypeName, 
+            T.MethodName AS OpcodeModel_MethodName, 
             T.Active AS OpcodeModel_Active, 
             T.DateCreated AS OpcodeModel_DateCreated, 
             T.DateModified AS OpcodeModel_DateModified, 
             T.DateDeactivated AS OpcodeModel_DateDeactivated, 
-            T.AssemblyName AS OpcodeModel_AssemblyName, 
-            T.TypeName AS OpcodeModel_TypeName, 
-            T.MethodName AS OpcodeModel_MethodName, 
             True AS _from0
         FROM CodeFirstDatabase.OpcodeModel AS T
     ) AS T1");

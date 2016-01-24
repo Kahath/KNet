@@ -132,13 +132,13 @@ namespace ServerFramework.Managers.Core
 
 							retVal = result.Invoke(user);
 						}
-						catch (IndexOutOfRangeException)
+						catch (IndexOutOfRangeException e)
 						{
-							Manager.LogMgr.Log(LogType.Error, $"Error with '{result.FullName}' command. wrong arguments");
+							Manager.LogMgr.Log(LogType.Error, $"Error with '{result.FullName}' command. wrong arguments", e);
 						}
-						catch (Exception)
+						catch (Exception e)
 						{
-							Manager.LogMgr.Log(LogType.Error, $"Error with '{result.FullName}' command. Failed to execute handler");
+							Manager.LogMgr.Log(LogType.Error, $"Error with '{result.FullName}' command. Failed to execute handler", e);
 						}
 
 						if (retVal)
@@ -155,20 +155,12 @@ namespace ServerFramework.Managers.Core
 					}
 					else
 					{
-						Manager.LogMgr.Log
-						(
-							LogType.Command
-						,	$"Available sub commands for '{result.FullName}'\n{AvailableSubCommands(result, user.UserLevel)}"
-						);
+						Manager.LogMgr.Log(LogType.Command,	$"Available sub commands for '{result.FullName}'\n{AvailableSubCommands(result, user.UserLevel)}");
 					}
 				}
 				else
 				{
-					Manager.LogMgr.Log
-					(
-						LogType.Command
-					,	$"Command '{commandPath[0]}' doesn't exist"
-					);
+					Manager.LogMgr.Log(LogType.Command,	$"Command '{commandPath[0]}' doesn't exist");
 				}
 			}
 
@@ -233,20 +225,13 @@ namespace ServerFramework.Managers.Core
 			command.Validation = ValidateCommand(command);
 
 			if (!command.IsValid)
-			{
-				Manager.LogMgr.Log
-				(
-					LogType.Warning
-				,	$"Command '{command.FullName}' failed '{command.Validation}' validation"
-				);
-			}
+				Manager.LogMgr.Log(LogType.Warning,	$"Command '{command.FullName}' failed '{command.Validation}' validation");
 
 			if (command.SubCommands != null)
 			{
 				foreach (Command c in command.SubCommands)
 				{
 					c.BaseCommand = command;
-
 					UpdateBase(c);
 				}
 			}

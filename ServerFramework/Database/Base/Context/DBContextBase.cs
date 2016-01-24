@@ -46,78 +46,64 @@ namespace ServerFramework.Database.Base.Context
 
 		#region Add
 
-		internal void Add<T>(T entity) where T : class, IEntity
+		private void Add<T>(T entity) where T : class, IEntity
 		{
-			if (entity.DateCreated != null && entity.DateCreated != DateTime.MinValue)
+			if (entity != null)
 			{
-				DbEntityEntry<T> entry = Entry(entity);
-				entry.State = EntityState.Modified;
-			}
-			else
-			{
-				Type types = typeof(T);
-				DbSet<T> set = GetEntitySet<T>(entity.GetType());
-				set.Add(entity);
-			}
-		}
-
-		internal void Add<T>(T[] entities)
-			where T : class, IEntity
-		{
-			if (entities.Any())
-			{
-				if (entities.Count() > 1)
+				if (entity.DateCreated != null && entity.DateCreated != DateTime.MinValue)
 				{
-					AddRange(entities);
+					DbEntityEntry<T> entry = Entry(entity);
+					entry.State = EntityState.Modified;
 				}
 				else
 				{
-					Add(entities.First());
+					DbSet<T> set = GetEntitySet<T>(entity.GetType());
+					set.Add(entity);
 				}
 			}
 		}
 
-		private void AddRange<T>(IEnumerable<T> entities) where T : class, IEntity
+		internal void Add<T>(IEnumerable<T> entities) where T : class, IEntity
 		{
-			ValidateEntities(entities);
+			if (entities != null && entities.Any())
+			{
+				DbSet<T> set = GetEntitySet<T>(entities.First().GetType());
+				IEnumerable<T> addEntities = entities.Where(x => x.DateCreated == null || x.DateCreated == DateTime.MinValue);
+				IEnumerable<T> updateEntities = entities.Where(x => x.DateCreated != null && x.DateCreated != DateTime.MinValue);
 
-			DbSet<T> set = GetEntitySet<T>(entities.First().GetType());
-			set.AddRange(entities);
+				if(addEntities != null && addEntities.Any())
+					set.AddRange(addEntities);
+
+				if (updateEntities != null && updateEntities.Any())
+				{
+					foreach (T entity in updateEntities)
+						Add(entity);
+				}
+			}
 		}
 
 		#endregion
 
 		#region Remove
 
-		private void Remove<T>(T entity) where T : class, IEntity
-		{
-			DbSet<T> set = GetEntitySet<T>(entity.GetType());
-			set.Remove(entity);
-		}
-
 		internal void Remove<T>(Func<DbSet<T>, IEnumerable<T>> func)
 			where T : class, IEntity
 		{
 			DbSet<T> set = GetEntitySet<T>(typeof(T));
-			RemoveRange(func(set));
+			IEnumerable<T> entities = func(set);
+
+			if (entities != null && entities.Any())
+				set.RemoveRange(entities);
 		}
 
 		internal void Remove<T>(Func<DbSet<T>, T> func)
 			where T : class, IEntity
 		{
 			DbSet<T> set = GetEntitySet<T>(typeof(T));
-			Remove(func(set));
-		}
+			T entity = func(set);
 
-		private void RemoveRange<T>(IEnumerable<T> entities) where T : class, IEntity
-		{
-			if (entities.Any())
-			{
-				ValidateEntities(entities);
-
-				DbSet<T> set = GetEntitySet<T>(entities.First().GetType());
-				set.RemoveRange(entities);
-			}
+			if (entity != null)
+				set.Remove(entity);
 		}
 
 		#endregion
@@ -135,7 +121,7 @@ namespace ServerFramework.Database.Base.Context
 			return retVal;
 		}
 
-		internal IEnumerable<T> Get<T>(Func<DbSet<T>, IEnumerable<T>> func, bool asNoTracking = false)
+		internal IEnumerable<T> Get<T>(Func<DbSet<T>, IEnumerable<T>> func)
 			where T : class, IEntity
 		{
 			IEnumerable<T> retVal = Enumerable.Empty<T>();
@@ -148,14 +134,32 @@ namespace ServerFramework.Database.Base.Context
 
 		#endregion
 
-		#region ValidateEntity
+		#region Update
 
-		private void ValidateEntities<T>(IEnumerable<T> entities)
+		internal void Update<T>(Func<DbSet<T>, T> func, Action<T> action)
+			where T : class, IEntity
 		{
-			bool isValid = entities.Select(x => x.GetType()).Distinct().Skip(1).Any();
+			T entity = Get(func);
 
-			if (!isValid)
-				throw new DatabaseException("Entities are not valid for range remove");
+			if(entity != null)
+			{
+				action(entity);
+				Add(entity);
+			}
+		}
+
+		internal void Update<T>(Func<DbSet<T>, IEnumerable<T>> func, Action<T> action)
+			where T : class, IEntity
+		{
+			IEnumerable<T> entities = Get(func);
+
+			if(entities != null && entities.Any())
+			{
+				foreach (T entity in entities)
+					action(entity);
+
+				Add(entities);
+			}
 		}
 
 		#endregion
