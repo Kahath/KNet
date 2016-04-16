@@ -13,7 +13,6 @@ namespace ServerFramework.Async.Semaphore
 		#region Fields
 
 		private readonly Task _green = Task.FromResult(true);
-		private readonly object _lock = new object();
 		private ConcurrentQueue<TaskCompletionSource<bool>> _waitingQueue;
 		private bool _isGreen;
 
@@ -24,11 +23,6 @@ namespace ServerFramework.Async.Semaphore
 		private Task Green
 		{
 			get { return _green; }
-		}
-
-		private object Lock
-		{
-			get { return _lock; }
 		}
 
 		internal ConcurrentQueue<TaskCompletionSource<bool>> WaitingQueue
@@ -62,19 +56,16 @@ namespace ServerFramework.Async.Semaphore
 		{
 			Task retVal;
 
-			lock(Lock)
+			if (IsGreen)
 			{
-				if (IsGreen)
-				{
-					retVal = Green;
-					IsGreen = false;
-				}
-				else
-				{
-					TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
-					WaitingQueue.Enqueue(tcs);
-					retVal = tcs.Task;
-				}
+				retVal = Green;
+				IsGreen = false;
+			}
+			else
+			{
+				TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
+				WaitingQueue.Enqueue(tcs);
+				retVal = tcs.Task;
 			}
 
 			return retVal;
@@ -88,16 +79,13 @@ namespace ServerFramework.Async.Semaphore
 		{
 			TaskCompletionSource<bool> red = null;
 
-			lock (Lock)
+			if (WaitingQueue.Count > 0)
 			{
-				if (WaitingQueue.Count > 0)
-				{
-					WaitingQueue.TryDequeue(out red);
-				}
-				else if (!IsGreen)
-				{
-					IsGreen = true;
-				}
+				WaitingQueue.TryDequeue(out red);
+			}
+			else if (!IsGreen)
+			{
+				IsGreen = true;
 			}
 
 			if (red != null)

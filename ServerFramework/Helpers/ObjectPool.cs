@@ -37,7 +37,7 @@ namespace ServerFramework.Helpers
 		/// </summary>
 		public int Count
 		{
-			get { return this._stackPool.Count; }
+			get { return _stackPool.Count; }
 		}
 
 		#endregion
@@ -54,8 +54,9 @@ namespace ServerFramework.Helpers
 		{
 			if (item == null)
 				throw new ArgumentNullException("item");
+
 			lock (_stackPool)
-				this._stackPool.Push(item);
+				_stackPool.Push(item);
 		}
 
 		#endregion
@@ -69,7 +70,7 @@ namespace ServerFramework.Helpers
 		public T Pop()
 		{
 			lock (_stackPool)
-				return this._stackPool.Pop();
+				return _stackPool.Pop();
 		}
 
 		#endregion

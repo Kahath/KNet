@@ -73,6 +73,7 @@ namespace ServerFramework.Configuration.Core
 		{
 			string nameValue = null;
 			T trueValue = default(T);
+			bool isEnum = typeof(T).IsEnum;
 
 			try
 			{
@@ -84,11 +85,26 @@ namespace ServerFramework.Configuration.Core
 
 				if (hex)
 				{
-					trueValue = (T)Convert.ChangeType(Convert.ToInt32(nameValue, 16), typeof(T));
+					if (isEnum)
+					{
+						trueValue = (T)Enum.ToObject(typeof(T), Convert.ToInt32(nameValue, 16));
+					}
+					else
+					{
+						trueValue = (T)Convert.ChangeType(Convert.ToInt32(nameValue, 16), typeof(T));
+					}
+
 				}
 				else
 				{
-					trueValue = (T)Convert.ChangeType(nameValue, typeof(T));
+					if (isEnum)
+					{
+						trueValue = (T)Enum.ToObject(typeof(T), nameValue);
+					}
+					else
+					{
+						trueValue = (T)Convert.ChangeType(nameValue, typeof(T));
+					}
 				}
 			}
 			catch (IndexOutOfRangeException e)

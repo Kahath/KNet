@@ -4,7 +4,6 @@
  */
 
 using ServerFramework.Database.Base.Entity;
-using ServerFramework.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -24,8 +23,6 @@ namespace ServerFramework.Database.Base.Context
 		{
 			get { return Database.Connection.ConnectionString; }
 		}
-
-		public abstract Dictionary<Type, DbSet> DbSetMap { get; }
 
 		#endregion
 
@@ -57,7 +54,7 @@ namespace ServerFramework.Database.Base.Context
 				}
 				else
 				{
-					DbSet<T> set = GetEntitySet<T>(entity.GetType());
+					DbSet<T> set = Set<T>();
 					set.Add(entity);
 				}
 			}
@@ -67,7 +64,7 @@ namespace ServerFramework.Database.Base.Context
 		{
 			if (entities != null && entities.Any())
 			{
-				DbSet<T> set = GetEntitySet<T>(entities.First().GetType());
+				DbSet<T> set = Set<T>();
 				IEnumerable<T> addEntities = entities.Where(x => x.DateCreated == null || x.DateCreated == DateTime.MinValue);
 				IEnumerable<T> updateEntities = entities.Where(x => x.DateCreated != null && x.DateCreated != DateTime.MinValue);
 
@@ -89,7 +86,7 @@ namespace ServerFramework.Database.Base.Context
 		internal void Remove<T>(Func<DbSet<T>, IEnumerable<T>> func)
 			where T : class, IEntity
 		{
-			DbSet<T> set = GetEntitySet<T>(typeof(T));
+			DbSet<T> set = Set<T>();
 			IEnumerable<T> entities = func(set);
 
 			if (entities != null && entities.Any())
@@ -99,7 +96,7 @@ namespace ServerFramework.Database.Base.Context
 		internal void Remove<T>(Func<DbSet<T>, T> func)
 			where T : class, IEntity
 		{
-			DbSet<T> set = GetEntitySet<T>(typeof(T));
+			DbSet<T> set = Set<T>();
 			T entity = func(set);
 
 			if (entity != null)
@@ -115,7 +112,7 @@ namespace ServerFramework.Database.Base.Context
 		{
 			T retVal = default(T);
 
-			DbSet<T> set = GetEntitySet<T>(typeof(T));
+			DbSet<T> set = Set<T>();
 			retVal = func(set);
 
 			return retVal;
@@ -126,7 +123,7 @@ namespace ServerFramework.Database.Base.Context
 		{
 			IEnumerable<T> retVal = Enumerable.Empty<T>();
 
-			DbSet<T> set = GetEntitySet<T>(typeof(T));
+			DbSet<T> set = Set<T>();
 			retVal = func(set);
 
 			return retVal;
@@ -160,40 +157,6 @@ namespace ServerFramework.Database.Base.Context
 
 				Add(entities);
 			}
-		}
-
-		#endregion
-
-		#region ValidateEntitySet
-
-		private void ValidateEntitySet(Type type, DbSet set)
-		{
-			if (set == null)
-				throw new DatabaseException($"Given entity Set '{type}' is not present in DbSetMap");
-		}
-
-		#endregion
-
-		#region GetEntitySet
-
-		private DbSet<T> GetEntitySet<T>(T entity)
-			where T : class, IEntity
-		{
-			DbSet<T> set = GetEntitySet<T>(entity.GetType());
-
-			return set;
-		}
-
-		private DbSet<T> GetEntitySet<T>(Type type)
-			where T : class, IEntity
-		{
-			DbSet set = null;
-			Type types = typeof(T);
-			DbSetMap.TryGetValue(type, out set);
-
-			ValidateEntitySet(type, set);
-
-			return set.Cast<T>();
 		}
 
 		#endregion

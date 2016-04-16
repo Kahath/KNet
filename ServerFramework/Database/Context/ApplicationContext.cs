@@ -18,12 +18,6 @@ namespace ServerFramework.Database.Context
 {
 	public class ApplicationContext : DBContextBase
 	{
-		#region Fields
-
-		private Dictionary<Type, DbSet> _dbSetMap;
-
-		#endregion
-
 		#region Properties
 
 		public DbSet<CommandModel> Commands				{ get; set; }
@@ -36,30 +30,6 @@ namespace ServerFramework.Database.Context
 		public DbSet<OpcodeModel> Opcodes				{ get; set; }
 		public DbSet<OpcodeTypeModel> OpcodeTypes		{ get; set; }
 		public DbSet<ServerModel> Servers				{ get; set; }
-
-		public override Dictionary<Type, DbSet> DbSetMap
-		{
-			get
-			{
-				if (_dbSetMap == null)
-				{
-					_dbSetMap = new Dictionary<Type, DbSet>()
-					{
-						{ typeof(CommandModel),         Set(typeof(CommandModel))       }
-					,   { typeof(CommandLevelModel),    Set(typeof(CommandLevelModel))  }
-					,   { typeof(CommandLogModel),      Set(typeof(CommandLogModel))    }
-					,   { typeof(PacketLogModel),       Set(typeof(PacketLogModel))     }
-					,   { typeof(PacketLogTypeModel),   Set(typeof(PacketLogTypeModel)) }
-					,   { typeof(LogModel),             Set(typeof(LogModel))           }
-					,   { typeof(OpcodeModel),          Set(typeof(OpcodeModel))        }
-					,   { typeof(OpcodeTypeModel),      Set(typeof(OpcodeTypeModel))    }
-					,   { typeof(ServerModel),          Set(typeof(ServerModel))        }
-					};
-				}
-
-				return _dbSetMap;
-			}
-		}
 
 		#endregion
 

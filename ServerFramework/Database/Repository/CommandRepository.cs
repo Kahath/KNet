@@ -43,24 +43,15 @@ namespace ServerFramework.Database.Repository
 		{
 			if (parent != null)
 			{
-				IEnumerable<CommandModel> subCommands = Manager.DatabaseMgr.Get<CommandModel>(Context, x =>
-					x.Where(y => y.Parent.ID == parent.ID && y.Active));
+				IEnumerable<CommandModel> subCommands = Manager.DatabaseMgr.Get<CommandModel>(
+					Context, x => x.Where(y => y.Parent.ID == parent.ID && y.Active));
 
 				if (command.SubCommands != null && command.SubCommands.Any())
 				{
 					foreach (Command c in command.SubCommands)
 					{
-						CommandModel commandModel = null;
-
-						if (!subCommands.Any(x => x.Name == c.Name))
-						{
-							commandModel = new CommandModel(c);
-							commandModel.Parent = parent;
-						}
-						else
-						{
-							commandModel = subCommands.FirstOrDefault(x => x.Name == c.Name);
-						}
+						CommandModel commandModel = subCommands.FirstOrDefault(x => x.Name == c.Name);
+						commandModel = commandModel ?? new CommandModel(c) { Parent = parent };
 
 						Manager.DatabaseMgr.AddOrUpdate(Context, false, commandModel);
 						UpdateSubCommands(c, commandModel);
@@ -82,8 +73,8 @@ namespace ServerFramework.Database.Repository
 				command.Description = commandModel.Description;
 			}
 
-			IEnumerable<CommandModel> subCommands = Manager.DatabaseMgr.Get<CommandModel>(Context, x =>
-				x.Where(y => y.ParentID == commandModel.ID && y.Active).ToList());
+			IEnumerable<CommandModel> subCommands = Manager.DatabaseMgr.Get<CommandModel>(
+				Context, x => x.Where(y => y.ParentID == commandModel.ID && y.Active).ToList());
 
 			if (command.SubCommands != null && command.SubCommands.Any())
 			{

@@ -6,6 +6,7 @@
 using ServerFramework.Configuration.Core;
 using ServerFramework.Enums;
 using System;
+using UMemory.Unmanaged.Enums;
 
 namespace ServerFramework.Configuration.Helpers
 {
@@ -14,13 +15,15 @@ namespace ServerFramework.Configuration.Helpers
 		#region Fields
 
 		private static Config _config;
+		private static bool _isInitialised;
 
 		private static string _bindIp;
 		private static int _bindPort;
 
-		private static LogType? _logLevel;
+		private static LogType _logLevel;
 		private static PacketLogType _packetLogLevel;
 		private static OpcodeType _opcodeAllowLevel;
+		private static EndiannessType _endianness;
 		private static int _packetLogSize;
 
 		private static int _bufferSize;
@@ -50,6 +53,11 @@ namespace ServerFramework.Configuration.Helpers
 			set { _config = value; }
 		}
 
+		public static bool IsInitialised
+		{
+			get { return _isInitialised; }
+		}
+
 		internal static string BindIP
 		{
 			get { return _bindIp; }
@@ -62,7 +70,7 @@ namespace ServerFramework.Configuration.Helpers
 			set { _bindPort = value; }
 		}
 
-		internal static LogType? LogLevel
+		internal static LogType LogLevel
 		{
 			get { return _logLevel; }
 			set { _logLevel = value; }
@@ -78,6 +86,12 @@ namespace ServerFramework.Configuration.Helpers
 		{
 			get { return _opcodeAllowLevel; }
 			set { _opcodeAllowLevel = value; }
+		}
+
+		internal static EndiannessType Endianness
+		{
+			get { return _endianness; }
+			set { _endianness = value; }
 		}
 
 		internal static int PacketLogSize
@@ -211,9 +225,10 @@ namespace ServerFramework.Configuration.Helpers
 			BindIP = Config.Read<string>(ConfigurationHelper.BindIPKey);
 			BindPort = Config.Read<int>(ConfigurationHelper.BindPortKey);
 
-			LogLevel = (LogType?)Config.Read<byte>(ConfigurationHelper.LogLevelKey, true) ?? LogType.None;
-			PacketLogLevel = (PacketLogType)Config.Read<byte>(ConfigurationHelper.PacketLogLevelKey, true);
-			OpcodeAllowLevel = (OpcodeType)Config.Read<byte>(ConfigurationHelper.OpcodeAllowLevelKey, true);
+			LogLevel = Config.Read<LogType>(ConfigurationHelper.LogLevelKey, true);
+			PacketLogLevel = Config.Read<PacketLogType>(ConfigurationHelper.PacketLogLevelKey, true);
+			OpcodeAllowLevel = Config.Read<OpcodeType>(ConfigurationHelper.OpcodeAllowLevelKey, true);
+			Endianness = Config.Read<EndiannessType>(ConfigurationHelper.Endianness, true);
 			PacketLogSize = Config.Read<int>(ConfigurationHelper.PacketLogSizeKey);
 
 			BufferSize = Config.Read<int>(ConfigurationHelper.BufferSizeKey);
@@ -232,7 +247,9 @@ namespace ServerFramework.Configuration.Helpers
 			OpcodeLength = sizeof(ushort);
 			MessageSizeLength = sizeof(ushort);
 			BigMessageSizeLength = sizeof(int);
-			NumSocketPerSession = 2;
+			NumSocketPerSession = 2; // 1 for receive, 1 for send
+
+			_isInitialised = true;
 		}
 
 		#endregion

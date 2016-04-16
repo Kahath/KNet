@@ -21,7 +21,6 @@ namespace ServerFramework.Commands.Base
 		private Command[]			_subCommands;
 		private CommandHandler		_script;
 		private string				_description;
-		private string				_arguments;
 		private CommandValidation	_validation;
 
 		#endregion
@@ -32,12 +31,6 @@ namespace ServerFramework.Commands.Base
 		{
 			get { return _description; }
 			internal set { _description = value; }
-		}
-
-		public string Arguments
-		{
-			get { return _arguments; }
-			internal set { _arguments = value; }
 		}
 
 		internal CommandHandler Script
@@ -133,9 +126,9 @@ namespace ServerFramework.Commands.Base
 		/// <param name="user">Client who executes script.</param>
 		/// <param name="args">Command arguments.</param>
 		/// <returns></returns>
-		public bool Invoke(Client user)
+		public bool Invoke(Client user, params string[] parameters)
 		{
-			return Script(user, Arguments.Split(' '));
+			return Script(user, parameters);
 		}
 
 		#endregion

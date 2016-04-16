@@ -38,7 +38,7 @@ namespace ServerFramework.Network.Packets
 		#region Constructors
 
 		public PacketStream(int maxLength)
-			: base(maxLength)
+			: base(maxLength, ServerConfig.Endianness)
 		{
 		}
 
@@ -107,7 +107,7 @@ namespace ServerFramework.Network.Packets
 
 			if (BitPosition == 8)
 			{
-				Write<byte>(Value);
+				Write(Value);
 				BitPosition = 0;
 				Value = 0;
 			}
@@ -155,7 +155,7 @@ namespace ServerFramework.Network.Packets
 		{
 			if (BitPosition != 0)
 			{
-				Write<byte>(Value);
+				Write(Value);
 
 				BitPosition = 0;
 				Value = 0;
@@ -182,18 +182,18 @@ namespace ServerFramework.Network.Packets
 
 			Seek(packetPosition);
 
-			Write<byte>(flags);
+			Write(flags);
 
 			if (!isBigHeader)
 			{
-				Write<ushort>((ushort)messageLength);
+				Write((ushort)messageLength);
 			}
 			else
 			{
-				Write<int>(messageLength);
+				Write(messageLength);
 			}
 
-			Write<ushort>(opcode);
+			Write(opcode);
 
 			Adjust(packetPosition);
 

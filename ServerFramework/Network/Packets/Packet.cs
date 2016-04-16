@@ -100,7 +100,7 @@ namespace ServerFramework.Network.Packets
 		{
 			try
 			{
-				Stream.Write<T>(value);
+				Stream.Write(value);
 			}
 			catch (IndexOutOfRangeException e)
 			{

@@ -69,30 +69,27 @@ namespace ServerFramework.Managers.Core
 		/// </summary>
 		protected override void Init()
 		{
-			using (ApplicationContext context = new ApplicationContext())
-			{
-				IEnumerable<OpcodeModel> opcodes = Manager.DatabaseMgr.Get<OpcodeModel>(context, x =>
-					x.Where(y => y.Active)
-					.GroupBy(y => y.Code, (key, y) =>
-						y.OrderByDescending(z => z.TypeID)
-						.ThenByDescending(z => z.Version)
-						.FirstOrDefault()));
+			IEnumerable<OpcodeModel> opcodes = Manager.DatabaseMgr.Get<ApplicationContext, OpcodeModel>(x =>
+				x.AsNoTracking().Where(y => y.Active)
+				.GroupBy(y => y.Code, (key, y) =>
+					y.OrderByDescending(z => z.TypeID)
+					.ThenByDescending(z => z.Version)
+					.FirstOrDefault()).ToList());
 
-				foreach (OpcodeModel opcode in opcodes)
-				{
-					PacketHandlers[(ushort)opcode.Code] = Delegate.CreateDelegate
+			foreach (OpcodeModel opcode in opcodes)
+			{
+				PacketHandlers[(ushort)opcode.Code] = Delegate.CreateDelegate
+				(
+					typeof(OpcodeHandler)
+				,	Manager.AssemblyMgr.GetMethod
 					(
-						typeof(OpcodeHandler)
-					,	Manager.AssemblyMgr.GetMethod
-						(
-							opcode.AssemblyName
-						,	opcode.TypeName
-						,	opcode.MethodName
-						,	typeof(Client)
-						,	typeof(Packet)
-						)
-					) as OpcodeHandler;
-				}
+						opcode.AssemblyName
+					,	opcode.TypeName
+					,	opcode.MethodName
+					,	typeof(Client)
+					,	typeof(Packet)
+					)
+				) as OpcodeHandler;
 			}
 
 			Manager.LogMgr.Log(LogType.Normal, $"{PacketHandlersCount} packet handlers loaded");

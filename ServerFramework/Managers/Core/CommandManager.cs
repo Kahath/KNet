@@ -130,7 +130,7 @@ namespace ServerFramework.Managers.Core
 							if (BeforeCommandInvoke != null)
 								BeforeCommandInvoke(result, new EventArgs());
 
-							retVal = result.Invoke(user);
+							retVal = result.Invoke(user, commandPath.ToArray());
 						}
 						catch (IndexOutOfRangeException e)
 						{
@@ -146,21 +146,20 @@ namespace ServerFramework.Managers.Core
 							CommandLogModel commandLog = new CommandLogModel();
 							commandLog.UserID = user.Token.ID;
 							commandLog.UserName = user.Token.Name;
-							commandLog.CommandName = String.Format($"{result.FullName} {result.Arguments}");
+							commandLog.CommandName = String.Format($"{result.FullName} {String.Join(" ", commandPath)}");
 							commandLog.CommandID = result.Model.ID;
 
-							using (ApplicationContext context = new ApplicationContext())
-								Manager.DatabaseMgr.AddOrUpdate(context, true, commandLog);
+							Manager.DatabaseMgr.AddOrUpdate<ApplicationContext, CommandLogModel>(true, commandLog);
 						}
 					}
 					else
 					{
-						Manager.LogMgr.Log(LogType.Command,	$"Available sub commands for '{result.FullName}'\n{AvailableSubCommands(result, user.UserLevel)}");
+						Manager.LogMgr.Log(LogType.Command, $"Available sub commands for '{result.FullName}'\n{AvailableSubCommands(result, user.UserLevel)}");
 					}
 				}
 				else
 				{
-					Manager.LogMgr.Log(LogType.Command,	$"Command '{commandPath[0]}' doesn't exist");
+					Manager.LogMgr.Log(LogType.Command, $"Command '{commandPath[0]}' doesn't exist");
 				}
 			}
 
@@ -184,7 +183,7 @@ namespace ServerFramework.Managers.Core
 		{
 			Command retVal = null;
 
-			if(commandTable == null)
+			if (commandTable == null)
 				commandTable = CommandTable;
 
 			if (path != null && path.Any())
@@ -199,7 +198,7 @@ namespace ServerFramework.Managers.Core
 
 					if (command.Script != null)
 					{
-						command.Arguments = String.Join(" ", path);
+						//command.Arguments = String.Join(" ", path);
 						retVal = command;
 					}
 					else if (command.SubCommands != null)
@@ -225,7 +224,7 @@ namespace ServerFramework.Managers.Core
 			command.Validation = ValidateCommand(command);
 
 			if (!command.IsValid)
-				Manager.LogMgr.Log(LogType.Warning,	$"Command '{command.FullName}' failed '{command.Validation}' validation");
+				Manager.LogMgr.Log(LogType.Warning, $"Command '{command.FullName}' failed '{command.Validation}' validation");
 
 			if (command.SubCommands != null)
 			{
@@ -275,6 +274,8 @@ namespace ServerFramework.Managers.Core
 			return retVal;
 		}
 
+		#endregion
+
 		#region GetSubCommands
 
 		public IEnumerable<Command> GetSubCommands(Command command, CommandLevel userLevel = CommandLevel.Zero)
@@ -286,8 +287,6 @@ namespace ServerFramework.Managers.Core
 
 			return retVal;
 		}
-
-		#endregion
 
 		#endregion
 

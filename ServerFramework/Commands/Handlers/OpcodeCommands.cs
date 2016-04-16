@@ -56,13 +56,10 @@ namespace ServerFramework.Commands.Handlers
 			int code = Int32.Parse(args[0]);
 			int version = Int32.Parse(args[1]);
 
-			using (ApplicationContext context = new ApplicationContext())
-			{
-				OpcodeModel opcode = Manager.DatabaseMgr.Get<OpcodeModel>(context, x =>
-					x.AsNoTracking().FirstOrDefault(y => y.Code == code && y.Version == version && y.Active));
+			OpcodeModel opcode = Manager.DatabaseMgr.Get<ApplicationContext, OpcodeModel>(x =>
+				x.AsNoTracking().FirstOrDefault(y => y.Code == code && y.Version == version && y.Active));
 
-				ChangeOpcode(opcode);
-			}
+			ChangeOpcode(opcode);
 
 			return true;
 		}
@@ -76,16 +73,12 @@ namespace ServerFramework.Commands.Handlers
 			int code = Int32.Parse(args[0]);
 			int opcodeType = int.Parse(args[1]);
 
-			using (ApplicationContext context = new ApplicationContext())
-			{
-				OpcodeModel opcode = Manager.DatabaseMgr.Get<OpcodeModel>(context, x => 
-					x.AsNoTracking().Where(y => y.Code == code && y.TypeID == opcodeType && y.Active)
-					.OrderByDescending(y => y.Version)
-					.FirstOrDefault());
+			OpcodeModel opcode = Manager.DatabaseMgr.Get<ApplicationContext, OpcodeModel>(x => 
+				x.AsNoTracking().Where(y => y.Code == code && y.TypeID == opcodeType && y.Active)
+				.OrderByDescending(y => y.Version)
+				.FirstOrDefault());
 
-				ChangeOpcode(opcode);
-			}
-
+			ChangeOpcode(opcode);
 
 			return true;
 		}
@@ -100,14 +93,11 @@ namespace ServerFramework.Commands.Handlers
 			int version = Int32.Parse(args[1]);
 			int opcodeType = int.Parse(args[2]);
 
-			using (ApplicationContext context = new ApplicationContext())
-			{
-				OpcodeModel opcode = Manager.DatabaseMgr.Get<OpcodeModel>(context, x =>
-					x.AsNoTracking().FirstOrDefault(y => y.Code == code && y.Version == version
-						&& y.TypeID == opcodeType && y.Active));
+			OpcodeModel opcode = Manager.DatabaseMgr.Get<ApplicationContext, OpcodeModel>(x =>
+				x.AsNoTracking().FirstOrDefault(y => y.Code == code && y.Version == version
+					&& y.TypeID == opcodeType && y.Active));
 
-				ChangeOpcode(opcode);
-			}
+			ChangeOpcode(opcode);
 
 			return true;
 		}

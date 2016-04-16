@@ -24,7 +24,7 @@
 															Error				= 0x40
 															Critical			= 0x80
 															All					= 0xFF-->
-		<!--Packet log level settings-->
+			<!--Packet log level settings-->
 <property name="packetloglevel" value="0x00" />			<!--Packet log level mask
 															None				= 0x00
 															SMSG				= 0x01
@@ -32,7 +32,7 @@
 															All					= 0x03-->
 
 <property name="packetlogsize" value="1000" />
-
+	
 				<!--Opcode settings-->
 <property name="opcodeallowlevel" value="0x1F"/>		<!--Opcode allow type mask
 															NotUsed				= 0x01
@@ -48,4 +48,6 @@
 <property name="maxsimultaneousacceptops" value="10" />
 <property name="backlog" value="100" />
 <property name="assemblypath" value="Assemblies" />
+<property name="endianness" value="0x01" />				<!--Endianness type
+															LittleEndian		= 0x01														BigEndian			= 0x02-->
 </ServerSettings>

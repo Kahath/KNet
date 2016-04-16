@@ -45,9 +45,17 @@ namespace ServerFramework.Managers.Core
 			}
 		}
 
-		private LogType? LogLevel
+		private LogType LogLevel
 		{
-			get { return ServerConfig.LogLevel ?? (LogType)0xFF; }
+			get
+			{
+				LogType logType = ServerConfig.LogLevel;
+
+				if (logType == LogType.None)
+					logType = LogType.Error | LogType.Critical;
+
+				return logType;
+			}
 		}
 
 		#endregion
@@ -154,7 +162,7 @@ namespace ServerFramework.Managers.Core
 					case LogType.Info:
 					case LogType.Command:
 						msg = message;
-					break;
+						break;
 					case LogType.Init:
 					case LogType.DB:
 					case LogType.Warning:
@@ -163,17 +171,16 @@ namespace ServerFramework.Managers.Core
 					default:
 						msg = String.Format($"[{DateTime.Now.ToString("HH:mm:ss.fff")}] {message}");
 
-						if (ServerConfig.LogLevel != null)
+						if (ServerConfig.IsInitialised)
 						{
 							LogModel logModel = new LogModel();
 							logModel.LogTypeID = (int)type;
 							logModel.Message = message;
 							logModel.Description = exception != null ? exception.ToString() : null;
 
-							using (ApplicationContext context = new ApplicationContext())
-								Manager.DatabaseMgr.AddOrUpdate(context, true, logModel);
+							Manager.DatabaseMgr.AddOrUpdate<ApplicationContext, LogModel>(true, logModel);
 						}
-					break;
+						break;
 				}
 
 				ConsoleLogQueue.Add(Tuple.Create(color, msg));

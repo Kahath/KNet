@@ -88,6 +88,12 @@ namespace ServerFramework
 
 		#endregion
 
+		#region Events
+
+		public event EventHandler AfterInitialisation;
+
+		#endregion
+
 		#region Constructors
 
 		public KahathFramework()
@@ -167,6 +173,12 @@ namespace ServerFramework
 
 			Manager.LogMgr.Log(LogType.Init, "Initialising managers.");
 			Manager.Init();
+
+			if (AfterInitialisation != null)
+			{
+				Manager.LogMgr.Log(LogType.Init, "Post initialisation...");
+				AfterInitialisation(new object(), new EventArgs());
+			}
 		}
 
 		#endregion
@@ -179,21 +191,22 @@ namespace ServerFramework
 
 			Manager.LogMgr.Log(LogType.Init, "Server successfully initialised");
 
-			using(ApplicationContext context = new ApplicationContext())
-			{
-				Manager.DatabaseMgr.Update<ServerModel>(context, true
-					, x => x.OrderByDescending(y => y.ID).First()
-					, x => x.IsSuccessful = true);
-			}
+			Manager.DatabaseMgr.Update<ApplicationContext, ServerModel>(true
+				, x => x.OrderByDescending(y => y.ID).First()
+				, x => x.IsSuccessful = true);
 
 			while (true)
 			{
 				string command = Console.ReadLine();
 
 				if (!String.IsNullOrEmpty(command))
+				{
 					Manager.CommandMgr.InvokeCommand(ConsoleClient, command.ToLower());
+				}
 				else
+				{
 					Manager.LogMgr.Log(LogType.Command, "Wrong input");
+				}
 			}
 		}
 

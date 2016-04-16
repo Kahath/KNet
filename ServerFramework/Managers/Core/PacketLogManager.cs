@@ -124,8 +124,7 @@ namespace ServerFramework.Managers.Core
 
 			if (PacketLog.Count > ServerConfig.PacketLogSize)
 			{
-				using (ApplicationContext context = new ApplicationContext())
-					Manager.DatabaseMgr.AddOrUpdate(context, true, PacketLog.ToArray());
+				Manager.DatabaseMgr.AddOrUpdate<ApplicationContext, PacketLogModel>(true, PacketLog.ToArray());
 
 				PacketLog.Clear();
 			}

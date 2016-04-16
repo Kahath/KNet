@@ -29,6 +29,7 @@ namespace ServerFramework.Configuration.Helpers
 		public const string DBPassKey = "dbpass";
 		public const string DBNameKey = "dbname";
 		public const string AssemblyPath = "assemblypath";
+		public const string Endianness = "endianness";
 
 		#endregion
 	}

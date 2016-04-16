@@ -17,6 +17,7 @@ using ServerFramework.Events;
 using ServerFramework.Extensions;
 using ServerFramework.Managers.Base;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -175,11 +176,13 @@ namespace ServerFramework.Managers.Core
 
 		private void OnCustomAssemblyType(Assembly assembly, Type type, ApplicationContext context)
 		{
-			if (type.GetCustomAttributes<CommandAttribute>().Any())
+			IEnumerable<CommandAttribute> attributes = type.GetCustomAttributes<CommandAttribute>();
+
+			if (attributes != null && attributes.Any())
 			{
 				CommandRepository CRepo = new CommandRepository(context);
 
-				foreach (CommandAttribute attr in type.GetCustomAttributes<CommandAttribute>())
+				foreach (CommandAttribute attr in attributes)
 				{
 					if (attr != null)
 					{
@@ -246,12 +249,13 @@ namespace ServerFramework.Managers.Core
 		#region InvokeMethod
 
 		public T InvokeMethod<T>(object obj, MethodInfo method, params object[] args)
+			where T : class
 		{
 			T retVal = default(T);
 
 			try
 			{
-				retVal = (T)method.Invoke(obj, args);
+				retVal = method.Invoke(obj, args) as T;
 			}
 			catch (TargetInvocationException)
 			{
