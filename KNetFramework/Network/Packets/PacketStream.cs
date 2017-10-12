@@ -58,10 +58,6 @@ namespace KNetFramework.Network.Packets
 			Write(header);
 			Adjust(packetPosition);
 
-			header.Flags = flags;
-			header.Length = messageLength;
-			header.Opcode = opcode;
-
 			return messageLength + headerLength;
 		}
 
