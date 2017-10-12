@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015. Kahath.
+ * Copyright © Kahath 2015
  * Licensed under MIT license.
  */
 
@@ -17,7 +17,7 @@ namespace ServerFramework.Attributes.Core
 		private ushort _opcode;
 		private string _author;
 		private int _version;
-		private OpcodeType _type;
+		private OpcodeTypes _type;
 
 		#endregion
 
@@ -41,7 +41,7 @@ namespace ServerFramework.Attributes.Core
 			set { _version = value; }
 		}
 
-		public OpcodeType Type
+		public OpcodeTypes Type
 		{
 			get { return _type; }
 			set { _type = value; }
@@ -58,7 +58,7 @@ namespace ServerFramework.Attributes.Core
 		/// <param name="author">Author of method</param>
 		/// <param name="version">Version of method</param>
 		/// <param name="type">Opcode type</param>
-		public OpcodeAttribute(ushort opcode, string author, int version, OpcodeType type)
+		public OpcodeAttribute(ushort opcode, string author, int version, OpcodeTypes type)
 		{
 			Opcode = opcode;
 			Author = author;

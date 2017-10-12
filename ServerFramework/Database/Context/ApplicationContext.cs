@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015. Kahath.
+ * Copyright © Kahath 2015
  * Licensed under MIT license.
  */
 
@@ -10,8 +10,6 @@ using ServerFramework.Database.Model.Application.Log;
 using ServerFramework.Database.Model.Application.Opcode;
 using ServerFramework.Database.Model.Application.PacketLog;
 using ServerFramework.Database.Model.Application.Server;
-using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 
 namespace ServerFramework.Database.Context
@@ -36,7 +34,7 @@ namespace ServerFramework.Database.Context
 		#region Constructors
 
 		/// <summary>
-		/// Creates new instance of <see cref="ServerFramework.Database.Context.ApplicationContext"/> type.
+		/// Creates new instance of <see cref="ApplicationContext"/> type.
 		/// </summary>
 		public ApplicationContext()
 			: base(ServerConfig.ConnectionString)

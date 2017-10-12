@@ -1,10 +1,11 @@
 ﻿/*
- * Copyright (c) 2015. Kahath.
+ * Copyright © Kahath 2015
  * Licensed under MIT license.
  */
 
 using ServerFramework.Attributes.Core;
 using ServerFramework.Commands.Base;
+using ServerFramework.Configuration.Helpers;
 using ServerFramework.Enums;
 using ServerFramework.Network.Session;
 using System;
@@ -37,7 +38,8 @@ namespace ServerFramework.Commands.Handlers
 
 		private static bool Cls(Client user, params string[] args)
 		{
-			Console.Clear();
+			if(ServerConfig.IsConsole)
+				Console.Clear();
 
 			return true;
 		}

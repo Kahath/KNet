@@ -41,11 +41,9 @@
       <HintPath>Libs\DILibrary.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -74,7 +72,25 @@
     <Compile Include="Database\Repository\CommandRepository.cs" />
     <Compile Include="Enums\CommandValidation.cs" />
     <Compile Include="Exceptions\DatabaseException.cs" />
+    <Compile Include="Managers\Core\AssemblyManager.cs" />
+    <Compile Include="Managers\Core\BufferManager.cs" />
+    <Compile Include="Managers\Core\CommandManager.cs" />
     <Compile Include="Managers\Core\DatabaseManager.cs" />
+    <Compile Include="Managers\Core\LogManager.cs" />
+    <Compile Include="Managers\Core\PacketLogManager.cs" />
+    <Compile Include="Managers\Core\PacketManager.cs" />
+    <Compile Include="Managers\Core\SessionManager.cs" />
+    <Compile Include="Managers\Injection\LogManagerInject.cs" />
+    <Compile Include="Managers\Injection\DatabaseManagerInject.cs" />
+    <Compile Include="Managers\Interface\IAssemblyManager.cs" />
+    <Compile Include="Managers\Interface\IBufferManager.cs" />
+    <Compile Include="Managers\Interface\ICommandManager.cs" />
+    <Compile Include="Managers\Interface\IDatabaseManager.cs" />
+    <Compile Include="Managers\Interface\ILogManager.cs" />
+    <Compile Include="Managers\Interface\IManager.cs" />
+    <Compile Include="Managers\Interface\IPacketLogManager.cs" />
+    <Compile Include="Managers\Interface\IPacketManager.cs" />
+    <Compile Include="Managers\Interface\ISessionManager.cs" />
     <Compile Include="Network\Packets\PacketLogItem.cs" />
     <Compile Include="Network\Packets\PacketStream.cs" />
     <Compile Include="Network\Session\ConsoleClient.cs" />
@@ -82,9 +98,9 @@
     <Compile Include="Events\AssemblyEventArgs.cs" />
     <Compile Include="Enums\CommandLevel.cs" />
     <Compile Include="Commands\Base\Command.cs" />
-    <Compile Include="Enums\OpcodeType.cs" />
-    <Compile Include="Enums\PacketFlag.cs" />
-    <Compile Include="Enums\PacketLogType.cs" />
+    <Compile Include="Enums\OpcodeTypes.cs" />
+    <Compile Include="Enums\PacketFlags.cs" />
+    <Compile Include="Enums\PacketLogTypes.cs" />
     <Compile Include="Network\Session\Client.cs" />
     <Compile Include="Database\Base\Context\DBContextBase.cs" />
     <Compile Include="Database\Base\Entity\EntityBase.cs" />
@@ -109,17 +125,16 @@
     <Compile Include="Commands\Handlers\DatabaseCommands.cs" />
     <Compile Include="Commands\Handlers\HelpCommands.cs" />
     <Compile Include="Commands\Handlers\OpcodeCommands.cs" />
-    <Compile Include="KahathFramework.cs" />
-    <Compile Include="Managers\Core\AssemblyManager.cs" />
-    <Compile Include="Managers\Core\LogManager.cs" />
-    <Compile Include="Enums\LogType.cs" />
-    <Compile Include="Managers\Core\PacketLogManager.cs" />
+    <Compile Include="KNetServer.cs" />
+    <Compile Include="Managers\Injection\AssemblyManagerInject.cs" />
+    <Compile Include="Enums\LogTypes.cs" />
+    <Compile Include="Managers\Injection\PacketLogManagerInject.cs" />
     <Compile Include="Managers\Base\ManagerBase.cs" />
-    <Compile Include="Managers\Core\BufferManager.cs" />
-    <Compile Include="Managers\Core\CommandManager.cs" />
+    <Compile Include="Managers\Injection\BufferManagerInject.cs" />
+    <Compile Include="Managers\Injection\CommandManagerInject.cs" />
     <Compile Include="Managers\Manager.cs" />
-    <Compile Include="Managers\Core\PacketManager.cs" />
-    <Compile Include="Managers\Core\SessionManager.cs" />
+    <Compile Include="Managers\Injection\PacketManagerInject.cs" />
+    <Compile Include="Managers\Injection\SessionManagerInject.cs" />
     <Compile Include="Network\Packets\Handlers\ExampleHandler.cs" />
     <Compile Include="Network\Packets\Packet.cs" />
     <Compile Include="Network\Packets\SocketData.cs" />
@@ -133,7 +148,6 @@
     <Compile Include="Network\Socket\ServerInject.cs" />
     <Compile Include="Configuration\Helpers\SocketListenerSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Singleton\SingletonBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Configs\ServerConfig.xml">
@@ -142,6 +156,8 @@
     </Content>
     <Content Include="Libs\DILibrary.dll" />
     <Content Include="Libs\UMemory.dll" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
@@ -149,7 +165,6 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

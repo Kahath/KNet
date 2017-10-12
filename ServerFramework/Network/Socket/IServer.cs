@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015. Kahath.
+ * Copyright © Kahath 2015
  * Licensed under MIT license.
  */
 
@@ -10,9 +10,15 @@ namespace ServerFramework.Network.Socket
 {
 	public interface IServer : IDisposable
 	{
+		#region Properties
+
+		bool IsRunning { get; }
+
+		#endregion
+
 		#region Events
 
-		event ServerEventHandler CloseClientSocket;
+		event ServerEventHandler ClosingClientSocket;
 		event ServerEventHandler Connect;
 
 		#endregion
@@ -21,6 +27,7 @@ namespace ServerFramework.Network.Socket
 
 		void Init();
 		void Send(SocketAsyncEventArgs e);
+		void Quit();
 
 		#endregion
 	}

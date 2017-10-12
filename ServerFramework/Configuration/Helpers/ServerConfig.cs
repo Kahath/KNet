@@ -1,11 +1,12 @@
 ﻿/*
- * Copyright (c) 2015. Kahath.
+ * Copyright © Kahath 2015
  * Licensed under MIT license.
  */
 
 using ServerFramework.Configuration.Core;
 using ServerFramework.Enums;
 using System;
+using System.IO;
 using UMemory.Unmanaged.Enums;
 
 namespace ServerFramework.Configuration.Helpers
@@ -20,9 +21,9 @@ namespace ServerFramework.Configuration.Helpers
 		private static string _bindIp;
 		private static int _bindPort;
 
-		private static LogType _logLevel;
-		private static PacketLogType _packetLogLevel;
-		private static OpcodeType _opcodeAllowLevel;
+		private static LogTypes _logLevel;
+		private static PacketLogTypes _packetLogLevel;
+		private static OpcodeTypes _opcodeAllowLevel;
 		private static EndiannessType _endianness;
 		private static int _packetLogSize;
 
@@ -35,6 +36,7 @@ namespace ServerFramework.Configuration.Helpers
 		private static int _messageSizeLength;
 		private static int _bigMessageSizeLength;
 		private static int _numSocketPerSession;
+		private static string _logFilePath;
 		private static string _assemblyPath;
 
 		private static string _dbHost;
@@ -42,6 +44,8 @@ namespace ServerFramework.Configuration.Helpers
 		private static string _dbUser;
 		private static string _dbPass;
 		private static string _dbName;
+
+		private static bool _isConsole = Console.OpenStandardInput(1) != Stream.Null;
 
 		#endregion
 
@@ -70,19 +74,19 @@ namespace ServerFramework.Configuration.Helpers
 			set { _bindPort = value; }
 		}
 
-		internal static LogType LogLevel
+		internal static LogTypes LogLevel
 		{
 			get { return _logLevel; }
 			set { _logLevel = value; }
 		}
 
-		internal static PacketLogType PacketLogLevel
+		internal static PacketLogTypes PacketLogLevel
 		{
 			get { return _packetLogLevel; }
 			set { _packetLogLevel = value; }
 		}
 
-		internal static OpcodeType OpcodeAllowLevel
+		internal static OpcodeTypes OpcodeAllowLevel
 		{
 			get { return _opcodeAllowLevel; }
 			set { _opcodeAllowLevel = value; }
@@ -154,6 +158,18 @@ namespace ServerFramework.Configuration.Helpers
 			set { _numSocketPerSession = value; }
 		}
 
+		internal static bool IsConsole
+		{
+			get { return _isConsole; }
+			set { _isConsole = value; }
+		}
+
+		internal static string LogFilePath
+		{
+			get { return _logFilePath; }
+			set { _logFilePath = value; }
+		}
+
 		internal static string AssemblyPath
 		{
 			get { return _assemblyPath; }
@@ -220,14 +236,16 @@ namespace ServerFramework.Configuration.Helpers
 
 		internal static void Init()
 		{
-			Config = new Config(ConfigurationHelper.Path);
+			Config = Config.GetInstance(ConfigurationHelper.Path);
 
 			BindIP = Config.Read<string>(ConfigurationHelper.BindIPKey);
 			BindPort = Config.Read<int>(ConfigurationHelper.BindPortKey);
 
-			LogLevel = Config.Read<LogType>(ConfigurationHelper.LogLevelKey, true);
-			PacketLogLevel = Config.Read<PacketLogType>(ConfigurationHelper.PacketLogLevelKey, true);
-			OpcodeAllowLevel = Config.Read<OpcodeType>(ConfigurationHelper.OpcodeAllowLevelKey, true);
+			AssemblyPath = Config.Read<string>(ConfigurationHelper.AssemblyPath);
+			LogFilePath = $"{Config.Read<string>(ConfigurationHelper.FileLogPath)}\\ServerLog_{DateTime.Now.ToString("yyyy_mm_dd")}.log";
+			LogLevel = Config.Read<LogTypes>(ConfigurationHelper.LogLevelKey, true);
+			PacketLogLevel = Config.Read<PacketLogTypes>(ConfigurationHelper.PacketLogLevelKey, true);
+			OpcodeAllowLevel = Config.Read<OpcodeTypes>(ConfigurationHelper.OpcodeAllowLevelKey, true);
 			Endianness = Config.Read<EndiannessType>(ConfigurationHelper.Endianness, true);
 			PacketLogSize = Config.Read<int>(ConfigurationHelper.PacketLogSizeKey);
 
@@ -235,7 +253,6 @@ namespace ServerFramework.Configuration.Helpers
 			MaxConnections = Config.Read<int>(ConfigurationHelper.MaxConnectionsKey);
 			MaxSimultaneousAcceptOps = Config.Read<int>(ConfigurationHelper.MaxSimultaneousAcceptOpsKey);
 			Backlog = Config.Read<int>(ConfigurationHelper.BacklogKey);
-			AssemblyPath = Config.Read<string>(ConfigurationHelper.AssemblyPath);
 
 			DBHost = Config.Read<string>(ConfigurationHelper.DBHostKey);
 			DBPort = Config.Read<int>(ConfigurationHelper.DBPortKey);

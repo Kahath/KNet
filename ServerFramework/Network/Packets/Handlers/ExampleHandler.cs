@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015. Kahath.
+ * Copyright © Kahath 2015
  * Licensed under MIT license.
  */
 
@@ -18,7 +18,7 @@ namespace ServerFramework.Network.Packets.Handlers
 
 		#region Version 1
 
-		[Opcode(0x0000, "Kahath", 1, OpcodeType.NotUsed)]
+		[Opcode(0x0000, "Kahath", 1, OpcodeTypes.NotUsed)]
 		private static void ExamplePacketHandler(Client pClient, Packet packet)
 		{
 			//Read if packet has data
@@ -43,7 +43,7 @@ namespace ServerFramework.Network.Packets.Handlers
 
 		#region Version 2
 
-		[Opcode(0x0000, "Kahath", 2, OpcodeType.NotUsed)]
+		[Opcode(0x0000, "Kahath", 2, OpcodeTypes.NotUsed)]
 		private static void ExamplePacketHandlerTwo(Client pClient, Packet packet)
 		{
 			//Read if packet has data

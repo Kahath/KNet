@@ -1,15 +1,16 @@
 ﻿/*
- * Copyright (c) 2015. Kahath.
+ * Copyright © Kahath 2015
  * Licensed under MIT license.
  */
 
-using ServerFramework.Configuration.Helpers;
 using ServerFramework.Enums;
 using System;
+using UMemory.Unmanaged.Stream.Base;
+using UMemory.Unmanaged.Stream.Core;
 
 namespace ServerFramework.Network.Packets
 {
-	public class PacketHeader
+	public class PacketHeader : IUMemoryRead, IUMemoryWrite
 	{
 		#region Fields
 
@@ -44,7 +45,7 @@ namespace ServerFramework.Network.Packets
 		/// </summary>
 		public bool IsBigHeader
 		{
-			get { return Convert.ToBoolean(Flags & (byte)PacketFlag.BigPacket); }
+			get { return Convert.ToBoolean(Flags & (byte)PacketFlags.BigPacket); }
 		}
 
 		/// <summary>
@@ -52,7 +53,7 @@ namespace ServerFramework.Network.Packets
 		/// </summary>
 		public bool IsForLog
 		{
-			get { return Convert.ToBoolean(Flags & (byte)PacketFlag.Log); }
+			get { return Convert.ToBoolean(Flags & (byte)PacketFlags.Log); }
 		}
 
 		#endregion
@@ -60,7 +61,7 @@ namespace ServerFramework.Network.Packets
 		#region Constructors
 
 		/// <summary>
-		/// Creates instance of <see cref="PacketHeader"/> type.
+		/// Instantiates new <see cref="PacketHeader"/> type.
 		/// </summary>
 		/// <param name="header">Header byte array.</param>
 		public PacketHeader(byte flags, int length, ushort opcode)
@@ -76,11 +77,44 @@ namespace ServerFramework.Network.Packets
 
 		#region Reset
 
+		/// <summary>
+		/// Resets values for packet header.
+		/// </summary>
 		internal void Reset()
 		{
 			_flags = 0;
 			_length = 0;
 			_opcode = 0;
+		}
+
+		#endregion
+
+		#region Write
+
+		/// <summary>
+		/// Writes data to underlying stream.
+		/// </summary>
+		/// <param name="stream">Underlying <see cref="UMemoryStream"/></param>
+		public void Write(UMemoryStream stream)
+		{
+			stream.Write(Flags);
+			stream.Write(IsBigHeader ? Length : (ushort)Length);
+			stream.Write(Opcode);
+		}
+
+		#endregion
+
+		#region Read
+
+		/// <summary>
+		/// Reads data from underlying stream.
+		/// </summary>
+		/// <param name="stream">Underlying <see cref="UMemoryStream"/></param>
+		public void Read(UMemoryStream stream)
+		{
+			Flags = stream.Read<byte>();
+			Length = IsBigHeader ? stream.Read<int>() : stream.Read<ushort>();
+			Opcode = stream.Read<ushort>();
 		}
 
 		#endregion

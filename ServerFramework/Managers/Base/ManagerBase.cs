@@ -1,19 +1,36 @@
 ﻿/*
- * Copyright (c) 2015. Kahath.
+ * Copyright © Kahath 2015
  * Licensed under MIT license.
  */
 
-using ServerFramework.Singleton;
+using DILibrary.DependencyInjection;
+using DILibrary.Constants;
+using ServerFramework.Managers.Interface;
 
 namespace ServerFramework.Managers.Base
 {
-	public abstract class ManagerBase<T> : SingletonBase<T> where T : class
+	public abstract class ManagerBase<T, K> : Dependency<T, K>
+		where T : Dependency<T, K>, new()
+		where K : class, IManager
 	{
+		#region Constructors
+
+		public ManagerBase()
+			: base(ResolveType.Singleton)
+		{
+
+		}
+
+		#endregion
+
 		#region Methods
 
 		#region Init
 
-		protected abstract void Init();
+		protected void Init()
+		{
+			Instance.Init();
+		}
 
 		#endregion
 

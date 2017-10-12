@@ -1,21 +1,18 @@
 ﻿/*
- * Copyright (c) 2015. Kahath.
+ * Copyright © Kahath 2015
  * Licensed under MIT license.
  */
 
 using ServerFramework.Database.Base.Entity;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ServerFramework.Database.Model.Application.Log
 {
 	[Table("Log", Schema = "Application")]
-	public class LogModel : EntityBase
+	public class LogModel : EntityBase<int>
 	{
 		#region Properties
 
-		[Key]
-		public int ID				{ get; set; }
 		public string Message		{ get; set; }
 		public string Description	{ get; set; }
 		public int LogTypeID		{ get; set; }

@@ -1,13 +1,12 @@
 ﻿/*
- * Copyright (c) 2015. Kahath.
+ * Copyright © Kahath 2015
  * Licensed under MIT license.
  */
 
-using System;
-
 namespace ServerFramework.Database.Base.Entity
 {
-	public abstract class AssemblyEntityBase : EntityBase
+	public abstract class AssemblyEntityBase<T> : EntityBase<T>
+		where T : struct
 	{
 		#region Properties
 

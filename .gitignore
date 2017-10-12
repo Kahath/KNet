@@ -1,0 +1,17 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/.git
+/packages
+/ServerFramework/bin
+/ServerFramework/.vs
+/ServerFramework/obj
+/ServerFramework/*.user
+/FrameworkDatabase/bin
+/FrameworkDatabase/.vs
+/FrameworkDatabase/obj
+/FrameworkDatabase/*.dbmdl
+/FrameworkDatabase/*.jfm
+/FrameworkDatabase/*.user

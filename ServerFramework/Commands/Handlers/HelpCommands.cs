@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015. Kahath.
+ * Copyright © Kahath 2015
  * Licensed under MIT license.
  */
 
@@ -25,7 +25,7 @@ namespace ServerFramework.Commands.Handlers
 			Command retVal = null;
 
 			retVal = new Command(Name, Level, null, HelpCommandHandler, Description);
-			
+
 			return retVal;
 		}
 
@@ -51,27 +51,22 @@ namespace ServerFramework.Commands.Handlers
 					{
 						Manager.LogMgr.Log
 						(
-							LogType.Command
-						,	$"Available sub commands for '{command.FullName}'"
-						+	$"{Environment.NewLine}{Manager.CommandMgr.AvailableSubCommands(command, user.UserLevel)}"
+							LogTypes.Command,
+							$"Available sub commands for '{command.FullName}' {Environment.NewLine}{Manager.CommandMgr.AvailableSubCommands(command, user.UserLevel)}"
 						);
 					}
 					else if (!String.IsNullOrEmpty(command.Description))
 					{
-						Manager.LogMgr.Log(LogType.Command, $"{command.Description}");
+						Manager.LogMgr.Log(LogTypes.Command, $"{command.Description}");
 					}
 					else
 					{
-						Manager.LogMgr.Log(LogType.Command, $"Command '{command.FullName}' is missing description");
+						Manager.LogMgr.Log(LogTypes.Command, $"Command '{command.FullName}' is missing description");
 					}
 				}
 				else
 				{
-					Manager.LogMgr.Log
-					(
-						LogType.Command
-					,	$"Command '{args[0]}' doesn't exist"
-					);
+					Manager.LogMgr.Log(LogTypes.Command, $"Command '{args[0]}' doesn't exist");
 				}
 
 				retVal = true;

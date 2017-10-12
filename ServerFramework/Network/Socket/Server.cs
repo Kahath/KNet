@@ -1,21 +1,29 @@
 ﻿/*
- * Copyright (c) 2015. Kahath.
+ * Copyright © Kahath 2015
  * Licensed under MIT license.
  */
 
 using DILibrary.Constants;
 using DILibrary.DependencyInjection;
-using ServerFramework.Configuration.Helpers;
 using System.Net.Sockets;
 
 namespace ServerFramework.Network.Socket
 {
-	public class Server : Dependency<IServer>
+	public class Server : Dependency<Server, IServer>
 	{
+		#region Properties
+
+		public bool IsRunning
+		{
+			get { return Instance.IsRunning; }
+		}
+
+		#endregion
+
 		#region Constructors
 
-		public Server(SocketListenerSettings socketSettings)
-			: base(ResolveType.Singleton, socketSettings)
+		public Server()
+			: base(ResolveType.Singleton)
 		{
 
 		}
@@ -26,8 +34,8 @@ namespace ServerFramework.Network.Socket
 
 		public event ServerEventHandler CloseClientSocket
 		{
-			add { Instance.CloseClientSocket += value; }
-			remove { Instance.CloseClientSocket -= value; }
+			add { Instance.ClosingClientSocket += value; }
+			remove { Instance.ClosingClientSocket -= value; }
 		}
 
 		public event ServerEventHandler Connect
@@ -54,6 +62,15 @@ namespace ServerFramework.Network.Socket
 		internal void Send(SocketAsyncEventArgs e)
 		{
 			Instance.Send(e);
+		}
+
+		#endregion
+
+		#region Quit
+
+		public void Quit()
+		{
+			Instance.Quit();
 		}
 
 		#endregion

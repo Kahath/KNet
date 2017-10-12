@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015. Kahath.
+ * Copyright © Kahath 2015
  * Licensed under MIT license.
  */
 
@@ -11,12 +11,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ServerFramework.Database.Model.Application.Command
 {
 	[Table("Command", Schema = "Application")]
-	public class CommandModel : AssemblyEntityBase
+	public class CommandModel : AssemblyEntityBase<int>
 	{
 		#region Properties
 
-		[Key]
-		public int ID							{ get; set; }
 
 		[StringLength(50)]
 		public string Name						{ get; set; }

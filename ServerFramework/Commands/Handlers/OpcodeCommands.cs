@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015. Kahath.
+ * Copyright © Kahath 2015
  * Licensed under MIT license.
  */
 
@@ -73,7 +73,7 @@ namespace ServerFramework.Commands.Handlers
 			int code = Int32.Parse(args[0]);
 			int opcodeType = int.Parse(args[1]);
 
-			OpcodeModel opcode = Manager.DatabaseMgr.Get<ApplicationContext, OpcodeModel>(x => 
+			OpcodeModel opcode = Manager.DatabaseMgr.Get<ApplicationContext, OpcodeModel>(x =>
 				x.AsNoTracking().Where(y => y.Code == code && y.TypeID == opcodeType && y.Active)
 				.OrderByDescending(y => y.Version)
 				.FirstOrDefault());
@@ -116,17 +116,16 @@ namespace ServerFramework.Commands.Handlers
 				{
 					MethodInfo method = Manager.AssemblyMgr.GetMethod
 						(
-							opcode.AssemblyName
-						,	opcode.TypeName
-						,	opcode.MethodName
-						,	typeof(Client)
-						,	typeof(Packet)
+							opcode.AssemblyName,
+							opcode.TypeName,
+							opcode.MethodName,
+							typeof(Client),
+							typeof(Packet)
 						);
 
 					if (method != null)
 					{
-						Manager.PacketMgr.PacketHandlers[(ushort)opcode.Code]
-						= Delegate.CreateDelegate(typeof(OpcodeHandler), method) as OpcodeHandler;
+						Manager.PacketMgr.PacketHandlers[(ushort)opcode.Code] = Delegate.CreateDelegate(typeof(OpcodeHandler), method) as OpcodeHandler;
 					}
 				}
 			}

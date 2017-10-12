@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015. Kahath.
+ * Copyright © Kahath 2015
  * Licensed under MIT license.
  */
 
@@ -12,7 +12,7 @@ namespace ServerFramework.Configuration.Core
 	/// <summary>
 	/// Provides configuration dependency injection.
 	/// </summary>
-	public class Config : Dependency<IConfig>
+	public class Config : Dependency<Config, IConfig>
 	{
 		#region Constructors
 
@@ -20,8 +20,8 @@ namespace ServerFramework.Configuration.Core
 		/// Creates new instance of <see cref="ServerFramework.Configuration.Config"/> type.
 		/// </summary>
 		/// <param name="path">Path to configuration file.</param>
-		public Config(string path)
-			: base(ResolveType.Transient, path)
+		public Config()
+			: base(ResolveType.Transient)
 		{
 
 		}

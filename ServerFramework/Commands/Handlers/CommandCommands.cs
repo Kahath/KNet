@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015. Kahath.
+ * Copyright © Kahath 2015
  * Licensed under MIT license.
  */
 
@@ -46,17 +46,13 @@ namespace ServerFramework.Commands.Handlers
 		private static bool CommandListHandler(Client user, params string[] args)
 		{
 			StringBuilder sb = new StringBuilder();
-			Manager.LogMgr.Log(LogType.Command, "List of all commands:");
+			Manager.LogMgr.Log(LogTypes.Command, "List of all commands:");
 
 			sb.AppendLine(String.Join("\n", Manager.CommandMgr.CommandTable
-				.Where
-				(x => 
-					user.UserLevel >= x.CommandLevel
-					&& x.IsValid
-				)
+				.Where(x => user.UserLevel >= x.CommandLevel && x.IsValid)
 				.Select(x => x.SubCommands != null ? String.Format($"{x.Name}..") : x.Name)));
 
-			Manager.LogMgr.Log(LogType.Command, $"{sb.ToString()}");
+			Manager.LogMgr.Log(LogTypes.Command, $"{sb.ToString()}");
 
 			return true;
 		}

@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015. Kahath.
+ * Copyright © Kahath 2015
  * Licensed under MIT license.
  */
 
@@ -26,6 +26,8 @@ namespace ServerFramework.Network.Socket
 
 		private ObjectPool<SocketAsyncEventArgs> _acceptPool;
 		private ObjectPool<SocketExtended> _sendReceivePool;
+
+		private bool _isRunning;
 
 		#endregion
 
@@ -61,11 +63,16 @@ namespace ServerFramework.Network.Socket
 			set { _sendReceivePool = value; }
 		}
 
+		public bool IsRunning
+		{
+			get { return _isRunning; }
+		}
+
 		#endregion
 
 		#region Events
 
-		public event ServerEventHandler CloseClientSocket;
+		public event ServerEventHandler ClosingClientSocket;
 		public event ServerEventHandler Connect;
 
 		#endregion
@@ -76,13 +83,10 @@ namespace ServerFramework.Network.Socket
 		{
 			SocketSettings = socketSettings;
 
-			AcceptPool = new
-				ObjectPool<SocketAsyncEventArgs>(SocketSettings.MaxAcceptOps);
-			SendReceivePool = new
-				ObjectPool<SocketExtended>(SocketSettings.NumberOfSaeaForRecSend);
+			AcceptPool = new ObjectPool<SocketAsyncEventArgs>(SocketSettings.MaxAcceptOps);
+			SendReceivePool = new ObjectPool<SocketExtended>(SocketSettings.NumberOfSaeaForRecSend);
 
-			MaxConnections = new Semaphore(SocketSettings.MaxConnections,
-				SocketSettings.MaxConnections);
+			MaxConnections = new Semaphore(SocketSettings.MaxConnections, SocketSettings.MaxConnections);
 		}
 
 		#endregion
@@ -99,42 +103,40 @@ namespace ServerFramework.Network.Socket
 			for (int i = 0; i < SocketSettings.NumberOfSaeaForRecSend; i++)
 				SendReceivePool.Push(CreateNewSendRecPoolItem());
 
-			startListen();
+			StartListen();
 		}
 
 		#endregion
 
 		#region StartListen
 
-		private void startListen()
+		private void StartListen()
 		{
-			ListenSocket = new System.Net.Sockets.Socket(SocketSettings.LocalEndPoint.AddressFamily,
-				SocketType.Stream, ProtocolType.Tcp);
+			ListenSocket = new System.Net.Sockets.Socket(SocketSettings.LocalEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
 			try
 			{
 				ListenSocket.Bind(SocketSettings.LocalEndPoint);
-
 				ListenSocket.Listen(SocketSettings.Backlog);
 			}
 			catch (SocketException e)
 			{
-				Manager.LogMgr.Log(LogType.Error, e);
+				Manager.LogMgr.Log(LogTypes.Error, e);
 				Console.ReadLine();
 				Environment.Exit(0);
 			}
 
-			Manager.LogMgr.Log(LogType.Normal, "Starting listening on "
-				+ $"{SocketSettings.LocalEndPoint.Address}:{SocketSettings.LocalEndPoint.Port}");
+			Manager.LogMgr.Log(LogTypes.Normal, $"Starting listening on {SocketSettings.LocalEndPoint.Address}:{SocketSettings.LocalEndPoint.Port}");
 
-			startAccept();
+			_isRunning = true;
+			StartAccept();
 		}
 
 		#endregion
 
 		#region StartAccept
 
-		private void startAccept()
+		private void StartAccept()
 		{
 			SocketAsyncEventArgs acceptEventArgs;
 
@@ -157,14 +159,14 @@ namespace ServerFramework.Network.Socket
 			MaxConnections.WaitOne();
 
 			if (!ListenSocket.AcceptAsync(acceptEventArgs))
-				processAccept(acceptEventArgs);
+				ProcessAccept(acceptEventArgs);
 		}
 
 		#endregion
 
 		#region StartReceive
 
-		private void startReceive(SocketAsyncEventArgs e)
+		private void StartReceive(SocketAsyncEventArgs e)
 		{
 			try
 			{
@@ -172,11 +174,11 @@ namespace ServerFramework.Network.Socket
 				e.SetBuffer(data.BufferOffset, SocketSettings.BufferSize);
 
 				if (!e.AcceptSocket.ReceiveAsync(e))
-					processReceive(e);
+					ProcessReceive(e);
 			}
-			catch (ArgumentOutOfRangeException) { closeClientSocket(e); }
-			catch (SocketException) { closeClientSocket(e); }
-			catch (ObjectDisposedException) { closeClientSocket(e); }
+			catch (ArgumentOutOfRangeException) { CloseClientSocket(e); }
+			catch (SocketException) { CloseClientSocket(e); }
+			catch (ObjectDisposedException) { CloseClientSocket(e); }
 		}
 
 		#endregion
@@ -192,18 +194,16 @@ namespace ServerFramework.Network.Socket
 				if (data.MessageBytesRemainingCount > SocketSettings.BufferSize)
 				{
 					e.SetBuffer(data.BufferOffset, SocketSettings.BufferSize);
-
 					data.Packet.CopyTo(data.MessageBytesDoneCount, e.Buffer, data.BufferOffset, (uint)SocketSettings.BufferSize);
 				}
 				else
 				{
 					e.SetBuffer(data.BufferOffset, data.MessageBytesRemainingCount);
-
 					data.Packet.CopyTo(data.MessageBytesDoneCount, e.Buffer, data.BufferOffset, (uint)data.MessageBytesRemainingCount);
 				}
 
 				if (!e.AcceptSocket.SendAsync(e))
-					processSend(e);
+					ProcessSend(e);
 			}
 			catch (ObjectDisposedException) { }
 			catch (NullReferenceException) { }
@@ -214,9 +214,9 @@ namespace ServerFramework.Network.Socket
 
 		#region ProcessAccept
 
-		private void processAccept(SocketAsyncEventArgs e)
+		private void ProcessAccept(SocketAsyncEventArgs e)
 		{
-			loopToStartAccept();
+			StartAccept();
 
 			if (e.SocketError == SocketError.Success)
 			{
@@ -225,33 +225,31 @@ namespace ServerFramework.Network.Socket
 				Client c = new Client(this, socketExtended);
 				int id = Manager.SessionMgr.AddClient(c);
 
-				if (id == 0)
+				if (id != 0)
 				{
-					closeClientSocket(e);
-					return;
+					socketExtended.SessionID = id;
+					socketExtended.AcceptSocket = e.AcceptSocket;
+
+					try
+					{
+						Manager.LogMgr.Log(LogTypes.Normal, $"Session {socketExtended.ReceiverData.SessionID} ({socketExtended.Receiver.AcceptSocket.RemoteEndPoint}) connected");
+					}
+					catch (ObjectDisposedException)
+					{
+
+					}
+
+					e.AcceptSocket = null;
+					AcceptPool.Push(e);
+
+					Connect?.Invoke(c, e);
+
+					StartReceive(socketExtended.Receiver);
 				}
-
-				socketExtended.SessionId = id;
-				socketExtended.AcceptSocket = e.AcceptSocket;
-
-				try
+				else
 				{
-					Manager.LogMgr.Log(LogType.Normal
-						,	$"Session {socketExtended.ReceiverData.SessionId} "
-						+	$"({socketExtended.Receiver.AcceptSocket.RemoteEndPoint}) connected");
+					CloseClientSocket(e);
 				}
-				catch (ObjectDisposedException)
-				{
-
-				}
-
-				e.AcceptSocket = null;
-				AcceptPool.Push(e);
-
-				if (Connect != null)
-					Connect(c, e);
-
-				startReceive(socketExtended.Receiver);
 			}
 		}
 
@@ -259,9 +257,9 @@ namespace ServerFramework.Network.Socket
 
 		#region ProcessReceive
 
-		private void processReceive(SocketAsyncEventArgs e)
+		private void ProcessReceive(SocketAsyncEventArgs e)
 		{
-			if(e.SocketError == SocketError.Success && e.BytesTransferred > 0)
+			if (e.SocketError == SocketError.Success && e.BytesTransferred > 0)
 			{
 				SocketData data = (SocketData)e.UserToken;
 				int remainingBytes = e.BytesTransferred;
@@ -286,33 +284,36 @@ namespace ServerFramework.Network.Socket
 						Manager.PacketMgr.InvokeHandler(data.Packet);
 
 						if (remainingBytes > 0)
-							data.Reset(data.MessageOffset + data.MessageBytesDoneThisOp);
-						else
-							data.Reset(data.BufferOffset);
-					}
-					else
-					{
-						if (data.IsHeaderReady)
 						{
-							data.MessageOffset = data.BufferOffset;
+							data.Reset(data.MessageOffset + data.MessageBytesDoneThisOp);
 						}
+						else
+						{
+							data.Reset(data.BufferOffset);
+						}
+					}
+					else if (data.IsHeaderReady)
+					{
+						data.MessageOffset = data.BufferOffset;
 					}
 
 					data.HeaderBytesDoneThisOp = 0;
 					data.MessageBytesDoneThisOp = 0;
 				}
 
-				startReceive(e);
+				StartReceive(e);
 			}
 			else
-				closeClientSocket(e);
+			{
+				CloseClientSocket(e);
+			}
 		}
 
 		#endregion
 
 		#region ProcessSend
 
-		private void processSend(SocketAsyncEventArgs e)
+		private void ProcessSend(SocketAsyncEventArgs e)
 		{
 			if (e.SocketError == SocketError.Success)
 			{
@@ -322,7 +323,7 @@ namespace ServerFramework.Network.Socket
 
 				if (data.MessageBytesRemainingCount == 0)
 				{
-					Client c = Manager.SessionMgr.GetClientBySession(data.SessionId);
+					Client c = Manager.SessionMgr.GetClient(data.SessionID);
 
 					if (c != null)
 					{
@@ -339,7 +340,9 @@ namespace ServerFramework.Network.Socket
 				}
 			}
 			else
-				closeClientSocket(e);
+			{
+				CloseClientSocket(e);
+			}
 		}
 
 		#endregion
@@ -358,7 +361,7 @@ namespace ServerFramework.Network.Socket
 		private SocketAsyncEventArgs CreateNewSaeaForAccept()
 		{
 			SocketAsyncEventArgs acceptEventArgs = new SocketAsyncEventArgs();
-			acceptEventArgs.Completed += new EventHandler<SocketAsyncEventArgs>(accept_completed);
+			acceptEventArgs.Completed += new EventHandler<SocketAsyncEventArgs>(Accept_Completed);
 
 			return acceptEventArgs;
 		}
@@ -369,60 +372,35 @@ namespace ServerFramework.Network.Socket
 
 		private SocketExtended CreateNewSendRecPoolItem()
 		{
-			SocketExtended retVal = null;
-			SocketData data = null;
-
-			retVal = new SocketExtended();
-
+			SocketExtended retVal = new SocketExtended();
 			Manager.BufferMgr.SetBuffer(retVal.Receiver);
 			Manager.BufferMgr.SetBuffer(retVal.Sender);
 
-			data = new SocketData(SocketSettings.BufferSize, retVal.Receiver.Offset,
-				SocketSettings.HeaderLength, PacketLogType.CMSG);
+			retVal.Receiver.UserToken = new SocketData(SocketSettings.BufferSize, retVal.Receiver.Offset, SocketSettings.HeaderLength, PacketLogTypes.CMSG);
+			retVal.Receiver.Completed += new EventHandler<SocketAsyncEventArgs>(Receive_Completed);
 
-			retVal.Receiver.UserToken = data;
-			retVal.Receiver.Completed +=
-				new EventHandler<SocketAsyncEventArgs>(receive_completed);
-
-			data = new SocketData(SocketSettings.BufferSize, retVal.Sender.Offset,
-				SocketSettings.HeaderLength, PacketLogType.SMSG);
-
-			retVal.Sender.UserToken = data;
-			retVal.Sender.Completed +=
-				new EventHandler<SocketAsyncEventArgs>(send_completed);
+			retVal.Sender.UserToken = new SocketData(SocketSettings.BufferSize, retVal.Sender.Offset, SocketSettings.HeaderLength, PacketLogTypes.SMSG);
+			retVal.Sender.Completed += new EventHandler<SocketAsyncEventArgs>(Send_Completed);
 
 			return retVal;
 		}
 
 		#endregion
 
-		#region LoopToStartAccept
-
-		private void loopToStartAccept()
-		{
-			startAccept();
-		}
-
-		#endregion
-
 		#region CloseClientSocket
 
-		private void closeClientSocket(SocketAsyncEventArgs e)
+		private void CloseClientSocket(SocketAsyncEventArgs e)
 		{
 			SocketData data = (SocketData)e.UserToken;
 
-			Client c = Manager.SessionMgr.RemoveClient(data.SessionId);
+			Client c = Manager.SessionMgr.RemoveClient(data.SessionID);
 			data.Reset(data.BufferOffset);
 
 			if (c != null)
 			{
-				if (CloseClientSocket != null)
-					CloseClientSocket(c, e);
-
-				Manager.LogMgr.Log(LogType.Normal, $"Session {((SocketData)e.UserToken).SessionId} quit");
+				ClosingClientSocket?.Invoke(c, e);
 
 				c.SocketExtended.Disconnect(SocketShutdown.Both);
-
 				SendReceivePool.Push(c.SocketExtended);
 				c = null;
 
@@ -434,9 +412,9 @@ namespace ServerFramework.Network.Socket
 
 		#region Exit
 
-		internal void Exit()
+		public void Quit()
 		{
-			Environment.Exit(0);
+			_isRunning = false;
 		}
 
 		#endregion
@@ -451,7 +429,7 @@ namespace ServerFramework.Network.Socket
 
 		private void Dispose(bool isDisposing)
 		{
-			if(isDisposing)
+			if (isDisposing)
 			{
 				ListenSocket.Dispose();
 				MaxConnections.Dispose();
@@ -464,29 +442,29 @@ namespace ServerFramework.Network.Socket
 
 		#region +EventHandling
 
-		#region accept_completed
+		#region Accept_Completed
 
-		private void accept_completed(object sender, SocketAsyncEventArgs e)
+		private void Accept_Completed(object sender, SocketAsyncEventArgs e)
 		{
-			processAccept(e);
+			ProcessAccept(e);
 		}
 
 		#endregion
 
-		#region receive_completed
+		#region Receive_Completed
 
-		private void receive_completed(object sender, SocketAsyncEventArgs e)
+		private void Receive_Completed(object sender, SocketAsyncEventArgs e)
 		{
-			processReceive(e);
+			ProcessReceive(e);
 		}
 
 		#endregion
 
-		#region send_completed
+		#region Send_Completed
 
-		private void send_completed(object sender, SocketAsyncEventArgs e)
+		private void Send_Completed(object sender, SocketAsyncEventArgs e)
 		{
-			processSend(e);
+			ProcessSend(e);
 		}
 
 		#endregion

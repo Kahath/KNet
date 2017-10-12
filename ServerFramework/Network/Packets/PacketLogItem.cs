@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015. Kahath.
+ * Copyright © Kahath 2015
  * Licensed under MIT license.
  */
 
@@ -15,7 +15,7 @@ namespace ServerFramework.Network.Packets
 		private Client _client;
 		private PacketHeader _packetHeader;
 		private byte[] _packetMessage;
-		private PacketLogType _packetLogType;
+		private PacketLogTypes _packetLogType;
 
 		#endregion
 
@@ -36,7 +36,7 @@ namespace ServerFramework.Network.Packets
 			get { return _packetMessage; }
 		}
 
-		internal PacketLogType PacketLogType
+		internal PacketLogTypes PacketLogType
 		{
 			get { return _packetLogType; }
 		}
@@ -45,7 +45,7 @@ namespace ServerFramework.Network.Packets
 
 		#region Constructors
 
-		public PacketLogItem(Client client, PacketHeader header, byte[] message, PacketLogType logtype)
+		public PacketLogItem(Client client, PacketHeader header, byte[] message, PacketLogTypes logtype)
 		{
 			_client = client;
 			_packetHeader = header;

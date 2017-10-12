@@ -1,11 +1,12 @@
 ﻿/*
- * Copyright (c) 2015. Kahath.
+ * Copyright © Kahath 2015
  * Licensed under MIT license.
  */
 
 using ServerFramework.Enums;
 using ServerFramework.Managers;
 using System;
+using UMemory.Unmanaged.Enums;
 
 namespace ServerFramework.Network.Packets
 {
@@ -16,7 +17,7 @@ namespace ServerFramework.Network.Packets
 		private PacketHeader _header;
 		private PacketStream _stream;
 		private int _sessionId;
-		private PacketLogType _logType;
+		private PacketLogTypes _logType;
 
 		#endregion
 
@@ -28,7 +29,7 @@ namespace ServerFramework.Network.Packets
 			internal set { _header = value; }
 		}
 
-		public int SessionId
+		public int SessionID
 		{
 			get { return _sessionId; }
 			internal set { _sessionId = value; }
@@ -39,7 +40,7 @@ namespace ServerFramework.Network.Packets
 			get { return _stream; }
 		}
 
-		internal PacketLogType LogType
+		internal PacketLogTypes LogType
 		{
 			get { return _logType; }
 		}
@@ -49,10 +50,10 @@ namespace ServerFramework.Network.Packets
 		#region Constructors
 
 		/// <summary>
-		/// Creates instance of <see cref="ServerFramework.Network.Packets.Packet"/> type used for reading data.
+		/// Creates instance of <see cref="Packet"/> type used for reading data.
 		/// </summary>
 		/// <param name="header">Header byte array.</param>
-		internal Packet(PacketLogType logType)
+		internal Packet(PacketLogTypes logType)
 		{
 			Header = new PacketHeader(0, 0, 0);
 			_stream = new PacketStream(0);
@@ -69,19 +70,19 @@ namespace ServerFramework.Network.Packets
 		/// Reads generic value from packet stream.
 		/// </summary>
 		/// <typeparam name="T">Type of return value.</typeparam>
-		/// <param name="count">Length to read if T is array.</param>
+		/// <param name="item">Object whose data will fill.</param>
 		/// <returns>Value of generic type.</returns>
-		public T Read<T>(int count = 0)
+		public T Read<T>(T item = default(T))
 		{
 			T retVal = default(T);
 
 			try
 			{
-				retVal = Stream.Read<T>();
+				retVal = Stream.Read(item);
 			}
 			catch(IndexOutOfRangeException e)
 			{
-				Manager.LogMgr.Log(Enums.LogType.Critical, e);
+				Manager.LogMgr.Log(LogTypes.Critical, e);
 			}
 
 			return retVal;
@@ -104,7 +105,7 @@ namespace ServerFramework.Network.Packets
 			}
 			catch (IndexOutOfRangeException e)
 			{
-				Manager.LogMgr.Log(Enums.LogType.Critical, e);
+				Manager.LogMgr.Log(LogTypes.Critical, e);
 			}
 		}
 
@@ -133,7 +134,7 @@ namespace ServerFramework.Network.Packets
 		/// <param name="value">Value.</param>
 		public void WriteBit(bool value)
 		{
-			WriteBits<bool>(value, 1);
+			WriteBits(value, 1);
 		}
 
 		#endregion
@@ -165,7 +166,7 @@ namespace ServerFramework.Network.Packets
 		public void WriteBits<T>(T value, int count) where T
 			: struct, IComparable, IComparable<T>, IConvertible, IEquatable<T>
 		{
-			Stream.WriteBits<T>(value, count);
+			Stream.WriteBits(value, count);
 		}
 
 		/// <summary>
@@ -178,7 +179,7 @@ namespace ServerFramework.Network.Packets
 		public void WriteBits<T>(T value, int startIndex, int count) where T
 			: struct, IComparable, IComparable<T>, IConvertible, IEquatable<T>
 		{
-			Stream.WriteBits<T>(value, startIndex, count);
+			Stream.WriteBits(value, startIndex, count);
 		}
 
 		#endregion
@@ -188,9 +189,9 @@ namespace ServerFramework.Network.Packets
 		/// <summary>
 		/// Writes remaining bits to packet stream.
 		/// </summary>
-		public void Flush()
+		public void Flush(BitPackFlushType flushType)
 		{
-			Stream.Flush();
+			Stream.Flush(flushType);
 		}
 
 		#endregion
@@ -212,16 +213,27 @@ namespace ServerFramework.Network.Packets
 
 		#region Alloc
 
+		/// <summary>
+		/// Allocates memory for underlying stream.
+		/// </summary>
+		/// <param name="maxLength">Length to allocate.</param>
 		internal void Alloc(int maxLength)
 		{
 			Stream.Alloc(maxLength);
 		}
 
+		/// <summary>
+		/// Reallocates memory for underlying stream.
+		/// </summary>
+		/// <param name="length">Length of memory.</param>
 		internal void Realloc(int length)
 		{
 			Stream.Realloc(length);
 		}
 
+		/// <summary>
+		/// Resets values for underlying stream and header.
+		/// </summary>
 		internal void Free()
 		{
 			Stream.Free();
@@ -233,6 +245,13 @@ namespace ServerFramework.Network.Packets
 
 		#region Copy
 
+		/// <summary>
+		/// Copies data to underlying stream from array.
+		/// /// </summary>
+		/// <param name="from">Array whose data will be copied.</param>
+		/// <param name="fromOffset">Array offset from which data will be copied.</param>
+		/// <param name="toOffset">Underlying stream offset from which data will be copied.</param>
+		/// <param name="length">Length of array to copy.</param>
 		internal void CopyFrom(byte[] from, int fromOffset, int toOffset, uint length)
 		{
 			try
@@ -241,10 +260,17 @@ namespace ServerFramework.Network.Packets
 			}
 			catch(IndexOutOfRangeException e)
 			{
-				Manager.LogMgr.Log(Enums.LogType.Critical, e);
+				Manager.LogMgr.Log(LogTypes.Critical, e);
 			}
 		}
 
+		/// <summary>
+		/// Copies data from underlying stream to array.
+		/// </summary>
+		/// <param name="srcOffset">Underlying stream offset from which data will be copied.</param>
+		/// <param name="to">Array to which data will be copied.</param>
+		/// <param name="toOffset">Array offset from which data will be copied.</param>
+		/// <param name="length">Length of array to copy.</param>
 		internal void CopyTo(int srcOffset, byte[] to, int toOffset, uint length)
 		{
 			try
@@ -253,7 +279,7 @@ namespace ServerFramework.Network.Packets
 			}
 			catch(IndexOutOfRangeException e)
 			{
-				Manager.LogMgr.Log(Enums.LogType.Critical, e);
+				Manager.LogMgr.Log(LogTypes.Critical, e);
 			}
 		}
 
@@ -261,6 +287,10 @@ namespace ServerFramework.Network.Packets
 
 		#region ToArray
 
+		/// <summary>
+		/// Converts packet to byte array.
+		/// </summary>
+		/// <returns>Packet message as byte array</returns>
 		public byte[] ToArray()
 		{
 			byte[] retVal = new byte[Header.Length];
@@ -271,7 +301,7 @@ namespace ServerFramework.Network.Packets
 			}
 			catch(IndexOutOfRangeException e)
 			{
-				Manager.LogMgr.Log(Enums.LogType.Critical, e);
+				Manager.LogMgr.Log(LogTypes.Critical, e);
 			}
 
 			return retVal;

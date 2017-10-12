@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015. Kahath.
+ * Copyright © Kahath 2015
  * Licensed under MIT license.
  */
 
@@ -97,7 +97,7 @@ namespace ServerFramework.Commands.Base
 		#region Constructors
 
 		/// <summary>
-		/// Creates new object of <see cref="ServerFramework.Constants.Entities.Console.Command"/> type.
+		/// Creates new object of <see cref="Command"/> type.
 		/// </summary>
 		/// <param name="name">Command name.</param>
 		/// <param name="commandLevel">Command level.</param>

@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015. Kahath.
+ * Copyright © Kahath 2015
  * Licensed under MIT license.
  */
 
@@ -109,19 +109,19 @@ namespace ServerFramework.Configuration.Core
 			}
 			catch (IndexOutOfRangeException e)
 			{
-				Manager.LogMgr.Log(LogType.Critical, $"Error while reading '{config}' config. Missing argument in line", e);
+				Manager.LogMgr.Log(LogTypes.Critical, $"Error while reading '{config}' config. Missing argument in line", e);
 			}
 			catch (NullReferenceException e)
 			{
-				Manager.LogMgr.Log(LogType.Critical, $"Error while reading '{config}' config. Argument is null", e);
+				Manager.LogMgr.Log(LogTypes.Critical, $"Error while reading '{config}' config. Argument is null", e);
 			}
 			catch (FormatException e)
 			{
-				Manager.LogMgr.Log(LogType.Critical, $"Error while reading '{config}' config. Cannot convert '{nameValue}' into type '{typeof(T)}'", e);
+				Manager.LogMgr.Log(LogTypes.Critical, $"Error while reading '{config}' config. Cannot convert '{nameValue}' into type '{typeof(T)}'", e);
 			}
 			catch (Exception e)
 			{
-				Manager.LogMgr.Log(LogType.Critical, $"Error while reading '{config}' config", e);
+				Manager.LogMgr.Log(LogTypes.Critical, $"Error while reading '{config}' config", e);
 			}
 
 			return trueValue;

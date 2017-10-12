@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015. Kahath.
+ * Copyright © Kahath 2015
  * Licensed under MIT license.
  */
 
@@ -92,22 +92,22 @@ namespace ServerFramework.Managers
 
 		internal static void Init()
 		{
-			LogMgr.Log(LogType.Init, "Initialising assembly manager");
+			LogMgr.Log(LogTypes.Init, "Initialising assembly manager");
 			AssemblyMgr = AssemblyManager.GetInstance();
 
-			LogMgr.Log(LogType.Init, "Initialising packet log manager");
+			LogMgr.Log(LogTypes.Init, "Initialising packet log manager");
 			PacketLogMgr = PacketLogManager.GetInstance();
 
-			LogMgr.Log(LogType.Init, "Initialising command manager");
+			LogMgr.Log(LogTypes.Init, "Initialising command manager");
 			CommandMgr = CommandManager.GetInstance();
 
-			LogMgr.Log(LogType.Init, "Initialising session manager");
+			LogMgr.Log(LogTypes.Init, "Initialising session manager");
 			SessionMgr = SessionManager.GetInstance();
 
-			LogMgr.Log(LogType.Init, "Initialising packet manager");
+			LogMgr.Log(LogTypes.Init, "Initialising packet manager");
 			PacketMgr = PacketManager.GetInstance();
 
-			LogMgr.Log(LogType.Init, "Initialising buffer manager");
+			LogMgr.Log(LogTypes.Init, "Initialising buffer manager");
 			BufferMgr = BufferManager.GetInstance
 				(
 					ServerConfig.BufferSize * ServerConfig.MaxConnections * ServerConfig.NumSocketPerSession

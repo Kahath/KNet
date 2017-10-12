@@ -1,11 +1,10 @@
 ﻿/*
- * Copyright (c) 2015. Kahath.
+ * Copyright © Kahath 2015
  * Licensed under MIT license.
  */
 
 using System;
-using System.Collections.Generic;
-
+using System.Collections.Concurrent;
 
 namespace ServerFramework.Helpers
 {
@@ -13,19 +12,19 @@ namespace ServerFramework.Helpers
 	{
 		#region Fields
 
-		private Stack<T> _stackPool;
+		private ConcurrentStack<T> _stackPool;
 
 		#endregion
 
 		#region Constructors
 
 		/// <summary>
-		/// Creates new instance of <see cref="ServerFramework.Constants.Entities.Console.Misc.ObjectPool{T}"/> type.
+		/// Creates new instance of <see cref="ObjectPool{T}"/> type.
 		/// </summary>
 		/// <param name="capacity">Capacity of pool.</param>
 		public ObjectPool(int capacity)
 		{
-			_stackPool = new Stack<T>(capacity);
+			_stackPool = new ConcurrentStack<T>();
 		}
 
 		#endregion
@@ -55,8 +54,7 @@ namespace ServerFramework.Helpers
 			if (item == null)
 				throw new ArgumentNullException("item");
 
-			lock (_stackPool)
-				_stackPool.Push(item);
+			_stackPool.Push(item);
 		}
 
 		#endregion
@@ -69,8 +67,9 @@ namespace ServerFramework.Helpers
 		/// <returns>object.</returns>
 		public T Pop()
 		{
-			lock (_stackPool)
-				return _stackPool.Pop();
+			_stackPool.TryPop(out T retVal);
+
+			return retVal;
 		}
 
 		#endregion

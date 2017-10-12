@@ -1,77 +1,42 @@
 ﻿/*
- * Copyright (c) 2015. Kahath.
+ * Copyright © Kahath 2015
  * Licensed under MIT license.
  */
 
-using ServerFramework.Enums;
 using ServerFramework.Managers.Base;
+using ServerFramework.Managers.Interface;
 using ServerFramework.Network.Session;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace ServerFramework.Managers.Core
 {
-	public sealed class SessionManager : ManagerBase<SessionManager>
+	public class SessionManager : ManagerBase<SessionManager, ISessionManager>
 	{
-		#region Fields
-
-		private ConcurrentDictionary<int, Client> _clients;
-		private Stack<int> _freeSessionIDPool;
-		private int _sessionId = 0;
-
-		#endregion
-
 		#region Properties
 
 		internal ConcurrentDictionary<int, Client> Clients
 		{
-			get { return _clients; }
-			set { _clients = value; }
+			get { return Instance.Clients; }
+			set { Instance.Clients = value; }
 		}
 
-		internal Stack<int> FreeSessionIDPool
-		{
-			get { return _freeSessionIDPool; }
-			set { _freeSessionIDPool = value; }
-		}
+		//internal Stack<int> FreeSessionIDPool
+		//{
+		//	get { return Instance.FreeSessionIDPool; }
+		//	set { Instance.FreeSessionIDPool = value; }
+		//}
 
 		public int ClientsCount
 		{
-			get { return _clients.Count; }
-		}
-
-		#endregion
-
-		#region Constructors
-
-		/// <summary>
-		/// Creates instance of <see cref="ServerFramework.Managers.Core.SessionManager"/> type.
-		/// </summary>
-		SessionManager()
-		{
-			Init();
+			get { return Instance.ClientsCount; }
 		}
 
 		#endregion
 
 		#region Methods
-
-		#region Init
-
-		/// <summary>
-		/// Initialises SessionManager.
-		/// </summary>
-		protected override void Init()
-		{
-			Clients = new ConcurrentDictionary<int, Client>();
-			FreeSessionIDPool = new Stack<int>();
-		}
-
-		#endregion
 
 		#region RemoveClient
 
@@ -82,12 +47,7 @@ namespace ServerFramework.Managers.Core
 		/// <returns>Instance of removed <see cref="ServerFramework.Constants.Entities.Session.Client"/> type.</returns>
 		internal Client RemoveClient(int id)
 		{
-			Client client = null;
-
-			if (Clients.TryRemove(id, out client))
-				FreeSessionIDPool.Push(id);
-
-			return client;
+			return Instance.RemoveClient(id);
 		}
 
 		#endregion
@@ -101,10 +61,7 @@ namespace ServerFramework.Managers.Core
 		/// <returns>Instance of filtered <see cref="ServerFramework.Constants.Entities.Session.Client"/> type.</returns>
 		public Client GetClient(Func<Client, bool> func)
 		{
-			Client client = null;
-			client = Clients.Values.FirstOrDefault(func);
-
-			return client;
+			return Instance.GetClient(func);
 		}
 
 		/// <summary>
@@ -112,13 +69,9 @@ namespace ServerFramework.Managers.Core
 		/// </summary>
 		/// <param name="sessionId">Session ID.</param>
 		/// <returns>Instance of <see cref="ServerFramework.Constants.Entities.Session.Client"/> type.</returns>
-		public Client GetClientBySession(int sessionId)
+		public Client GetClient(int sessionId)
 		{
-			Client c = null;
-
-			Clients.TryGetValue(sessionId, out c);
-
-			return c;
+			return Instance.GetClient(sessionId);
 		}
 
 		#endregion
@@ -132,14 +85,7 @@ namespace ServerFramework.Managers.Core
 		/// <returns>Collection of <see cref="ServerFramework.Constants.Entities.Session.Client"/> type.</returns>
 		public IEnumerable<Client> GetClients(Func<Client, bool> func = null)
 		{
-			IEnumerable<Client> clients = null;
-
-			if (func != null)
-				clients = Clients.Values.Where(func);
-			else
-				clients = Clients.Values;
-
-			return clients;
+			return Instance.GetClients(func);
 		}
 
 		#endregion
@@ -153,20 +99,7 @@ namespace ServerFramework.Managers.Core
 		/// <returns>Session ID.</returns>
 		internal int AddClient(Client c)
 		{
-			int id = 0;
-
-			id = FreeSessionIDPool.Count > 0 ? FreeSessionIDPool.Pop() 
-				: Interlocked.Increment(ref _sessionId);
-
-			if (!Clients.TryAdd(id, c))
-			{ 
-				if (id > 0)
-					FreeSessionIDPool.Push(id);
-
-				id = 0;
-			}
-
-			return id;
+			return Instance.AddClient(c);
 		}
 
 		#endregion
@@ -180,11 +113,7 @@ namespace ServerFramework.Managers.Core
 		/// <returns>Instance of <see cref="System.Threading.Tasks.ParallelLoopResult"/> type.</returns>
 		public ParallelLoopResult ForEachParallel(Action<Client> body)
 		{
-			ParallelLoopResult retVal;
-
-			retVal = Parallel.ForEach(Clients.Values, body);
-
-			return retVal;
+			return Instance.ForEachParallel(body);
 		}
 
 		#endregion
@@ -197,14 +126,12 @@ namespace ServerFramework.Managers.Core
 		/// <param name="body">Action method.</param>
 		public void ForEach(Action<Client> body)
 		{
-			foreach (Client client in Clients.Values)
-			{
-				body(client);
-			}
+			Instance.ForEach(body);
 		}
 
 		#endregion
 
 		#endregion
+
 	}
 }

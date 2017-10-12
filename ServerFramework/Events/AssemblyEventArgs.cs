@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015. Kahath.
+ * Copyright © Kahath 2015
  * Licensed under MIT license.
  */
 
@@ -23,19 +23,16 @@ namespace ServerFramework.Events
 		public Assembly Assembly
 		{
 			get { return _assembly; }
-			set { _assembly = value; }
 		}
 
 		public Type Type
 		{
 			get { return _type; }
-			set { _type = value; }
 		}
 
 		public MethodInfo Method
 		{
 			get { return _method; }
-			set { _method = value; }
 		}
 
 		#endregion
@@ -44,9 +41,9 @@ namespace ServerFramework.Events
 
 		public AssemblyEventArgs(Assembly assembly, Type type, MethodInfo method)
 		{
-			Assembly = assembly;
-			Type = type;
-			Method = method;
+			_assembly = assembly;
+			_type = type;
+			_method = method;
 		}
 
 		#endregion

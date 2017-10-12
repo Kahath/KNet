@@ -1,22 +1,19 @@
 ﻿/*
- * Copyright (c) 2015. Kahath.
+ * Copyright © Kahath 2015
  * Licensed under MIT license.
  */
 
 using ServerFramework.Attributes.Core;
 using ServerFramework.Database.Base.Entity;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ServerFramework.Database.Model.Application.Opcode
 {
 	[Table("Opcode", Schema="Application")]
-	public class OpcodeModel : AssemblyEntityBase
+	public class OpcodeModel : AssemblyEntityBase<int>
 	{
 		#region Properties
 
-		[Key]
-		public int ID					{ get; set; }
 		public int Code					{ get; set; }
 		public int TypeID				{ get; set; }
 		public int Version				{ get; set; }

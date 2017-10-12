@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015. Kahath.
+ * Copyright © Kahath 2015
  * Licensed under MIT license.
  */
 
@@ -9,7 +9,7 @@ namespace ServerFramework.Network.Session
 	{
 		#region Properties
 
-		int SessionId
+		int SessionID
 		{
 			get;
 			set;

@@ -1,11 +1,10 @@
 ﻿/*
- * Copyright (c) 2015. Kahath.
+ * Copyright © Kahath 2015
  * Licensed under MIT license.
  */
 
 using ServerFramework.Configuration.Helpers;
 using ServerFramework.Enums;
-using System;
 using System.Net.Sockets;
 
 namespace ServerFramework.Network.Packets
@@ -138,10 +137,10 @@ namespace ServerFramework.Network.Packets
 			set { _packet = value; }
 		}
 
-		public int SessionId
+		public int SessionID
 		{
-			get { return Packet.SessionId; }
-			internal set { Packet.SessionId = value; }
+			get { return Packet.SessionID; }
+			internal set { Packet.SessionID = value; }
 		}
 
 		#endregion
@@ -154,13 +153,13 @@ namespace ServerFramework.Network.Packets
 		/// <param name="bufferSize">Buffer size for client.</param>
 		/// <param name="bufferOffset">Buffer offset in large alocated buffer.</param>
 		/// <param name="headerLength">Length of message header.</param>
-		internal SocketData(int bufferSize, int bufferOffset, int headerLength, PacketLogType logType)
+		internal SocketData(int bufferSize, int bufferOffset, int headerLength, PacketLogTypes logType)
 		{
 			_bufferSize = bufferSize;
 			_bufferOffset = bufferOffset;
-			HeaderLength = headerLength;
-			HeaderOffset = bufferOffset;
-			Packet = new Packet(logType);
+			_headerLength = headerLength;
+			_headerOffset = bufferOffset;
+			_packet = new Packet(logType);
 		}
 
 		#endregion
@@ -195,14 +194,13 @@ namespace ServerFramework.Network.Packets
 			{
 				byte flags = e.Buffer[HeaderOffset];
 
-				IsBigPacket = Convert.ToBoolean(flags & (byte)PacketFlag.BigPacket);
+				IsBigPacket = (flags & (byte)PacketFlags.BigPacket) == (byte)PacketFlags.BigPacket;
 
 				HeaderLength = IsBigPacket
 					? ServerConfig.BigHeaderLength
 					: ServerConfig.HeaderLength;
 
 				MessageOffset = HeaderOffset + HeaderLength;
-
 				Packet.Alloc(HeaderLength);
 			}
 
@@ -214,10 +212,7 @@ namespace ServerFramework.Network.Packets
 				HeaderBytesDoneThisOp = HeaderLength - HeaderBytesDoneCount;
 				HeaderBytesDoneCount = HeaderLength;
 
-				Packet.Header.Flags = Packet.Read<byte>();
-				Packet.Header.Length = IsBigPacket ? Packet.Read<int>() : Packet.Read<ushort>();
-				Packet.Header.Opcode = Packet.Read<ushort>();
-
+				Packet.Read(Packet.Header);
 				MessageLength = Packet.Header.Length;
 
 				if (MessageLength > 0)
@@ -248,7 +243,7 @@ namespace ServerFramework.Network.Packets
 		#region HandleMessage
 
 		/// <summary>
-		/// Handles message.  If received bytes length is lesser than 
+		/// Handles message. If received bytes length is lesser than 
 		/// message length, multiple method calls are required. 
 		/// </summary>
 		/// <param name="e">SocketAsyncEventArgs object</param>
@@ -259,7 +254,7 @@ namespace ServerFramework.Network.Packets
 		{
 			if (MessageLength == 0)
 			{
-				Packet.SessionId = SessionId;
+				Packet.SessionID = SessionID;
 				IsPacketReady = true;
 			}
 			else if ((remainingBytesToProcess + MessageBytesDoneCount) >= MessageLength)
@@ -269,7 +264,7 @@ namespace ServerFramework.Network.Packets
 				remainingBytesToProcess = (remainingBytesToProcess - MessageLength) + MessageBytesDoneCount;
 				MessageBytesDoneThisOp = MessageLength - MessageBytesDoneCount;
 
-				Packet.SessionId = SessionId;
+				Packet.SessionID = SessionID;
 				IsPacketReady = true;
 			}
 			else

@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015. Kahath.
+ * Copyright © Kahath 2015
  * Licensed under MIT license.
  */
 
@@ -47,51 +47,31 @@ namespace ServerFramework.Network.Session
 		{
 			get
 			{
-				IPEndPoint retVal = null;
-
-				if (SocketExtended != null && SocketExtended.RemoteEndPoint != null)
-					retVal = SocketExtended.RemoteEndPoint;
-
-				return retVal;
+				return SocketExtended?.RemoteEndPoint;
 			}
 		}
 
 		public string IP
 		{
-			get 
+			get
 			{
-				string retVal = String.Empty;
-
-				if(EndPoint != null && EndPoint.Address != null)
-					retVal =  EndPoint.Address.ToString();
-
-				return retVal;
+				return EndPoint?.Address?.ToString() ?? String.Empty;
 			}
 		}
 
 		public int Port
 		{
-			get 
+			get
 			{
-				int retVal = 0;
-
-				if (EndPoint != null)
-					retVal = EndPoint.Port;
-
-				return retVal;
+				return EndPoint?.Port ?? 0;
 			}
 		}
 
 		public int SessionID
 		{
-			get 
+			get
 			{
-				int retVal = 0;
-
-				if (SocketExtended != null)
-					retVal = SocketExtended.ReceiverData.SessionId;
-
-				return retVal;
+				return SocketExtended?.ReceiverData?.SessionID ?? 0;
 			}
 		}
 
@@ -111,7 +91,7 @@ namespace ServerFramework.Network.Session
 		#region Constructors
 
 		/// <summary>
-		/// Creates default instance of <see cref="ServerFramework.Constants.Entities.Session.Client"/> type.
+		/// Creates default instance of <see cref="Client"/> type.
 		/// </summary>
 		internal Client()
 		{
@@ -119,13 +99,14 @@ namespace ServerFramework.Network.Session
 		}
 
 		/// <summary>
-		/// Creates instance of <see cref="ServerFramework.Constants.Entities.Session.Client"/> type.
+		/// Creates instance of <see cref="Client"/> type.
 		/// </summary>
-		/// <param name="socketExtended">Instance of <see cref="ServerFramework.Network.Socket.SocketExtended"/> type.</param>
+		/// <param name="server">Instance of <see cref="IServer"/> type.</param>
+		/// <param name="socketExtended">Instance of <see cref="Socket.SocketExtended"/> type.</param>
 		internal Client(IServer server, SocketExtended socketExtended)
 		{
-			Server = server;
-			SocketExtended = socketExtended;
+			_server = server;
+			_socketExtended = socketExtended;
 		}
 
 		#endregion
@@ -140,6 +121,12 @@ namespace ServerFramework.Network.Session
 
 		#region Send
 
+		/// <summary>
+		/// Sends packet to client.
+		/// </summary>
+		/// <param name="opcode">Packet opcode.</param>
+		/// <param name="maxLength">Estimate max length of packet underlying stream.</param>
+		/// <param name="action">Packet action.</param>
 		public void Send(ushort opcode, int maxLength, Action<Packet> action)
 		{
 			Send(opcode, 0, maxLength, action);
@@ -148,7 +135,10 @@ namespace ServerFramework.Network.Session
 		/// <summary>
 		/// Sends packet to client.
 		/// </summary>
-		/// <param name="packet">Instance of <see cref="ServerFramework.Network.Packets.Packet"/> type.</param>
+		/// <param name="opcode">Packet opcode.</param>
+		/// <param name="flags">Packet flags.</param>
+		/// <param name="maxLength">Estimate max length of packet underlying stream.</param>
+		/// <param name="action">Packet action.</param>
 		public async void Send(ushort opcode, byte flags, int maxLength, Action<Packet> action)
 		{
 			await SocketExtended.Signaler.WaitGreen();
@@ -158,11 +148,9 @@ namespace ServerFramework.Network.Session
 			data.Packet.Stream.Seek(ServerConfig.BigHeaderLength);
 
 			action(data.Packet);
-
 			data.Finish(flags, opcode);
 
-			if (BeforePacketSend != null)
-				BeforePacketSend(data.Packet, new EventArgs());
+			BeforePacketSend?.Invoke(data.Packet, new EventArgs());
 
 			Server.Send(SocketExtended.Sender);
 		}

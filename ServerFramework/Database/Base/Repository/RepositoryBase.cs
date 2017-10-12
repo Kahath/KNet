@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015. Kahath.
+ * Copyright © Kahath 2015
  * Licensed under MIT license.
  */
 
@@ -30,9 +30,9 @@ namespace ServerFramework.Database.Base.Repository
 		#region Constructors
 
 		/// <summary>
-		/// Creates instance of <see cref="ServerFramework.Database.Base.RepositoryBase{T}"/> type.
+		/// Creates instance of <see cref="Base.RepositoryBase{T}"/> type.
 		/// </summary>
-		/// <param name="context">Instance of <see cref="ServerFramework.Database.Base.DBContextBase"/> type.</param>
+		/// <param name="context">Instance of <see cref="Base.DBContextBase"/> type.</param>
 		public RepositoryBase(DBContextBase context)
 		{
 			Context = context;

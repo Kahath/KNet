@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015. Kahath.
+ * Copyright © Kahath 2015
  * Licensed under MIT license.
  */
 
@@ -28,8 +28,8 @@ namespace ServerFramework.Network.Socket
 		/// </summary>
 		internal SocketExtended()
 		{
-			Sender = new SocketAsyncEventArgs();
-			Receiver = new SocketAsyncEventArgs();
+			_sender = new SocketAsyncEventArgs();
+			_receiver = new SocketAsyncEventArgs();
 			_signaler = new Signaler();
 		}
 
@@ -73,12 +73,12 @@ namespace ServerFramework.Network.Socket
 			}
 		}
 
-		internal int SessionId
+		internal int SessionID
 		{
 			set
 			{
-				SenderData.SessionId = value;
-				ReceiverData.SessionId = value;
+				SenderData.SessionID = value;
+				ReceiverData.SessionID = value;
 			}
 		}
 

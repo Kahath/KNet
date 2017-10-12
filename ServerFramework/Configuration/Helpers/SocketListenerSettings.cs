@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015. Kahath.
+ * Copyright © Kahath 2015
  * Licensed under MIT license.
  */
 
@@ -71,9 +71,7 @@ namespace ServerFramework.Configuration.Helpers
 		/// <param name="bufferSize">Buffer size for each SocketAsyncEventArgs object.</param>
 		/// <param name="headerLength">Length of message header.</param>
 		/// <param name="localEndPoint">IP address and port of listening.</param>
-		internal SocketListenerSettings(int maxConnections, int backlog,
-			int maxAcceptOps, int bufferSize,
-			int headerLength, IPEndPoint localEndPoint)
+		internal SocketListenerSettings(int maxConnections, int backlog, int maxAcceptOps, int bufferSize, int headerLength, IPEndPoint localEndPoint)
 		{
 			_maxConnections = maxConnections;
 			_numberOfSaeaForRecSend = maxConnections;

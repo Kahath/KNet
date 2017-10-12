@@ -1,21 +1,18 @@
 ﻿/*
- * Copyright (c) 2015. Kahath.
+ * Copyright © Kahath 2015
  * Licensed under MIT license.
  */
 
 using ServerFramework.Database.Base.Entity;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ServerFramework.Database.Model.Application.Server
 {
 	[Table("Server", Schema="Application")]
-	public class ServerModel : EntityBase
+	public class ServerModel : EntityBase<int>
 	{
 		#region Properties
 
-		[Key]
-		public int ID { get; set; }
 		public bool IsSuccessful { get; set; }
 
 		#endregion

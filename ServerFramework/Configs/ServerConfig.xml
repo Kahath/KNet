@@ -48,6 +48,8 @@
 <property name="maxsimultaneousacceptops" value="10" />
 <property name="backlog" value="100" />
 <property name="assemblypath" value="Assemblies" />
+<property name="logfolderpath" value="Logs" />
 <property name="endianness" value="0x01" />				<!--Endianness type
-															LittleEndian		= 0x01														BigEndian			= 0x02-->
+															LittleEndian		= 0x01
+															BigEndian			= 0x02-->
 </ServerSettings>

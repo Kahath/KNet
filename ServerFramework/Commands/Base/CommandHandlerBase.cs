@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015. Kahath.
+ * Copyright © Kahath 2015
  * Licensed under MIT license.
  */
 
@@ -35,12 +35,7 @@ namespace ServerFramework.Commands.Base
 		{
 			get
 			{
-				string retVal = String.Empty;
-
-				if (Attribute != null)
-					retVal = Attribute.Name;
-
-				return retVal;
+				return Attribute?.Name ?? String.Empty;
 			}
 		}
 
@@ -48,12 +43,7 @@ namespace ServerFramework.Commands.Base
 		{
 			get
 			{
-				CommandLevel retVal = CommandLevel.Ten;
-
-				if (Attribute != null)
-					retVal = Attribute.CommandLevel;
-
-				return retVal;
+				return Attribute?.CommandLevel ?? CommandLevel.Ten;
 			}
 		}
 
@@ -61,12 +51,7 @@ namespace ServerFramework.Commands.Base
 		{
 			get
 			{
-				string retVal = String.Empty;
-
-				if (Attribute != null)
-					retVal = Attribute.Description;
-
-				return retVal;
+				return Attribute?.Description ?? String.Empty;
 			}
 		}
 

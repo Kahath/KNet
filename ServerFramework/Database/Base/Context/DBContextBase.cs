@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015. Kahath.
+ * Copyright © Kahath 2015
  * Licensed under MIT license.
  */
 
@@ -49,8 +49,7 @@ namespace ServerFramework.Database.Base.Context
 			{
 				if (entity.DateCreated != null && entity.DateCreated != DateTime.MinValue)
 				{
-					DbEntityEntry<T> entry = Entry(entity);
-					entry.State = EntityState.Modified;
+					Update(entity);
 				}
 				else
 				{
@@ -68,14 +67,11 @@ namespace ServerFramework.Database.Base.Context
 				IEnumerable<T> addEntities = entities.Where(x => x.DateCreated == null || x.DateCreated == DateTime.MinValue);
 				IEnumerable<T> updateEntities = entities.Where(x => x.DateCreated != null && x.DateCreated != DateTime.MinValue);
 
-				if(addEntities != null && addEntities.Any())
+				if (addEntities != null && addEntities.Any())
 					set.AddRange(addEntities);
 
 				if (updateEntities != null && updateEntities.Any())
-				{
-					foreach (T entity in updateEntities)
-						Add(entity);
-				}
+					Update(updateEntities);
 			}
 		}
 
@@ -101,6 +97,30 @@ namespace ServerFramework.Database.Base.Context
 
 			if (entity != null)
 				set.Remove(entity);
+		}
+
+		internal void Remove<T>(T entity)
+			where T : class, IEntity
+		{
+			if (entity != null)
+			{
+				DbSet<T> set = Set<T>();
+
+				AttachIfDetached(set, entity);
+				set.Remove(entity);
+			}
+		}
+
+		internal void Remove<T>(IEnumerable<T> entities)
+			where T : class, IEntity
+		{
+			if (entities != null && entities.Any())
+			{
+				DbSet<T> set = Set<T>();
+
+				AttachIfDetached(set, entities);
+				set.RemoveRange(entities);
+			}
 		}
 
 		#endregion
@@ -138,10 +158,10 @@ namespace ServerFramework.Database.Base.Context
 		{
 			T entity = Get(func);
 
-			if(entity != null)
+			if (entity != null)
 			{
 				action(entity);
-				Add(entity);
+				//Update(entity);
 			}
 		}
 
@@ -150,13 +170,56 @@ namespace ServerFramework.Database.Base.Context
 		{
 			IEnumerable<T> entities = Get(func);
 
-			if(entities != null && entities.Any())
+			if (entities != null && entities.Any())
 			{
 				foreach (T entity in entities)
+				{
 					action(entity);
-
-				Add(entities);
+					//Entry(entity).State = EntityState.Modified;
+				}
 			}
+		}
+
+		internal void Update<T>(T entity)
+			where T : class, IEntity
+		{
+			if (entity != null)
+			{
+				DbSet<T> set = Set<T>();
+				AttachIfDetached(set, entity, x => x.State = EntityState.Modified);
+			}
+		}
+
+		internal void Update<T>(IEnumerable<T> entities)
+			where T : class, IEntity
+		{
+			if (entities != null && entities.Any())
+			{
+				DbSet<T> set = Set<T>();
+				AttachIfDetached(set, entities, x => x.State = EntityState.Modified);
+			}
+		}
+
+		#endregion
+
+		#region AttachIfDetached
+
+		public void AttachIfDetached<T>(DbSet<T> set, T entity, Action<DbEntityEntry<T>> entryAction = null)
+			where T : class, IEntity
+		{
+			DbEntityEntry<T> entry = Entry(entity);
+
+			if (entry.State == EntityState.Detached)
+				set.Attach(entity);
+
+			entryAction?.Invoke(entry);
+		}
+
+		public void AttachIfDetached<T>(DbSet<T> set, IEnumerable<T> entities, Action<DbEntityEntry<T>> entryAction = null)
+			where T : class, IEntity
+		{
+			foreach (T entity in entities)
+				AttachIfDetached(set, entity, entryAction);
 		}
 
 		#endregion
@@ -219,9 +282,7 @@ namespace ServerFramework.Database.Base.Context
 
 			foreach (ObjectStateEntry entry in objectStateEntries)
 			{
-				IEntity entity = entry.Entity as IEntity;
-
-				if (entity != null)
+				if (entry.Entity is IEntity entity)
 				{
 					switch (entry.State)
 					{
