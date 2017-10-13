@@ -1,22 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <KNetSettings>
 	<!--  Server settings -->
-	<property name="bindip" value="0.0.0.0"/>
 	<!--Server bind IP-->
-	<property name="bindport" value=""/>
+	<property name="bindip" value="0.0.0.0"/>
 	<!--Server port-->
+	<property name="bindport" value=""/>
 
 	<!-- Database settings-->
-	<property name="dbhost" value="127.0.0.1"/>
 	<!--Database IP-->
-	<property name="dbport" value="1433"/>
+	<property name="dbhost" value="127.0.0.1"/>
 	<!--Database port-->
-	<property name="dbuser" value="root"/>
+	<property name="dbport" value="1433"/>
 	<!--Database username-->
-	<property name="dbpass" value="root"/>
+	<property name="dbuser" value="root"/>
 	<!--Database password-->
-	<property name="dbname" value=""/>
+	<property name="dbpass" value="root"/>
 	<!--Database name-->
+	<property name="dbname" value=""/>
 
 	<!-- Log level settings-->
 	<!--Console log level mask

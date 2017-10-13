@@ -7,6 +7,7 @@ using KNetFramework.Configuration.Core;
 using KNetFramework.Enums;
 using System;
 using System.IO;
+using System.Reflection;
 using UMemory.Unmanaged.Enums;
 
 namespace KNetFramework.Configuration.Helpers
@@ -36,6 +37,7 @@ namespace KNetFramework.Configuration.Helpers
 		private static int _messageSizeLength;
 		private static int _bigMessageSizeLength;
 		private static int _numSocketPerSession;
+		private static string _logFolderPath;
 		private static string _logFilePath;
 		private static string _assemblyPath;
 
@@ -146,6 +148,11 @@ namespace KNetFramework.Configuration.Helpers
 			get { return _isConsole; }
 		}
 
+		public static string LogFolderPath
+		{
+			get { return _logFolderPath; }
+		}
+
 		public static string LogFilePath
 		{
 			get { return _logFilePath; }
@@ -217,7 +224,8 @@ namespace KNetFramework.Configuration.Helpers
 			_bindPort = Config.Read<int>(ConfigurationHelper.BindPortKey);
 
 			_assemblyPath = Config.Read<string>(ConfigurationHelper.AssemblyPath);
-			_logFilePath = $"{Config.Read<string>(ConfigurationHelper.LogFolderPath)}\\ServerLog_{DateTime.Now.ToString("yyyy_mm_dd")}.log";
+			_logFolderPath = Config.Read<string>(ConfigurationHelper.LogFolderPath);
+			_logFilePath = $"{_logFolderPath}\\ServerLog_{DateTime.Now.ToString("yyyy_MM_dd")}.log";
 			_logLevel = Config.Read<LogTypes>(ConfigurationHelper.LogLevelKey, true);
 			_packetLogLevel = Config.Read<PacketLogTypes>(ConfigurationHelper.PacketLogLevelKey, true);
 			_opcodeAllowLevel = Config.Read<OpcodeTypes>(ConfigurationHelper.OpcodeAllowLevelKey, true);
@@ -242,6 +250,23 @@ namespace KNetFramework.Configuration.Helpers
 			_numSocketPerSession = 2; // 1 for receive, 1 for send
 
 			_isInitialised = true;
+
+			OnInitialised();
+		}
+
+		#endregion
+
+		#region OnInitialised
+
+		private static void OnInitialised()
+		{
+			string path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), AssemblyPath);
+
+			if (!Directory.Exists(path))
+				Directory.CreateDirectory(path);
+
+			if (!Directory.Exists(LogFolderPath))
+				Directory.CreateDirectory(LogFolderPath);
 		}
 
 		#endregion
