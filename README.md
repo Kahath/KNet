@@ -33,5 +33,16 @@ Now, after server is successfully configured, the only thing left is to extend i
 
 </br>
 
+## Ideas, references and influences
+* Initial idea - [Arctium Emulation WoW Core](https://github.com/Arctium-Emulation/WoW-Core)
+* [Signaler.cs](https://github.com/Kahath/KNet/blob/master/KNetFramework/Async/Semaphore/Signaler.cs) - [Building Async Coordination Primitives, Part 5: AsyncSemaphore](https://blogs.msdn.microsoft.com/pfxteam/2012/02/12/building-async-coordination-primitives-part-5-asyncsemaphore/)
+* Network related stuff - [C# SocketAsyncEventArgs High Performance Socket Code](https://www.codeproject.com/Articles/83102/C-SocketAsyncEventArgs-High-Performance-Socket-Cod)
+* Packet handling - [Arctium Emulation WoW Core](https://github.com/Arctium-Emulation/WoW-Core) (Earlier version)
+* Commands handling - [TrinityCore](https://github.com/TrinityCore/TrinityCore)
+* Entity Framework - [Ivan](https://github.com/zagorec92)
+* Dependency Injection - [MSCommunity](http://www.mscommunity.hr/event/dependency-injection-win10/362)
+
+</br>
+
 ## License
 Product is licensed by The MIT License ([MIT](https://github.com/Kahath/KNet/blob/master/LICENSE)). See LICENSE for more details.
