@@ -22,8 +22,8 @@ namespace KNetFramework.Network.Packets.Handlers
 		private static void ExamplePacketHandler(Client pClient, Packet packet)
 		{
 			//Read if packet has data
-			string exampleName = packet.Read<string>();
-			byte exampleData = packet.Read<byte>();
+			string exampleName = packet.ReadString();
+			byte exampleData = packet.ReadByte();
 
 			//Process data
 			Console.WriteLine(exampleName);
@@ -47,8 +47,8 @@ namespace KNetFramework.Network.Packets.Handlers
 		private static void ExamplePacketHandlerTwo(Client pClient, Packet packet)
 		{
 			//Read if packet has data
-			string exampleName = packet.Read<string>();
-			byte exampleData = packet.Read<byte>();
+			string exampleName = packet.ReadString();
+			byte exampleData = packet.ReadByte();
 
 			//Process data
 			Console.WriteLine(exampleName);

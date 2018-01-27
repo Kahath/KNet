@@ -62,13 +62,23 @@ namespace KNetFramework.Network.Packets
 
 		/// <summary>
 		/// Instantiates new <see cref="PacketHeader"/> type.
-		/// </summary>
-		/// <param name="header">Header byte array.</param>
+		/// /// </summary>
+		/// <param name="flags">Header flags.</param>
+		/// <param name="length">Message length.</param>
+		/// <param name="opcode">Header opcode.</param>
 		public PacketHeader(byte flags, int length, ushort opcode)
 		{
 			Flags = flags;
 			Length = length;
 			Opcode = opcode;
+		}
+
+		/// <summary>
+		/// Instantiates new <see cref="PacketHeader"/> type.
+		/// </summary>
+		public PacketHeader()
+		{
+
 		}
 
 		#endregion
@@ -112,9 +122,9 @@ namespace KNetFramework.Network.Packets
 		/// <param name="stream">Underlying <see cref="UMemoryStream"/></param>
 		public void Read(UMemoryStream stream)
 		{
-			Flags = stream.Read<byte>();
-			Length = IsBigHeader ? stream.Read<int>() : stream.Read<ushort>();
-			Opcode = stream.Read<ushort>();
+			Flags = stream.ReadByte();
+			Length = IsBigHeader ? stream.ReadInt32() : stream.ReadInt16();
+			Opcode = stream.ReadUInt16();
 		}
 
 		#endregion

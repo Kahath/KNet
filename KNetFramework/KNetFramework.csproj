@@ -71,6 +71,7 @@
     <Compile Include="Database\Base\Entity\AssemblyEntityBase.cs" />
     <Compile Include="Database\PrecompiledViews\KNetContext.Views.cs" />
     <Compile Include="Database\Repository\CommandRepository.cs" />
+    <Compile Include="Enums\BitPackFlushType.cs" />
     <Compile Include="Enums\CommandValidation.cs" />
     <Compile Include="Exceptions\DatabaseException.cs" />
     <Compile Include="Managers\Core\AssemblyManager.cs" />
