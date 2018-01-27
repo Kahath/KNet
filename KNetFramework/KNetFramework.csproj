@@ -36,6 +36,7 @@
     <RunPostBuildEvent>Always</RunPostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
+	<ProjectReference Include="..\Submodules\UMemory\UMemory\UMemory.csproj" />
     <Reference Include="DILibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Libs\DILibrary.dll</HintPath>
@@ -54,10 +55,6 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="UMemory, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Libs\UMemory.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\Base\CommandHandlerBase.cs" />
@@ -156,7 +153,6 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Libs\DILibrary.dll" />
-    <Content Include="Libs\UMemory.dll" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

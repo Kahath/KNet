@@ -1,0 +1,3 @@
+[submodule "Submodules/UMemory"]
+	path = Submodules/UMemory
+	url = https://github.com/Kahath/UMemory
