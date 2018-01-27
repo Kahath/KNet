@@ -2,7 +2,7 @@
 
 [![Join Discord](https://img.shields.io/badge/discord-join-7289DA.svg)](https://discord.gg/5kK9eav) [![Build status](https://ci.appveyor.com/api/projects/status/oyxdordfnyuwedhv?svg=true)](https://ci.appveyor.com/project/Kahath/knet)
 
-KNet is simple, lightweight and extensible TCP/IP server framework. It uses two third party libraries (UMemory and DILibrary) that are still not open sourced and EntityFramework as ORM. UMemory is unsafe context C# .NET 4.6 library used for reading and writing buffers to avoid some unnecessary calls from .NET GC. It has custom length format for arrays and strings. DILibrary is just lightweight dependency injection library.
+KNet is simple, lightweight and extensible TCP/IP server framework. It uses two third party libraries ([UMemory](https://github.com/Kahath/UMemory) and DILibrary) and EntityFramework as ORM. [UMemory](https://github.com/Kahath/UMemory) is unsafe context C# .NET 4.6 library used for reading and writing buffers to avoid some unnecessary calls from .NET GC. It has custom length format for arrays and strings. DILibrary is just lightweight dependency injection library.
 
 </br>
 
