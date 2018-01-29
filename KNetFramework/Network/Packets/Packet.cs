@@ -64,15 +64,13 @@ namespace KNetFramework.Network.Packets
 
 		#region Methods
 
-
 		#region Write
 
 		/// <summary>
 		/// Writes <see cref="IUMemoryWrite"/> instance to underlying stream.
 		/// </summary>
-		/// <typeparam name="T">Type of instance to write.</typeparam>
 		/// <param name="data">Instance to write.</param>
-		public void Write<T>(T data) where T : IUMemoryWrite
+		public void Write(IUMemoryWrite data)
 		{
 			Stream.Write(data);
 		}
@@ -197,12 +195,31 @@ namespace KNetFramework.Network.Packets
 		}
 
 		/// <summary>
+		/// Writes null terminated string to underlying stream.
+		/// </summary>
+		/// <param name="data">String value to write.</param>
+		public void WriteCString(string data)
+		{
+			Stream.WriteCString(data);
+		}
+
+		/// <summary>
 		/// Writes byte array value to underlying stream.
 		/// </summary>
 		/// <param name="data">Byte array value to write.</param>
 		public void Write(byte[] data)
 		{
 			Stream.Write(data);
+		}
+
+		/// <summary>
+		/// Writes byte array value to underlying stream with specified elements count.
+		/// </summary>
+		/// <param name="data">Byte array value to write.</param>
+		/// <param name="count">Elements count to write.</param>
+		public void Write(byte[] data, int count)
+		{
+			Stream.Write(data, count);
 		}
 
 		#endregion
@@ -339,12 +356,31 @@ namespace KNetFramework.Network.Packets
 		}
 
 		/// <summary>
+		/// Reads null terminated string from underlying stream.
+		/// </summary>
+		/// <returns>Read null terminated string.</returns>
+		public string ReadCString()
+		{
+			return Stream.ReadCString();
+		}
+
+		/// <summary>
 		/// Reads byte array from underlying stream.
 		/// </summary>
 		/// <returns>Read byte array value.</returns>
-		public byte[] ReadByteArray()
+		public byte[] ReadBytes()
 		{
-			return Stream.ReadByteArray();
+			return Stream.ReadBytes();
+		}
+
+		/// <summary>
+		/// Reads byte array from underlying stream with specified elements count.
+		/// </summary>
+		/// <param name="count">Array elements count to read.</param>
+		/// <returns>Read byte array.</returns>
+		public byte[] ReadBytes(int count)
+		{
+			return Stream.ReadBytes(count);
 		}
 
 		#endregion
