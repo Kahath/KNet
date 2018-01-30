@@ -107,9 +107,14 @@ namespace KNetFramework.Network.Packets
 		/// <param name="stream">Underlying <see cref="UMemoryStream"/></param>
 		public void Write(UMemoryStream stream)
 		{
-			stream.Write(Flags);
-			stream.Write(IsBigHeader ? Length : (ushort)Length);
-			stream.Write(Opcode);
+			stream.WriteUInt8(Flags);
+
+			if (IsBigHeader)
+				stream.WriteUInt32((uint)Length);
+			else
+				stream.WriteUInt16((ushort)Length);
+
+			stream.WriteUInt16(Opcode);
 		}
 
 		#endregion
@@ -122,7 +127,7 @@ namespace KNetFramework.Network.Packets
 		/// <param name="stream">Underlying <see cref="UMemoryStream"/></param>
 		public void Read(UMemoryStream stream)
 		{
-			Flags = stream.ReadByte();
+			Flags = stream.ReadUInt8();
 			Length = IsBigHeader ? stream.ReadInt32() : stream.ReadInt16();
 			Opcode = stream.ReadUInt16();
 		}

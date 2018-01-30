@@ -46,7 +46,7 @@ namespace KNetFramework.Network.Packets
 		{
 			if (_bitPosition == 0)
 			{
-				_value = ReadByte();
+				_value = ReadUInt8();
 				_bitPosition = 8;
 			}
 
@@ -92,7 +92,7 @@ namespace KNetFramework.Network.Packets
 
 			if (_bitPosition == 8)
 			{
-				Write(_value);
+				WriteUInt8(_value);
 				_bitPosition = 0;
 				_value = 0;
 			}
@@ -173,7 +173,7 @@ namespace KNetFramework.Network.Packets
 		{
 			if (_bitPosition != 0)
 			{
-				Write(_value);
+				WriteUInt8(_value);
 
 				_bitPosition = 0;
 				_value = 0;

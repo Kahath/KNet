@@ -23,7 +23,7 @@ namespace KNetFramework.Network.Packets.Handlers
 		{
 			//Read if packet has data
 			string exampleName = packet.ReadString();
-			byte exampleData = packet.ReadByte();
+			byte exampleData = packet.ReadUInt8();
 
 			//Process data
 			Console.WriteLine(exampleName);
@@ -32,7 +32,7 @@ namespace KNetFramework.Network.Packets.Handlers
 			//Write data
 			Action<Packet> packetAction = (pck) =>
 			{
-				pck.Write("Example string data");
+				pck.WriteString("Example string data");
 			};
 
 			//Send data
@@ -48,7 +48,7 @@ namespace KNetFramework.Network.Packets.Handlers
 		{
 			//Read if packet has data
 			string exampleName = packet.ReadString();
-			byte exampleData = packet.ReadByte();
+			byte exampleData = packet.ReadUInt8();
 
 			//Process data
 			Console.WriteLine(exampleName);
@@ -57,7 +57,7 @@ namespace KNetFramework.Network.Packets.Handlers
 			//Write data
 			Action<Packet> packetAction = (pck) =>
 			{
-				pck.Write("Example string data");
+				pck.WriteString("Example string data");
 				pck.WriteBits(0x123, 8);
 
 				pck.WriteBit(true);

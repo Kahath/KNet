@@ -80,9 +80,9 @@ namespace KNetFramework.Network.Packets
 		/// Increases stream position.
 		/// </summary>
 		/// <param name="data">Boolean value to write.</param>
-		public void Write(bool data)
+		public void WriteBool(bool data)
 		{
-			Stream.Write(data);
+			Stream.WriteBool(data);
 		}
 
 		/// <summary>
@@ -90,9 +90,9 @@ namespace KNetFramework.Network.Packets
 		/// Increases stream position.
 		/// </summary>
 		/// <param name="data">Byte value to write.</param>
-		public void Write(byte data)
+		public void WriteUInt8(byte data)
 		{
-			Stream.Write(data);
+			Stream.WriteUInt8(data);
 		}
 
 		/// <summary>
@@ -100,9 +100,9 @@ namespace KNetFramework.Network.Packets
 		/// Increases stream position.
 		/// </summary>
 		/// <param name="data">Char value to write.</param>
-		public void Write(char data)
+		public void WriteChar(char data)
 		{
-			Stream.Write(data);
+			Stream.WriteChar(data);
 		}
 
 		/// <summary>
@@ -110,9 +110,9 @@ namespace KNetFramework.Network.Packets
 		/// Increases stream position.
 		/// </summary>
 		/// <param name="data">Unsigned short value to write.</param>
-		public void Write(ushort data)
+		public void WriteUInt16(ushort data)
 		{
-			Stream.Write(data);
+			Stream.WriteUInt16(data);
 		}
 
 		/// <summary>
@@ -120,9 +120,9 @@ namespace KNetFramework.Network.Packets
 		/// Increases stream position.
 		/// </summary>
 		/// <param name="data">Unsigned int value to write.</param>
-		public void Write(uint data)
+		public void WriteUInt32(uint data)
 		{
-			Stream.Write(data);
+			Stream.WriteUInt32(data);
 		}
 
 		/// <summary>
@@ -130,9 +130,9 @@ namespace KNetFramework.Network.Packets
 		/// Increases stream position.
 		/// </summary>
 		/// <param name="data">Unsigned long value to write.</param>
-		public void Write(ulong data)
+		public void WriteUInt64(ulong data)
 		{
-			Stream.Write(data);
+			Stream.WriteUInt64(data);
 		}
 
 		/// <summary>
@@ -140,9 +140,9 @@ namespace KNetFramework.Network.Packets
 		/// Increases stream position.
 		/// </summary>
 		/// <param name="data">Short value to write.</param>
-		public void Write(short data)
+		public void WriteInt16(short data)
 		{
-			Stream.Write(data);
+			Stream.WriteInt16(data);
 		}
 
 		/// <summary>
@@ -150,9 +150,9 @@ namespace KNetFramework.Network.Packets
 		/// Increases stream position.
 		/// </summary>
 		/// <param name="data">Int value to write.</param>
-		public void Write(int data)
+		public void WriteInt32(int data)
 		{
-			Stream.Write(data);
+			Stream.WriteInt32(data);
 		}
 
 		/// <summary>
@@ -160,9 +160,9 @@ namespace KNetFramework.Network.Packets
 		/// Increases stream position.
 		/// </summary>
 		/// <param name="data">Long value to write.</param>
-		public void Write(long data)
+		public void WriteInt64(long data)
 		{
-			Stream.Write(data);
+			Stream.WriteInt64(data);
 		}
 
 		/// <summary>
@@ -170,9 +170,9 @@ namespace KNetFramework.Network.Packets
 		/// Increases stream position.
 		/// </summary>
 		/// <param name="data">Float value to write.</param>
-		public void Write(float data)
+		public void WriteFloat(float data)
 		{
-			Stream.Write(data);
+			Stream.WriteFloat(data);
 		}
 
 		/// <summary>
@@ -180,18 +180,18 @@ namespace KNetFramework.Network.Packets
 		/// Increases stream position.
 		/// </summary>
 		/// <param name="data">Double value to write.</param>
-		public void Write(double data)
+		public void WriteDouble(double data)
 		{
-			Stream.Write(data);
+			Stream.WriteDouble(data);
 		}
 
 		/// <summary>
 		/// Writes string value to underlying stream.
 		/// </summary>
 		/// <param name="data">string value to write.</param>
-		public void Write(string data)
+		public void WriteString(string data)
 		{
-			Stream.Write(data);
+			Stream.WriteString(data);
 		}
 
 		/// <summary>
@@ -207,9 +207,9 @@ namespace KNetFramework.Network.Packets
 		/// Writes byte array value to underlying stream.
 		/// </summary>
 		/// <param name="data">Byte array value to write.</param>
-		public void Write(byte[] data)
+		public void WriteBytes(byte[] data)
 		{
-			Stream.Write(data);
+			Stream.WriteBytes(data);
 		}
 
 		/// <summary>
@@ -219,7 +219,7 @@ namespace KNetFramework.Network.Packets
 		/// <param name="count">Elements count to write.</param>
 		public void Write(byte[] data, int count)
 		{
-			Stream.Write(data, count);
+			Stream.WriteBytes(data, count);
 		}
 
 		#endregion
@@ -244,25 +244,25 @@ namespace KNetFramework.Network.Packets
 		/// <returns>Read boolean value.</returns>
 		public bool ReadBoolean()
 		{
-			return Stream.ReadBoolean();
+			return Stream.ReadBool();
 		}
 
 		/// <summary>
 		/// Reads byte value from underlying stream.
 		/// </summary>
 		/// <returns>Read byte value.</returns>
-		public byte ReadByte()
+		public byte ReadUInt8()
 		{
-			return Stream.ReadByte();
+			return Stream.ReadUInt8();
 		}
 
 		/// <summary>
 		/// Reads signed byte value from underlying stream.
 		/// </summary>
 		/// <returns>Read signed byte value.</returns>
-		public sbyte ReadSByte()
+		public sbyte ReadInt8()
 		{
-			return Stream.ReadSByte();
+			return Stream.ReadInt8();
 		}
 
 		/// <summary>
