@@ -24,7 +24,7 @@ Now, after server is successfully configured, the only thing left is to extend i
 
 </br>
 
-## To do
+## [To do milestone](https://github.com/Kahath/KNet/milestone/1)
 * [Compression](https://github.com/Kahath/KNet/issues/1)
 * [Cryptography](https://github.com/Kahath/KNet/issues/2)
 * [UDP support](https://github.com/Kahath/KNet/issues/3)
