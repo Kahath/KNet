@@ -25,10 +25,10 @@ Now, after server is successfully configured, the only thing left is to extend i
 </br>
 
 ## To do
-* Compression
-* Cryptography
-* UDP support
-* Overhaul PacketLogging
+* [Compression](https://github.com/Kahath/KNet/issues/1)
+* [Cryptography](https://github.com/Kahath/KNet/issues/2)
+* [UDP support](https://github.com/Kahath/KNet/issues/3)
+* [Overhaul logging](https://github.com/Kahath/KNet/issues/4)
 * Optimization... Optimization... Optimization...
 
 </br>
@@ -43,6 +43,7 @@ Now, after server is successfully configured, the only thing left is to extend i
 * Dependency Injection - [MSCommunity](http://www.mscommunity.hr/event/dependency-injection-win10/362)
 
 Special thanks to [Arctium Emulation WoW Core](https://github.com/Arctium-Emulation/WoW-Core) repository. It was big help in beginning and a lot of earlier code was based on that repository. Some similarities are still visible.
+
 </br>
 
 ## License
