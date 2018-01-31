@@ -42,6 +42,7 @@ Now, after server is successfully configured, the only thing left is to extend i
 * Entity Framework - [Ivan](https://github.com/zagorec92)
 * Dependency Injection - [MSCommunity](http://www.mscommunity.hr/event/dependency-injection-win10/362)
 
+Special thanks to [Arctium Emulation WoW Core](https://github.com/Arctium-Emulation/WoW-Core) repository. It was big help in beginning and a lot of earlier code was based on that repository. Some similarities are still visible.
 </br>
 
 ## License
